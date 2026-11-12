@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#212121">
-<title>Fresh Fries v29 - الطلبات والمزامنة اللحظية</title>
+<title>Fresh Fries v30 - الجلسة والمزامنة المحسّنة</title>
 <style>
 :root{--red:#d32f2f;--black:#212121;--bg:#f5f5f5;--white:#fff;--muted:#777;--border:#e0e0e0;--green:#2e7d32;--wa:#25D366;--orange:#f57c00;--blue:#1976d2}
 *{box-sizing:border-box;font-family:Segoe UI,Tahoma,Arial,sans-serif}
@@ -233,6 +233,32 @@ function applyPermissions(){
  $('loginOverlay').style.display='none';
 }
 let cloudAccessToken=null, cloudRefreshToken=null, cloudExpiry=0;
+const FF30_SESSION_KEY='freshFries_supabase_session_v30';
+function ff30SaveSession(){
+ try{if(!cloudRefreshToken||!currentAccount)return;localStorage.setItem(FF30_SESSION_KEY,JSON.stringify({refresh_token:cloudRefreshToken,user_id:currentAccount.id,email:currentAccount.username}));}catch(e){console.warn('Session storage unavailable',e);}
+}
+function ff30ClearSession(){try{localStorage.removeItem(FF30_SESSION_KEY);}catch(e){}}
+async function ff30RestoreSession(){
+ let stored;try{stored=JSON.parse(localStorage.getItem(FF30_SESSION_KEY)||'null');}catch(e){ff30ClearSession();return;}
+ if(!stored?.refresh_token)return;
+ const cfg=state.cloudConfig||{},hint=$('loginHint');
+ if(!cfg.url||!cfg.anonKey)return;
+ hint.textContent='جارٍ استعادة جلسة الدخول…';
+ try{
+  const base=cfg.url.replace(/\/$/,'');
+  const r=await fetch(base+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:cfg.anonKey,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:stored.refresh_token})});
+  const j=await r.json();if(!r.ok||!j.access_token||!j.user?.id)throw Error('انتهت الجلسة');
+  const pr=await fetch(base+'/rest/v1/ff_profiles?select=user_id,display_name,role,active&user_id=eq.'+encodeURIComponent(j.user.id),{headers:{apikey:cfg.anonKey,Authorization:'Bearer '+j.access_token}});
+  if(!pr.ok)throw Error('تعذر التحقق من صلاحيات الحساب');
+  const profile=(await pr.json())[0];if(!profile||profile.active!==true||!DEFAULT_ROLE_PERMS[profile.role])throw Error('الحساب غير مفعل');
+  cloudAccessToken=j.access_token;cloudRefreshToken=j.refresh_token;cloudExpiry=Date.now()+(j.expires_in||3600)*1000;
+  currentAccount={id:j.user.id,name:profile.display_name||stored.email,username:j.user.email||stored.email,role:profile.role,permissions:DEFAULT_ROLE_PERMS[profile.role],active:true};
+  ff30SaveSession();applyPermissions();await ff29StartSync();
+ }catch(e){
+  if(e.message==='انتهت الجلسة'||e.message==='الحساب غير مفعل'){ff30ClearSession();hint.textContent='انتهت الجلسة؛ سجل الدخول مرة أخرى.';}
+  else hint.textContent='تعذر استعادة الجلسة. تحقق من الإنترنت ثم أعد فتح الصفحة.';
+ }
+}
 function showLogin(){
  $('firstAdminSetup').hidden=true;$('loginForm').hidden=false;
  $('loginTitle').textContent='تسجيل الدخول عبر Supabase';
@@ -256,14 +282,14 @@ async function login(){
   if(!profile||profile.active!==true||!DEFAULT_ROLE_PERMS[profile.role])throw Error('الحساب غير مفعل أو لا توجد له صلاحيات معتمدة في قاعدة البيانات.');
   cloudAccessToken=auth.access_token;cloudRefreshToken=auth.refresh_token;cloudExpiry=Date.now()+(auth.expires_in||3600)*1000;
   currentAccount={id:auth.user.id,name:profile.display_name||email,username:email,role:profile.role,permissions:DEFAULT_ROLE_PERMS[profile.role],active:true};
-  $('loginPass').value='';applyPermissions();
+  $('loginPass').value='';ff30SaveSession();applyPermissions();
   if(profile.role==='manager')$('cloudStatus').textContent='تم تسجيل الدخول. جارٍ تحميل الطلبات من Supabase…';
   await ff29StartSync();
  }catch(err){cloudAccessToken=null;cloudRefreshToken=null;currentAccount=null;hint.style.color='#c62828';hint.textContent=err.message||String(err);}
  finally{btn.disabled=false;}
 }
 $('setupAdminBtn').onclick=()=>{const name=$('setupAdminName').value.trim(),username=$('setupAdminUser').value.trim(),password=$('setupAdminPass').value;if(!name||!username||password.length<6){alert('أدخل الاسم واسم المستخدم وكلمة مرور لا تقل عن 6 أحرف.');return;}state.accounts=[{id:Date.now(),name,username,password,role:'manager',branch:'جميع الفروع',permissions:PERMISSIONS.map(x=>x[0]),active:true}];saveState();currentAccount=state.accounts[0];applyPermissions();renderAccounts();};
-$('logoutBtn').onclick=()=>{ff29StopSync();cloudAccessToken=null;cloudRefreshToken=null;cloudExpiry=0;currentAccount=null;showLogin();};$('loginBtn').onclick=login;$('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+$('logoutBtn').onclick=()=>{ff30ClearSession();ff29StopSync();cloudAccessToken=null;cloudRefreshToken=null;cloudExpiry=0;currentAccount=null;showLogin();};$('loginBtn').onclick=login;$('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
 $('changeMyPassword').onclick=()=>{if(!currentAccount)return alert('سجل الدخول أولاً.');const old=$('currentPassword').value,next=$('newPassword').value,confirmPass=$('confirmPassword').value;if(old!==currentAccount.password)return alert('كلمة المرور الحالية غير صحيحة.');if(next.length<4)return alert('اجعل كلمة المرور الجديدة 4 أحرف أو أرقام على الأقل.');if(next!==confirmPass)return alert('تأكيد كلمة المرور غير مطابق.');const a=state.accounts.find(x=>x.id===currentAccount.id);if(!a)return alert('تعذر العثور على الحساب.');a.password=next;currentAccount=a;saveState();$('currentPassword').value='';$('newPassword').value='';$('confirmPassword').value='';alert('تم تغيير كلمة المرور بنجاح.');};
 renderPermissionChecks('newAccountPermissions',DEFAULT_ROLE_PERMS.customer_service);
 $('createAccount').onclick=()=>{if(currentAccount?.role!=='manager')return alert('هذه الخاصية للمدير العام فقط.');const username=$('newAccountUser').value.trim(),password=$('newAccountPass').value,name=$('newAccountName').value.trim();if(!username||!name||password.length<6)return alert('أكمل البيانات واجعل كلمة المرور 6 أحرف على الأقل.');if(state.accounts.some(a=>a.username.toLowerCase()===username.toLowerCase()))return alert('اسم المستخدم مستخدم مسبقاً.');const a={id:Date.now(),username,password,name,role:'custom',branch:$('newAccountBranch').value,permissions:getCheckedPermissions('newAccountPermissions'),active:true};state.accounts.push(a);saveState();renderAccounts();$('newAccountUser').value='';$('newAccountPass').value='';$('newAccountName').value='';alert('تم إنشاء الحساب.');};
@@ -503,7 +529,7 @@ async function cloudTokenReady(){
  const cfg=state.cloudConfig,base=cfg.url.replace(/\/$/,'');
  const r=await fetch(base+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'apikey':cfg.anonKey,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:cloudRefreshToken})});
  const j=await r.json();if(!r.ok||!j.access_token)throw Error('انتهت الجلسة. سجّل الدخول مرة أخرى.');
- cloudAccessToken=j.access_token;cloudRefreshToken=j.refresh_token;cloudExpiry=Date.now()+(j.expires_in||3600)*1000;return cloudAccessToken;
+ cloudAccessToken=j.access_token;cloudRefreshToken=j.refresh_token;cloudExpiry=Date.now()+(j.expires_in||3600)*1000;ff30SaveSession();if(ff29Client){ff29Client.realtime.setAuth(cloudAccessToken);ff29StartSync();}return cloudAccessToken;
 }
 async function cloudSaveOperationalOrder(o){
  const token=await cloudTokenReady(),cfg=state.cloudConfig,base=cfg.url.replace(/\/$/,'');
@@ -711,12 +737,13 @@ $('testCloudOrder').onclick=async()=>{
 
 
 // v29: Server is authoritative for cloud orders. Local-only legacy orders are not uploaded automatically.
-let ff29Client=null,ff29Channel=null,ff29RefreshTimer=null,ff29Syncing=false,ff29Session=0;
+let ff29Client=null,ff29Channel=null,ff29RefreshTimer=null,ff29Syncing=false,ff29Session=0,ff30PollTimer=null,ff30RefreshPending=false;
 const ff29BranchNames={cairo:'فرع القاهرة',khamseen:'فرع الخمسين',sam_mall:'فرع سام مول'};
 function ff29Status(message){const el=$('cloudStatus');if(el)el.textContent=message;}
 function ff29StopSync(){
  ff29Session++;
  if(ff29RefreshTimer){clearTimeout(ff29RefreshTimer);ff29RefreshTimer=null;}
+ if(ff30PollTimer){clearInterval(ff30PollTimer);ff30PollTimer=null;}
  if(ff29Channel&&ff29Client){ff29Client.removeChannel(ff29Channel).catch(()=>{});}
  ff29Channel=null;ff29Client=null;
 }
@@ -744,7 +771,8 @@ function ff29MapOrder(o,branchById,itemsByOrder){
  return mapped;
 }
 async function ff29FetchOrders(){
- if(ff29Syncing||!currentAccount||!cloudAccessToken||!ff29Client)return;
+ if(ff29Syncing){ff30RefreshPending=true;return;}
+ if(!currentAccount||!cloudAccessToken||!ff29Client)return;
  const generation=ff29Session;ff29Syncing=true;
  try{
   const [branchesRes,ordersRes]=await Promise.all([
@@ -773,7 +801,7 @@ async function ff29FetchOrders(){
   ff29Status('تم تحديث '+mapped.length+' طلب من Supabase (آخر 1000 طلب كحد أقصى). المزامنة اللحظية: '+(ff29Channel?'مشتركة':'جارٍ الاشتراك'));
  }catch(err){
   if(generation===ff29Session)ff29Status('تعذر تحديث الطلبات من Supabase: '+(err.message||err)+'. ستُعاد المحاولة عند وصول تحديث أو إعادة فتح التطبيق.');
- }finally{ff29Syncing=false;}
+ }finally{ff29Syncing=false;if(ff30RefreshPending){ff30RefreshPending=false;ff29ScheduleRefresh();}}
 }
 async function ff29StartSync(){
  ff29StopSync();const generation=ff29Session;
@@ -783,6 +811,7 @@ async function ff29StartSync(){
  try{
   ff29Client=window.supabase.createClient(cfg.url,cfg.anonKey,{
    auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},
+   global:{headers:{Authorization:'Bearer '+cloudAccessToken}},
    realtime:{params:{eventsPerSecond:5}}
   });
   // Reuse the verified login token; do not create another independent login.
@@ -796,13 +825,19 @@ async function ff29StartSync(){
     else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')ff29Status('انقطع الاشتراك اللحظي؛ افتح النظام مجدداً أو تحقق من الإنترنت.');
    });
   await ff29FetchOrders();
+  // Polling fallback: works even when Supabase Realtime publication is not configured.
+  ff30PollTimer=setInterval(async()=>{
+   if(generation!==ff29Session||!currentAccount)return;
+   try{const oldToken=cloudAccessToken;await cloudTokenReady();if(oldToken!==cloudAccessToken)return;}catch(e){ff29Status('تعذر تجديد جلسة الدخول: '+(e.message||e));return;}
+   ff29ScheduleRefresh();
+  },12000);
  }catch(err){ff29Status('تعذر بدء المزامنة: '+(err.message||err));}
 }
 window.addEventListener('online',()=>{if(currentAccount&&cloudAccessToken)ff29StartSync();});
 window.addEventListener('focus',()=>{if(currentAccount&&cloudAccessToken)ff29ScheduleRefresh();});
 
 loadCloudSettings();restoreOrderDraft();
-showLogin();
+showLogin();ff30RestoreSession();
 setInterval(()=>{renderDrivers();renderOrders();},60000);
 window.addEventListener('beforeunload',saveState);
 </script>
