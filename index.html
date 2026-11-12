@@ -205,7 +205,7 @@ const menuData={
 const defaultState={
 employees:initialEmployees,
 knownAreas:{'الحصبة':500,'الجامعة القديمة':500,'العلوم':0},
-customers:{'774732962':{area:'الحصبة',deliveryPrice:500,firstSeen:'2026-01-01',orders:0},'782898626':{area:'الجامعة القديمة',deliveryPrice:500,firstSeen:'2026-01-01',orders:0}},
+customers:{},
 offers:{},customMenu:null,attendance:[],driverCursors:{},crmNotes:{},cloudConfig:{url:'https://dmduuidfvqpvmcwgoffi.supabase.co',anonKey:'sb_publishable_CJ8mR24mwpTyh2NerElb7g_R_t6xuQ4'},orders:[],nextOrderId:1,lastDriverId:null,branch:'فرع القاهرة',lastSelections:{},templates:{cashier:'طلب رقم {id} {branch}\n{items}\nرقم العميل : {phone}\nالعنوان : {area}\nالموصل : {driver}\nإجمالي الفاتورة: {total} ريال',driver:'طلب رقم {id} {branch}\n{items}\nالعنوان : {area}\nرسوم توصيل : {fee} ريال\nرقم العميل : {phone}\nالكاشير : {cashier}\nالموصل : {driver}\nإجمالي الفاتورة مع التوصيل : {total} ريال'}
 };
 function loadState(){
@@ -214,6 +214,17 @@ function loadState(){
  catch(e){alert('تعذر قراءة البيانات المحفوظة. سيتم تشغيل نسخة افتراضية؛ لا تستمر بإدخال بيانات قبل استعادة النسخة الاحتياطية.');return structuredClone(defaultState);}
 }
 let state=loadState();
+// v31 clean-install migration: clears legacy local orders/customers exactly once.
+// Supabase rows must be cleared separately in SQL Editor; never delete server data from the browser.
+try{
+ if(localStorage.getItem('ff_v31_clean_local_once')!=='yes'){
+  state.orders=[];state.customers={};state.crmNotes={};state.nextOrderId=1;
+  localStorage.removeItem(STORAGE_KEY+'_draft');
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  localStorage.setItem('ff_v31_clean_local_once','yes');
+ }
+}catch(e){console.warn('تعذر تصفير السجلات المحلية',e);}
+
 state.schemaVersion=22;state.driverCursors??={};state.crmNotes??={};state.cloudConfig??={url:'',anonKey:''};
 // تعريف محدد العناصر مبكراً قبل ربط أزرار تسجيل الدخول.
 const $=id=>document.getElementById(id);
@@ -622,9 +633,39 @@ function renderRatingStars(){$('ratingStars').innerHTML=[1,2,3,4,5].map(n=>`<but
 $('ratingStars').addEventListener('click',e=>{const b=e.target.closest('[data-star]');if(!b)return;ratingValue=Number(b.dataset.star);renderRatingStars();});
 $('closeRating').onclick=()=>{$('ratingModal').style.display='none';};
 $('laterRating').onclick=()=>{$('ratingModal').style.display='none';renderOrders();};
-$('saveRating').onclick=()=>{const o=state.orders.find(x=>x.id===ratingOrderId);if(!o)return;o.rating=ratingValue;o.ratingNote=$('ratingNoteInput').value.trim();o.ratedAt=new Date().toISOString();o.status='delivered';saveState();$('ratingModal').style.display='none';renderOrders();updateStats();};
+async function ff31PersistOrderStatus(o,status,extra={}){
+ if(!o.cloudOrderId)throw Error('هذا الطلب غير مرتبط بقاعدة البيانات؛ لا يمكن تأكيد حالته على الأجهزة الأخرى.');
+ const token=await cloudTokenReady(),cfg=state.cloudConfig;
+ const response=await fetch(cfg.url.replace(/\/$/,'')+'/rest/v1/ff_orders?id=eq.'+encodeURIComponent(o.cloudOrderId),{
+  method:'PATCH',headers:{apikey:cfg.anonKey,Authorization:'Bearer '+token,'Content-Type':'application/json',Prefer:'return=representation'},
+  body:JSON.stringify({status})
+ });
+ const payload=await response.json().catch(()=>null);
+ if(!response.ok||!Array.isArray(payload)||payload.length!==1)throw Error('لم تُحفظ حالة الطلب في Supabase ('+response.status+'). تحقق من صلاحيات التعديل وقيم الحالات المسموحة.');
+ Object.assign(o,extra,{status});saveState();renderOrders();updateStats();ff29ScheduleRefresh();
+}
+$('saveRating').onclick=async()=>{const o=state.orders.find(x=>x.id===ratingOrderId);if(!o)return;try{await ff31PersistOrderStatus(o,'delivered',{rating:ratingValue,ratingNote:$('ratingNoteInput').value.trim(),ratedAt:new Date().toISOString()});$('ratingModal').style.display='none';}catch(err){alert('تعذر حفظ التسليم النهائي: '+(err.message||err));}};
 function editOrder(orderId){const o=state.orders.find(x=>x.id===orderId);if(!o)return;if(o.type==='reservation'){const itemText=(o.items||[]).map(i=>`${i.qty} ${i.name}`).join('\n');const text=prompt('تعديل أصناف الحجز — الكمية ثم الصنف في كل سطر',itemText);if(text===null)return;const phone=prompt('رقم العميل',o.phone||'');if(phone===null)return;const reservationName=prompt('اسم الحجز أو وصفه',o.reservationName||'');if(reservationName===null)return;const notes=prompt('ملاحظات الحجز',o.notes||'');if(notes===null)return;const menu=Object.entries(getMenu()).flatMap(([cat,items])=>Object.entries(items).map(([name,price])=>({name,price})));const parsed=[];for(const line of text.split(/\n+/)){const m=line.trim().match(/^(\d+)\s+(.+)$/);if(!m)continue;const q=Number(m[1]),name=m[2].trim();let it=menu.find(x=>x.name===name)||menu.find(x=>x.name.toLowerCase().startsWith(name.toLowerCase()))||menu.find(x=>name.toLowerCase().startsWith(x.name.toLowerCase()));if(it&&q>0)parsed.push({name:it.name,qty:q,price:it.price});}if(!parsed.length||!phone.trim())return alert('تحقق من الأصناف ورقم العميل.');o.items=parsed;o.phone=phone.trim();o.reservationName=reservationName.trim();o.area=o.reservationName||'حجز مباشر';o.notes=notes.trim();o.itemsTotal=parsed.reduce((a,i)=>a+i.qty*i.price,0);o.total=o.itemsTotal;o.editedAt=new Date().toISOString();const cashier=state.employees.find(e=>e.role==='cashier'&&e.name===o.cashier);const msg=`تعديل الحجز رقم ${o.id}\n${parsed.map(i=>`${i.qty} × ${i.name}`).join('\n')}\nرقم العميل: ${o.phone}\nالحجز: ${o.reservationName}\nإجمالي الأصناف: ${o.total} ريال${o.notes?'\nملاحظات: '+o.notes:''}`;o.cashierMessage=msg;saveState();renderOrders();if(cashier?.phone&&confirm('تم حفظ الحجز. هل تريد إرسال التعديل للكاشير عبر واتساب؟'))window.open(`https://wa.me/${cashier.phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');return;}const menu=Object.entries(getMenu()).flatMap(([cat,items])=>Object.entries(items).map(([name,price])=>({name,price})));const itemText=(o.items||[]).map(i=>`${i.qty} ${i.name}`).join('\n');const text=prompt('عدّل الأصناف: كل صنف في سطر، مثال 2 تشكن فرايز',itemText);if(text===null)return;const phone=prompt('رقم العميل',o.phone||'');if(phone===null)return;const area=prompt('العنوان / المنطقة',o.area||'');if(area===null)return;const notes=prompt('ملاحظات العميل',o.notes||'');if(notes===null)return;const feeRaw=prompt('أجرة التوصيل',String(o.deliveryPrice??0));if(feeRaw===null)return;const payment=prompt('طريقة الدفع',o.payment||'كاش');if(payment===null)return;const driverChoices=state.employees.filter(e=>e.role==='driver');const driverList=driverChoices.map(d=>`${d.id}: ${d.name}`).join('\n');const driverPick=prompt('رقم الموصل من القائمة (اتركه كما هو بإدخال رقم الموصل الحالي)\n'+driverList,String(o.driverId));if(driverPick===null)return;const selectedDriver=driverChoices.find(d=>d.id===Number(driverPick));if(!selectedDriver)return alert('رقم الموصل غير صحيح.');const parsed=[];for(const line of text.split(/\n+/)){const m=line.trim().match(/^(\d+)\s+(.+)$/);if(!m)continue;const q=Number(m[1]),name=m[2].trim();let it=menu.find(x=>x.name===name)||menu.find(x=>x.name.toLowerCase().startsWith(name.toLowerCase()))||menu.find(x=>name.toLowerCase().startsWith(x.name.toLowerCase()));if(it&&q>0)parsed.push({name:it.name,qty:q,price:it.price});}if(!parsed.length)return alert('لم أتعرف على الأصناف. لم يتم حفظ التعديل.');const fee=Number(feeRaw);if(!phone.trim()||!area.trim()||!Number.isFinite(fee)||fee<0)return alert('تحقق من رقم العميل والعنوان وأجرة التوصيل.');o.items=parsed;o.phone=phone.trim();o.area=area.trim();o.notes=notes.trim();o.deliveryPrice=fee;o.payment=payment;o.driverId=selectedDriver.id;o.driverName=selectedDriver.name;o.itemsTotal=parsed.reduce((a,i)=>a+i.qty*i.price,0);o.total=o.itemsTotal+fee;o.editedAt=new Date().toISOString();o.revisedMessage=`تعديل الطلب رقم ${o.id}\n${parsed.map(i=>`${i.qty} × ${i.name}`).join('\n')}\nالعميل: ${o.phone}\nالعنوان: ${o.area}\nالتوصيل: ${fee}\nملاحظات: ${o.notes}`;const cashier=state.employees.find(e=>e.role==='cashier'&&e.name===o.cashier);const cashierMsg=`تعديل الطلب رقم ${o.id}\n${parsed.map(i=>`${i.qty} × ${i.name}`).join('\n')}\nالعميل: ${o.phone}\nالعنوان: ${o.area}\nالتوصيل: ${fee}\nالإجمالي: ${o.total}\nالدفع: ${payment}\nالموصل: ${o.driverName}\nملاحظات: ${o.notes}`;o.revisedCashierMessage=cashierMsg;saveState();renderOrders();const d=selectedDriver;const url=d?.phone?`https://wa.me/${d.phone.replace(/\D/g,'')}?text=${encodeURIComponent(o.revisedMessage)}`:'';const cUrl=cashier?.phone?`https://wa.me/${cashier.phone.replace(/\D/g,'')}?text=${encodeURIComponent(cashierMsg)}`:'';if(url&&confirm('تم اعتماد التعديل وحفظه. هل تريد إرسال تفاصيل الطلب المعدلة للموصل عبر واتساب؟'))window.open(url,'_blank');if(cUrl&&confirm('هل تريد إرسال تفاصيل التعديل للكاشير عبر واتساب؟'))window.open(cUrl,'_blank');}
-$('activeOrdersList').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const id=Number(b.dataset.delivered||b.dataset.editOrder||b.dataset.cancelOrder||b.dataset.rateOrder||b.dataset.finishReservation),o=state.orders.find(x=>x.id===id);if(!o)return;if(b.dataset.finishReservation){o.status='reservation_completed';o.completedAt=new Date().toISOString();saveState();renderOrders();updateStats();}else if(b.dataset.delivered){o.deliveredAt=new Date().toISOString();o.status='delivered_waiting_rating';saveState();renderOrders();openRating(id);}else if(b.dataset.rateOrder)openRating(id);else if(b.dataset.editOrder)editOrder(id);else if(b.dataset.cancelOrder){const reason=prompt('اكتب سبب إلغاء الطلب (إلزامي):');if(reason===null)return;if(!reason.trim())return alert('يجب تسجيل سبب الإلغاء.');o.status='cancelled';o.cancelReason=reason.trim();o.cancelledAt=new Date().toISOString();saveState();renderOrders();updateStats();}});
+$('activeOrdersList').addEventListener('click',async e=>{
+ const b=e.target.closest('button');if(!b||b.disabled)return;
+ const id=Number(b.dataset.delivered||b.dataset.editOrder||b.dataset.cancelOrder||b.dataset.rateOrder||b.dataset.finishReservation);
+ const o=state.orders.find(x=>x.id===id);if(!o)return;
+ if(b.dataset.rateOrder){openRating(id);return;}
+ if(b.dataset.editOrder){editOrder(id);return;}
+ let status,extra={};
+ if(b.dataset.cancelOrder){
+  const reason=prompt('اكتب سبب إلغاء الطلب (إلزامي):');if(reason===null)return;
+  if(!reason.trim())return alert('يجب تسجيل سبب الإلغاء.');
+  status='cancelled';extra={cancelReason:reason.trim(),cancelledAt:new Date().toISOString()};
+ }else if(b.dataset.delivered){status='delivered_waiting_rating';extra={deliveredAt:new Date().toISOString()};}
+ else if(b.dataset.finishReservation){status='reservation_completed';extra={completedAt:new Date().toISOString()};}
+ else return;
+ b.disabled=true;
+ try{await ff31PersistOrderStatus(o,status,extra);if(b.dataset.delivered)openRating(id);}
+ catch(err){alert('لم يتم تغيير حالة الطلب: '+(err.message||err));}
+ finally{b.disabled=false;}
+});
+
 function updateStats(){
  const date=today(),orders=state.orders.filter(o=>o.date===date);
  $('todayOrdersCount').textContent=orders.length;$('newCustomersCount').textContent=orders.filter(o=>o.isNewCustomer).length;
@@ -760,7 +801,7 @@ function ff29MapOrder(o,branchById,itemsByOrder){
  const n=ff29ParseNotes(o.notes),d=new Date(o.created_at||Date.now());
  const its=itemsByOrder.get(o.id)||[];
  const cloudStatus=o.status||'new';
- const localStatus=cloudStatus==='cancelled'?'cancelled':cloudStatus==='completed'?'completed':cloudStatus==='delivered_waiting_rating'?'delivered_waiting_rating':'active';
+ const localStatus=cloudStatus==='cancelled'?'cancelled':cloudStatus==='completed'?'completed':cloudStatus==='delivered_waiting_rating'?'delivered_waiting_rating':cloudStatus==='delivered'?'delivered':cloudStatus==='reservation_completed'?'reservation_completed':'active';
  const mapped={id:Number(n.local_id)||Number(String(o.order_number).slice(-9))||Date.now(),cloudOrderId:o.id,cloudOrderNumber:o.order_number,
   cloudSynced:true,branch:branchById.get(o.branch_id)||'فرع القاهرة',phone:o.phone_snapshot||'',area:o.area_snapshot||'',
   deliveryPrice:Number(o.delivery_fee||0),itemsTotal:Number(o.items_total||0),total:Number(o.total||0),
@@ -826,15 +867,21 @@ async function ff29StartSync(){
    });
   await ff29FetchOrders();
   // Polling fallback: works even when Supabase Realtime publication is not configured.
+  // Reliable foreground polling, independent of Realtime subscription state.
+  // Fetch directly so a queued/debounced refresh cannot indefinitely defer a read.
   ff30PollTimer=setInterval(async()=>{
-   if(generation!==ff29Session||!currentAccount)return;
-   try{const oldToken=cloudAccessToken;await cloudTokenReady();if(oldToken!==cloudAccessToken)return;}catch(e){ff29Status('تعذر تجديد جلسة الدخول: '+(e.message||e));return;}
-   ff29ScheduleRefresh();
-  },12000);
+   if(generation!==ff29Session||!currentAccount||document.hidden)return;
+   try{
+    await cloudTokenReady();
+    if(generation!==ff29Session)return; // Token refresh may restart synchronization.
+    await ff29FetchOrders();
+   }catch(e){ff29Status('تعذر تحديث الطلبات تلقائياً: '+(e.message||e));}
+  },5000);
  }catch(err){ff29Status('تعذر بدء المزامنة: '+(err.message||err));}
 }
 window.addEventListener('online',()=>{if(currentAccount&&cloudAccessToken)ff29StartSync();});
 window.addEventListener('focus',()=>{if(currentAccount&&cloudAccessToken)ff29ScheduleRefresh();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&currentAccount&&cloudAccessToken)ff29ScheduleRefresh();});
 
 loadCloudSettings();restoreOrderDraft();
 showLogin();ff30RestoreSession();
