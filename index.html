@@ -141,7 +141,7 @@ th,td{border:1px solid var(--border);padding:8px;text-align:right}th{background:
 <div class="actions"><button class="btn btn-blue" id="exportData">تنزيل نسخة احتياطية</button><label class="btn btn-orange" for="importFile" style="cursor:pointer">استعادة نسخة احتياطية</label><label class="btn btn-green" for="driveDbFile" style="cursor:pointer">اختيار ملف قاعدة البيانات من Google Drive</label><input id="importFile" type="file" accept="application/json" hidden><input id="driveDbFile" type="file" accept=".json,application/json" hidden></div>
 <div class="alert info">يمكنك اختيار ملف JSON من Google Drive عبر نافذة اختيار الملفات في الهاتف أو الكمبيوتر واستيراد بياناته إلى هذا الجهاز. هذا استيراد/استعادة لنسخة بيانات، وليس ربطاً حياً بملف Drive أو مزامنة بين الأجهزة. الربط الحي يحتاج إعداد Google OAuth وخادم مزامنة.</div><div class="card"><h2>إعداد قاعدة البيانات المركزية</h2><div class="alert warning">تم تجهيز رابط Supabase والمفتاح العام؛ لكن الطلبات وتسجيل الدخول لا تزال محلية في هذه النسخة، ولا توجد مزامنة بعد. لا تستخدمها للإنتاج متعدد الأجهزة. لا تضع كلمة مرور قاعدة البيانات هنا؛ المطلوب عنوان المشروع ومفتاح anon/public فقط.</div><div class="form-group"><label>رابط مشروع Supabase</label><input id="cloudUrl" type="url" placeholder="https://xxxx.supabase.co"></div><div class="form-group"><label>مفتاح anon / publishable</label><input id="cloudAnonKey" type="password" autocomplete="off" placeholder="مفتاح المشروع العام"></div><div class="actions"><button class="btn btn-blue" id="saveCloudConfig">حفظ إعدادات الربط</button><button class="btn btn-green" id="testCloudConfig">اختبار الاتصال</button></div><div class="actions"><button class="btn btn-orange" id="testCloudOrder" type="button">حفظ طلب تجريبي في Supabase</button></div><div id="cloudOrderResult" class="alert info">نسخة v27: اعتماد طلبات التوصيل يحفظ سجل الطلب في Supabase أولاً. الأصناف محفوظة مؤقتاً ضمن notes؛ المزامنة الكاملة غير مفعلة.</div><div id="cloudStatus" class="alert info">الوضع الحالي: حفظ محلي على هذا الجهاز.</div><p class="muted">هذه المرحلة تحفظ إعدادات الربط وتجهز واجهة الاتصال. لن تُرفع بيانات العملاء أو الطلبات إلى السحابة قبل إنشاء الجداول وتفعيل سياسات الأمان واختبار الترحيل.</p></div>
 <div class="card"><h2>قوالب رسائل واتساب</h2><p class="muted">استخدم المتغيرات: {id} {items} {phone} {area} {fee} {total} {cashier} {driver} {branch}</p><label>رسالة الكاشير</label><textarea id="cashierTemplate" rows="4"></textarea><label>رسالة الموصل</label><textarea id="driverTemplate" rows="4"></textarea><button class="btn btn-green" id="saveTemplates">حفظ القوالب</button></div>
-<div class="card"><h2>معالجة البيانات</h2><p class="muted">ينصح بتنزيل نسخة احتياطية قبل الحذف. لا يمكن التراجع عن هذه العمليات.</p><div class="actions"><button class="btn btn-orange" id="deleteOrders">حذف جميع الطلبات</button><button class="btn btn-orange" id="deleteCustomers">حذف بيانات العملاء</button><button class="btn btn-red" id="resetSelected">تصفير الطلبات والعملاء والتقارير</button></div></div>
+<div class="card"><h2>معالجة البيانات</h2><p class="muted">حذف مركزي نهائي من Supabase لجميع الأجهزة، متاح للمدير العام فقط. يلزم تفعيل دالة الحذف الآمنة في قاعدة البيانات مرة واحدة. لا يمكن التراجع عن الحذف.</p><div class="actions"><button class="btn btn-orange" id="deleteOrders">حذف جميع الطلبات</button><button class="btn btn-orange" id="deleteCustomers">حذف بيانات العملاء</button><button class="btn btn-red" id="resetSelected">تصفير الطلبات والعملاء والتقارير</button></div></div>
 <div class="card"><h2>كشف تفصيلي للموصلين</h2><select id="driverExportSelect"></select><button class="btn btn-blue" id="exportDriverOrders">تنزيل كشف الموصل CSV</button></div>
 <div id="storageStatus" class="alert success">الحفظ التلقائي مفعّل.</div>
 <p class="muted">البيانات محفوظة محلياً في المتصفح ولا تتم مزامنتها تلقائياً بين الأجهزة. انقل النسخة الاحتياطية يدوياً عند تغيير الجهاز.</p>
@@ -717,9 +717,47 @@ $('reportDate').value=today();
 
 function downloadText(name,text,type='text/csv;charset=utf-8'){const blob=new Blob(['\ufeff'+text],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
 $('saveTemplates').onclick=()=>{state.templates.cashier=$('cashierTemplate').value;state.templates.driver=$('driverTemplate').value;saveState();alert('تم حفظ قوالب الرسائل.');};
-$('deleteOrders').onclick=()=>{if(confirm('تأكيد حذف جميع الطلبات؟ يفضّل تنزيل نسخة احتياطية أولاً.')){state.orders=[];saveState();updateStats();alert('تم حذف سجل الطلبات.');}};
-$('deleteCustomers').onclick=()=>{if(confirm('تأكيد حذف جميع بيانات العملاء؟ يفضّل تنزيل نسخة احتياطية أولاً.')){state.customers={};saveState();fillSelects();alert('تم حذف بيانات العملاء.');}};
-$('resetSelected').onclick=()=>{if(confirm('سيتم حذف جميع الطلبات والعملاء وسجلات الحضور والتوقفات. هل أنت متأكد؟')){state.orders=[];state.customers={};state.attendance=[];state.nextOrderId=1;saveState();fillSelects();updateStats();renderAttendance();alert('تم تصفير البيانات المحددة.');}};
+// v32: data processing is executed on the server with manager-only authorization.
+// Never clear local data before the database confirms successful deletion.
+let ff32ResetBusy=false;
+async function ff32ResetData(mode){
+ if(ff32ResetBusy)return;
+ if(!currentAccount||currentAccount.role!=='manager'){
+  alert('هذه العملية متاحة للمدير العام فقط.');return;
+ }
+ const names={orders:'جميع الطلبات وأصنافها وسجل أحداثها',customers:'بيانات العملاء وملاحظاتهم',all:'جميع الطلبات والعملاء والتقارير المرتبطة بها'};
+ if(!names[mode])return;
+ if(!confirm('تحذير: سيتم حذف '+names[mode]+' نهائيًا من جميع الأجهزة. لا يمكن التراجع. هل تريد المتابعة؟'))return;
+ const typed=prompt('للتأكيد النهائي اكتب كلمة: حذف');
+ if(typed!=='حذف'){alert('تم إلغاء العملية دون حذف بيانات.');return;}
+ const buttons=['deleteOrders','deleteCustomers','resetSelected'].map($).filter(Boolean);
+ ff32ResetBusy=true;buttons.forEach(b=>b.disabled=true);
+ try{
+  const cfg=state.cloudConfig||{};
+  if(!cfg.url||!cfg.anonKey)throw Error('إعدادات Supabase غير مكتملة.');
+  const token=await cloudTokenReady();
+  const res=await fetch(cfg.url.replace(/\/$/,'')+'/rest/v1/rpc/ff_manager_reset_data',{
+   method:'POST',headers:{'apikey':cfg.anonKey,'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+   body:JSON.stringify({p_scope:mode})
+  });
+  const payload=await res.json().catch(()=>null);
+  if(!res.ok)throw Error(payload?.message||payload?.error||'تعذر حذف البيانات (HTTP '+res.status+'). تأكد من تنفيذ ملف SQL الخاص بالإصدار v32.');
+  if(!payload||payload.success!==true)throw Error('لم تؤكد قاعدة البيانات نجاح الحذف.');
+  if(mode==='orders'||mode==='all'){
+   state.orders=[];state.nextOrderId=1;state.lastDriverId=null;
+  }
+  if(mode==='customers'||mode==='all')state.customers={};
+  if(mode==='all')state.attendance=[];
+  saveState();fillSelects();renderOrders();renderDrivers();updateStats();renderAttendance();
+  // Fetch server-authoritative state again; other devices pick up changes on their next refresh.
+  if(ff29Client)await ff29FetchOrders();
+  alert('تم الحذف بنجاح من Supabase. ستظهر النتيجة على الأجهزة الأخرى عند المزامنة.');
+ }catch(err){alert('لم يكتمل الحذف: '+(err.message||err));}
+ finally{ff32ResetBusy=false;buttons.forEach(b=>b.disabled=false);}
+}
+$('deleteOrders').onclick=()=>ff32ResetData('orders');
+$('deleteCustomers').onclick=()=>ff32ResetData('customers');
+$('resetSelected').onclick=()=>ff32ResetData('all');
 $('exportDriverOrders').onclick=()=>{const id=Number($('driverExportSelect').value),emp=state.employees.find(e=>e.id===id);if(!emp)return;const rows=state.orders.filter(o=>o.driverId===id);const csv=[['رقم الطلب','التاريخ','الفرع','العميل','المنطقة','الأصناف','مبلغ التوصيل','الإجمالي','الكاشير','خدمة العملاء','وقت الإرسال','وقت التسليم','مدة التوصيل بالدقائق','التقييم','ملاحظة التقييم','سبب الإلغاء'].join(','),...rows.map(o=>[o.id,o.createdAt,o.branch||'فرع القاهرة',o.phone,o.area,(o.items||[]).map(i=>`${i.qty} × ${i.name}`).join(' | '),o.deliveryPrice,o.total,o.cashier,o.employee,o.sentAt||'',o.deliveredAt||'',o.sentAt&&o.deliveredAt?Math.round((new Date(o.deliveredAt)-new Date(o.sentAt))/60000):'',o.rating||'',o.ratingNote||'',o.cancelReason||''].map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(','))].join('\n');downloadText(`كشف-${emp.name}-${today()}.csv`,csv);};
 $('cashierTemplate').value=state.templates.cashier;$('driverTemplate').value=state.templates.driver;
 fillSelects();renderMenu();renderDrivers();renderTeam();renderOrders();updateStats();renderAccounts();saveState();
