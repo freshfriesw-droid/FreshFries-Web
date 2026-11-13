@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fresh Fries v38.14 — خدمة العملاء والتوصيل وسلامة البيانات</title>
+<title>Fresh Fries v38.15 — خدمة العملاء والتوصيل وعزل الفروع</title>
 <style>
 :root{--red:#d51e2c;--dark:#17191d;--bg:#f4f5f7;--line:#e2e5e9;--muted:#667085;--good:#138654;--amber:#c37a0d}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#22272e;font-family:Tahoma,Arial,sans-serif;font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:11px 14px;background:#e8ebef;color:#252932;font-weight:700}button:disabled{opacity:.48;cursor:not-allowed}button.primary{background:var(--red);color:white}button.dark{background:var(--dark);color:#fff}button.good{background:var(--good);color:#fff}button.outline{background:white;border:1px solid var(--line)}.head{background:var(--dark);color:white;border-bottom:4px solid var(--red);padding:14px max(14px,env(safe-area-inset-right));display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.brand{font-size:21px;font-weight:900}.brand span{color:#ff4d56}.sub{font-size:12px;color:#b3bdc8;margin-top:5px}.head .sub{max-width:420px}main{max-width:1170px;margin:auto;padding:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:13px;box-shadow:0 1px 2px #00000009}.card h2,.card h3{margin:0 0 12px;font-size:17px}.muted{color:var(--muted);font-size:12px}.stat{background:#fff;padding:13px;border:1px solid var(--line);border-radius:12px}.stat strong{font-size:23px;display:block;margin-top:4px}.flex{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:12px;font-weight:bold;margin:10px 0 5px}input,select,textarea{width:100%;padding:12px;border:1px solid #d3d7df;background:#fff;border-radius:8px;outline:0}input:focus,textarea:focus,select:focus{border-color:var(--red)}textarea{resize:vertical;min-height:84px}.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.tag{font-size:12px;padding:5px 9px;border-radius:20px;background:#f0f0f0;white-space:nowrap;display:inline-block}.ready{background:#e2f6eb;color:#087744}.busy{background:#fff1db;color:#a46609}.offline{background:#efeff1;color:#616671}.warning{background:#fff7e5;border:1px solid #f5d9a5;border-radius:10px;padding:11px;color:#875400;margin:10px 0}.item{padding:12px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.tiny{font-size:12px}.note{padding:12px;border-radius:9px;background:#f5f7fa;margin:10px 0;line-height:1.9;white-space:pre-line}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}.topinfo{font-size:12px;color:#e6e6e6}.hidden{display:none!important}.login{position:fixed;inset:0;z-index:1000;background:#17191deb;display:flex;align-items:center;justify-content:center;padding:14px}.loginbox{width:min(440px,100%);background:white;border-radius:17px;padding:24px}.loginbox h2{margin-top:0}.alert{position:fixed;bottom:18px;right:15px;left:15px;z-index:1002;max-width:700px;margin:auto;background:#23272c;color:white;padding:13px;border-radius:12px;box-shadow:0 3px 20px #0003}.chip{background:#eef1f5;border-radius:7px;padding:8px 10px;font-size:12px}.danger{color:var(--red)}.offer{border-right:5px solid var(--red);background:#fff8f8;padding:12px;border-radius:10px;margin:10px 0}.notice{border-right:4px solid #ffbc28;padding-right:12px}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:9px}.pill{font-size:11px;color:#fff;background:var(--red);padding:3px 8px;border-radius:30px}footer{text-align:center;color:var(--muted);font-size:11px;margin:28px 0}.version{color:#aaafb8;font-size:11px}.btnlink{background:none;border:0;color:var(--red);padding:4px;text-decoration:underline}.statusbar{background:#eceff4;padding:9px 12px;border-radius:8px;color:#334155;font-size:12px;margin:10px 0}.sectionbar{margin:15px 0 8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}.sectionbar h2{font-size:17px;margin:0}@media(max-width:840px){.grid{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}}@media(max-width:520px){.row{grid-template-columns:1fr}.brand{font-size:19px}.grid{grid-template-columns:repeat(2,1fr)}main{padding:10px}.card{padding:13px}}@media(prefers-reduced-motion:no-preference){.offer{animation:pulse 1.6s infinite}@keyframes pulse{50%{box-shadow:0 0 0 2px #f7c8cb}}}
@@ -33,16 +33,44 @@
 .ff44-samples{color:#515b6b;font-size:12px;line-height:1.9;overflow-wrap:anywhere;margin-top:5px}
 .ff44-strong{font-weight:900;font-size:21px;display:block;margin:5px 0}
 @media(max-width:600px){.ff44-summary{grid-template-columns:1fr}}
+
+/* v38.15 - manager-only scope audit */
+.ff45-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:12px 0}
+.ff45-metrics .stat strong{font-size:20px}.ff45-risk{padding:12px;background:#f8fafc;border:1px solid #e1e5eb;border-right:4px solid #c79b35;border-radius:10px;margin:9px 0;overflow-wrap:anywhere}
+.ff45-risk.high{background:#fff7f7;border-right-color:#d51e2c}.ff45-table-scroll{overflow-x:auto;margin:10px 0}
+.ff45-table{width:100%;min-width:630px;border-collapse:collapse;font-size:12px}
+.ff45-table th,.ff45-table td{padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:right;vertical-align:top}
+.ff45-table th{background:#f5f6f8}.ff45-table tr:nth-child(even){background:#fbfcfd}
+.ff45-mono{font-family:Consolas,monospace;direction:ltr;unicode-bidi:isolate;font-size:11px;word-break:break-word}
+.ff45-code{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f6fa;padding:7px;border-radius:7px;margin:6px 0}
+.ff45-flags{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:9px 0}
+.ff45-flag{background:#f4f6fa;padding:11px;border-radius:9px;line-height:1.8}
+@media(max-width:760px){.ff45-metrics,.ff45-flags{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
-<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.14 · سلامة البيانات والأمان</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
+<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.15 · عزل الفروع والصلاحيات</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff45AccessBtn" class="outline hidden" type="button">🔐 عزل الفروع</button><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
 <main>
 <div class="warning">نسخة تجريبية مستقلة. لا تربطها بفرع يعمل فعليًا قبل اختبار قاعدة البيانات والصلاحيات والتوزيع. لا تستخدمها لطلبات عملاء حقيقيين الآن.</div>
 <div id="connection" class="statusbar">جاهز لتسجيل الدخول.</div><div id="additionLoadError" class="hidden"></div>
 
 
 
+
+
+<section id="ff45AccessPanel" class="card hidden" aria-label="مراجعة العزل بين فروع Fresh Fries">
+ <div class="sectionbar"><h2>🔐 مراجعة عزل الفروع والصلاحيات</h2><div class="flex"><button id="ff45Run" class="primary" type="button">فحص الوصول</button><button id="ff45Export" class="outline" type="button" disabled>تصدير CSV</button><button id="ff45Close" class="outline" type="button">إغلاق</button></div></div>
+ <div class="warning"><b>للمدير العام فقط:</b> يفحص هذا القسم روابط الموظفين بالفروع والموصلين، وامتيازات الجداول وسياسات RLS. <b>الفحص لا يختبر محاولة الدخول من حساب غير مصرح له</b>، ولا يغير البيانات أو صلاحيات الموظفين.</div>
+ <p id="ff45Status" class="muted" role="status" aria-live="polite">اضغط «فحص الوصول» لقراءة الوضع الحالي من قاعدة البيانات.</p>
+ <div id="ff45Metrics" class="ff45-metrics"></div>
+ <div id="ff45Flags" class="ff45-flags"></div>
+ <div class="sectionbar"><h3>ملاحظات ربط الموظفين والتوصيل</h3><span id="ff45IssueCount" class="muted"></span></div>
+ <div id="ff45Issues"></div>
+ <details><summary><b>ملخص الفروع والأدوار</b></summary><div class="ff45-table-scroll"><table class="ff45-table"><thead><tr><th>الفرع</th><th>نشط</th><th>كاشير نشط</th><th>موصلون نشطون</th><th>طلبات توصيل مفتوحة</th></tr></thead><tbody id="ff45Branches"></tbody></table></div><div id="ff45Roles"></div></details>
+ <details><summary><b>الجداول الحساسة وامتيازات الوصول</b></summary><div class="ff45-table-scroll"><table class="ff45-table"><thead><tr><th>الجدول</th><th>RLS</th><th>سياسات</th><th>قراءة anon</th><th>كتابة anon</th><th>قراءة الموظفين</th><th>كتابة الموظفين</th></tr></thead><tbody id="ff45Tables"></tbody></table></div></details>
+ <details><summary><b>تفاصيل السياسات الحالية (للمراجعة)</b></summary><p class="muted">عرض لأسماء السياسات وشروطها كما هي؛ لا يعني أن وجود السياسة يمنع كل وصول غير مصرح.</p><div id="ff45Policies"></div></details>
+ <p class="muted">تُعرض معرفات الحسابات عند وجود تناقض، دون أسماء العملاء أو الهواتف أو نصوص البلاغات. لا تعتبر نتيجة هذا الفحص شهادة أمان أو بديلًا عن اختبارات الأدوار والفروع على بيئة التجارب.</p>
+</section>
 
 <section id="ff44IntegrityPanel" class="card hidden" aria-label="تدقيق سلامة بيانات التشغيل">
  <div class="sectionbar"><h2>🔎 تدقيق سلامة البيانات</h2><div class="flex"><button id="ff44Export" type="button" class="outline" disabled>تصدير النتائج CSV</button><button id="ff44Close" type="button" class="outline">إغلاق</button></div></div>
@@ -969,6 +997,79 @@ $('ff44Export').addEventListener('click',ff44Export);
 $('ff44Close').addEventListener('click',()=>$('ff44IntegrityPanel').classList.add('hidden'));
 const ff44PrevDraw=draw;draw=function(){ff44PrevDraw();ff44Nav();};
 const ff44PrevReset=resetUI;resetUI=function(){ff44PrevReset();ff44Reset();};
+
+
+// v38.15 - manager-only branch scope review. No mutation RPCs.
+let ff45Last=null,ff45Busy=false;
+function ff45Nav(){
+ const manager=data?.role==='manager';
+ $('ff45AccessBtn').classList.toggle('hidden',!manager);
+ if(!manager)$('ff45AccessPanel').classList.add('hidden');
+}
+function ff45Reset(){
+ ff45Last=null;ff45Busy=false;
+ $('ff45AccessBtn').classList.add('hidden');
+ $('ff45AccessPanel').classList.add('hidden');
+ $('ff45Run').disabled=false;$('ff45Export').disabled=true;
+ for(const id of ['ff45Metrics','ff45Flags','ff45Issues','ff45Branches','ff45Roles','ff45Tables','ff45Policies'])$(id).innerHTML='';
+ $('ff45Status').textContent='اضغط «فحص الوصول» لقراءة الوضع الحالي من قاعدة البيانات.';
+ $('ff45IssueCount').textContent='';
+}
+function ff45Render(r){
+ const issues=Array.isArray(r.issues)?r.issues:[],tables=Array.isArray(r.tables)?r.tables:[],policies=Array.isArray(r.policies)?r.policies:[];
+ $('ff45Metrics').innerHTML=[
+  ['الفروع',(r.branches||[]).length],['أولوية عالية',r.high_count||0],
+  ['تحتاج مراجعة',r.review_count||0],['الجداول المفحوصة',tables.length]
+ ].map(([k,v])=>`<div class="stat"><span class="muted">${esc(k)}</span><strong>${esc(v)}</strong></div>`).join('');
+ const pill=(ok,labelOk,labelNo)=>`<span class="tag ${ok?'ready':'busy'}">${ok?labelOk:labelNo}</span>`;
+ $('ff45Flags').innerHTML=[
+  `<div class="ff45-flag"><b>دعم كاشير متعدد الفروع</b><p>${pill(r.cashier_multi_branch_supported,'مفعّل','يحتاج فحص')}</p></div>`,
+  `<div class="ff45-flag"><b>استدعاء دالة التصفير من التطبيق</b><p>${pill(r.reset_rpc_exposed!==true,'مغلق','متاح — راجع فورًا')}</p></div>`
+ ].join('');
+ $('ff45IssueCount').textContent=`${issues.length} نوع من ملاحظات الروابط`;
+ $('ff45Issues').innerHTML=issues.length?issues.map(x=>{
+  let samples=Array.isArray(x.samples)?x.samples:[];
+  return `<div class="ff45-risk ${x.severity==='high'?'high':''}"><div class="item-top"><strong>${x.severity==='high'?'⚠️':'🔎'} ${esc(x.label)}</strong><span class="tag">${esc(x.count)}</span></div><div class="muted ff45-mono">${esc(x.code)}</div>${samples.length?`<p class="muted">أمثلة (معرفات داخلية): ${samples.map(esc).join('، ')}</p>`:''}</div>`
+ }).join(''):'<div class="empty">لا توجد تناقضات في روابط الفروع والموصلين ضمن القواعد المفحوصة.</div>';
+ $('ff45Branches').innerHTML=(r.branches||[]).map(b=>`<tr><td>${esc(b.name)}</td><td>${b.active?'نعم':'لا'}</td><td>${esc(b.active_cashiers)}</td><td>${esc(b.active_drivers)}</td><td>${esc(b.open_delivery_orders)}</td></tr>`).join('');
+ $('ff45Roles').innerHTML='<p class="muted">المستخدمون حسب الدور:</p>'+(r.roles||[]).map(x=>`<span class="chip">${esc(x.role)}: نشط ${esc(x.active)} / معطل ${esc(x.disabled)}</span>`).join(' ');
+ $('ff45Tables').innerHTML=tables.map(t=>`<tr><td class="ff45-mono">${esc(t.name)}${t.exists?'':' (غير موجود)'}</td><td>${t.rls_enabled?'نعم':'لا'}</td><td>${esc(t.policy_count)}</td><td>${t.anon_read?'نعم':'لا'}</td><td>${t.anon_write?'نعم':'لا'}</td><td>${t.auth_read?'نعم':'لا'}</td><td>${t.auth_write?'نعم':'لا'}</td></tr>`).join('');
+ $('ff45Policies').innerHTML=policies.length?policies.map(x=>`<div class="ff45-risk"><b>${esc(x.table)} / ${esc(x.name)}</b><div class="muted">الأمر: ${esc(x.cmd)} · الأدوار: ${esc((x.roles||[]).join(', '))}</div><div class="ff45-code ff45-mono">USING: ${esc(x.using||'—')}</div><div class="ff45-code ff45-mono">WITH CHECK: ${esc(x.with_check||'—')}</div></div>`).join(''):'<div class="empty">لا توجد سياسات مباشرة على الجداول المعروضة. قد تكون الجداول محجوبة بالامتيازات أصلًا.</div>';
+ $('ff45Status').textContent=`آخر فحص: ${time(r.checked_at)}. الفحص وصفي وليس اختبار اختراق.`;
+ $('ff45Export').disabled=false;
+}
+async function ff45Run(){
+ if(!user||data?.role!=='manager'||ff45Busy)return;
+ ff45Busy=true;$('ff45Run').disabled=true;$('ff45Export').disabled=true;
+ $('ff45Status').textContent='جارٍ فحص روابط الفروع وسياسات الوصول...';
+ try{
+  const r=await rpc('ff45_branch_access_review');
+  if(!r||!Array.isArray(r.branches)||!Array.isArray(r.tables)||!Array.isArray(r.issues))throw Error('استجابة غير مكتملة من قاعدة البيانات');
+  ff45Last=r;ff45Render(r);
+ }catch(e){ff45Last=null;$('ff45Status').textContent='تعذر الفحص: '+e.message;toast('تعذر فحص الفروع: '+e.message)}
+ finally{ff45Busy=false;$('ff45Run').disabled=false}
+}
+function ff45Export(){
+ if(!ff45Last)return;
+ const r=ff45Last,rows=[['الفئة','الاسم / الرمز','التفاصيل','العدد']];
+ for(const x of r.issues||[])rows.push(['ملاحظة',x.severity+' — '+x.code,x.label+' | أمثلة: '+(x.samples||[]).join(' ؛ '),x.count]);
+ for(const b of r.branches||[])rows.push(['فرع',b.name,'نشط: '+b.active+'، كاشير: '+b.active_cashiers+'، موصلون: '+b.active_drivers,b.open_delivery_orders]);
+ for(const t of r.tables||[])rows.push(['جدول',t.name,'RLS: '+t.rls_enabled+'، سياسات: '+t.policy_count+'، anon_write: '+t.anon_write+'، authenticated_write: '+t.auth_write,'']);
+ for(const p of r.policies||[])rows.push(['سياسة',p.table+' / '+p.name,'الأمر: '+p.cmd+'؛ USING: '+(p.using||'')+'؛ CHECK: '+(p.with_check||''),'']);
+ const csv='\uFEFF'+rows.map(row=>row.map(ff43Csv).join(',')).join('\r\n');
+ const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+ const a=document.createElement('a');a.href=url;a.download='FreshFries_Branch_Access_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+$('ff45AccessBtn').addEventListener('click',async()=>{
+ if(data?.role!=='manager')return;
+ const panel=$('ff45AccessPanel');panel.classList.toggle('hidden');
+ if(!panel.classList.contains('hidden')){if(!ff45Last)await ff45Run();panel.scrollIntoView({behavior:'smooth',block:'start'});}
+});
+$('ff45Run').addEventListener('click',ff45Run);
+$('ff45Export').addEventListener('click',ff45Export);
+$('ff45Close').addEventListener('click',()=>$('ff45AccessPanel').classList.add('hidden'));
+const ff45PrevDraw=draw;draw=function(){ff45PrevDraw();ff45Nav();};
+const ff45PrevReset=resetUI;resetUI=function(){ff45PrevReset();ff45Reset();};
 
 </script>
 </body></html>
