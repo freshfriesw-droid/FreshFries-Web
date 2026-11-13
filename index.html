@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fresh Fries v38.13 — خدمة العملاء والتوصيل وأمان النظام</title>
+<title>Fresh Fries v38.14 — خدمة العملاء والتوصيل وسلامة البيانات</title>
 <style>
 :root{--red:#d51e2c;--dark:#17191d;--bg:#f4f5f7;--line:#e2e5e9;--muted:#667085;--good:#138654;--amber:#c37a0d}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#22272e;font-family:Tahoma,Arial,sans-serif;font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:11px 14px;background:#e8ebef;color:#252932;font-weight:700}button:disabled{opacity:.48;cursor:not-allowed}button.primary{background:var(--red);color:white}button.dark{background:var(--dark);color:#fff}button.good{background:var(--good);color:#fff}button.outline{background:white;border:1px solid var(--line)}.head{background:var(--dark);color:white;border-bottom:4px solid var(--red);padding:14px max(14px,env(safe-area-inset-right));display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.brand{font-size:21px;font-weight:900}.brand span{color:#ff4d56}.sub{font-size:12px;color:#b3bdc8;margin-top:5px}.head .sub{max-width:420px}main{max-width:1170px;margin:auto;padding:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:13px;box-shadow:0 1px 2px #00000009}.card h2,.card h3{margin:0 0 12px;font-size:17px}.muted{color:var(--muted);font-size:12px}.stat{background:#fff;padding:13px;border:1px solid var(--line);border-radius:12px}.stat strong{font-size:23px;display:block;margin-top:4px}.flex{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:12px;font-weight:bold;margin:10px 0 5px}input,select,textarea{width:100%;padding:12px;border:1px solid #d3d7df;background:#fff;border-radius:8px;outline:0}input:focus,textarea:focus,select:focus{border-color:var(--red)}textarea{resize:vertical;min-height:84px}.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.tag{font-size:12px;padding:5px 9px;border-radius:20px;background:#f0f0f0;white-space:nowrap;display:inline-block}.ready{background:#e2f6eb;color:#087744}.busy{background:#fff1db;color:#a46609}.offline{background:#efeff1;color:#616671}.warning{background:#fff7e5;border:1px solid #f5d9a5;border-radius:10px;padding:11px;color:#875400;margin:10px 0}.item{padding:12px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.tiny{font-size:12px}.note{padding:12px;border-radius:9px;background:#f5f7fa;margin:10px 0;line-height:1.9;white-space:pre-line}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}.topinfo{font-size:12px;color:#e6e6e6}.hidden{display:none!important}.login{position:fixed;inset:0;z-index:1000;background:#17191deb;display:flex;align-items:center;justify-content:center;padding:14px}.loginbox{width:min(440px,100%);background:white;border-radius:17px;padding:24px}.loginbox h2{margin-top:0}.alert{position:fixed;bottom:18px;right:15px;left:15px;z-index:1002;max-width:700px;margin:auto;background:#23272c;color:white;padding:13px;border-radius:12px;box-shadow:0 3px 20px #0003}.chip{background:#eef1f5;border-radius:7px;padding:8px 10px;font-size:12px}.danger{color:var(--red)}.offer{border-right:5px solid var(--red);background:#fff8f8;padding:12px;border-radius:10px;margin:10px 0}.notice{border-right:4px solid #ffbc28;padding-right:12px}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:9px}.pill{font-size:11px;color:#fff;background:var(--red);padding:3px 8px;border-radius:30px}footer{text-align:center;color:var(--muted);font-size:11px;margin:28px 0}.version{color:#aaafb8;font-size:11px}.btnlink{background:none;border:0;color:var(--red);padding:4px;text-decoration:underline}.statusbar{background:#eceff4;padding:9px 12px;border-radius:8px;color:#334155;font-size:12px;margin:10px 0}.sectionbar{margin:15px 0 8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}.sectionbar h2{font-size:17px;margin:0}@media(max-width:840px){.grid{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}}@media(max-width:520px){.row{grid-template-columns:1fr}.brand{font-size:19px}.grid{grid-template-columns:repeat(2,1fr)}main{padding:10px}.card{padding:13px}}@media(prefers-reduced-motion:no-preference){.offer{animation:pulse 1.6s infinite}@keyframes pulse{50%{box-shadow:0 0 0 2px #f7c8cb}}}
@@ -23,15 +23,37 @@
 
 /* v38.13: metadata-only security inspection. This is not a certification. */
 .ff43-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.ff43-finding{padding:12px;border-radius:9px;border-right:4px solid #ca8a04;background:#fffdf4;margin-bottom:9px;overflow-wrap:anywhere}.ff43-finding.high{border-right-color:#cf2d3e;background:#fff6f7}.ff43-small{color:#667085;font-size:12px;line-height:1.8}.ff43-scroller{overflow:auto;max-width:100%}.ff43-table{width:100%;border-collapse:collapse;min-width:670px}.ff43-table th,.ff43-table td{padding:9px 8px;text-align:right;border-bottom:1px solid #e2e5ea;font-size:12px}.ff43-table th{background:#f4f5f7}.ff43-yes{color:#147e48;font-weight:700}.ff43-no{color:#b12c36;font-weight:700}@media(max-width:700px){.ff43-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* v38.14: manager-only operational data-integrity review. */
+.ff44-help{font-size:12px;color:#667085;line-height:1.9;background:#f6f8fb;border-right:4px solid #b3bfcc;padding:11px;border-radius:8px;margin:10px 0}
+.ff44-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:13px 0}
+.ff44-risk{border:1px solid #e3e5e9;border-right:4px solid #d9a331;border-radius:10px;padding:13px;margin:9px 0;background:#fffdf8}
+.ff44-risk.high{border-right-color:#c73546;background:#fff8f8}
+.ff44-codes{font:12px monospace;direction:ltr;text-align:left;display:inline-block;color:#637187}
+.ff44-samples{color:#515b6b;font-size:12px;line-height:1.9;overflow-wrap:anywhere;margin-top:5px}
+.ff44-strong{font-weight:900;font-size:21px;display:block;margin:5px 0}
+@media(max-width:600px){.ff44-summary{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.13 · مراجعة الأمان</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
+<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.14 · سلامة البيانات والأمان</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
 <main>
 <div class="warning">نسخة تجريبية مستقلة. لا تربطها بفرع يعمل فعليًا قبل اختبار قاعدة البيانات والصلاحيات والتوزيع. لا تستخدمها لطلبات عملاء حقيقيين الآن.</div>
 <div id="connection" class="statusbar">جاهز لتسجيل الدخول.</div><div id="additionLoadError" class="hidden"></div>
 
 
+
+
+<section id="ff44IntegrityPanel" class="card hidden" aria-label="تدقيق سلامة بيانات التشغيل">
+ <div class="sectionbar"><h2>🔎 تدقيق سلامة البيانات</h2><div class="flex"><button id="ff44Export" type="button" class="outline" disabled>تصدير النتائج CSV</button><button id="ff44Close" type="button" class="outline">إغلاق</button></div></div>
+ <p class="ff44-help">فحص للمدير العام فقط. يقرأ سجلات الطلبات المسلّمة والموصلين والإضافات والتسويات دون تغييرها. النتائج مؤشرات للمتابعة وليست إثباتًا بوجود مخالفة، أو شهادة أمان أو جردًا محاسبيًا. قد يكون فرق النقد موثقًا بصورة صحيحة.</p>
+ <div class="row"><div><label for="ff44From">من تاريخ</label><input id="ff44From" type="date" min="2020-01-01"></div><div><label for="ff44To">إلى تاريخ</label><input id="ff44To" type="date" min="2020-01-01"></div><div style="align-self:end"><button id="ff44Run" class="primary" type="button" style="width:100%">بدء فحص البيانات</button></div></div>
+ <div id="ff44Status" class="muted" role="status" aria-live="polite">حدد الفترة واضغط بدء الفحص (حتى 90 يومًا).</div>
+ <div id="ff44Summary" class="ff44-summary"></div>
+ <div class="sectionbar"><h3>الملاحظات المصنفة</h3><span id="ff44Count" class="muted"></span></div>
+ <div id="ff44Results"></div>
+ <p class="ff44-help">ألغى التحديث v38.14 صلاحية استدعاء دالة التصفير القديمة من حسابات واجهة التطبيق دون حذفها من قاعدة البيانات؛ الإدارة من SQL Editor ما تزال ممكنة بصلاحيات مالك قاعدة البيانات. جميع نتائج الفحص للقراءة فقط.</p>
+</section>
 
 <section id="ff43SecurityPanel" class="card hidden" aria-label="مراجعة أمن قاعدة البيانات">
  <div class="sectionbar"><h2>🛡️ أمان النظام — فحص قاعدة البيانات</h2><div class="flex"><button id="ff43Run" class="primary" type="button">فحص الآن</button><button id="ff43Export" class="outline" disabled type="button">تصدير نتائج CSV</button><button id="ff43Close" class="outline" type="button">إغلاق</button></div></div>
@@ -870,6 +892,83 @@ $('ff43Export').addEventListener('click',ff43Export);
 $('ff43Close').addEventListener('click',()=>$('ff43SecurityPanel').classList.add('hidden'));
 const ff43PrevDraw=draw;draw=function(){ff43PrevDraw();ff43Nav();};
 const ff43PrevReset=resetUI;resetUI=function(){ff43PrevReset();ff43Reset();};
+
+
+// v38.14 — manager-only read-only data-integrity review, plus reset RPC safety indicator.
+let ff44Last=null,ff44Busy=false;
+function ff44Nav(){
+ const manager=data?.role==='manager';
+ $('ff44IntegrityBtn').classList.toggle('hidden',!manager);
+ if(!manager)$('ff44IntegrityPanel').classList.add('hidden');
+}
+function ff44Reset(){
+ ff44Last=null;ff44Busy=false;
+ $('ff44IntegrityBtn').classList.add('hidden');
+ $('ff44IntegrityPanel').classList.add('hidden');
+ $('ff44Run').disabled=false;$('ff44Export').disabled=true;
+ $('ff44Results').innerHTML='';$('ff44Summary').innerHTML='';
+ $('ff44Count').textContent='';$('ff44Status').textContent='حدد الفترة واضغط بدء الفحص (حتى 90 يومًا).';
+}
+function ff44LocalISO(daysAgo=0){
+ const dtf=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'});
+ const obj=Object.fromEntries(dtf.formatToParts(new Date()).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));
+ const utc=new Date(Date.UTC(Number(obj.year),Number(obj.month)-1,Number(obj.day)-daysAgo));
+ return utc.toISOString().slice(0,10);
+}
+function ff44InitDates(){
+ if(!$('ff44To').value)$('ff44To').value=ff44LocalISO();
+ if(!$('ff44From').value)$('ff44From').value=ff44LocalISO(13);
+ $('ff44To').max=ff44LocalISO();
+}
+function ff44Render(r){
+ const categories=Array.isArray(r.categories)?r.categories:[];
+ const tiles=[
+  ['ملاحظات حرجة للفحص',r.critical_count??0],
+  ['بنود تحتاج مراجعة',r.review_count??0],
+  ['استدعاء التصفير من التطبيق',r.reset_api_exposed===true?'متاح ⚠️':'مغلق ✓']
+ ];
+ $('ff44Summary').innerHTML=tiles.map(([label,num])=>`<div class="stat"><span class="muted">${esc(label)}</span><strong class="ff44-strong">${esc(num)}</strong></div>`).join('');
+ $('ff44Count').textContent=`${categories.length} نوع من الملاحظات`;
+ $('ff44Results').innerHTML=categories.length?categories.map(row=>{
+  const critical=row.severity==='critical';const examples=Array.isArray(row.samples)?row.samples:[];
+  return `<div class="ff44-risk ${critical?'high':''}"><div class="item-top"><b>${critical?'⚠️ أولوية عالية':'🔎 مراجعة'} — ${esc(row.label)}</b><span class="tag">${esc(row.count)} حالة</span></div><div class="ff44-codes">${esc(row.code)}</div>${examples.length?`<div class="ff44-samples">أمثلة: ${examples.map(esc).join('، ')}${Number(row.count)>examples.length?' …':''}</div>`:''}</div>`;
+ }).join(''):'<div class="empty">لا توجد مؤشرات ضمن الفئات التي يغطيها هذا الفحص والفترة المحددة. هذا لا يثبت خلو البيانات من جميع الأخطاء.</div>';
+ $('ff44Status').textContent=`آخر فحص: ${time(r.checked_at)} · الفترة: ${esc(r.from)} إلى ${esc(r.to)} · النتائج للقراءة فقط.`;
+ $('ff44Export').disabled=false;
+}
+async function ff44Run(){
+ if(!user||data?.role!=='manager'||ff44Busy)return;
+ ff44Busy=true;$('ff44Run').disabled=true;$('ff44Export').disabled=true;
+ $('ff44Status').textContent='جاري فحص سلامة البيانات…';
+ try{
+  const from=$('ff44From').value,to=$('ff44To').value;
+  if(!from||!to)throw Error('حدد بداية ونهاية الفترة');
+  if(from>to)throw Error('تاريخ البداية بعد النهاية');
+  const result=await rpc('ff44_integrity_review',{p_from:from,p_to:to});
+  if(!result||!Array.isArray(result.categories))throw Error('استجابة قاعدة البيانات غير مكتملة');
+  ff44Last=result;ff44Render(result);
+ }catch(err){ff44Last=null;$('ff44Results').innerHTML='';$('ff44Summary').innerHTML='';$('ff44Status').textContent='تعذر الفحص: '+err.message;toast('تعذر فحص البيانات: '+err.message)}
+ finally{ff44Busy=false;$('ff44Run').disabled=false}
+}
+function ff44Export(){
+ if(!ff44Last)return;
+ const rows=[['النوع','الخطورة','الوصف','العدد','أمثلة','من تاريخ','إلى تاريخ']];
+ for(const r of ff44Last.categories||[])rows.push([r.code,r.severity,r.label,r.count,(r.samples||[]).join(' | '),ff44Last.from,ff44Last.to]);
+ rows.push(['reset_api_exposed',ff44Last.reset_api_exposed?'review':'checked',ff44Last.reset_api_exposed?'استدعاء التصفير مكشوف':'استدعاء التصفير مغلق',0,'',ff44Last.from,ff44Last.to]);
+ const csv='\uFEFF'+rows.map(r=>r.map(ff43Csv).join(',')).join('\r\n');
+ const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+ const a=document.createElement('a');a.href=url;a.download='FreshFries_Data_Integrity_'+ff44Last.to+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+$('ff44IntegrityBtn').addEventListener('click',async()=>{
+ if(data?.role!=='manager')return;
+ const panel=$('ff44IntegrityPanel');panel.classList.toggle('hidden');
+ if(!panel.classList.contains('hidden')){ff44InitDates();if(!ff44Last)await ff44Run();panel.scrollIntoView({behavior:'smooth',block:'start'});}
+});
+$('ff44Run').addEventListener('click',ff44Run);
+$('ff44Export').addEventListener('click',ff44Export);
+$('ff44Close').addEventListener('click',()=>$('ff44IntegrityPanel').classList.add('hidden'));
+const ff44PrevDraw=draw;draw=function(){ff44PrevDraw();ff44Nav();};
+const ff44PrevReset=resetUI;resetUI=function(){ff44PrevReset();ff44Reset();};
 
 </script>
 </body></html>
