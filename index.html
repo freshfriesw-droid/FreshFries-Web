@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fresh Fries v38.10 — التوصيل والتقارير والتنبيهات</title>
+<title>Fresh Fries v38.11 — خدمة العملاء والتوصيل والبلاغات</title>
 <style>
 :root{--red:#d51e2c;--dark:#17191d;--bg:#f4f5f7;--line:#e2e5e9;--muted:#667085;--good:#138654;--amber:#c37a0d}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#22272e;font-family:Tahoma,Arial,sans-serif;font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:11px 14px;background:#e8ebef;color:#252932;font-weight:700}button:disabled{opacity:.48;cursor:not-allowed}button.primary{background:var(--red);color:white}button.dark{background:var(--dark);color:#fff}button.good{background:var(--good);color:#fff}button.outline{background:white;border:1px solid var(--line)}.head{background:var(--dark);color:white;border-bottom:4px solid var(--red);padding:14px max(14px,env(safe-area-inset-right));display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.brand{font-size:21px;font-weight:900}.brand span{color:#ff4d56}.sub{font-size:12px;color:#b3bdc8;margin-top:5px}.head .sub{max-width:420px}main{max-width:1170px;margin:auto;padding:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:13px;box-shadow:0 1px 2px #00000009}.card h2,.card h3{margin:0 0 12px;font-size:17px}.muted{color:var(--muted);font-size:12px}.stat{background:#fff;padding:13px;border:1px solid var(--line);border-radius:12px}.stat strong{font-size:23px;display:block;margin-top:4px}.flex{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:12px;font-weight:bold;margin:10px 0 5px}input,select,textarea{width:100%;padding:12px;border:1px solid #d3d7df;background:#fff;border-radius:8px;outline:0}input:focus,textarea:focus,select:focus{border-color:var(--red)}textarea{resize:vertical;min-height:84px}.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.tag{font-size:12px;padding:5px 9px;border-radius:20px;background:#f0f0f0;white-space:nowrap;display:inline-block}.ready{background:#e2f6eb;color:#087744}.busy{background:#fff1db;color:#a46609}.offline{background:#efeff1;color:#616671}.warning{background:#fff7e5;border:1px solid #f5d9a5;border-radius:10px;padding:11px;color:#875400;margin:10px 0}.item{padding:12px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.tiny{font-size:12px}.note{padding:12px;border-radius:9px;background:#f5f7fa;margin:10px 0;line-height:1.9;white-space:pre-line}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}.topinfo{font-size:12px;color:#e6e6e6}.hidden{display:none!important}.login{position:fixed;inset:0;z-index:1000;background:#17191deb;display:flex;align-items:center;justify-content:center;padding:14px}.loginbox{width:min(440px,100%);background:white;border-radius:17px;padding:24px}.loginbox h2{margin-top:0}.alert{position:fixed;bottom:18px;right:15px;left:15px;z-index:1002;max-width:700px;margin:auto;background:#23272c;color:white;padding:13px;border-radius:12px;box-shadow:0 3px 20px #0003}.chip{background:#eef1f5;border-radius:7px;padding:8px 10px;font-size:12px}.danger{color:var(--red)}.offer{border-right:5px solid var(--red);background:#fff8f8;padding:12px;border-radius:10px;margin:10px 0}.notice{border-right:4px solid #ffbc28;padding-right:12px}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:9px}.pill{font-size:11px;color:#fff;background:var(--red);padding:3px 8px;border-radius:30px}footer{text-align:center;color:var(--muted);font-size:11px;margin:28px 0}.version{color:#aaafb8;font-size:11px}.btnlink{background:none;border:0;color:var(--red);padding:4px;text-decoration:underline}.statusbar{background:#eceff4;padding:9px 12px;border-radius:8px;color:#334155;font-size:12px;margin:10px 0}.sectionbar{margin:15px 0 8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}.sectionbar h2{font-size:17px;margin:0}@media(max-width:840px){.grid{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}}@media(max-width:520px){.row{grid-template-columns:1fr}.brand{font-size:19px}.grid{grid-template-columns:repeat(2,1fr)}main{padding:10px}.card{padding:13px}}@media(prefers-reduced-motion:no-preference){.offer{animation:pulse 1.6s infinite}@keyframes pulse{50%{box-shadow:0 0 0 2px #f7c8cb}}}
@@ -11,13 +11,38 @@
 
 /* v38.10: report/alert cards */
 .ff40-list{display:grid;gap:10px;margin:12px 0}.ff40-alert{background:#fffcf5;border:1px solid #eed7a1;border-right:4px solid #d39a25;border-radius:10px;padding:12px}.ff40-alert.severe{border-right-color:#bd2d37;background:#fff6f6}.ff40-card{min-width:0;overflow:hidden}.ff40-scroll{overflow-x:auto;max-width:100%}.ff40-table{width:100%;border-collapse:collapse;min-width:520px;font-size:13px}.ff40-table th,.ff40-table td{padding:11px 9px;border-bottom:1px solid #e4e7ec;text-align:right}.ff40-table th{background:#f6f7f9;color:#444}.ff40-note{font-size:12px;color:#667085;line-height:1.8;margin:8px 0}.ff40-kpi{font-variant-numeric:tabular-nums}.ff40-report-sections{display:grid;gap:12px;grid-template-columns:1fr 1fr}@media(max-width:760px){.ff40-report-sections{grid-template-columns:1fr}.ff40-table{min-width:460px}}
+
+/* v38.11: private case management */
+.ff41-header{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}.ff41-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ff41-case{background:#fff;border:1px solid #e4e7ec;border-radius:10px;padding:12px;margin:9px 0}.ff41-case.active{border-right:4px solid #d51e2c;background:#fffafa}.ff41-detail{background:#fafbfc;border:1px solid #dfe3e9;border-radius:12px;padding:14px;margin-top:10px}.ff41-history{border-right:3px solid #cfd8e3;margin:8px 2px;padding:4px 12px}.ff41-history article{padding:10px 0;border-bottom:1px solid #e7e9ee}.ff41-history article:last-child{border-bottom:0}.ff41-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}.ff41-triage{background:#fff8ed;border:1px solid #f0d6b0;border-radius:10px;padding:11px;margin-top:12px}.ff41-status{font-size:12px;font-weight:700}.ff41-kind-badge{background:#f0f3f8;padding:3px 7px;border-radius:6px;font-size:11px}.ff41-submit{border:1px solid #dce4eb;padding:12px;border-radius:10px;background:#f9fafb}.ff41-empty{padding:20px;text-align:center;color:#667085}.ff41-privacy{font-size:12px;color:#576074;line-height:1.8;margin:9px 0}
+@media(max-width:730px){.ff41-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.10 · التقارير والتنبيهات</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
+<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.11 · الشكاوى والتظلمات</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
 <main>
 <div class="warning">نسخة تجريبية مستقلة. لا تربطها بفرع يعمل فعليًا قبل اختبار قاعدة البيانات والصلاحيات والتوزيع. لا تستخدمها لطلبات عملاء حقيقيين الآن.</div>
 <div id="connection" class="statusbar">جاهز لتسجيل الدخول.</div><div id="additionLoadError" class="hidden"></div>
+
+
+<section id="ff41Panel" class="card hidden" aria-label="مركز شكاوى العملاء وتظلمات الموظفين">
+ <div class="ff41-header"><h2>📋 مركز الشكاوى والتظلمات</h2><div class="flex"><button id="ff41Refresh" class="outline" type="button">تحديث البلاغات</button><button id="ff41Close" class="outline" type="button">إغلاق</button></div></div>
+ <p class="ff41-privacy">🔒 <b>خصوصية الموظفين:</b> التظلم الوظيفي يطلع عليه صاحبه والمدير العام فقط. شكاوى العملاء متاحة للجهات المصرّح لها داخل النظام. لا تُرسل رسائل للعملاء تلقائيًا.</p>
+ <div class="ff41-submit">
+  <h3>➕ تسجيل بلاغ جديد</h3>
+  <div class="row">
+   <div><label for="ff41Kind">نوع البلاغ</label><select id="ff41Kind"><option value="customer_complaint">شكوى عميل</option><option value="staff_grievance">تظلم موظف (خاص)</option></select></div>
+   <div id="ff41BranchWrap"><label for="ff41Branch">الفرع</label><select id="ff41Branch"><option value="">اختر الفرع</option></select></div>
+   <div id="ff41OrderWrap"><label for="ff41Order">الطلب المرتبط (اختياري)</label><select id="ff41Order"><option value="">بدون ربط بطلب</option></select></div>
+  </div>
+  <div id="ff41ContactWrap" class="row"><div><label for="ff41CustomerName">اسم العميل (اختياري)</label><input id="ff41CustomerName" maxlength="120" placeholder="اسم العميل" autocomplete="off"></div><div><label for="ff41CustomerPhone">رقم التواصل (اختياري)</label><input id="ff41CustomerPhone" maxlength="30" inputmode="tel" placeholder="77xxxxxxx" autocomplete="off"></div><div><label for="ff41Channel">مصدر الشكوى</label><select id="ff41Channel"><option value="phone">هاتف</option><option value="whatsapp">واتساب</option><option value="walk_in">حضور شخصي</option><option value="other">أخرى</option></select></div></div>
+  <div class="row"><div><label for="ff41Priority">الأولوية</label><select id="ff41Priority"><option value="normal">عادية</option><option value="low">منخفضة</option><option value="high">عاجلة</option></select></div><div style="grid-column:span 2"><label for="ff41Subject">عنوان البلاغ</label><input id="ff41Subject" maxlength="140" placeholder="عنوان واضح ومختصر" autocomplete="off"></div></div>
+  <label for="ff41Description">التفاصيل</label><textarea id="ff41Description" maxlength="4000" rows="4" placeholder="اكتب المشكلة أو التظلم بوضوح، دون إدخال معلومات غير ضرورية"></textarea>
+  <div class="actions"><button class="primary" id="ff41Create" type="button">حفظ البلاغ</button><span class="muted" id="ff41CreateHelp"></span></div>
+ </div>
+ <div class="sectionbar"><h3>📚 متابعة البلاغات</h3><div id="ff41Counter" class="muted"></div></div>
+ <div class="row"><div><label for="ff41FilterKind">النوع</label><select id="ff41FilterKind"><option value="">كل الأنواع المسموحة</option><option value="customer_complaint">شكاوى العملاء</option><option value="staff_grievance">تظلمات الموظفين</option></select></div><div><label for="ff41FilterStatus">الحالة</label><select id="ff41FilterStatus"><option value="">كل الحالات</option><option value="open">مفتوح</option><option value="in_review">تحت المراجعة</option><option value="resolved">تم الحل</option><option value="closed">مغلق</option></select></div></div>
+ <div class="ff41-grid"><div><div id="ff41ListStatus" class="muted" aria-live="polite"></div><div id="ff41CaseList"><p class="ff41-empty">افتح المركز لعرض البلاغات</p></div></div><div><div id="ff41Detail" class="ff41-detail"><div class="ff41-empty">اختر بلاغًا لعرض تفاصيله وسجل إجراءاته.</div></div></div></div>
+</section>
 
 <section id="ff39Panel" class="card hidden" aria-label="مركز الرسائل الداخلية">
  <div class="sectionbar"><h2>📨 مركز الرسائل الداخلية</h2><div class="flex"><button id="ff39Refresh" class="outline" type="button">تحديث الرسائل</button><button id="ff39Close" class="outline" type="button">إغلاق</button></div></div>
@@ -84,7 +109,7 @@
  <div class="card" id="auditCard"><div class="sectionbar"><h2>📚 سجل التحكم برفض الموصل</h2><button id="auditRefreshBtn" class="outline" type="button">تحديث السجل</button></div><p class="muted">آخر 100 تغيير في صلاحية رفض عروض التوصيل. متاح للمدير وخدمة العملاء.</p><div id="auditHistory" class="empty">اضغط تحديث السجل لعرض العمليات.</div></div>
 </section>
 <section id="cashierView" class="hidden"><div class="card"><h2>🧾 شاشة الكاشير — طلبات التوصيل فقط</h2><p class="muted">يصل الطلب بعد قبول الموصل، مع اسمه وعنوان العميل وتفاصيل الأصناف. إصدار الفاتورة يتم في برنامج الكاشير المستخدم حاليًا.</p><div id="cashierOrders"></div></div></section>
-<footer>Fresh Fries v38.9 — مرحلة اختبار. تسجيل الدخول بالهوية المركزية Supabase. لا يتم حفظ كلمات المرور في واجهة المطعم.</footer>
+<footer>Fresh Fries v38.11 — مرحلة اختبار. تسجيل الدخول بالهوية المركزية Supabase. لا يتم حفظ كلمات المرور في واجهة المطعم.</footer>
 </main>
 <div id="loginOverlay" class="login"><div class="loginbox"><h2>🔐 دخول نظام Fresh Fries</h2><p class="muted">استخدم بريد وكلمة مرور حسابك في Supabase. حساب الموصل يجب أن يكون مربوطًا من المدير.</p><label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="username" placeholder="example@email.com"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" placeholder="••••••••"><div class="actions"><button id="loginBtn" class="primary" style="width:100%">تسجيل الدخول</button></div><div class="statusbar" id="loginStatus">في أول تجربة، ادخل بحساب المدير الحالي.</div></div></div>
 <div id="toast" class="alert hidden"></div>
@@ -463,6 +488,151 @@ resetUI=function(){ff40PriorReset();ff40ReportData=null;ff40AlertsAt=0;ff40OldAl
  $('ff40ReportsBtn').classList.add('hidden');$('ff40AlertsBtn').classList.add('hidden');
  $('ff40AlertCount').textContent='0';$('ff40ReportStatus').textContent='';$('ff40AlertStatus').textContent='';$('ff40ExportCSV').disabled=true;
 };
+
+
+// Fresh Fries v38.11 — complaint and grievance cases. Only server RPCs access private data.
+let ff41Cases=[],ff41Selected=null,ff41ListLoading=false,ff41DetailLoading=false;
+const ff41StatusNames={open:'مفتوح',in_review:'تحت المراجعة',resolved:'تم الحل',closed:'مغلق'};
+const ff41KindNames={customer_complaint:'شكوى عميل',staff_grievance:'تظلم موظف (خاص)'};
+const ff41PriorityNames={low:'منخفضة',normal:'عادية',high:'عاجلة'};
+function ff41CanComplain(){return ['manager','customer_service','cashier'].includes(data?.role);}
+function ff41CanGrieve(){return Boolean(data&&data.role!=='manager');}
+function ff41Nav(){
+ const visible=Boolean(user&&data);
+ $('ff41CasesBtn').classList.toggle('hidden',!visible);
+ if(!visible)$('ff41Panel').classList.add('hidden');
+}
+function ff41Reset(){
+ ff41Cases=[];ff41Selected=null;ff41ListLoading=false;ff41DetailLoading=false;
+ $('ff41Panel').classList.add('hidden');$('ff41CasesBtn').classList.add('hidden');
+ $('ff41OpenBadge').textContent='0';$('ff41Counter').textContent='';
+ $('ff41ListStatus').textContent='';$('ff41CaseList').innerHTML='<div class="ff41-empty">افتح المركز لعرض البلاغات</div>';
+ $('ff41Detail').innerHTML='<div class="ff41-empty">اختر بلاغًا لعرض التفاصيل.</div>';
+ $('ff41Subject').value='';$('ff41Description').value='';$('ff41Priority').value='normal';$('ff41CustomerName').value='';$('ff41CustomerPhone').value='';
+}
+function ff41Setup(){
+ const sel=$('ff41Kind'),old=sel.value;let options=[];
+ if(ff41CanComplain())options.push(['customer_complaint','شكوى عميل']);
+ if(ff41CanGrieve())options.push(['staff_grievance','تظلم موظف (خاص)']);
+ sel.innerHTML=options.map(([v,label])=>`<option value="${v}">${label}</option>`).join('');
+ if(options.some(x=>x[0]===old))sel.value=old;
+ const branches=data?.branches||[],bs=$('ff41Branch'),oldBranch=bs.value;
+ bs.innerHTML='<option value="">اختر الفرع</option>'+branches.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');
+ if(branches.some(b=>b.id===oldBranch))bs.value=oldBranch;
+ if(data.role==='cashier'&&branches.length===1)bs.value=branches[0].id;
+ ff41FormKindChange();
+}
+function ff41FormKindChange(){
+ const complaint=$('ff41Kind').value==='customer_complaint';
+ $('ff41BranchWrap').classList.toggle('hidden',!complaint);
+ $('ff41OrderWrap').classList.toggle('hidden',!complaint);
+ $('ff41ContactWrap').classList.toggle('hidden',!complaint);
+ $('ff41CreateHelp').textContent=complaint?'يمكن ربط الشكوى بطلب توصيل ظاهر في النظام.':'التظلم خاص بك وبالمدير فقط؛ سيحدد النظام فرع الموصل تلقائيًا.';
+ ff41OrdersSelect();
+}
+function ff41OrdersSelect(){
+ const sel=$('ff41Order'),prior=sel.value,branch=$('ff41Branch').value;
+ const orders=(data?.orders||[]).filter(o=>!branch||o.branch_id===branch).slice(0,100);
+ sel.innerHTML='<option value="">بدون ربط بطلب</option>'+orders.map(o=>`<option value="${esc(o.id)}">طلب #${esc(o.number)} · ${esc(branchName(o.branch_id))} · ${esc(o.area||'')}</option>`).join('');
+ if(orders.some(o=>o.id===prior))sel.value=prior;
+}
+function ff41DisplayList(){
+ $('ff41CaseList').innerHTML=ff41Cases.length?ff41Cases.map(c=>{
+  const selected=ff41Selected===c.id;
+  const branch=c.branch_id?branchName(c.branch_id):'بدون فرع';
+  return `<article class="ff41-case ${selected?'active':''}"><div class="item-top"><b>${esc(c.subject)}</b><span class="tag ${c.status==='open'?'busy':c.status==='resolved'||c.status==='closed'?'ready':'offline'}">${esc(ff41StatusNames[c.status]||c.status)}</span></div>`+
+    `<div class="muted">${esc(ff41KindNames[c.kind]||c.kind)} · ${esc(branch)}${c.order_number?' · طلب #'+esc(c.order_number):''} · ${time(c.updated_at)}</div>`+
+    `<div class="actions"><button class="outline" type="button" data-ff41-open="${esc(c.id)}">عرض التفاصيل والردود</button></div></article>`;
+ }).join(''):'<div class="ff41-empty">لا توجد بلاغات ضمن عوامل التصفية.</div>';
+}
+async function ff41LoadCases(){
+ if(!user||!data||ff41ListLoading)return;
+ ff41ListLoading=true;$('ff41ListStatus').textContent='جاري تحديث البلاغات...';
+ try{
+  const r=await rpc('ff41_case_list',{p_status:$('ff41FilterStatus').value||null,p_kind:$('ff41FilterKind').value||null,p_limit:80});
+  if(!r||!Array.isArray(r.items))throw Error('تنسيق بيانات البلاغات غير متوقع');
+  ff41Cases=r.items;const active=Number(r.open_count||0)+Number(r.review_count||0);
+  $('ff41OpenBadge').textContent=String(active);
+  $('ff41Counter').textContent=`${Number(r.open_count||0)} مفتوح · ${Number(r.review_count||0)} تحت المراجعة`;
+  $('ff41ListStatus').textContent=`يعرض آخر ${ff41Cases.length} بلاغ ضمن الصلاحيات المسموحة`;
+  ff41DisplayList();
+ }catch(e){$('ff41ListStatus').textContent='تعذر تحميل البلاغات: '+e.message;}
+ finally{ff41ListLoading=false;}
+}
+async function ff41ShowDetail(id){
+ if(ff41DetailLoading)return;
+ ff41DetailLoading=true;ff41Selected=id;
+ ff41DisplayList();$('ff41Detail').textContent='جارٍ تحميل التفاصيل...';
+ try{
+  const result=await rpc('ff41_case_detail',{p_case:id}),c=result?.item,events=result?.events;
+  if(!c||!Array.isArray(events))throw Error('تعذر قراءة تفاصيل البلاغ');
+  const history=events.length?events.map(e=>{
+    const action=e.action==='created'?'فتح البلاغ':e.action==='comment'?'رد / متابعة':`تغيير الحالة إلى ${ff41StatusNames[e.new_status]||e.new_status}`;
+    return `<article><b>${esc(action)}</b><div class="muted">${esc(e.actor||'موظف')} · ${time(e.created_at)}</div>${e.note?`<div class="ff41-text">${esc(e.note)}</div>`:''}</article>`;
+  }).join(''):'<div class="muted">لا يوجد سجل إضافي.</div>';
+  const next=({open:['in_review'],in_review:['resolved'],resolved:['closed','in_review'],closed:['in_review']})[c.status]||[];
+  const managerAction=data.role==='manager'&&next.length?`<div class="ff41-triage"><h3>إجراء المدير العام</h3><label for="ff41NextStatus">الحالة التالية</label><select id="ff41NextStatus">${next.map(st=>`<option value="${st}">${ff41StatusNames[st]}</option>`).join('')}</select><label for="ff41Resolution">الحل أو الملاحظة (إلزامي عند «تم الحل»)</label><textarea id="ff41Resolution" maxlength="2000" rows="3" placeholder="اشرح الإجراء المتخذ أو الحل المقترح"></textarea><button class="primary" type="button" data-ff41-transition="${esc(c.id)}">حفظ تغيير الحالة</button></div>`:'';
+  $('ff41Detail').innerHTML=`<div class="item-top"><h3>${esc(c.subject)}</h3><span class="tag ${c.status==='closed'||c.status==='resolved'?'ready':'busy'}">${esc(ff41StatusNames[c.status])}</span></div>`+
+    `<div class="muted">${esc(ff41KindNames[c.kind]||c.kind)} · ${esc(ff41PriorityNames[c.priority]||c.priority)} · ${c.branch_id?esc(branchName(c.branch_id)):'بدون فرع'} · ${time(c.created_at)}</div>`+
+    `<p class="muted">مقدم البلاغ: ${esc(c.creator||'—')}${c.order_number?' · طلب #'+esc(c.order_number):''}</p>`+
+    `${c.kind==='customer_complaint'?`<p class="muted">بيانات التواصل: ${esc(c.customer_name||'بدون اسم')} · ${esc(c.customer_phone||'بدون هاتف')} · ${esc(({phone:'هاتف',whatsapp:'واتساب',walk_in:'حضور شخصي',other:'أخرى'})[c.contact_channel]||'—')}</p>`:''}`+
+    `<div class="note ff41-text">${esc(c.description)}</div>`+
+    `${c.resolution?`<div class="statusbar"><b>القرار / الحل:</b><div class="ff41-text">${esc(c.resolution)}</div></div>`:''}`+
+    `<h3>سجل المتابعة</h3><div class="ff41-history">${history}</div>`+
+    `${c.status!=='closed'?`<div class="ff41-submit"><h3>إضافة رد أو متابعة</h3><textarea id="ff41CommentBody" maxlength="2000" rows="2" placeholder="اكتب ردك أو الملاحظة..."></textarea><button class="outline" type="button" data-ff41-comment="${esc(c.id)}">حفظ الرد</button></div>`:'<p class="muted">هذا البلاغ مغلق ولا يقبل تعليقات جديدة إلا بعد إعادة فتحه من المدير.</p>'}`+
+    managerAction;
+ }catch(e){$('ff41Detail').textContent='تعذر قراءة التفاصيل: '+e.message;toast(e.message);}
+ finally{ff41DetailLoading=false;}
+}
+$('ff41CasesBtn').addEventListener('click',async()=>{
+ if(!data)return;const panel=$('ff41Panel');panel.classList.toggle('hidden');
+ if(!panel.classList.contains('hidden')){ff41Setup();await ff41LoadCases();panel.scrollIntoView({behavior:'smooth',block:'start'});}
+});
+$('ff41Close').addEventListener('click',()=>$('ff41Panel').classList.add('hidden'));
+$('ff41Refresh').addEventListener('click',ff41LoadCases);
+$('ff41Kind').addEventListener('change',ff41FormKindChange);
+$('ff41Branch').addEventListener('change',ff41OrdersSelect);
+for(const id of ['ff41FilterKind','ff41FilterStatus'])$(id).addEventListener('change',ff41LoadCases);
+$('ff41Create').addEventListener('click',async()=>{
+ const btn=$('ff41Create'),kind=$('ff41Kind').value,subject=$('ff41Subject').value.trim(),description=$('ff41Description').value.trim();
+ const complaint=kind==='customer_complaint',branch=complaint?$('ff41Branch').value||null:null;
+ const order=complaint?$('ff41Order').value||null:null;
+ if(subject.length<4||description.length<10)return toast('اكتب عنوانًا من 4 أحرف وتفاصيل من 10 أحرف على الأقل');
+ if(complaint&&!branch)return toast('يرجى اختيار فرع الشكوى');
+ btn.disabled=true;
+ try{
+  const r=await rpc('ff41_case_create',{p_kind:kind,p_subject:subject,p_description:description,p_branch:branch,p_order:order,p_priority:$('ff41Priority').value,
+   p_customer_name:complaint?$('ff41CustomerName').value.trim()||null:null,
+   p_customer_phone:complaint?$('ff41CustomerPhone').value.trim()||null:null,
+   p_channel:complaint?$('ff41Channel').value:'phone'});
+  if(!r?.case_id)throw Error('لم تتم إعادة رقم البلاغ');
+  $('ff41Subject').value='';$('ff41Description').value='';$('ff41Order').value='';$('ff41CustomerName').value='';$('ff41CustomerPhone').value='';
+  toast('تم حفظ البلاغ في قاعدة البيانات');await ff41LoadCases();await ff41ShowDetail(r.case_id);
+ }catch(e){toast('تعذر حفظ البلاغ: '+e.message)}finally{btn.disabled=false;}
+});
+document.addEventListener('click',async e=>{
+ const b=e.target.closest('button[data-ff41-open]');if(b)await ff41ShowDetail(b.dataset.ff41Open);
+});
+document.addEventListener('click',async e=>{
+ const b=e.target.closest('button[data-ff41-comment]');if(!b)return;
+ const body=$('ff41CommentBody')?.value.trim();if(!body||body.length<2)return toast('اكتب ردًا أولًا');
+ b.disabled=true;
+ try{await rpc('ff41_case_comment',{p_case:b.dataset.ff41Comment,p_body:body});toast('تم حفظ الرد');await ff41ShowDetail(b.dataset.ff41Comment);await ff41LoadCases();}
+ catch(err){toast('تعذر حفظ الرد: '+err.message)}finally{b.disabled=false;}
+});
+document.addEventListener('click',async e=>{
+ const b=e.target.closest('button[data-ff41-transition]');if(!b)return;
+ const status=$('ff41NextStatus')?.value,resolution=$('ff41Resolution')?.value.trim()||null;
+ if(status==='resolved'&&(!resolution||resolution.length<5))return toast('اكتب توضيحًا للحل (5 أحرف على الأقل)');
+ if(!confirm(`تأكيد تغيير حالة البلاغ إلى «${ff41StatusNames[status]}»؟`))return;
+ b.disabled=true;
+ try{await rpc('ff41_case_transition',{p_case:b.dataset.ff41Transition,p_status:status,p_resolution:resolution});toast('تم تحديث الحالة وتوثيقها');await ff41ShowDetail(b.dataset.ff41Transition);await ff41LoadCases();}
+ catch(err){toast('تعذر تحديث الحالة: '+err.message)}finally{b.disabled=false;}
+});
+const ff41PriorDraw=draw;
+draw=function(){ff41PriorDraw();ff41Nav();};
+const ff41PriorReset=resetUI;
+resetUI=function(){ff41PriorReset();ff41Reset();};
 
 </script>
 </body></html>
