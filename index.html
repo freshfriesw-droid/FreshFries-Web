@@ -2,16 +2,19 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fresh Fries v38.9 — الطلبات والتوصيل والرسائل الداخلية</title>
+<title>Fresh Fries v38.10 — التوصيل والتقارير والتنبيهات</title>
 <style>
 :root{--red:#d51e2c;--dark:#17191d;--bg:#f4f5f7;--line:#e2e5e9;--muted:#667085;--good:#138654;--amber:#c37a0d}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#22272e;font-family:Tahoma,Arial,sans-serif;font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:11px 14px;background:#e8ebef;color:#252932;font-weight:700}button:disabled{opacity:.48;cursor:not-allowed}button.primary{background:var(--red);color:white}button.dark{background:var(--dark);color:#fff}button.good{background:var(--good);color:#fff}button.outline{background:white;border:1px solid var(--line)}.head{background:var(--dark);color:white;border-bottom:4px solid var(--red);padding:14px max(14px,env(safe-area-inset-right));display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.brand{font-size:21px;font-weight:900}.brand span{color:#ff4d56}.sub{font-size:12px;color:#b3bdc8;margin-top:5px}.head .sub{max-width:420px}main{max-width:1170px;margin:auto;padding:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:13px;box-shadow:0 1px 2px #00000009}.card h2,.card h3{margin:0 0 12px;font-size:17px}.muted{color:var(--muted);font-size:12px}.stat{background:#fff;padding:13px;border:1px solid var(--line);border-radius:12px}.stat strong{font-size:23px;display:block;margin-top:4px}.flex{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:12px;font-weight:bold;margin:10px 0 5px}input,select,textarea{width:100%;padding:12px;border:1px solid #d3d7df;background:#fff;border-radius:8px;outline:0}input:focus,textarea:focus,select:focus{border-color:var(--red)}textarea{resize:vertical;min-height:84px}.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.tag{font-size:12px;padding:5px 9px;border-radius:20px;background:#f0f0f0;white-space:nowrap;display:inline-block}.ready{background:#e2f6eb;color:#087744}.busy{background:#fff1db;color:#a46609}.offline{background:#efeff1;color:#616671}.warning{background:#fff7e5;border:1px solid #f5d9a5;border-radius:10px;padding:11px;color:#875400;margin:10px 0}.item{padding:12px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.tiny{font-size:12px}.note{padding:12px;border-radius:9px;background:#f5f7fa;margin:10px 0;line-height:1.9;white-space:pre-line}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}.topinfo{font-size:12px;color:#e6e6e6}.hidden{display:none!important}.login{position:fixed;inset:0;z-index:1000;background:#17191deb;display:flex;align-items:center;justify-content:center;padding:14px}.loginbox{width:min(440px,100%);background:white;border-radius:17px;padding:24px}.loginbox h2{margin-top:0}.alert{position:fixed;bottom:18px;right:15px;left:15px;z-index:1002;max-width:700px;margin:auto;background:#23272c;color:white;padding:13px;border-radius:12px;box-shadow:0 3px 20px #0003}.chip{background:#eef1f5;border-radius:7px;padding:8px 10px;font-size:12px}.danger{color:var(--red)}.offer{border-right:5px solid var(--red);background:#fff8f8;padding:12px;border-radius:10px;margin:10px 0}.notice{border-right:4px solid #ffbc28;padding-right:12px}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:9px}.pill{font-size:11px;color:#fff;background:var(--red);padding:3px 8px;border-radius:30px}footer{text-align:center;color:var(--muted);font-size:11px;margin:28px 0}.version{color:#aaafb8;font-size:11px}.btnlink{background:none;border:0;color:var(--red);padding:4px;text-decoration:underline}.statusbar{background:#eceff4;padding:9px 12px;border-radius:8px;color:#334155;font-size:12px;margin:10px 0}.sectionbar{margin:15px 0 8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}.sectionbar h2{font-size:17px;margin:0}@media(max-width:840px){.grid{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}}@media(max-width:520px){.row{grid-template-columns:1fr}.brand{font-size:19px}.grid{grid-template-columns:repeat(2,1fr)}main{padding:10px}.card{padding:13px}}@media(prefers-reduced-motion:no-preference){.offer{animation:pulse 1.6s infinite}@keyframes pulse{50%{box-shadow:0 0 0 2px #f7c8cb}}}
 .addition-card{background:#fff9ee;border:1px solid #f1d7a4;border-radius:10px;padding:12px;margin:10px 0}.addition-card.invoiced{background:#f0fbf4;border-color:#b9e4cb}.addition-card.cancelled{background:#f5f5f5;border-color:#ddd;opacity:.8}.addition-card .item-top{margin-bottom:6px}.addition-form{border:1px solid #e5b45d;background:#fffdf6;border-radius:12px;padding:14px;margin:12px 0}.addition-form textarea{min-height:90px}.addition-total{font-size:15px;font-weight:800;color:#146b43}.addition-pending{color:#985a00;font-weight:bold}.additions-header{font-weight:800;margin:9px 0 5px}.addition-actions{margin-top:8px}.order-addition-alert{background:#fff1db;border-radius:9px;padding:9px;margin:8px 0;color:#875400}#additionLoadError{margin:8px 0;color:#a52222} 
 .ff39-list{display:grid;gap:10px;margin-top:12px}.ff39-msg{background:#fbfbfc;border:1px solid #e4e6eb;border-radius:10px;padding:12px}.ff39-msg.ff39-new{border-right:4px solid #d51e2c;background:#fffafa}.ff39-msg .ff39-content{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}.ff39-composer{margin-top:18px;padding-top:15px;border-top:1px solid #e2e5e9}.ff39-composer textarea{width:100%;min-height:85px}.ff39-check{display:flex;gap:8px;align-items:center;justify-content:flex-start;margin:12px 0;cursor:pointer}.ff39-check input{width:auto;flex:none}.ff39-pending{color:#9a6400;font-size:12px;font-weight:bold}
+
+/* v38.10: report/alert cards */
+.ff40-list{display:grid;gap:10px;margin:12px 0}.ff40-alert{background:#fffcf5;border:1px solid #eed7a1;border-right:4px solid #d39a25;border-radius:10px;padding:12px}.ff40-alert.severe{border-right-color:#bd2d37;background:#fff6f6}.ff40-card{min-width:0;overflow:hidden}.ff40-scroll{overflow-x:auto;max-width:100%}.ff40-table{width:100%;border-collapse:collapse;min-width:520px;font-size:13px}.ff40-table th,.ff40-table td{padding:11px 9px;border-bottom:1px solid #e4e7ec;text-align:right}.ff40-table th{background:#f6f7f9;color:#444}.ff40-note{font-size:12px;color:#667085;line-height:1.8;margin:8px 0}.ff40-kpi{font-variant-numeric:tabular-nums}.ff40-report-sections{display:grid;gap:12px;grid-template-columns:1fr 1fr}@media(max-width:760px){.ff40-report-sections{grid-template-columns:1fr}.ff40-table{min-width:460px}}
 </style>
 </head>
 <body>
-<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.9 · مركز الرسائل</small></div><div class="sub">منصة خدمة العملاء والتوصيل — المرحلة الأولى</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
+<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.10 · التقارير والتنبيهات</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
 <main>
 <div class="warning">نسخة تجريبية مستقلة. لا تربطها بفرع يعمل فعليًا قبل اختبار قاعدة البيانات والصلاحيات والتوزيع. لا تستخدمها لطلبات عملاء حقيقيين الآن.</div>
 <div id="connection" class="statusbar">جاهز لتسجيل الدخول.</div><div id="additionLoadError" class="hidden"></div>
@@ -33,6 +36,30 @@
  </div>
 </section>
 <section id="metrics" class="grid hidden"></section>
+<section id="ff40AlertsPanel" class="card hidden ff40-card" aria-label="المتابعة التشغيلية">
+ <div class="sectionbar"><h2>⚠️ المتابعة التشغيلية للطلبات</h2><div class="flex"><button id="ff40AlertRefresh" class="outline" type="button">تحديث التنبيهات</button><button id="ff40AlertsClose" class="outline" type="button">إغلاق</button></div></div>
+ <p class="ff40-note">تنبيهات محسوبة من بيانات Supabase كل 30 ثانية تقريبًا عندما يكون التطبيق مفتوحًا: انتظار موصل، تأخر الكاشير، تأخر التوصيل، إضافة معلّقة، أو انقطاع موصل لديه طلب نشط. لا ترسل إشعارات عند إغلاق التطبيق.</p>
+ <div class="row"><div><label for="ff40AlertBranch">فلتر الفرع</label><select id="ff40AlertBranch"><option value="">جميع الفروع المسموحة</option></select></div></div>
+ <div id="ff40AlertStatus" class="muted" aria-live="polite">اضغط تحديث التنبيهات.</div><div id="ff40AlertsList" class="ff40-list"></div>
+</section>
+<section id="ff40ReportsPanel" class="card hidden ff40-card" aria-label="التقارير التشغيلية">
+ <div class="sectionbar"><h2>📊 التقارير التشغيلية للفروع</h2><div class="flex"><button id="ff40ExportCSV" class="outline" type="button" disabled>تصدير CSV</button><button id="ff40ReportsClose" class="outline" type="button">إغلاق</button></div></div>
+ <p class="ff40-note">التقارير حسب تاريخ إنشاء الطلب بتوقيت صنعاء، بحد أقصى 90 يومًا. قيمة الطلبات المُسلّمة = قيمة الطلب الأصلية مع الإضافات المفوترة، وليست إثباتًا للتحصيل النقدي أو تسوية المحاسبة.</p>
+ <div class="row">
+  <div><label for="ff40From">من تاريخ</label><input id="ff40From" type="date"/></div>
+  <div><label for="ff40To">إلى تاريخ</label><input id="ff40To" type="date"/></div>
+  <div><label for="ff40ReportBranch">الفرع</label><select id="ff40ReportBranch"><option value="">كل الفروع المسموحة</option></select></div>
+ </div>
+ <div class="actions"><button id="ff40RunReport" class="primary" type="button">إعداد التقرير</button></div>
+ <div id="ff40ReportStatus" class="muted" aria-live="polite"></div>
+ <div id="ff40KPIs" class="grid"></div>
+ <div class="ff40-report-sections">
+  <div><h3>الفروع</h3><div id="ff40BranchTable" class="ff40-scroll"></div></div>
+  <div><h3>حسب اليوم</h3><div id="ff40DayTable" class="ff40-scroll"></div></div>
+ </div>
+ <h3>أداء الموصلين</h3><div id="ff40DriverTable" class="ff40-scroll"></div>
+</section>
+
 <section id="driverView" class="hidden">
  <div class="card"><div class="sectionbar"><h2>🛵 بوابة الموصل</h2><span id="myPresence" class="tag offline">متوقف</span></div>
  <div class="flex"><button id="clockInBtn" class="good">تسجيل حضور / جاهز</button><button id="clockOutBtn" class="outline">إنهاء الدوام</button></div><p class="muted">عند تسجيل الدخول يبدأ الحضور تلقائيًا. إذا انقطع اتصالك، يتوقف النظام عن عرض طلبات جديدة عليك بعد مهلة الاتصال. لا تقفل الصفحة أثناء انتظار العروض.</p></div>
@@ -309,6 +336,133 @@ async function ff39LoadSent(){
  }catch(e){box.textContent='تعذر قراءة السجل: '+e.message}
 }
 $('ff39SentRefresh').addEventListener('click',ff39LoadSent);
+
+
+// Fresh Fries v38.10 — Operational reporting and read-only live computed alerts.
+let ff40ReportData=null, ff40AlertsAt=0,ff40AlertsLoading=false,ff40InitializedAlerts=false;
+let ff40OldAlertKeys=new Set();
+function ff40CanReport(){return Boolean(data&&canAction('view_reports'));}
+function ff40CanAlerts(){return ff40CanReport()&&data.role!=='driver';}
+function ff40Nav(){
+ const can=ff40CanReport(),warn=ff40CanAlerts();
+ $('ff40ReportsBtn').classList.toggle('hidden',!can);
+ $('ff40AlertsBtn').classList.toggle('hidden',!warn);
+ if(!can)$('ff40ReportsPanel').classList.add('hidden');
+ if(!warn)$('ff40AlertsPanel').classList.add('hidden');
+}
+function ff40SetBranches(){
+ for(const name of ['ff40ReportBranch','ff40AlertBranch']){
+  const sel=$(name),old=sel.value,branches=data?.branches||[];
+  sel.innerHTML='<option value="">كل الفروع المسموحة</option>'+branches.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');
+  if(branches.some(b=>b.id===old))sel.value=old;
+ }
+}
+function ff40TodayYemen(){
+ const parts=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));
+ return `${parts.year}-${parts.month}-${parts.day}`;
+}
+function ff40InitialDates(){
+ if($('ff40From').value&&$('ff40To').value)return;
+ const today=ff40TodayYemen(),day=new Date(today+'T12:00:00Z');day.setUTCDate(day.getUTCDate()-6);
+ $('ff40From').value=day.toISOString().slice(0,10);$('ff40To').value=today;
+ $('ff40To').max=today;
+}
+function ff40Table(cols,rows){
+ if(!rows?.length)return '<p class="muted">لا توجد بيانات لهذه الفترة.</p>';
+ return `<table class="ff40-table"><thead><tr>${cols.map(c=>`<th>${esc(c[0])}</th>`).join('')}</tr></thead><tbody>`+
+  rows.map(r=>'<tr>'+cols.map(c=>`<td>${esc(String(c[1](r)??'—'))}</td>`).join('')+'</tr>').join('')+'</tbody></table>';
+}
+function ff40Money(n){return `${amount(Number(n||0))} ريال`}
+function ff40Minutes(n){return n===null||n===undefined?'—':`${Number(n)} دقيقة`}
+function ff40ShowReport(r){
+ const t=r.totals||{};
+ const cards=[['الطلبات',t.orders],['المسلّمة',t.delivered],['قيد التنفيذ',t.in_progress],['بانتظار الإسناد',t.awaiting_assignment],['الملغاة',t.cancelled],['قيمة الطلبات المسلّمة',ff40Money(t.delivered_order_value)],['رسوم توصيل المسلّم',ff40Money(t.delivered_delivery_fees)],['متوسط من الإسناد للتسليم',ff40Minutes(t.avg_delivery_minutes)]];
+ $('ff40KPIs').innerHTML=cards.map(([name,value])=>`<div class="stat"><span class="muted">${esc(String(name))}</span><strong class="ff40-kpi" style="font-size:19px">${esc(String(value??0))}</strong></div>`).join('');
+ $('ff40BranchTable').innerHTML=ff40Table([['الفرع',x=>x.branch_name],['الطلبات',x=>x.orders],['المسلّمة',x=>x.delivered],['الملغاة',x=>x.cancelled],['قيمة المسلّمة',x=>ff40Money(x.delivered_order_value)]],r.branches);
+ $('ff40DayTable').innerHTML=ff40Table([['التاريخ',x=>x.day],['الطلبات',x=>x.orders],['المسلّمة',x=>x.delivered],['قيمة المسلّمة',x=>ff40Money(x.delivered_order_value)]],r.days);
+ $('ff40DriverTable').innerHTML=ff40Table([['الموصل',x=>x.driver_name],['الفرع',x=>branchName(x.branch_id)],['المسندة',x=>x.assigned],['المسلّمة',x=>x.delivered],['متوسط مدة التسليم',x=>ff40Minutes(x.avg_delivery_minutes)]],r.drivers);
+ $('ff40ExportCSV').disabled=false;
+}
+async function ff40LoadReport(){
+ if(!ff40CanReport())return toast('ليس لديك إذن عرض التقارير');
+ const from=$('ff40From').value,to=$('ff40To').value,branch=$('ff40ReportBranch').value||null;
+ if(!from||!to||from>to||to>ff40TodayYemen())return toast('راجع تاريخ بداية ونهاية التقرير');
+ const b=$('ff40RunReport');b.disabled=true;$('ff40ReportStatus').textContent='جارٍ إعداد التقرير...';
+ try{const r=await rpc('ff40_operations_report',{p_from:from,p_to:to,p_branch:branch});
+  if(!r||!r.totals||!Array.isArray(r.branches))throw Error('تنسيق التقرير غير متوقع');
+  ff40ReportData=r;ff40ShowReport(r);
+  $('ff40ReportStatus').textContent=`تقرير الفترة ${from} إلى ${to} · ${branch?branchName(branch):'كل الفروع المسموحة'}`;
+ }catch(e){ff40ReportData=null;$('ff40ExportCSV').disabled=true;$('ff40ReportStatus').textContent='تعذر إعداد التقرير: '+e.message;toast(e.message)}
+ finally{b.disabled=false}
+}
+function ff40CsvCell(value){
+ let s=String(value??'');
+ if(/^[\s]*[=+@\-]/.test(s))s="'"+s; // spreadsheet-formula injection safety
+ return '"'+s.replace(/"/g,'""')+'"';
+}
+function ff40Export(){
+ if(!ff40ReportData)return toast('أعد التقرير أولًا');
+ const r=ff40ReportData;
+ const rows=[['النوع','التاريخ','الاسم','الطلبات/المسندة','المسلّمة','الملغاة','قيمة الطلبات المسلّمة (ريال)','متوسط مدة التسليم (دقيقة)']];
+ for(const x of r.branches||[])rows.push(['فرع','',x.branch_name,x.orders,x.delivered,x.cancelled,x.delivered_order_value,'']);
+ for(const x of r.days||[])rows.push(['يوم',x.day,'',x.orders,x.delivered,x.cancelled,x.delivered_order_value,'']);
+ for(const x of r.drivers||[])rows.push(['موصل','',x.driver_name,x.assigned,x.delivered,'','',x.avg_delivery_minutes??'']);
+ const csv='\uFEFF'+rows.map(a=>a.map(ff40CsvCell).join(',')).join('\r\n');
+ const file=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(file);
+ const a=document.createElement('a');a.href=url;a.download=`FreshFries_Operations_${r.from}_${r.to}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
+}
+async function ff40LoadAlerts(force=false){
+ if(!ff40CanAlerts()||ff40AlertsLoading||(!force&&Date.now()-ff40AlertsAt<30000))return;
+ ff40AlertsLoading=true;
+ try{
+  const result=await rpc('ff40_operations_alerts',{p_branch:$('ff40AlertBranch').value||null});
+  if(!result||!Array.isArray(result.items))throw Error('تنسيق التنبيهات غير متوقع');
+  const items=result.items,keys=new Set(items.map(a=>`${a.kind}:${a.order_id}`));
+  const newly=items.filter(a=>!ff40OldAlertKeys.has(`${a.kind}:${a.order_id}`));
+  if(ff40InitializedAlerts&&newly.length){
+    ding();notify('تنبيه تشغيلي جديد',`${newly[0].title} — طلب رقم ${newly[0].order_number}`);
+  }
+  ff40OldAlertKeys=keys;ff40InitializedAlerts=true;ff40AlertsAt=Date.now();
+  $('ff40AlertCount').textContent=String(items.length);
+  $('ff40AlertStatus').textContent=`${items.length} تنبيه نشط · آخر تحديث: ${time(result.checked_at)}${items.length===50?' · يتم عرض أول 50 تنبيه فقط':''}`;
+  $('ff40AlertsList').innerHTML=items.length?items.map(a=>`<article class="ff40-alert ${Number(a.severity)>=3?'severe':''}"><div class="item-top"><b>${esc(a.title)} · طلب #${esc(String(a.order_number))}</b><span class="tag ${Number(a.severity)>=3?'busy':'offline'}">${esc(branchName(a.branch_id))}</span></div><div class="muted">${esc(a.description)} · منذ ${Math.max(0,Number(a.age_minutes||0))} دقيقة</div></article>`).join(''):'<p class="empty">لا توجد تنبيهات متأخرة الآن.</p>';
+ }catch(e){$('ff40AlertStatus').textContent='تعذر قراءة التنبيهات: '+e.message;ff40AlertsAt=Date.now();}
+ finally{ff40AlertsLoading=false}
+}
+$('ff40ReportsBtn').addEventListener('click',()=>{
+ if(!ff40CanReport())return;
+ const panel=$('ff40ReportsPanel');panel.classList.toggle('hidden');
+ if(!panel.classList.contains('hidden')){ff40SetBranches();ff40InitialDates();panel.scrollIntoView({behavior:'smooth',block:'start'});}
+});
+$('ff40AlertsBtn').addEventListener('click',()=>{
+ if(!ff40CanAlerts())return;
+ const panel=$('ff40AlertsPanel');panel.classList.toggle('hidden');
+ if(!panel.classList.contains('hidden')){ff40SetBranches();void ff40LoadAlerts(true);panel.scrollIntoView({behavior:'smooth',block:'start'});}
+});
+$('ff40ReportsClose').addEventListener('click',()=>$('ff40ReportsPanel').classList.add('hidden'));
+$('ff40AlertsClose').addEventListener('click',()=>$('ff40AlertsPanel').classList.add('hidden'));
+$('ff40RunReport').addEventListener('click',ff40LoadReport);
+for(const id of ['ff40From','ff40To','ff40ReportBranch'])$(id).addEventListener('change',()=>{ff40ReportData=null;$('ff40ExportCSV').disabled=true;$('ff40ReportStatus').textContent='تم تغيير عوامل التصفية؛ اضغط إعداد التقرير لتحديث البيانات.'});
+$('ff40ExportCSV').addEventListener('click',ff40Export);
+$('ff40AlertRefresh').addEventListener('click',()=>ff40LoadAlerts(true));
+$('ff40AlertBranch').addEventListener('change',()=>{
+ ff40OldAlertKeys=new Set();ff40InitializedAlerts=false;void ff40LoadAlerts(true);
+});
+// Wrap existing rendering/update; do not replace any older core RPC or dispatch logic.
+const ff40PriorDraw=draw;
+draw=function(){ff40PriorDraw();ff40Nav()};
+const ff40PriorReload=reload;
+reload=async function(force=false){
+ const out=await ff40PriorReload(force);
+ if(ff40CanAlerts()&&Date.now()-ff40AlertsAt>=30000)void ff40LoadAlerts();
+ return out;
+};
+const ff40PriorReset=resetUI;
+resetUI=function(){ff40PriorReset();ff40ReportData=null;ff40AlertsAt=0;ff40OldAlertKeys=new Set();ff40InitializedAlerts=false;ff40AlertsLoading=false;
+ $('ff40ReportsPanel').classList.add('hidden');$('ff40AlertsPanel').classList.add('hidden');
+ $('ff40ReportsBtn').classList.add('hidden');$('ff40AlertsBtn').classList.add('hidden');
+ $('ff40AlertCount').textContent='0';$('ff40ReportStatus').textContent='';$('ff40AlertStatus').textContent='';$('ff40ExportCSV').disabled=true;
+};
 
 </script>
 </body></html>
