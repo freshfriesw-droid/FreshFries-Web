@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fresh Fries v38.11 — خدمة العملاء والتوصيل والبلاغات</title>
+<title>Fresh Fries v38.13 — خدمة العملاء والتوصيل وأمان النظام</title>
 <style>
 :root{--red:#d51e2c;--dark:#17191d;--bg:#f4f5f7;--line:#e2e5e9;--muted:#667085;--good:#138654;--amber:#c37a0d}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#22272e;font-family:Tahoma,Arial,sans-serif;font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:11px 14px;background:#e8ebef;color:#252932;font-weight:700}button:disabled{opacity:.48;cursor:not-allowed}button.primary{background:var(--red);color:white}button.dark{background:var(--dark);color:#fff}button.good{background:var(--good);color:#fff}button.outline{background:white;border:1px solid var(--line)}.head{background:var(--dark);color:white;border-bottom:4px solid var(--red);padding:14px max(14px,env(safe-area-inset-right));display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.brand{font-size:21px;font-weight:900}.brand span{color:#ff4d56}.sub{font-size:12px;color:#b3bdc8;margin-top:5px}.head .sub{max-width:420px}main{max-width:1170px;margin:auto;padding:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:13px;box-shadow:0 1px 2px #00000009}.card h2,.card h3{margin:0 0 12px;font-size:17px}.muted{color:var(--muted);font-size:12px}.stat{background:#fff;padding:13px;border:1px solid var(--line);border-radius:12px}.stat strong{font-size:23px;display:block;margin-top:4px}.flex{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:12px;font-weight:bold;margin:10px 0 5px}input,select,textarea{width:100%;padding:12px;border:1px solid #d3d7df;background:#fff;border-radius:8px;outline:0}input:focus,textarea:focus,select:focus{border-color:var(--red)}textarea{resize:vertical;min-height:84px}.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.tag{font-size:12px;padding:5px 9px;border-radius:20px;background:#f0f0f0;white-space:nowrap;display:inline-block}.ready{background:#e2f6eb;color:#087744}.busy{background:#fff1db;color:#a46609}.offline{background:#efeff1;color:#616671}.warning{background:#fff7e5;border:1px solid #f5d9a5;border-radius:10px;padding:11px;color:#875400;margin:10px 0}.item{padding:12px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.tiny{font-size:12px}.note{padding:12px;border-radius:9px;background:#f5f7fa;margin:10px 0;line-height:1.9;white-space:pre-line}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}.topinfo{font-size:12px;color:#e6e6e6}.hidden{display:none!important}.login{position:fixed;inset:0;z-index:1000;background:#17191deb;display:flex;align-items:center;justify-content:center;padding:14px}.loginbox{width:min(440px,100%);background:white;border-radius:17px;padding:24px}.loginbox h2{margin-top:0}.alert{position:fixed;bottom:18px;right:15px;left:15px;z-index:1002;max-width:700px;margin:auto;background:#23272c;color:white;padding:13px;border-radius:12px;box-shadow:0 3px 20px #0003}.chip{background:#eef1f5;border-radius:7px;padding:8px 10px;font-size:12px}.danger{color:var(--red)}.offer{border-right:5px solid var(--red);background:#fff8f8;padding:12px;border-radius:10px;margin:10px 0}.notice{border-right:4px solid #ffbc28;padding-right:12px}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:9px}.pill{font-size:11px;color:#fff;background:var(--red);padding:3px 8px;border-radius:30px}footer{text-align:center;color:var(--muted);font-size:11px;margin:28px 0}.version{color:#aaafb8;font-size:11px}.btnlink{background:none;border:0;color:var(--red);padding:4px;text-decoration:underline}.statusbar{background:#eceff4;padding:9px 12px;border-radius:8px;color:#334155;font-size:12px;margin:10px 0}.sectionbar{margin:15px 0 8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}.sectionbar h2{font-size:17px;margin:0}@media(max-width:840px){.grid{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}}@media(max-width:520px){.row{grid-template-columns:1fr}.brand{font-size:19px}.grid{grid-template-columns:repeat(2,1fr)}main{padding:10px}.card{padding:13px}}@media(prefers-reduced-motion:no-preference){.offer{animation:pulse 1.6s infinite}@keyframes pulse{50%{box-shadow:0 0 0 2px #f7c8cb}}}
@@ -20,14 +20,28 @@
 .ff42-help{border-right:4px solid #d2a146;background:#fffaf1;padding:12px;margin:10px 0 14px;line-height:1.9;color:#715626;border-radius:7px;font-size:12px}
 .ff42-filter-action{align-self:end}.ff42-filter-action button{width:100%}.ff42-list{display:grid;gap:9px;margin:14px 0}.ff42-driver{border:1px solid #e2e5ea;background:#fafbfc;border-radius:11px;padding:13px}.ff42-driver.ff42-active{border-right:4px solid #d51e2c;background:#fffafb}.ff42-driver-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:11px;font-size:12px}.ff42-editor{border:1px solid #dbe2ed;border-radius:12px;padding:15px;background:#f8fafc;margin-top:16px}.ff42-difference{align-self:end;line-height:2.8}.ff42-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.ff42-line{display:flex;gap:9px;flex-wrap:wrap;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e4e7ec;font-size:12px}.ff42-event-note{width:100%;white-space:pre-wrap;overflow-wrap:anywhere}.ff42-detail{margin-top:10px}
 @media(max-width:730px){.ff42-driver-grid,.ff42-two{grid-template-columns:1fr}.ff42-filter-action{align-self:auto}}
+
+/* v38.13: metadata-only security inspection. This is not a certification. */
+.ff43-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.ff43-finding{padding:12px;border-radius:9px;border-right:4px solid #ca8a04;background:#fffdf4;margin-bottom:9px;overflow-wrap:anywhere}.ff43-finding.high{border-right-color:#cf2d3e;background:#fff6f7}.ff43-small{color:#667085;font-size:12px;line-height:1.8}.ff43-scroller{overflow:auto;max-width:100%}.ff43-table{width:100%;border-collapse:collapse;min-width:670px}.ff43-table th,.ff43-table td{padding:9px 8px;text-align:right;border-bottom:1px solid #e2e5ea;font-size:12px}.ff43-table th{background:#f4f5f7}.ff43-yes{color:#147e48;font-weight:700}.ff43-no{color:#b12c36;font-weight:700}@media(max-width:700px){.ff43-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
-<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.12 · تسويات الموصلين</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
+<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.13 · مراجعة الأمان</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
 <main>
 <div class="warning">نسخة تجريبية مستقلة. لا تربطها بفرع يعمل فعليًا قبل اختبار قاعدة البيانات والصلاحيات والتوزيع. لا تستخدمها لطلبات عملاء حقيقيين الآن.</div>
 <div id="connection" class="statusbar">جاهز لتسجيل الدخول.</div><div id="additionLoadError" class="hidden"></div>
 
+
+
+<section id="ff43SecurityPanel" class="card hidden" aria-label="مراجعة أمن قاعدة البيانات">
+ <div class="sectionbar"><h2>🛡️ أمان النظام — فحص قاعدة البيانات</h2><div class="flex"><button id="ff43Run" class="primary" type="button">فحص الآن</button><button id="ff43Export" class="outline" disabled type="button">تصدير نتائج CSV</button><button id="ff43Close" class="outline" type="button">إغلاق</button></div></div>
+ <div class="warning">هذا الفحص يراجع مؤشرات RLS وامتيازات واجهة API ودوال SECURITY DEFINER. <b>عدم ظهور تحذيرات لا يثبت أن النظام آمن</b>؛ لا يغني عن مراجعة كل سياسة وصلاحية واختبارات عزل المستخدمين والفروع قبل الإنتاج. لا يُجري الفحص تغييرات على البيانات.</div>
+ <div id="ff43Status" class="muted" role="status">اضغط «فحص الآن» لقراءة الوضع الحالي من Supabase.</div>
+ <div id="ff43Kpis" class="ff43-grid"></div>
+ <div class="sectionbar"><h3>نتائج تحتاج مراجعة</h3><span id="ff43IssueCount" class="muted"></span></div>
+ <div id="ff43Findings"></div>
+ <details><summary><b>تفاصيل الجداول وRLS</b></summary><div class="ff43-scroller"><table class="ff43-table"><thead><tr><th>الجدول</th><th>RLS</th><th>سياسات</th><th>قراءة anon</th><th>كتابة anon</th><th>كتابة authenticated</th></tr></thead><tbody id="ff43Tables"></tbody></table></div></details>
+</section>
 
 <section id="ff42Panel" class="card hidden" aria-label="تسويات الموصلين النقدية">
  <div class="sectionbar"><h2>💰 تسويات الموصلين النقدية</h2><div class="flex"><button id="ff42Export" class="outline" disabled type="button">تصدير CSV</button><button id="ff42ClosePanel" class="outline" type="button">إغلاق</button></div></div>
@@ -131,7 +145,7 @@
  <div class="card" id="auditCard"><div class="sectionbar"><h2>📚 سجل التحكم برفض الموصل</h2><button id="auditRefreshBtn" class="outline" type="button">تحديث السجل</button></div><p class="muted">آخر 100 تغيير في صلاحية رفض عروض التوصيل. متاح للمدير وخدمة العملاء.</p><div id="auditHistory" class="empty">اضغط تحديث السجل لعرض العمليات.</div></div>
 </section>
 <section id="cashierView" class="hidden"><div class="card"><h2>🧾 شاشة الكاشير — طلبات التوصيل فقط</h2><p class="muted">يصل الطلب بعد قبول الموصل، مع اسمه وعنوان العميل وتفاصيل الأصناف. إصدار الفاتورة يتم في برنامج الكاشير المستخدم حاليًا.</p><div id="cashierOrders"></div></div></section>
-<footer>Fresh Fries v38.11 — مرحلة اختبار. تسجيل الدخول بالهوية المركزية Supabase. لا يتم حفظ كلمات المرور في واجهة المطعم.</footer>
+<footer>Fresh Fries v38.13 — مرحلة اختبار. تسجيل الدخول بالهوية المركزية Supabase. لا يتم حفظ كلمات المرور في واجهة المطعم.</footer>
 </main>
 <div id="loginOverlay" class="login"><div class="loginbox"><h2>🔐 دخول نظام Fresh Fries</h2><p class="muted">استخدم بريد وكلمة مرور حسابك في Supabase. حساب الموصل يجب أن يكون مربوطًا من المدير.</p><label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="username" placeholder="example@email.com"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" placeholder="••••••••"><div class="actions"><button id="loginBtn" class="primary" style="width:100%">تسجيل الدخول</button></div><div class="statusbar" id="loginStatus">في أول تجربة، ادخل بحساب المدير الحالي.</div></div></div>
 <div id="toast" class="alert hidden"></div>
@@ -796,6 +810,66 @@ for(const id of ['ff42Day','ff42Branch'])$(id).addEventListener('change',()=>{$(
 document.addEventListener('click',async ev=>{const b=ev.target.closest('button[data-ff42-select]');if(b)await ff42Pick(Number(b.dataset.ff42Select));});
 const ff42PrevDraw=draw;draw=function(){ff42PrevDraw();ff42Nav();};
 const ff42PrevReset=resetUI;resetUI=function(){ff42PrevReset();ff42Reset();};
+
+
+// v38.13 security review: manager-only, metadata only; server RPC enforces authorization.
+let ff43Last=null,ff43Busy=false;
+function ff43Nav(){
+ const manager=data?.role==='manager';
+ $('ff43SecurityBtn').classList.toggle('hidden',!manager);
+ if(!manager)$('ff43SecurityPanel').classList.add('hidden');
+}
+function ff43Reset(){
+ ff43Last=null;ff43Busy=false;
+ $('ff43SecurityBtn').classList.add('hidden');
+ $('ff43SecurityPanel').classList.add('hidden');
+ $('ff43Export').disabled=true;$('ff43Kpis').innerHTML='';
+ $('ff43Findings').innerHTML='';$('ff43Tables').innerHTML='';
+ $('ff43Status').textContent='اضغط «فحص الآن» لقراءة الوضع الحالي من Supabase.';
+ $('ff43IssueCount').textContent='';
+}
+function ff43Render(report){
+ const pairs=[['جداول Fresh Fries',report.table_count],['RLS مفعل',report.rls_enabled],['تنبيه مرتفع',report.high_count],['تحتاج مراجعة',report.review_count]];
+ $('ff43Kpis').innerHTML=pairs.map(([k,v])=>`<div class="stat"><span class="muted">${esc(k)}</span><strong>${esc(v)}</strong></div>`).join('');
+ const issues=Array.isArray(report.findings)?report.findings:[];
+ $('ff43IssueCount').textContent=`${issues.length} نتيجة؛ ليست جميعها ثغرات مؤكدة`;
+ $('ff43Findings').innerHTML=issues.length?issues.map(i=>`<div class="ff43-finding ${i.severity==='high'?'high':''}"><b>${i.severity==='high'?'⚠️ مرتفع':'🔎 مراجعة'} — ${esc(i.code)}</b><div><b>${esc(i.object_name)}</b></div><div class="ff43-small">${esc(i.explanation)}</div></div>`).join(''):'<div class="empty">لم تظهر مؤشرات من الفحص الآلي. لا يعتبر ذلك ضمانًا للأمان.</div>';
+ const yes=(b,good=true)=>`<span class="${b===good?'ff43-yes':'ff43-no'}">${b?'نعم':'لا'}</span>`;
+ const tables=Array.isArray(report.tables)?report.tables:[];
+ $('ff43Tables').innerHTML=tables.map(t=>`<tr><td>${esc(t.table_name)}</td><td>${yes(t.rls_enabled)}</td><td>${esc(t.policy_count)}</td><td>${yes(t.anon_select,false)}</td><td>${yes(t.anon_write,false)}</td><td>${yes(t.authenticated_write,false)}</td></tr>`).join('');
+ $('ff43Export').disabled=false;
+ $('ff43Status').textContent=`آخر فحص: ${time(report.checked_at)} · ${report.function_count||0} دالة · ${report.trigger_functions||0} دالة مشغّل. فحص وصفي محدود، وليس شهادة أمنية.`;
+}
+async function ff43Run(){
+ if(!user||data?.role!=='manager'||ff43Busy)return;
+ ff43Busy=true;$('ff43Run').disabled=true;$('ff43Status').textContent='جارٍ قراءة بيانات الأمان...';
+ try{
+  const report=await rpc('ff43_security_report');
+  if(!report || !Array.isArray(report.tables) || !Array.isArray(report.findings))throw Error('البيانات الراجعة غير مكتملة');
+  ff43Last=report;ff43Render(report);
+ }catch(err){ff43Last=null;$('ff43Export').disabled=true;$('ff43Status').textContent='تعذر الفحص: '+err.message;toast(err.message)}
+ finally{ff43Busy=false;$('ff43Run').disabled=false}
+}
+function ff43Csv(v){let x=String(v??'').replace(/[\r\n\u0000-\u001f]/g,' ');if(/^[=+\-@\t]/.test(x.trimStart()))x="'"+x;return '"'+x.replace(/"/g,'""')+'"'}
+function ff43Export(){
+ if(!ff43Last)return;
+ const rows=[['النوع','المعرف','الاسم','التفاصيل']];
+ for(const i of ff43Last.findings||[])rows.push(['نتيجة أمنية',i.severity+' / '+i.code,i.object_name,i.explanation]);
+ for(const t of ff43Last.tables||[])rows.push(['جدول',t.rls_enabled?'RLS مفعّل':'RLS غير مفعّل',t.table_name,`السياسات: ${t.policy_count}، قراءة anon: ${t.anon_select}، كتابة anon: ${t.anon_write}، كتابة authenticated: ${t.authenticated_write}`]);
+ const csv='\uFEFF'+rows.map(r=>r.map(ff43Csv).join(',')).join('\r\n');
+ const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+ const a=document.createElement('a');a.href=url;a.download='FreshFries_Security_Review_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+$('ff43SecurityBtn').addEventListener('click',async()=>{
+ if(data?.role!=='manager')return;
+ const panel=$('ff43SecurityPanel');panel.classList.toggle('hidden');
+ if(!panel.classList.contains('hidden')){if(!ff43Last)await ff43Run();panel.scrollIntoView({behavior:'smooth',block:'start'});}
+});
+$('ff43Run').addEventListener('click',ff43Run);
+$('ff43Export').addEventListener('click',ff43Export);
+$('ff43Close').addEventListener('click',()=>$('ff43SecurityPanel').classList.add('hidden'));
+const ff43PrevDraw=draw;draw=function(){ff43PrevDraw();ff43Nav();};
+const ff43PrevReset=resetUI;resetUI=function(){ff43PrevReset();ff43Reset();};
 
 </script>
 </body></html>
