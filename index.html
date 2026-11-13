@@ -105,7 +105,18 @@ $('createBtn').onclick=async()=>{let b=$('createBtn');try{b.disabled=true;let p_
 $('linkUserBtn').onclick=async()=>{let b=$('linkUserBtn');try{b.disabled=true;let result=await rpc('ff38_admin_link_user',{p_email:$('addEmail').value.trim(),p_name:$('addName').value.trim(),p_role:$('addRole').value,p_branch:['driver','cashier'].includes($('addRole').value)?$('addBranch').value:null});toast('تم ربط الحساب بنجاح');$('addEmail').value='';$('addName').value='';await reload(true)}catch(e){toast('تعذر ربط الحساب: '+e.message)}finally{b.disabled=false}};
 document.addEventListener('click',async ev=>{let b=ev.target.closest('button[data-auto],button[data-manual],button[data-accept],button[data-reject],button[data-progress],button[data-cashier],button[data-open-addition],button[data-close-addition],button[data-save-addition],button[data-invoice-addition],button[data-cancel-addition],button[data-toggle-reject],button[data-cancel-order]');if(!b)return; b.disabled=true;try{
  if(b.dataset.auto){let x=await rpc('ff38_dispatch',{p_order:b.dataset.auto,p_driver:null});toast(x.state==='offered'?'تم عرض الطلب على موصل':'الطلب في الانتظار: '+x.state)}
-  else if(b.dataset.cancelOrder){
+  else if(b.hasAttribute('data-toggle-reject')){
+    const orderId=b.dataset.toggleReject;
+    const allow=b.dataset.allow==='true';
+    if(!orderId)throw Error('رقم الطلب غير متاح');
+    const order=(data?.orders||[]).find(x=>x.id===orderId);
+    if(!order||order.phase)throw Error('لا يمكن تغيير صلاحية الرفض بعد قبول الموصل');
+    await rpc('ff38_set_driver_reject_permission',{p_order:orderId,p_allow:allow});
+    rejectPermissions[orderId]=allow;
+    rejectPermissionReady=true;
+    toast(allow?'تم السماح للموصل برفض العرض':'تم منع الموصل من رفض العرض');
+ }
+ else if(b.dataset.cancelOrder){
     const o=(data.orders||[]).find(x=>x.id===b.dataset.cancelOrder);
     if(!o||o.phase)throw Error('لا يمكن إلغاء طلب تم قبوله من الموصل من هذه الشاشة');
     const reason=prompt('سبب إلغاء الطلب #'+o.number+' (إلزامي):','أُدخل بالخطأ');
