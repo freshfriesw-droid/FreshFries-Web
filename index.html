@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fresh Fries v38.15 — خدمة العملاء والتوصيل وعزل الفروع</title>
+<title>Fresh Fries v38.16 — خدمة العملاء والتوصيل وجاهزية الإطلاق</title>
 <style>
 :root{--red:#d51e2c;--dark:#17191d;--bg:#f4f5f7;--line:#e2e5e9;--muted:#667085;--good:#138654;--amber:#c37a0d}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#22272e;font-family:Tahoma,Arial,sans-serif;font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:11px 14px;background:#e8ebef;color:#252932;font-weight:700}button:disabled{opacity:.48;cursor:not-allowed}button.primary{background:var(--red);color:white}button.dark{background:var(--dark);color:#fff}button.good{background:var(--good);color:#fff}button.outline{background:white;border:1px solid var(--line)}.head{background:var(--dark);color:white;border-bottom:4px solid var(--red);padding:14px max(14px,env(safe-area-inset-right));display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.brand{font-size:21px;font-weight:900}.brand span{color:#ff4d56}.sub{font-size:12px;color:#b3bdc8;margin-top:5px}.head .sub{max-width:420px}main{max-width:1170px;margin:auto;padding:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:13px;box-shadow:0 1px 2px #00000009}.card h2,.card h3{margin:0 0 12px;font-size:17px}.muted{color:var(--muted);font-size:12px}.stat{background:#fff;padding:13px;border:1px solid var(--line);border-radius:12px}.stat strong{font-size:23px;display:block;margin-top:4px}.flex{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:12px;font-weight:bold;margin:10px 0 5px}input,select,textarea{width:100%;padding:12px;border:1px solid #d3d7df;background:#fff;border-radius:8px;outline:0}input:focus,textarea:focus,select:focus{border-color:var(--red)}textarea{resize:vertical;min-height:84px}.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.tag{font-size:12px;padding:5px 9px;border-radius:20px;background:#f0f0f0;white-space:nowrap;display:inline-block}.ready{background:#e2f6eb;color:#087744}.busy{background:#fff1db;color:#a46609}.offline{background:#efeff1;color:#616671}.warning{background:#fff7e5;border:1px solid #f5d9a5;border-radius:10px;padding:11px;color:#875400;margin:10px 0}.item{padding:12px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.tiny{font-size:12px}.note{padding:12px;border-radius:9px;background:#f5f7fa;margin:10px 0;line-height:1.9;white-space:pre-line}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}.topinfo{font-size:12px;color:#e6e6e6}.hidden{display:none!important}.login{position:fixed;inset:0;z-index:1000;background:#17191deb;display:flex;align-items:center;justify-content:center;padding:14px}.loginbox{width:min(440px,100%);background:white;border-radius:17px;padding:24px}.loginbox h2{margin-top:0}.alert{position:fixed;bottom:18px;right:15px;left:15px;z-index:1002;max-width:700px;margin:auto;background:#23272c;color:white;padding:13px;border-radius:12px;box-shadow:0 3px 20px #0003}.chip{background:#eef1f5;border-radius:7px;padding:8px 10px;font-size:12px}.danger{color:var(--red)}.offer{border-right:5px solid var(--red);background:#fff8f8;padding:12px;border-radius:10px;margin:10px 0}.notice{border-right:4px solid #ffbc28;padding-right:12px}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:9px}.pill{font-size:11px;color:#fff;background:var(--red);padding:3px 8px;border-radius:30px}footer{text-align:center;color:var(--muted);font-size:11px;margin:28px 0}.version{color:#aaafb8;font-size:11px}.btnlink{background:none;border:0;color:var(--red);padding:4px;text-decoration:underline}.statusbar{background:#eceff4;padding:9px 12px;border-radius:8px;color:#334155;font-size:12px;margin:10px 0}.sectionbar{margin:15px 0 8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}.sectionbar h2{font-size:17px;margin:0}@media(max-width:840px){.grid{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}}@media(max-width:520px){.row{grid-template-columns:1fr}.brand{font-size:19px}.grid{grid-template-columns:repeat(2,1fr)}main{padding:10px}.card{padding:13px}}@media(prefers-reduced-motion:no-preference){.offer{animation:pulse 1.6s infinite}@keyframes pulse{50%{box-shadow:0 0 0 2px #f7c8cb}}}
@@ -46,10 +46,23 @@
 .ff45-flags{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:9px 0}
 .ff45-flag{background:#f4f6fa;padding:11px;border-radius:9px;line-height:1.8}
 @media(max-width:760px){.ff45-metrics,.ff45-flags{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* v38.16: release-readiness manager review + role reset audit */
+.ff46-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.ff46-result{background:#fafbfc;border:1px solid #e0e4e9;border-radius:10px;padding:12px;margin:9px 0;overflow-wrap:anywhere}
+.ff46-result.high{border-right:4px solid #bd3546;background:#fff8f8}
+.ff46-result.review{border-right:4px solid #d6a23a;background:#fffdf6}
+.ff46-tbl-wrap{overflow-x:auto;margin:11px 0}
+.ff46-table{width:100%;min-width:620px;border-collapse:collapse;font-size:12px}
+.ff46-table td,.ff46-table th{padding:10px;text-align:right;border-bottom:1px solid #e0e4e9}
+.ff46-table th{background:#f2f4f7}
+.ff46-desc{line-height:1.8;color:#56606f}
+@media(max-width:730px){.ff46-summary{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
-<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.15 · عزل الفروع والصلاحيات</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff45AccessBtn" class="outline hidden" type="button">🔐 عزل الفروع</button><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
+<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.16 · الجاهزية وحماية الأدوار</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff46ReadinessBtn" class="outline hidden" type="button">🧪 جاهزية الإطلاق</button><button id="ff45AccessBtn" class="outline hidden" type="button">🔐 عزل الفروع</button><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
 <main>
 <div class="warning">نسخة تجريبية مستقلة. لا تربطها بفرع يعمل فعليًا قبل اختبار قاعدة البيانات والصلاحيات والتوزيع. لا تستخدمها لطلبات عملاء حقيقيين الآن.</div>
 <div id="connection" class="statusbar">جاهز لتسجيل الدخول.</div><div id="additionLoadError" class="hidden"></div>
@@ -57,6 +70,20 @@
 
 
 
+
+
+<section id="ff46ReadinessPanel" class="card hidden" aria-label="مراجعة جاهزية الإصدار للتجربة الشاملة">
+ <div class="sectionbar"><h2>🧪 جاهزية النظام للتجربة الشاملة</h2><div class="flex"><button id="ff46Run" class="primary" type="button">فحص جاهزية النسخة</button><button id="ff46Export" class="outline" type="button" disabled>تصدير CSV</button><button id="ff46Close" class="outline" type="button">إغلاق</button></div></div>
+ <p class="ff46-desc"><b>للمدير العام فقط.</b> يفحص هذا القسم وجود الجداول وتفعيل RLS وحالة إتاحة دالة التصفير وبعض مؤشرات الحماية النصية للدوال الحساسة، ويرصد تغييرات الأدوار التي أعادت الصلاحيات إلى الافتراضي. <b>الفحص لا يثبت أمان النظام ولا يغني عن تجارب حسابات الموظفين.</b></p>
+ <div id="ff46Status" class="muted" role="status" aria-live="polite">اضغط «فحص جاهزية النسخة» لقراءة حالة قاعدة البيانات.</div>
+ <div id="ff46Summary" class="ff46-summary"></div>
+ <div class="sectionbar"><h3>ملاحظات ما قبل الإطلاق</h3><span id="ff46IssueCount" class="muted"></span></div>
+ <div id="ff46Alerts"></div>
+ <details><summary><b>فحص الجداول المطلوبة وRLS</b></summary><div class="ff46-tbl-wrap"><table class="ff46-table"><thead><tr><th>الجدول</th><th>موجود</th><th>RLS</th><th>كتابة anon</th></tr></thead><tbody id="ff46Modules"></tbody></table></div></details>
+ <details><summary><b>مسارات API الحساسة (فحص نصي)</b></summary><p class="muted">وجود اسم الصلاحية في تعريف الدالة مجرد مؤشر وليس اختبار سماح ومنع حقيقي.</p><div class="ff46-tbl-wrap"><table class="ff46-table"><thead><tr><th>الدالة</th><th>الصلاحية</th><th>موجودة</th><th>مؤشر الفحص</th><th>استدعاء مجهول</th></tr></thead><tbody id="ff46Rpcs"></tbody></table></div></details>
+ <details><summary><b>آخر تغييرات الأدوار والصلاحيات التي أُعيدت</b></summary><div id="ff46RoleEvents" class="ff46-desc"></div></details>
+ <p class="muted">التقييم للتطوير فقط. لن نعلن جاهزية الإنتاج إلا بعد نجاح التجربة الشاملة والتأكد من سلامة عزل الفروع والصلاحيات والحسابات.</p>
+</section>
 
 <section id="ff45AccessPanel" class="card hidden" aria-label="مراجعة العزل بين فروع Fresh Fries">
  <div class="sectionbar"><h2>🔐 مراجعة عزل الفروع والصلاحيات</h2><div class="flex"><button id="ff45Run" class="primary" type="button">فحص الوصول</button><button id="ff45Export" class="outline" type="button" disabled>تصدير CSV</button><button id="ff45Close" class="outline" type="button">إغلاق</button></div></div>
@@ -183,7 +210,7 @@
  <div class="row"><div><label>بريد الموظف</label><input id="addEmail" type="email" placeholder="example@email.com"></div><div><label>اسم الموظف</label><input id="addName" placeholder="اسم الموظف"></div><div><label>الدور</label><select id="addRole"><option value="driver">موصل</option><option value="cashier">كاشير</option><option value="customer_service">خدمة عملاء</option><option value="supervisor">مشرف مشاهدة</option></select></div></div>
  <div class="row"><div><label>الفرع (للموصل والكاشير)</label><select id="addBranch"></select></div></div><div class="actions"><button id="linkUserBtn" class="dark">ربط الحساب</button></div></div>
 
- <div class="card" id="staffAdminCard" hidden><div class="sectionbar"><h2>👥 إدارة الموظفين والحسابات</h2><button id="staffAdminRefresh" class="outline" type="button">تحديث الموظفين</button></div><p class="muted">المدير العام فقط. خدمة العملاء مركزية لجميع الفروع. لا يمكن تعطيل موصل لديه طلبات أو عروض نشطة.</p><div id="staffAdminList" class="empty">اضغط تحديث الموظفين لعرض الحسابات.</div><div class="sectionbar"><h3>🔐 الصلاحيات التفصيلية</h3></div><p class="muted">اختر الموظف من القائمة، ثم حدد السماح أو المنع أو العودة لافتراضيات الدور. تُفرض الصلاحيات على الطلبات والإسناد والإضافات والتحكم برفض الموصل. بعض الصلاحيات الإدارية الأخرى لا تزال قيد التكامل.</p><div class="row"><div><label>الموظف</label><select id="permissionEmployee"><option value="">اختر موظفًا</option></select></div><div style="align-self:end"><button id="permissionLoad" class="outline">عرض صلاحيات الموظف</button></div></div><div id="permissionMatrix"></div><div id="permissionAudit"></div><div class="sectionbar"><h3>📚 سجل تغييرات الموظفين</h3><button id="staffAuditRefresh" class="outline" type="button">عرض السجل</button></div><div id="staffAuditList"></div></div>
+ <div class="card" id="staffAdminCard" hidden><div class="sectionbar"><h2>👥 إدارة الموظفين والحسابات</h2><button id="staffAdminRefresh" class="outline" type="button">تحديث الموظفين</button></div><p class="muted">المدير العام فقط. خدمة العملاء مركزية لجميع الفروع. لا يمكن تعطيل موصل لديه طلبات أو عروض نشطة. <b>في v38.16:</b> عند تغيير الدور الوظيفي تُحذف الاستثناءات الفردية القديمة ويعود الموظف إلى صلاحيات دوره الجديد، مع تسجيل العملية. تغيير الفرع وحده لا يغيّر الصلاحيات.</p><div id="staffAdminList" class="empty">اضغط تحديث الموظفين لعرض الحسابات.</div><div class="sectionbar"><h3>🔐 الصلاحيات التفصيلية</h3></div><p class="muted">اختر الموظف من القائمة، ثم حدد السماح أو المنع أو العودة لافتراضيات الدور. تُفرض الصلاحيات على الطلبات والإسناد والإضافات والتحكم برفض الموصل. بعض الصلاحيات الإدارية الأخرى لا تزال قيد التكامل.</p><div class="row"><div><label>الموظف</label><select id="permissionEmployee"><option value="">اختر موظفًا</option></select></div><div style="align-self:end"><button id="permissionLoad" class="outline">عرض صلاحيات الموظف</button></div></div><div id="permissionMatrix"></div><div id="permissionAudit"></div><div class="sectionbar"><h3>📚 سجل تغييرات الموظفين</h3><button id="staffAuditRefresh" class="outline" type="button">عرض السجل</button></div><div id="staffAuditList"></div></div>
  <div id="serviceOnly" class="hidden"><div class="card"><h2>➕ إنشاء طلب توصيل يدوي (للاختبار)</h2><p class="muted">طلبات الاتصال أو واتساب تُدخل هنا وتُعتمد وتُعرض تلقائيًا على الموصل المتاح. اكتب كل صنف بصيغة: <b>2 تشكن فرايز | 1500</b> (السعر للوحدة). يظهر الطلب مركزيًا ويمكن عرضه على الموصل.</p>
  <div class="row"><div><label>الفرع</label><select id="newBranch"></select></div><div><label>هاتف العميل</label><input id="newPhone" inputmode="tel" placeholder="77xxxxxxx"></div><div><label>المنطقة</label><input id="newArea" placeholder="اسم المنطقة بالتحديد"></div></div>
  <div class="row"><div><label>رسوم التوصيل</label><input id="newFee" type="number" min="0" value="0"></div><div><label>ملاحظات الطلب</label><input id="newNotes" placeholder="ملاحظة العميل"></div></div>
@@ -269,11 +296,11 @@ $('clockInBtn').onclick=()=>perform('ff38_clock_in',{},'تم تسجيل الحض
 $('clockOutBtn').onclick=()=>perform('ff38_clock_out',{},'تم إنهاء الدوام');
 $('notificationsBtn').onclick=async()=>{ding();if('Notification'in window){let p=await Notification.requestPermission();toast(p==='granted'?'تم تفعيل إشعارات المتصفح':'الإشعارات غير مفعلة؛ أبقِ الصفحة مفتوحة')}else toast('الإشعارات غير مدعومة في هذا المتصفح')};
 $('createBtn').onclick=async()=>{let b=$('createBtn');try{b.disabled=true;let p_items=parseItems($('newItems').value);let x=await rpc('ff38_create_delivery_order',{p_branch:$('newBranch').value,p_phone:$('newPhone').value.trim(),p_area:$('newArea').value.trim(),p_items,p_delivery_fee:Number($('newFee').value||0),p_notes:$('newNotes').value});toast('تم اعتماد الطلب رقم '+x.order_number+' — التوزيع: '+(x.dispatch?.state==='offered'?'أُرسل عرض للموصل':x.dispatch?.state==='assigned_cumulative'?'أُسند تلقائيًا للموصل (تراكمي)':'بانتظار موصل متاح'));$('newItems').value='';$('newNotes').value='';await reload(true)}catch(e){toast('تعذر إنشاء الطلب: '+e.message)}finally{b.disabled=false}};
-async function loadStaffAdmin(){let box=$('staffAdminList');box.textContent='جاري تحميل الموظفين...';try{let arr=await rpc('ff38_admin_staff_list');box.innerHTML=arr.length?arr.map(p=>{const branches=(p.branches||[]).map(branchName).join('، ');const roles={customer_service:'خدمة عملاء مركزية',cashier:'كاشير',driver:'موصل',supervisor:'مشرف مشاهدة',manager:'مدير عام'};const choices=Object.entries(roles).filter(([k])=>k!=='manager').map(([k,v])=>`<option value="${k}" ${p.role===k?'selected':''}>${v}</option>`).join('');const branchesUI=(data.branches||[]).map(b=>`<label style="display:inline-flex;align-items:center;gap:5px;margin:5px 12px 5px 0"><input style="width:auto" type="checkbox" data-access-branch="${esc(p.user_id)}" value="${esc(b.id)}" ${(p.branches||[]).includes(b.id)?'checked':''}>${esc(b.name)}</label>`).join('');return `<div class="item"><div class="item-top"><b>${esc(p.name||'بدون اسم')}</b><span class="tag ${p.active?'ready':'offline'}">${p.active?'نشط':'معطّل'}</span></div><p class="muted">${esc(roles[p.role]||p.role)}${branches?' — '+esc(branches):''}</p>${p.role!=='manager'?`<div class="actions"><button class="${p.active?'outline':'good'}" data-staff-toggle="${esc(p.user_id)}" data-staff-active="${p.active?'false':'true'}">${p.active?'تعطيل الحساب':'إعادة تفعيل الحساب'}</button></div><div style="margin-top:12px;border:1px solid #e2e5e9;padding:10px;border-radius:10px"><label>تعديل الدور</label><select data-access-role="${esc(p.user_id)}">${choices}</select><div data-access-branches="${esc(p.user_id)}"><label>الفروع المسموحة (خدمة العملاء والمشرف مركزيان؛ الموصل فرع واحد). عند تحويل الموصل يجب إنهاء طلباته أولًا</label>${branchesUI}</div><button class="primary" data-save-access="${esc(p.user_id)}" style="margin-top:9px">حفظ الدور والفروع</button></div>`:''}</div>`}).join(''):'لا يوجد موظفون';}catch(e){box.textContent='تعذر تحميل الموظفين: '+e.message;}}
+async function loadStaffAdmin(){let box=$('staffAdminList');box.textContent='جاري تحميل الموظفين...';try{let arr=await rpc('ff38_admin_staff_list');box.innerHTML=arr.length?arr.map(p=>{const branches=(p.branches||[]).map(branchName).join('، ');const roles={customer_service:'خدمة عملاء مركزية',cashier:'كاشير',driver:'موصل',supervisor:'مشرف مشاهدة',manager:'مدير عام'};const choices=Object.entries(roles).filter(([k])=>k!=='manager').map(([k,v])=>`<option value="${k}" ${p.role===k?'selected':''}>${v}</option>`).join('');const branchesUI=(data.branches||[]).map(b=>`<label style="display:inline-flex;align-items:center;gap:5px;margin:5px 12px 5px 0"><input style="width:auto" type="checkbox" data-access-branch="${esc(p.user_id)}" value="${esc(b.id)}" ${(p.branches||[]).includes(b.id)?'checked':''}>${esc(b.name)}</label>`).join('');return `<div class="item"><div class="item-top"><b>${esc(p.name||'بدون اسم')}</b><span class="tag ${p.active?'ready':'offline'}">${p.active?'نشط':'معطّل'}</span></div><p class="muted">${esc(roles[p.role]||p.role)}${branches?' — '+esc(branches):''}</p>${p.role!=='manager'?`<div class="actions"><button class="${p.active?'outline':'good'}" data-staff-toggle="${esc(p.user_id)}" data-staff-active="${p.active?'false':'true'}">${p.active?'تعطيل الحساب':'إعادة تفعيل الحساب'}</button></div><div style="margin-top:12px;border:1px solid #e2e5e9;padding:10px;border-radius:10px"><label>تعديل الدور</label><select data-original-role="${esc(p.role)}" data-access-role="${esc(p.user_id)}">${choices}</select><div data-access-branches="${esc(p.user_id)}"><label>الفروع المسموحة (خدمة العملاء والمشرف مركزيان؛ الموصل فرع واحد). عند تحويل الموصل يجب إنهاء طلباته أولًا</label>${branchesUI}</div><button class="primary" data-save-access="${esc(p.user_id)}" style="margin-top:9px">حفظ الدور والفروع</button></div>`:''}</div>`}).join(''):'لا يوجد موظفون';}catch(e){box.textContent='تعذر تحميل الموظفين: '+e.message;}}
 $('staffAdminRefresh').onclick=loadStaffAdmin;
 $('staffAuditRefresh').onclick=async()=>{try{let arr=await rpc('ff38_admin_staff_audit');$('staffAuditList').innerHTML=arr.length?arr.map(a=>`<div class="item"><b>${a.action==='set_access'?'تعديل الدور والفروع':(a.new_data?.active?'إعادة تفعيل':'تعطيل')}</b> — ${esc(a.target_user_id)}<p class="muted">${esc(time(a.created_at))}</p></div>`).join(''):'لا توجد تغييرات مسجلة';}catch(e){toast('تعذر تحميل السجل: '+e.message)}};
 document.addEventListener('click',async e=>{let b=e.target.closest('button[data-staff-toggle]');if(!b)return;const active=b.dataset.staffActive==='true';if(!confirm(active?'هل تريد إعادة تفعيل هذا الموظف؟':'هل تريد تعطيل هذا الموظف؟'))return;b.disabled=true;try{await rpc('ff38_admin_staff_set_active',{p_user:b.dataset.staffToggle,p_active:active});toast(active?'تم تفعيل الحساب':'تم تعطيل الحساب');await loadStaffAdmin()}catch(err){toast('تعذر تغيير الحالة: '+err.message)}finally{b.disabled=false}});
-document.addEventListener('click',async e=>{const b=e.target.closest('button[data-save-access]');if(!b)return;const uid=b.dataset.saveAccess;const role=document.querySelector(`select[data-access-role="${uid}"]`)?.value;const branches=[...document.querySelectorAll(`input[data-access-branch="${uid}"]:checked`)].map(x=>x.value);if(!confirm('حفظ صلاحيات الموظف؟'))return;b.disabled=true;try{await rpc('ff38_admin_staff_set_access',{p_user:uid,p_role:role,p_branches:['driver','cashier'].includes(role)?branches:[]});toast('تم تحديث الدور والفروع');await loadStaffAdmin()}catch(err){toast('تعذر تحديث الصلاحيات: '+err.message)}finally{b.disabled=false}});
+document.addEventListener('click',async e=>{const b=e.target.closest('button[data-save-access]');if(!b)return;const uid=b.dataset.saveAccess;const role=document.querySelector(`select[data-access-role="${uid}"]`)?.value;const branches=[...document.querySelectorAll(`input[data-access-branch="${uid}"]:checked`)].map(x=>x.value);const oldRole=document.querySelector(`select[data-access-role="${uid}"]`)?.dataset.originalRole;const message=oldRole&&oldRole!==role?'تنبيه: تغيير الدور سيعيد الصلاحيات الفردية للموظف إلى افتراضيات الدور الجديد، وسيُسجل التغيير في سجل المراجعة. هل تؤكد؟':'حفظ الدور والفروع؟';if(!confirm(message))return;b.disabled=true;try{await rpc('ff38_admin_staff_set_access',{p_user:uid,p_role:role,p_branches:['driver','cashier'].includes(role)?branches:[]});toast('تم تحديث الدور والفروع');await loadStaffAdmin()}catch(err){toast('تعذر تحديث الصلاحيات: '+err.message)}finally{b.disabled=false}});
 $('linkUserBtn').onclick=async()=>{let b=$('linkUserBtn');try{b.disabled=true;let result=await rpc('ff38_admin_link_user',{p_email:$('addEmail').value.trim(),p_name:$('addName').value.trim(),p_role:$('addRole').value,p_branch:['driver','cashier'].includes($('addRole').value)?$('addBranch').value:null});toast('تم ربط الحساب بنجاح');$('addEmail').value='';$('addName').value='';await reload(true)}catch(e){toast('تعذر ربط الحساب: '+e.message)}finally{b.disabled=false}};
 document.addEventListener('click',async ev=>{let b=ev.target.closest('button[data-auto],button[data-manual],button[data-accept],button[data-reject],button[data-progress],button[data-cashier],button[data-open-addition],button[data-close-addition],button[data-save-addition],button[data-invoice-addition],button[data-cancel-addition],button[data-toggle-reject],button[data-cancel-order],button[data-check-reject]');if(!b)return; b.disabled=true;try{
  if(b.dataset.auto){let x=await rpc('ff38_dispatch',{p_order:b.dataset.auto,p_driver:null});toast(x.state==='offered'?'تم عرض الطلب على موصل':x.state==='assigned_cumulative'?'تم إسناد الطلب تلقائيًا (تراكمي)':'الطلب في الانتظار: '+x.state)}
@@ -1070,6 +1097,72 @@ $('ff45Export').addEventListener('click',ff45Export);
 $('ff45Close').addEventListener('click',()=>$('ff45AccessPanel').classList.add('hidden'));
 const ff45PrevDraw=draw;draw=function(){ff45PrevDraw();ff45Nav();};
 const ff45PrevReset=resetUI;resetUI=function(){ff45PrevReset();ff45Reset();};
+
+
+// v38.16 — read-only, manager-only readiness review; no data migration from the UI.
+let ff46Last=null,ff46Busy=false;
+function ff46Nav(){
+ const isManager=data?.role==='manager';
+ $('ff46ReadinessBtn').classList.toggle('hidden',!isManager);
+ if(!isManager)$('ff46ReadinessPanel').classList.add('hidden');
+}
+function ff46Reset(){
+ ff46Last=null;ff46Busy=false;
+ $('ff46ReadinessBtn').classList.add('hidden');
+ $('ff46ReadinessPanel').classList.add('hidden');
+ $('ff46Run').disabled=false;$('ff46Export').disabled=true;
+ for(const id of ['ff46Summary','ff46Alerts','ff46Modules','ff46Rpcs','ff46RoleEvents'])$(id).innerHTML='';
+ $('ff46Status').textContent='اضغط «فحص جاهزية النسخة» لقراءة حالة قاعدة البيانات.';
+ $('ff46IssueCount').textContent='';
+}
+function ff46Render(r){
+ const alerts=Array.isArray(r.alerts)?r.alerts:[],modules=Array.isArray(r.modules)?r.modules:[],rpcs=Array.isArray(r.rpcs)?r.rpcs:[];
+ const metrics=[['ملاحظات عالية الأولوية',r.high_count||0],['تحتاج مراجعة',r.review_count||0],['الجداول المطلوبة',modules.length]];
+ $('ff46Summary').innerHTML=metrics.map(([label,num])=>`<div class="stat"><span class="muted">${esc(label)}</span><strong>${esc(num)}</strong></div>`).join('');
+ $('ff46IssueCount').textContent=`${alerts.length} ملاحظة`;
+ $('ff46Alerts').innerHTML=alerts.length?alerts.map(a=>`<div class="ff46-result ${a.severity==='high'?'high':'review'}"><b>${a.severity==='high'?'⚠️ أولوية عالية':'🔎 مراجعة'} — ${esc(a.description)}</b><div class="muted ff45-mono">${esc(a.code)}</div></div>`).join(''):'<div class="empty">لم يجد الفحص الآلي ملاحظات وفق قواعده المحدودة. ما زالت الاختبارات الأمنية والتشغيلية مطلوبة.</div>';
+ const yesNo=x=>x===true?'نعم':'لا';
+ $('ff46Modules').innerHTML=modules.map(m=>`<tr><td class="ff45-mono">${esc(m.name)}</td><td>${yesNo(m.exists)}</td><td>${yesNo(m.rls)}</td><td>${yesNo(m.anon_write)}</td></tr>`).join('');
+ $('ff46Rpcs').innerHTML=rpcs.map(p=>`<tr><td class="ff45-mono">${esc(p.name)}</td><td class="ff45-mono">${esc(p.permission)}</td><td>${yesNo(p.exists)}</td><td>${p.guard_text_found?'موجود نصيًا':'غير مرصود'}</td><td>${yesNo(p.anon_execute)}</td></tr>`).join('');
+ $('ff46RoleEvents').innerHTML=(r.role_transitions||[]).length?(r.role_transitions||[]).map(x=>`<div class="ff46-result"><b>${esc(x.old_role)} ← ${esc(x.new_role)}</b><p class="muted">تمت إعادة ${esc(x.overrides_cleared)} صلاحية خاصة إلى الافتراضي · ${time(x.at)} · حساب ${esc(String(x.user_id||'').slice(0,8))}…</p></div>`).join(''):'<p class="muted">لم يسجل تحديث v38.16 تغييرات أدوار بعد تركيبه.</p>';
+ $('ff46Status').textContent=`فحص ${time(r.checked_at)} · حماية تحويل الدور: ${r.role_reset_guard?'مفعّلة':'غير مفعّلة'} · استدعاء التصفير: ${r.reset_rpc_exposed?'مكشوف':'مقيد'} · غير معتمد للإنتاج`;
+ $('ff46Export').disabled=false;
+}
+async function ff46Run(){
+ if(ff46Busy||data?.role!=='manager')return;
+ ff46Busy=true;$('ff46Run').disabled=true;$('ff46Export').disabled=true;
+ $('ff46Status').textContent='جارٍ فحص مؤشرات جاهزية النظام...';
+ try{
+  const r=await rpc('ff46_release_readiness');
+  if(!r||!Array.isArray(r.alerts)||!Array.isArray(r.rpcs)||!Array.isArray(r.modules))throw Error('استجابة الجاهزية غير مكتملة');
+  ff46Last=r;ff46Render(r);
+ }catch(e){ff46Last=null;$('ff46Status').textContent='تعذر الفحص: '+e.message;toast('فشل فحص الجاهزية: '+e.message)}
+ finally{ff46Busy=false;$('ff46Run').disabled=false;}
+}
+function ff46Export(){
+ if(!ff46Last)return;const r=ff46Last;
+ const rows=[['القسم','الاسم','الحالة','التفاصيل']];
+ for(const a of r.alerts||[])rows.push(['ملاحظة',a.code,a.severity,a.description]);
+ for(const m of r.modules||[])rows.push(['جدول',m.name,m.exists&&m.rls?'RLS مفعّل':'مراجعة مطلوبة',`anon_write=${m.anon_write}`]);
+ for(const p of r.rpcs||[])rows.push(['API',p.name,p.guard_text_found?'مؤشر موجود':'مؤشر غير موجود',`permission=${p.permission}; anon_execute=${p.anon_execute}`]);
+ for(const e of r.role_transitions||[])rows.push(['تغيير دور',String(e.user_id||''),`${e.old_role} → ${e.new_role}`,`overrides_cleared=${e.overrides_cleared}`]);
+ const csv='\uFEFF'+rows.map(a=>a.map(ff43Csv).join(',')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob);
+ const a=document.createElement('a');a.href=url;a.download='FreshFries_v38_16_Readiness_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+$('ff46ReadinessBtn').addEventListener('click',async()=>{
+ if(data?.role!=='manager')return;
+ $('ff46ReadinessPanel').classList.toggle('hidden');
+ if(!$('ff46ReadinessPanel').classList.contains('hidden')){
+  if(!ff46Last)await ff46Run();
+  $('ff46ReadinessPanel').scrollIntoView({behavior:'smooth',block:'start'});
+ }
+});
+$('ff46Run').addEventListener('click',ff46Run);
+$('ff46Export').addEventListener('click',ff46Export);
+$('ff46Close').addEventListener('click',()=>$('ff46ReadinessPanel').classList.add('hidden'));
+const ff46PrevDraw=draw;draw=function(){ff46PrevDraw();ff46Nav();};
+const ff46PrevReset=resetUI;resetUI=function(){ff46PrevReset();ff46Reset();};
 
 </script>
 </body></html>
