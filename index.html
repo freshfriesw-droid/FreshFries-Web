@@ -81,11 +81,30 @@
 .ff47-history>div{border-bottom:1px solid #e5e8eb;padding:8px}
 @media(max-width:700px){.ff47-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ff47-tools>*{min-width:100%!important}}
 
+
+/* v38.18: deploy compatibility + diagnostic aggregates (no personal data). */
+.ff48-version{display:inline-flex;align-items:center;gap:6px;font-size:11px;border-radius:20px;padding:5px 9px;background:#eef1f5;color:#465365;max-width:350px}
+.ff48-version.good{background:#e6f6eb;color:#126c3c}
+.ff48-version.bad{background:#fff0e9;color:#9f2e2e}
+.ff48-version.unknown{background:#fff5da;color:#755300}
+.ff48-items{display:grid;gap:8px;margin:13px 0}
+.ff48-item{border:1px solid #e1e5e9;background:#fafbfc;padding:10px;border-radius:10px;overflow-wrap:anywhere}
+.ff48-item b{display:block;font-size:14px;margin:3px 0}
+.ff48-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
 </style>
 </head>
 <body>
-<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.17 · مركز اعتماد الاختبار</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><button id="ff47QABtn" class="outline hidden" type="button">📋 الاختبار الشامل</button><button id="ff46ReadinessBtn" class="outline hidden" type="button">🧪 جاهزية الإطلاق</button><button id="ff45AccessBtn" class="outline hidden" type="button">🔐 عزل الفروع</button><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
+<header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.18 · استقرار النسخة والتشخيص</small></div><div class="sub">منصة خدمة العملاء والتوصيل — بيئة التطوير</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><span id="ff48VersionStatus" class="ff48-version hidden" role="status" aria-live="polite">فحص توافق الإصدار...</span><button id="ff48DiagnosticsBtn" class="outline hidden" type="button">🩺 تشخيص النسخة</button><button id="ff47QABtn" class="outline hidden" type="button">📋 الاختبار الشامل</button><button id="ff46ReadinessBtn" class="outline hidden" type="button">🧪 جاهزية الإطلاق</button><button id="ff45AccessBtn" class="outline hidden" type="button">🔐 عزل الفروع</button><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
 <main>
+<section id="ff48DiagnosticsPanel" class="card hidden" aria-label="تشخيص الإصدار والأخطاء التقنية">
+ <div class="sectionbar"><h2>🩺 تشخيص النسخة والأخطاء التقنية</h2><div class="ff48-actions"><button id="ff48Refresh" class="primary" type="button">تحديث التشخيص</button><button id="ff48Export" class="outline" type="button" disabled>تصدير CSV</button><button id="ff48Close" class="outline" type="button">إغلاق</button></div></div>
+ <p class="muted">للمدير العام في بيئة التجارب. يعرض توافق إصدار الواجهة مع قاعدة البيانات وعدد إخفاقات الدوال والأخطاء التقنية خلال آخر سبعة أيام. لا يخزن نص الخطأ أو محتوى الطلبات أو أرقام العملاء أو كلمات المرور. الفحص ليس شهادة أمان أو اعتمادًا للإطلاق.</p>
+ <div id="ff48Status" role="status" aria-live="polite" class="statusbar">اضغط تحديث التشخيص لعرض النتائج.</div>
+ <div id="ff48Summary" class="ff48-items"></div>
+ <div id="ff48Rows" class="ff48-items"></div>
+</section>
+
 <div class="warning">نسخة تجريبية مستقلة. لا تربطها بفرع يعمل فعليًا قبل اختبار قاعدة البيانات والصلاحيات والتوزيع. لا تستخدمها لطلبات عملاء حقيقيين الآن.</div>
 <div id="connection" class="statusbar">جاهز لتسجيل الدخول.</div><div id="additionLoadError" class="hidden"></div>
 
@@ -99,7 +118,7 @@
  <div class="sectionbar"><h2>📋 مركز التجربة الشاملة</h2><div class="flex"><button id="ff47Reload" type="button" class="outline">تحديث النتائج</button><button id="ff47Close" type="button" class="outline">إغلاق</button></div></div>
  <p class="muted">مخصص للمدير العام على <b>قاعدة التطوير فقط</b>. جهزنا سيناريوهات كل أقسام Fresh Fries في جولة واحدة؛ نسجل نتيجة كل سيناريو عندما نبدأ التجربة النهائية، ولا نحتاج إلى تجربتها الآن. لا تسجل أرقام العملاء أو كلمات المرور في الملاحظات.</p>
  <div class="ff47-tools">
-  <label>رقم النسخة<input id="ff47Version" type="text" maxlength="40" value="v38.17" autocomplete="off"></label>
+  <label>رقم النسخة<input id="ff47Version" type="text" maxlength="40" value="v38.18" autocomplete="off"></label>
   <label>عنوان الجولة<input id="ff47Title" type="text" maxlength="120" value="التجربة الشاملة قبل الإطلاق" autocomplete="off"></label>
   <button id="ff47Create" type="button" class="primary">إنشاء جولة اختبار</button>
  </div>
@@ -1350,6 +1369,112 @@ $('ff47Finish').addEventListener('click',()=>ff47ChangeRunState('completed'));
 $('ff47Reopen').addEventListener('click',()=>ff47ChangeRunState('in_progress'));
 const ff47PreviousDraw=draw;draw=function(){ff47PreviousDraw();ff47Nav()};
 const ff47PreviousReset=resetUI;resetUI=function(){ff47PreviousReset();ff47Reset()};
+
+
+// v38.18 | Privacy-preserving diagnostic capture + explicit UI/database compatibility.
+const FF48_UI_VERSION='v38.18';
+let ff48DbVersion=null,ff48LastCheck=0,ff48Checking=false,ff48SummaryData=null;
+const ff48ReportThrottle=new Map();
+function ff48Report(eventCode,actionKey){
+ if(!client||!user||!data?.role)return;
+ const action=String(actionKey||'app_runtime').toLowerCase();
+ if(!/^[a-z][a-z0-9_]{0,79}$/.test(action))return;
+ if(!['rpc_failure','runtime_error','promise_error','version_mismatch'].includes(eventCode))return;
+ const key=eventCode+'|'+action,now=Date.now();
+ if(now-(ff48ReportThrottle.get(key)||0)<5*60*1000)return;
+ ff48ReportThrottle.set(key,now);
+ // No raw error string, request arguments, stack trace, personal data, or token is transmitted.
+ try{Promise.resolve(client.rpc('ff48_report_client_event',{
+   p_event:eventCode,p_action:action,p_client_version:FF48_UI_VERSION
+ })).catch(()=>{});}catch{}
+}
+function ff48SetVersion(text,status){
+ const el=$('ff48VersionStatus');el.textContent=text;
+ el.classList.remove('hidden','good','bad','unknown');el.classList.add(status||'unknown');
+}
+async function ff48CheckVersion(force=false){
+ if(!client||!user||!data?.role||ff48Checking)return;
+ if(!force && Date.now()-ff48LastCheck<60000)return;
+ ff48Checking=true;ff48LastCheck=Date.now();
+ try{
+  const {data:info,error}=await client.rpc('ff48_release_info');
+  if(error)throw Error('version_check_failed');
+  const db=String(info?.database_version||'');
+  if(!/^v\d+\.\d+$/.test(db))throw Error('version_missing');
+  ff48DbVersion=db;
+  if(db===FF48_UI_VERSION)ff48SetVersion('✓ الواجهة وقاعدة البيانات: '+db,'good');
+  else{ff48SetVersion('⚠ اختلاف النسخ: الواجهة '+FF48_UI_VERSION+' / القاعدة '+db,'bad');ff48Report('version_mismatch','release_info');}
+ }catch{
+  ff48DbVersion=null;ff48SetVersion('⚠ تعذر التحقق من إصدار قاعدة البيانات','unknown');
+ }finally{ff48Checking=false;}
+}
+function ff48Nav(){
+ const isManager=data?.role==='manager';
+ $('ff48DiagnosticsBtn').classList.toggle('hidden',!isManager);
+ if(!isManager)$('ff48DiagnosticsPanel').classList.add('hidden');
+}
+function ff48Reset(){
+ ff48DbVersion=null;ff48LastCheck=0;ff48Checking=false;ff48SummaryData=null;ff48ReportThrottle.clear();
+ $('ff48VersionStatus').classList.add('hidden');
+ $('ff48DiagnosticsBtn').classList.add('hidden');$('ff48DiagnosticsPanel').classList.add('hidden');
+ $('ff48Status').textContent='اضغط تحديث التشخيص لعرض النتائج.';
+ $('ff48Summary').innerHTML='';$('ff48Rows').innerHTML='';$('ff48Export').disabled=true;
+}
+async function ff48Load(){
+ if(data?.role!=='manager')return;
+ const b=$('ff48Refresh');b.disabled=true;$('ff48Status').textContent='جاري تحميل ملخص الأعطال من Supabase...';
+ try{
+  await ff48CheckVersion(true);
+  const summary=await rpc('ff48_diagnostics_summary');
+  if(!summary||!Array.isArray(summary.events))throw Error('صيغة البيانات غير مكتملة');
+  ff48SummaryData=summary;
+  $('ff48Status').textContent='بيئة التجارب • آخر 7 أيام • لا توجد رسائل خطأ خام في السجل.';
+  $('ff48Summary').innerHTML=`<div class="ff48-item"><span>إصدار الواجهة</span><b>${esc(FF48_UI_VERSION)}</b></div>
+  <div class="ff48-item"><span>إصدار القاعدة</span><b>${esc(summary.database_version||'غير معروف')}</b></div>
+  <div class="ff48-item"><span>إجمالي أحداث الأخطاء</span><b>${esc(summary.total_events||0)}</b> • حسابات تعرضت لأخطاء: ${esc(summary.affected_accounts||0)}</div>`;
+  $('ff48Rows').innerHTML=summary.events.length?summary.events.map(x=>`<div class="ff48-item">
+   <b>${esc(x.action)} · ${esc(x.event)}</b><div class="muted">الدور: ${esc(x.role)} · إصدار الواجهة: ${esc(x.client_version)} · التكرار: ${esc(x.count)} · آخر مرة: ${esc(time(x.latest_at))}</div>
+  </div>`).join(''):'<div class="empty">لا توجد أعطال تقنية مُسجلة خلال الأيام السبعة الأخيرة. لا يعني ذلك أن جميع الوظائف مختبرة.</div>';
+  $('ff48Export').disabled=false;
+ }catch(e){$('ff48Status').textContent='تعذر تحميل التشخيص: '+e.message;}
+ finally{b.disabled=false;}
+}
+function ff48ExportCSV(){
+ if(!ff48SummaryData)return;
+ const rows=[['الحدث','الدالة أو العملية','دور الموظف','إصدار الواجهة','عدد التكرارات','آخر ظهور']];
+ for(const x of ff48SummaryData.events)rows.push([x.event,x.action,x.role,x.client_version,x.count,x.latest_at]);
+ const encoded='\uFEFF'+rows.map(r=>r.map(ff47CsvCell).join(',')).join('\r\n');
+ const blob=new Blob([encoded],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob);
+ const a=document.createElement('a');a.href=url;a.download='FreshFries_v38_18_Diagnostics_'+new Date().toISOString().slice(0,10)+'.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+$('ff48DiagnosticsBtn').addEventListener('click',async()=>{
+ if(data?.role!=='manager')return;
+ $('ff48DiagnosticsPanel').classList.toggle('hidden');
+ if(!$('ff48DiagnosticsPanel').classList.contains('hidden')){
+  await ff48Load();$('ff48DiagnosticsPanel').scrollIntoView({behavior:'smooth',block:'start'});
+ }
+});
+$('ff48Refresh').addEventListener('click',ff48Load);
+$('ff48Export').addEventListener('click',ff48ExportCSV);
+$('ff48Close').addEventListener('click',()=>$('ff48DiagnosticsPanel').classList.add('hidden'));
+// Wrapping RPC only observes failures. The original exceptions and response flow remain unchanged.
+const ff48OriginalRpc=rpc;
+rpc=async function(name,args={}){
+ try{return await ff48OriginalRpc(name,args)}
+ catch(e){if(!String(name).startsWith('ff48_'))ff48Report('rpc_failure',name);throw e;}
+};
+window.addEventListener('error',()=>ff48Report('runtime_error','app_runtime'));
+window.addEventListener('unhandledrejection',()=>ff48Report('promise_error','app_promise'));
+const ff48PreviousReload=reload;
+reload=async function(...args){
+ const response=await ff48PreviousReload(...args);
+ if(user&&data?.role)void ff48CheckVersion();
+ return response;
+};
+const ff48PreviousDraw=draw;
+draw=function(){ff48PreviousDraw();ff48Nav()};
+const ff48PreviousReset=resetUI;
+resetUI=function(){ff48PreviousReset();ff48Reset()};
 
 </script>
 </body></html>
