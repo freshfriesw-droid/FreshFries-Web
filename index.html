@@ -1955,8 +1955,30 @@ document.addEventListener('click',e=>{const b=e.target.closest('button[data-manu
 $('ff49ManualClose').onclick=()=>$('ff49ManualPanel').classList.add('hidden');
 $('ff49ManualConfirm').onclick=async()=>{
  const b=$('ff49ManualConfirm');b.disabled=true;try{
-  const result=await rpc('ff49_manual_dispatch',{p_order:ff49ManualOrderId,p_driver:$('ff49ManualDriver').value,p_reason:$('ff49ManualReason').value.trim()});
-  if(result.state==='offered'||result.state==='assigned_cumulative'){toast(result.state==='offered'?'تم إرسال عرض جديد للموصل':'تم إسناد الطلب مباشرة');$('ff49ManualPanel').classList.add('hidden')}else{toast('لم يتم إرسال عرض جديد: '+(result.reason||result.state||'غير معروف'))}await reload(true);
+  const driver=$('ff49ManualDriver').value;
+  const reason=$('ff49ManualReason').value.trim();
+  if(!driver)throw Error('اختر موصلًا متصلًا لديه سعة متاحة');
+  if(reason.length<5)throw Error('اكتب سبب الإسناد بخمسة أحرف على الأقل');
+  let result=await rpc('ff49_manual_dispatch',{p_order:ff49ManualOrderId,p_driver:driver,p_reason:reason});
+  let reoffered=false;
+  // A previous refusal/timeout is intentionally excluded by ff38 dispatch.
+  // Only in that case, ask the Stage-6 server function to validate and reoffer.
+  if(result && result.state==='queued' && result.reason==='no_eligible_driver'){
+   try{
+    result=await rpc('ff60_manual_reoffer',{p_order:ff49ManualOrderId,p_driver:driver,p_reason:reason});
+    reoffered=true;
+   }catch(reofferError){
+    throw Error('تعذر الإسناد المعتاد، ولم تقبل قاعدة البيانات إعادة العرض: '+reofferError.message);
+   }
+  }
+  const state=String(result?.state||'');
+  if(reoffered || state==='offered' || state==='assigned_cumulative'){
+   toast(reoffered?'تم إنشاء إعادة عرض للموصل؛ بانتظار قبوله':state==='offered'?'تم إرسال عرض جديد للموصل':'تم إسناد الطلب مباشرة');
+   $('ff49ManualPanel').classList.add('hidden');
+  }else{
+   toast('لم يتم إرسال عرض جديد: '+(result?.reason||state||'غير معروف'));
+  }
+  await reload(true);
  }catch(e){toast('تعذر الإسناد: '+e.message)}finally{b.disabled=false}
 };
 </script>
