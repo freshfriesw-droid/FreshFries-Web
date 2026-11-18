@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fresh Fries LUXE — المرحلة السادسة — دورة الطلب التشغيلية (تجريبي)</title>
+<title>Fresh Fries LUXE — V11 نقطة التجميع (بيئة اختبار فقط)</title>
 <style>
 :root{--red:#d51e2c;--dark:#1a1a1a;--bg:#f6f6f6;--line:#e5e5e5;--muted:#767676;--good:#222222;--amber:#b31d27}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ffb-ink);font-family:Tahoma,Arial,sans-serif;font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:11px 14px;background:var(--ffb-soft2);color:var(--ffb-ink);font-weight:700}button:disabled{opacity:.48;cursor:not-allowed}button.primary{background:var(--red);color:white}button.dark{background:var(--dark);color:#fff}button.good{background:var(--good);color:#fff}button.outline{background:white;border:1px solid var(--line)}.head{background:var(--dark);color:white;border-bottom:4px solid var(--red);padding:14px max(14px,env(safe-area-inset-right));display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.brand{font-size:21px;font-weight:900}.brand span{color:#ff4d56}.sub{font-size:12px;color:#bebebe;margin-top:5px}.head .sub{max-width:420px}main{max-width:1170px;margin:auto;padding:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:var(--ffb-surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:13px;box-shadow:0 1px 2px #00000009}.card h2,.card h3{margin:0 0 12px;font-size:17px}.muted{color:var(--muted);font-size:12px}.stat{background:var(--ffb-surface);padding:13px;border:1px solid var(--line);border-radius:12px}.stat strong{font-size:23px;display:block;margin-top:4px}.flex{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:12px;font-weight:bold;margin:10px 0 5px}input,select,textarea{width:100%;padding:12px;border:1px solid #d9d9d9;background:var(--ffb-surface);border-radius:8px;outline:0}input:focus,textarea:focus,select:focus{border-color:var(--red)}textarea{resize:vertical;min-height:84px}.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.tag{font-size:12px;padding:5px 9px;border-radius:20px;background:var(--ffb-soft);white-space:nowrap;display:inline-block}.ready{background:var(--ffb-soft2);color:var(--ffb-ink)}.busy{background:var(--ffb-redwash);color:var(--ffb-redink)}.offline{background:var(--ffb-soft);color:var(--ffb-muted)}.warning{background:var(--ffb-redwash);border:1px solid #f1a9ae;border-radius:10px;padding:11px;color:var(--ffb-redink);margin:10px 0}.item{padding:12px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.tiny{font-size:12px}.note{padding:12px;border-radius:9px;background:var(--ffb-soft);margin:10px 0;line-height:1.9;white-space:pre-line}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}.topinfo{font-size:12px;color:#e6e6e6}.hidden{display:none!important}.login{position:fixed;inset:0;z-index:1000;background:#1a1a1aeb;display:flex;align-items:center;justify-content:center;padding:14px}.loginbox{width:min(440px,100%);background:white;border-radius:17px;padding:24px}.loginbox h2{margin-top:0}.alert{position:fixed;bottom:18px;right:15px;left:15px;z-index:1002;max-width:700px;margin:auto;background:#282828;color:white;padding:13px;border-radius:12px;box-shadow:0 3px 20px #0003}.chip{background:var(--ffb-soft);border-radius:7px;padding:8px 10px;font-size:12px}.danger{color:var(--red)}.offer{border-right:5px solid var(--red);background:var(--ffb-redwash);padding:12px;border-radius:10px;margin:10px 0}.notice{border-right:4px solid #e14650;padding-right:12px}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:9px}.pill{font-size:11px;color:#fff;background:var(--red);padding:3px 8px;border-radius:30px}footer{text-align:center;color:var(--muted);font-size:11px;margin:28px 0}.version{color:#b1b1b1;font-size:11px}.btnlink{background:none;border:0;color:var(--red);padding:4px;text-decoration:underline}.statusbar{background:var(--ffb-soft);padding:9px 12px;border-radius:8px;color:var(--ffb-muted);font-size:12px;margin:10px 0}.sectionbar{margin:15px 0 8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}.sectionbar h2{font-size:17px;margin:0}@media(max-width:840px){.grid{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}}@media(max-width:520px){.row{grid-template-columns:1fr}.brand{font-size:19px}.grid{grid-template-columns:repeat(2,1fr)}main{padding:10px}.card{padding:13px}}@media(prefers-reduced-motion:no-preference){.offer{animation:pulse 1.6s infinite}@keyframes pulse{50%{box-shadow:0 0 0 2px #f7c8cb}}}
@@ -125,6 +125,7 @@ body.ffx-compact .card{padding:12px;margin-bottom:8px}body.ffx-compact .ffx-kpi{
 @media(max-width:380px){.ffx-show-tiles{grid-template-columns:1fr}.ffx-top-intro{display:none}}
 
 </style>
+<style id="ff-fee-history-style">.ff-fee-history{font-size:12px;font-weight:800;color:var(--ffb-redink);background:var(--ffb-redwash);padding:9px 12px;border-right:3px solid var(--ffb-red);border-radius:9px;margin:12px 0 5px}.ff-fee-history.hidden{display:none!important}</style>
 <style id="ffb-brand">
 /* FRESH FRIES — brand layer: RED / BLACK / WHITE. The drawer (sidebar) design language is applied system-wide. */
 body{--ffb-red:#d51e2c;--ffb-red2:#ff2d3f;--ffb-black:#111113;--ffb-bg:#f4f4f5;--ffb-surface:#fff;--ffb-soft:#f7f7f8;--ffb-soft2:#eeeeef;--ffb-line:#e3e3e5;--ffb-ink:#161618;--ffb-muted:#6a6a70;--ffb-redwash:#fff1f2;--ffb-redink:#b3121f;
@@ -242,6 +243,11 @@ footer{color:var(--ffb-muted)}
 #ff2-network{position:fixed;top:0;left:0;right:0;z-index:2147483000;background:#a51d2c;color:white;text-align:center;padding:9px;font-weight:800;display:none;direction:rtl}
 @media(max-width:410px){#ff2-actions{grid-template-columns:1fr}#ff2-launch{left:10px;bottom:12px}}
 @media(prefers-reduced-motion:reduce){#ff2-panel *{transition:none!important}}
+</style>
+<style id="ff60-countdown-fix">.ff60-live-countdown{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate;display:inline-block;min-width:42px}.ff60-countdown-urgent{color:#c51d2b;font-weight:900}</style>
+<style id="ff-assembly-css">
+.ff-assembly-stale{color:var(--ffb-redink);font-weight:900;padding:7px 0}
+#ff-assembly-monitor{border-top:4px solid var(--ffb-red)}.ff-assembly-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}.ff-assembly-order{padding:14px;border:1px solid var(--ffb-line);border-radius:14px;background:var(--ffb-surface)}.ff-assembly-order strong{font-size:18px}.ff-assembly-stage{font-weight:900;color:var(--ffb-redink)}.ff-assembly-time{font-variant-numeric:tabular-nums;font-weight:800}.ff-assembly-time.late{color:var(--ffb-redink)}.ff-assembly-time.warn{color:#b16b00}.ff-assembly-items{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8;margin:8px 0}.ff-assembly-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:12px 0}
 </style>
 </head>
 <body>
@@ -428,10 +434,17 @@ footer{color:var(--ffb-muted)}
  <div class="row"><div><label>الفرع (للموصل والكاشير)</label><select id="addBranch"></select></div></div><div class="actions"><button id="linkUserBtn" class="dark">ربط الحساب</button></div></div>
 
  <div class="card" id="staffAdminCard" hidden><div class="sectionbar"><h2>👥 إدارة الموظفين والحسابات</h2><button id="staffAdminRefresh" class="outline" type="button">تحديث الموظفين</button></div><p class="muted">المدير العام فقط. خدمة العملاء مركزية لجميع الفروع. لا يمكن تعطيل موصل لديه طلبات أو عروض نشطة. <b>في v38.16:</b> عند تغيير الدور الوظيفي تُحذف الاستثناءات الفردية القديمة ويعود الموظف إلى صلاحيات دوره الجديد، مع تسجيل العملية. تغيير الفرع وحده لا يغيّر الصلاحيات.</p><div id="staffAdminList" class="empty">اضغط تحديث الموظفين لعرض الحسابات.</div><div class="sectionbar"><h3>🔐 الصلاحيات التفصيلية</h3></div><p class="muted">اختر الموظف من القائمة، ثم حدد السماح أو المنع أو العودة لافتراضيات الدور. تُفرض الصلاحيات على الطلبات والإسناد والإضافات والتحكم برفض الموصل. بعض الصلاحيات الإدارية الأخرى لا تزال قيد التكامل.</p><div class="row"><div><label>الموظف</label><select id="permissionEmployee"><option value="">اختر موظفًا</option></select></div><div style="align-self:end"><button id="permissionLoad" class="outline">عرض صلاحيات الموظف</button></div></div><div id="permissionMatrix"></div><div id="permissionAudit"></div><div class="sectionbar"><h3>📚 سجل تغييرات الموظفين</h3><button id="staffAuditRefresh" class="outline" type="button">عرض السجل</button></div><div id="staffAuditList"></div></div>
- <div id="serviceOnly" class="hidden"><div class="card ff-neworder-workspace"><h2>🍟 طلب جديد — خدمة العملاء</h2><p class="muted">أنشئ الطلب بخطوات واضحة: بيانات العميل ← اختيار الأصناف أو الكتابة السريعة ← معاينة دقيقة ← اعتماد وتوزيع تلقائي وفق الصلاحيات.</p>
+ <section id="ff-assembly-monitor" class="card hidden" aria-label="لوحة نقطة التجميع">
+<h2>📦 نقطة التجميع — متابعة التحضير والتسليم</h2>
+<p class="muted">لوحة متابعة حية للطلبات الظاهرة لحسابك، دون صلاحية تغيير حالة الكاشير أو تسليم الطلب. تفعيل إجراءات التجميع يتطلب وظائف خادم وصلاحيات مستقلة قبل الإطلاق.</p>
+<div class="ff-assembly-toolbar"><label for="ff-assembly-branch">الفرع <select id="ff-assembly-branch"><option value="">كل الفروع المصرح بها</option></select></label><button id="ff-assembly-refresh" type="button" class="outline">تحديث الطلبات</button></div>
+<div id="ff-assembly-freshness" class="muted" role="status" aria-live="polite">بانتظار أول تحديث من قاعدة البيانات</div><div id="ff-assembly-summary" class="muted" aria-live="polite"></div><div id="ff-assembly-orders" class="ff-assembly-grid"></div>
+</section>
+<div id="serviceOnly" class="hidden"><div class="card ff-neworder-workspace"><h2>🍟 طلب جديد — خدمة العملاء</h2><p class="muted">أنشئ الطلب بخطوات واضحة: بيانات العميل ← اختيار الأصناف أو الكتابة السريعة ← معاينة دقيقة ← اعتماد وتوزيع تلقائي وفق الصلاحيات.</p>
  <div class="ff-step-label">01 <span>بيانات العميل</span></div>
  <div class="row"><div><label>الفرع</label><select id="newBranch"></select></div><div><label>هاتف العميل</label><input id="newPhone" inputmode="tel" placeholder="77xxxxxxx"></div><div><label>المنطقة</label><input id="newArea" placeholder="اسم المنطقة بالتحديد"></div></div>
- <div class="row"><div><label>رسوم التوصيل</label><input id="newFee" type="number" min="0" placeholder="اكتب الأجرة أو 0 للمجاني"></div><div><label>ملاحظات الطلب</label><input id="newNotes" placeholder="ملاحظة العميل"></div></div>
+ <div id="ff-fee-history" class="ff-fee-history hidden" role="status" aria-live="polite"></div>
+ <div class="row"><div><label>رسوم التوصيل</label><input id="newFee" type="number" min="0" step="0.01" placeholder="اكتب الأجرة أو 0 للمجاني"></div><div><label>ملاحظات الطلب</label><input id="newNotes" placeholder="ملاحظة العميل"></div></div>
  <div id="ffbRequiredMore" hidden><input type="hidden" id="newCustomerName" value=""><select id="newChannel" hidden><option value="phone">اتصال هاتفي</option></select><input type="hidden" id="newFullAddress" value=""></div>
  <div class="ff-step-label">02 <span>أصناف الطلب</span></div><div class="ffb-order-tabs"><button type="button" class="primary" id="ffbTabMenu">🍟 المنيو التفاعلي</button><button type="button" class="outline" id="ffbTabText">✍️ الكتابة السريعة</button></div>
  <div id="ffbMenuPanel"><div class="ffb-menu-head"><input id="ffbMenuSearch" placeholder="🔎 ابحث عن صنف أو عرض" aria-label="بحث في المنيو"><button type="button" id="ffbMenuReload" class="outline">تحديث المنيو</button></div><div id="ffbCategories" class="ffb-categories" aria-label="أقسام المنيو"></div><div class="ffb-order-layout"><div id="ffbMenuGrid" class="ffb-menu-grid"></div><div class="ffb-v2-cart"><h3>🧾 سلة الطلب</h3><div id="ffbCart"></div><p class="muted">اضغط الصنف لزيادة الكمية، واستخدم + أو − للتعديل. رفع الصور المركزي يعمل بعد تطبيق ملف ترقية الوسائط.</p></div></div></div>
@@ -530,6 +543,18 @@ footer{color:var(--ffb-muted)}
 </main>
 <div id="loginOverlay" class="login"><div class="loginbox"><h2>🔐 دخول نظام Fresh Fries</h2><p class="muted">استخدم بريد وكلمة مرور حسابك في Supabase. حساب الموصل يجب أن يكون مربوطًا من المدير.</p><label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="username" placeholder="example@email.com"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" placeholder="••••••••"><div class="actions"><button id="loginBtn" class="primary" style="width:100%">تسجيل الدخول</button></div><div class="statusbar" id="loginStatus">في أول تجربة، ادخل بحساب المدير الحالي.</div></div></div>
 <div id="toast" class="alert hidden"></div>
+<script id="ff-fee-safety">
+/* Prevent blank delivery fees from silently becoming zero; zero is explicit. */
+window.ffRequiredDeliveryFee=function(value){
+ const raw=String(value??'').trim();
+ if(raw==='')throw new Error('رسوم التوصيل مطلوبة؛ اكتب 0 فقط إذا كان التوصيل مجانياً');
+ // Only ordinary decimal money values; reject hex, exponent, Infinity and separators.
+ if(!/^(?:\d+)(?:\.\d{1,2})?$/.test(raw))throw new Error('رسوم التوصيل يجب أن تكون رقماً عشرياً غير سالب');
+ const amount=Number(raw);
+ if(!Number.isSafeInteger(Math.round(amount*100)))throw new Error('رسوم التوصيل تتجاوز الحد المسموح');
+ return amount;
+};
+</script>
 <script>/* ffb: skip identical re-renders on poll-driven lists */
 /* Stable lists: preserve the browser DOM; do not override Element.prototype.innerHTML. */
 </script>
@@ -593,8 +618,8 @@ function drawOrders(){if($('additionItemsInput'))additionDraft=$('additionItemsI
 function drawCashier(){const arr=(data.orders||[]).filter(o=>o.phase&&o.phase!=='delivered'&&(o.cashier_stage!=='handed_over'||additionsFor(o).some(a=>a.status==='pending'||a.late_state==='invoiced')));const steps=['waiting','printed','preparing','ready','handed_over'];const next={waiting:'printed',printed:'preparing',preparing:'ready',ready:'handed_over'};const labels={printed:'تم قطع الطلب في برنامج الكاشير',preparing:'بدء التحضير',ready:'الطلب جاهز',handed_over:'تم تسليم الطلب للموصل'};
  $('cashierOrders').innerHTML=arr.length?arr.map(o=>`<div class="item"><div class="item-top"><strong>طلب #${esc(o.number)}</strong><span class="tag busy">${esc(cashierNames[o.cashier_stage]||'')}</span></div><p>🛵 <b>الموصل: ${esc(o.driver_name||driverName(o.driver_id))}</b></p><p>${esc(o.customer_name||"عميل")} · ${esc(o.full_address||o.area)} · ${esc(o.phone)}</p>${o.external_invoice_ref?`<p class="tiny">مرجع فاتورة MicroPOS: <b>${esc(o.external_invoice_ref)}</b></p>`:''}<div class="note">${itemLines(o)}</div>${o.notes?`<p class="muted">📝 ${esc(o.notes)}</p>`:''}${totalPanel(o)}${additionsPanel(o,"cashier")}<div class="actions">${o.cashier_stage==='waiting'?(o.cashier_received_at?`<button class="primary" data-ff49-invoice="${esc(o.id)}">🧾 تم القطع — تسجيل رقم فاتورة MicroPOS</button>`:`<button class="primary" data-ff49-receive="${esc(o.id)}">📥 استلمت الطلب</button>`):next[o.cashier_stage]?`<button class="primary" data-cashier="${esc(o.id)}" data-stage="${esc(next[o.cashier_stage])}">${esc(labels[next[o.cashier_stage]])}</button>`:""}</div></div>`).join(''):'<div class="empty">لا توجد طلبات مسندة لموصلين في هذا الفرع.</div>'}
 function fillBranchSelects(){for(const id of ['newBranch','addBranch']){let el=$(id);let old=el.value;el.innerHTML=(data.branches||[]).map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');if(data.branches.some(b=>b.id===old))el.value=old}let f=$('orderBranchFilter');if(f){let old=f.value;f.innerHTML='<option value="">كل الفروع</option>'+(data.branches||[]).map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');f.value=(data.branches||[]).some(b=>b.id===old)?old:''}}
-function draw(){if(!data)return;$('createBtn').disabled=!canAction('create_order');$('createBtn').title=canAction('create_order')?'':'إنشاء الطلبات ممنوع وفق صلاحيات حسابك';$('auditCard').classList.toggle('hidden',!canAction('view_reports')||!['manager','customer_service'].includes(data.role));$('identity').textContent=user?.email+' — '+({manager:'المدير العام',driver:'موصل',cashier:'الكاشير',customer_service:'خدمة العملاء',supervisor:'مشرف'}[data.role]||data.role);$('driverView').classList.toggle('hidden',data.role!=='driver');$('staffView').classList.toggle('hidden',!['manager','customer_service','supervisor'].includes(data.role));$('cashierView').classList.toggle('hidden',data.role!=='cashier');$('managerLinks').hidden=data.role!=='manager';$('staffAdminCard').hidden=data.role!=='manager';$('serviceOnly').classList.toggle('hidden',!['manager','customer_service'].includes(data.role));$('metrics').classList.remove('hidden');drawMetrics();if(data.role==='driver')drawDriver();if(['manager','customer_service','supervisor'].includes(data.role)){fillBranchSelects();drawRoster();drawOffers();drawOrders()}if(data.role==='cashier')drawCashier()}
-async function reload(force=false){if(!client||!user||inFlight)return; if(!force && activeAdditionForm && document.activeElement?.id==='additionItemsInput')return;inFlight=true;try{let incoming=await rpc('ff49_snapshot');data=incoming;
+function draw(){if(!data)return;drawAssemblyMonitor();$('createBtn').disabled=!canAction('create_order');$('createBtn').title=canAction('create_order')?'':'إنشاء الطلبات ممنوع وفق صلاحيات حسابك';$('auditCard').classList.toggle('hidden',!canAction('view_reports')||!['manager','customer_service'].includes(data.role));$('identity').textContent=user?.email+' — '+({manager:'المدير العام',driver:'موصل',cashier:'الكاشير',customer_service:'خدمة العملاء',supervisor:'مشرف'}[data.role]||data.role);$('driverView').classList.toggle('hidden',data.role!=='driver');$('staffView').classList.toggle('hidden',!['manager','customer_service','supervisor'].includes(data.role));$('cashierView').classList.toggle('hidden',data.role!=='cashier');$('managerLinks').hidden=data.role!=='manager';$('staffAdminCard').hidden=data.role!=='manager';$('serviceOnly').classList.toggle('hidden',!['manager','customer_service'].includes(data.role));$('metrics').classList.remove('hidden');drawMetrics();if(data.role==='driver')drawDriver();if(['manager','customer_service','supervisor'].includes(data.role)){fillBranchSelects();drawRoster();drawOffers();drawOrders()}if(data.role==='cashier')drawCashier()}
+async function reload(force=false){if(!client||!user||inFlight)return; if(!force && activeAdditionForm && document.activeElement?.id==='additionItemsInput')return;inFlight=true;try{let incoming=await rpc('ff49_snapshot');data=incoming;window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
  if(!selfPermissions || Date.now()-selfPermissionsFetchedAt>20000){
    try{const p=await rpc('ff38_my_permissions');if(!p || typeof p!=='object')throw Error('صلاحيات غير صالحة');selfPermissions=p;selfPermissionsFetchedAt=Date.now()}
    catch(err){selfPermissions=null;console.warn('تعذر تحميل الصلاحيات الخاصة بالحساب؛ الحماية في الخادم ما تزال فعالة',err.message)}
@@ -617,7 +642,7 @@ $('auditRefreshBtn').onclick=async()=>{let b=$('auditRefreshBtn');b.disabled=tru
 $('clockInBtn').onclick=()=>perform('ff38_clock_in',{},'تم تسجيل الحضور');
 $('clockOutBtn').onclick=()=>perform('ff38_clock_out',{},'تم إنهاء الدوام');
 $('notificationsBtn').onclick=async()=>{ding();if('Notification'in window){let p=await Notification.requestPermission();toast(p==='granted'?'تم تفعيل إشعارات المتصفح':'الإشعارات غير مفعلة؛ أبقِ الصفحة مفتوحة')}else toast('الإشعارات غير مدعومة في هذا المتصفح')};
-$('createBtn').onclick=async()=>{let b=$('createBtn');try{b.disabled=true;let p_items=parseItems($('newItems').value);let x=await rpc('ff38_create_delivery_order',{p_branch:$('newBranch').value,p_phone:$('newPhone').value.trim(),p_area:$('newArea').value.trim(),p_items,p_delivery_fee:Number($('newFee').value||0),p_notes:$('newNotes').value});toast('تم اعتماد الطلب رقم '+x.order_number+' — التوزيع: '+(x.dispatch?.state==='offered'?'أُرسل عرض للموصل':x.dispatch?.state==='assigned_cumulative'?'أُسند تلقائيًا للموصل (تراكمي)':'بانتظار موصل متاح'));$('newItems').value='';$('newNotes').value='';await reload(true)}catch(e){toast('تعذر إنشاء الطلب: '+e.message)}finally{b.disabled=false}};
+$('createBtn').onclick=async()=>{let b=$('createBtn');try{b.disabled=true;let p_items=parseItems($('newItems').value);let x=await rpc('ff38_create_delivery_order',{p_branch:$('newBranch').value,p_phone:$('newPhone').value.trim(),p_area:$('newArea').value.trim(),p_items,p_delivery_fee:window.ffRequiredDeliveryFee($('newFee').value),p_notes:$('newNotes').value});toast('تم اعتماد الطلب رقم '+x.order_number+' — التوزيع: '+(x.dispatch?.state==='offered'?'أُرسل عرض للموصل':x.dispatch?.state==='assigned_cumulative'?'أُسند تلقائيًا للموصل (تراكمي)':'بانتظار موصل متاح'));$('newItems').value='';$('newNotes').value='';await reload(true)}catch(e){toast('تعذر إنشاء الطلب: '+e.message)}finally{b.disabled=false}};
 async function loadStaffAdmin(){let box=$('staffAdminList');box.textContent='جاري تحميل الموظفين...';try{let arr=await rpc('ff38_admin_staff_list');box.innerHTML=arr.length?arr.map(p=>{const branches=(p.branches||[]).map(branchName).join('، ');const roles={customer_service:'خدمة عملاء مركزية',cashier:'كاشير',driver:'موصل',supervisor:'مشرف مشاهدة',manager:'مدير عام'};const choices=Object.entries(roles).filter(([k])=>k!=='manager').map(([k,v])=>`<option value="${k}" ${p.role===k?'selected':''}>${v}</option>`).join('');const branchesUI=(data.branches||[]).map(b=>`<label style="display:inline-flex;align-items:center;gap:5px;margin:5px 12px 5px 0"><input style="width:auto" type="checkbox" data-access-branch="${esc(p.user_id)}" value="${esc(b.id)}" ${(p.branches||[]).includes(b.id)?'checked':''}>${esc(b.name)}</label>`).join('');return `<div class="item"><div class="item-top"><b>${esc(p.name||'بدون اسم')}</b><span class="tag ${p.active?'ready':'offline'}">${p.active?'نشط':'معطّل'}</span></div><p class="muted">${esc(roles[p.role]||p.role)}${branches?' — '+esc(branches):''}</p>${p.role!=='manager'?`<div class="actions"><button class="${p.active?'outline':'good'}" data-staff-toggle="${esc(p.user_id)}" data-staff-active="${p.active?'false':'true'}">${p.active?'تعطيل الحساب':'إعادة تفعيل الحساب'}</button></div><div style="margin-top:12px;border:1px solid #e2e5e9;padding:10px;border-radius:10px"><label>تعديل الدور</label><select data-original-role="${esc(p.role)}" data-access-role="${esc(p.user_id)}">${choices}</select><div data-access-branches="${esc(p.user_id)}"><label>الفروع المسموحة (خدمة العملاء والمشرف مركزيان؛ الموصل فرع واحد). عند تحويل الموصل يجب إنهاء طلباته أولًا</label>${branchesUI}</div><button class="primary" data-save-access="${esc(p.user_id)}" style="margin-top:9px">حفظ الدور والفروع</button></div>`:''}</div>`}).join(''):'لا يوجد موظفون';}catch(e){box.textContent='تعذر تحميل الموظفين: '+e.message;}}
 $('staffAdminRefresh').onclick=loadStaffAdmin;
 $('staffAuditRefresh').onclick=async()=>{try{let arr=await rpc('ff38_admin_staff_audit');$('staffAuditList').innerHTML=arr.length?arr.map(a=>`<div class="item"><b>${a.action==='set_access'?'تعديل الدور والفروع':(a.new_data?.active?'إعادة تفعيل':'تعطيل')}</b> — ${esc(a.target_user_id)}<p class="muted">${esc(time(a.created_at))}</p></div>`).join(''):'لا توجد تغييرات مسجلة';}catch(e){toast('تعذر تحميل السجل: '+e.message)}};
@@ -1837,7 +1862,7 @@ $('createBtn').onclick=async()=>{
   const notes=[$('newNotes').value.trim(),parsed.notes,parsed.meta.driver?'الموصل المطلوب: '+parsed.meta.driver:''].filter(Boolean).join(' | ');
   const x=await rpc('ff49_create_delivery_order',{
    p_branch:$('newBranch').value,p_phone:(parsed.meta.phone||$('newPhone').value).trim(),p_area:(parsed.meta.area||$('newArea').value).trim(),
-   p_items:parsed.items,p_delivery_fee:parsed.meta.fee??Number($('newFee').value||0),p_notes:notes,
+   p_items:parsed.items,p_delivery_fee:window.ffRequiredDeliveryFee(parsed.meta.fee??$('newFee').value),p_notes:notes,
    p_customer_name:(parsed.meta.customer||$('newCustomerName').value).trim(),p_channel:$('newChannel').value,
    p_full_address:$('newFullAddress').value.trim()
   });
@@ -2454,9 +2479,10 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
  $('ffbCloseReview').onclick=closeReview;$('ffbCancelReview').onclick=closeReview;
  layer.addEventListener('click',e=>{if(e.target===layer)closeReview()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!layer.classList.contains('hidden'))closeReview()});
  async function openReview(){try{await ff49LoadCatalog();const p=ff49ParseItemsAndNotes($('newItems').value);if(p.meta.kind==='reservation')throw Error('الحجز يجب أن يُنشأ في شاشة حجوزات الكاشير');
- const phone=String(p.meta.phone||$('newPhone').value).trim(),area=String(p.meta.area||$('newArea').value).trim(),fee=$('newFee').value,name=$('newCustomerName').value.trim(),address=$('newFullAddress').value.trim();
+ const phone=String(p.meta.phone||$('newPhone').value).trim(),area=String(p.meta.area||$('newArea').value).trim(),fee=String(p.meta.fee??$('newFee').value).trim(),name=$('newCustomerName').value.trim(),address=$('newFullAddress').value.trim();
  if(!phone){$('newPhone').focus();throw Error('هاتف العميل مطلوب')};if(!area){$('newArea').focus();throw Error('المنطقة مطلوبة')};if(fee===''){ $('newFee').focus();throw Error('أدخل رسوم التوصيل، أو اكتب 0 عند التوصيل المجاني')};if(!Number.isFinite(Number(fee))||Number(fee)<0)throw Error('رسوم التوصيل غير صحيحة');
  
+ window.ffRequiredDeliveryFee(fee);
  let total=p.items.reduce((a,x)=>a+Number(x.price)*x.qty,0);const notes=[$('newNotes').value,p.notes].filter(Boolean).join(' | ');
  $('ffbReviewBody').innerHTML='<div class="ffb-v2-reviewline"><b>الفرع</b><span>'+esc($('newBranch').selectedOptions[0]?.textContent||'')+'</span></div><div class="ffb-v2-reviewline"><b>العميل</b><span>'+esc(name)+' • '+esc(phone)+'</span></div><div class="ffb-v2-reviewline"><b>المنطقة والعنوان</b><span>'+esc(area)+' — '+esc(address)+'</span></div><h4>الأصناف</h4>'+p.items.map(x=>'<div class="ffb-v2-reviewline"><span>'+x.qty+' × '+esc(x.name)+'</span><b>'+(x.qty*Number(x.price)).toLocaleString('ar-YE')+' ريال</b></div>').join('')+'<div class="ffb-v2-reviewline"><b>رسوم التوصيل</b><span>'+Number(fee).toLocaleString('ar-YE')+' ريال</span></div><div class="ffb-v2-reviewline"><b>الإجمالي المتوقع</b><strong>'+(total+Number(fee)).toLocaleString('ar-YE')+' ريال</strong></div>'+(notes?'<div class="ffb-v2-reviewnotes">الملاحظات: '+esc(notes)+'</div>':'')+(p.warnings.length?'<p class="warning">'+esc(p.warnings.join(' | '))+'</p>':'')+'<p class="muted">بعد الاعتماد سيتم توزيع الطلب وفق قواعد الخادم والصلاحيات؛ هذه المعاينة ليست فاتورة مالية.</p>';
  previewReady=true;layer.classList.remove('hidden');$('ffbConfirmSave').focus();status('المعاينة جاهزة. راجع البيانات ثم أكّد.');
@@ -2756,7 +2782,7 @@ function render(){if(!panel.classList.contains('open'))return;
  const active=rows.filter(o=>!closed(o));const pending=active.filter(o=>state(o)==='unassigned').length;const inOffers=active.filter(o=>state(o)==='offer').length;const toPrepare=active.filter(o=>state(o)==='cashier'||state(o)==='handoff').length;const onRoute=active.filter(o=>state(o)==='on_way').length;const issues=active.filter(hasIssues).length;
  $('ff60-metrics').innerHTML=[['طلبات جارية',active.length],['دون موصل',pending],['عروض جديدة',inOffers],['الكاشير',toPrepare],['في الطريق',onRoute],['تحتاج معالجة',issues]].map(([n,v])=>`<div class="ff60-metric"><span>${esc(n)}</span><b>${v}</b></div>`).join('');
  const list=visible();$('ff60-list').innerHTML=list.map(o=>{const block=[];if(o.pending_additions)block.push(`${o.pending_additions} إضافة بانتظار الفاتورة`);if(o.pending_transfer)block.push('نقل موصل معلق لدى الكاشير');if(o.pending_late_pickup)block.push('إضافة متأخرة لم تُستلم');const overdue=!closed(o)&&age(o)>=30;
- return `<article class="ff60-order ${block.length||overdue?'urgent':''}"><div class="ff60-order-head"><h3>طلب #${esc(o.order_number||'—')}</h3><span class="ff60-tag ${block.length||overdue?'attention':''}">${esc(stageLabel(o))}</span></div><div class="ff60-meta">${esc(branchLabel(o.branch_id))} · ${esc(o.area||'—')}<br>الموصل: ${esc(o.driver_name||driverLabel(o.driver_id))} · العمر: ${age(o)} دقيقة${overdue?' · متأخر':''}${o.offer_id?`<br>مهلة القبول: <b>${esc(timer(o))}</b>`:''}${o.cashier_received?' · استلم الكاشير':''}</div>${block.length?`<div class="ff60-issue">${esc(block.join(' • '))}</div>`:''}<div class="ff60-actions">${actions(o)}</div>${form(o)}${historyPanel(o)}</article>`}).join('')||'<div class="ff60-loading">لا توجد طلبات مطابقة وفق صلاحياتك وعوامل التصفية.</div>';
+ return `<article class="ff60-order ${block.length||overdue?'urgent':''}"><div class="ff60-order-head"><h3>طلب #${esc(o.order_number||'—')}</h3><span class="ff60-tag ${block.length||overdue?'attention':''}">${esc(stageLabel(o))}</span></div><div class="ff60-meta">${esc(branchLabel(o.branch_id))} · ${esc(o.area||'—')}<br>الموصل: ${esc(o.driver_name||driverLabel(o.driver_id))} · العمر: ${age(o)} دقيقة${overdue?' · متأخر':''}${o.offer_id&&state(o)==='offer'?`<br>مهلة القبول: <b class="ff60-live-countdown" data-expiry="${esc(o.offer_expires_at||'')}">${esc(timer(o))}</b>`:''}${o.cashier_received?' · استلم الكاشير':''}</div>${block.length?`<div class="ff60-issue">${esc(block.join(' • '))}</div>`:''}<div class="ff60-actions">${actions(o)}</div>${form(o)}${historyPanel(o)}</article>`}).join('')||'<div class="ff60-loading">لا توجد طلبات مطابقة وفق صلاحياتك وعوامل التصفية.</div>';
  $('ff60-updated').textContent=`${list.length} نتيجة · آخر عرض ${now()} · مجموع البيانات المتاحة ${rows.length}`;
 }
 async function refresh(){if(!canUse()){err('يجب تسجيل الدخول أولًا.');return;}if(loading||busy)return;loading=true;err('');$('ff60-server-status').textContent='جاري الاتصال بقاعدة البيانات...';try{
@@ -2792,8 +2818,109 @@ panel.addEventListener('input',e=>{if(e.target.matches('[data-ff60-invoice]'))in
 panel.addEventListener('change',e=>{if(e.target.matches('[data-ff60-reoffer-driver]')){const id=e.target.dataset.ff60ReofferDriver;reofferDrafts.set(id,{...(reofferDrafts.get(id)||{}),driver:e.target.value})}});
 $('ff60-search').addEventListener('input',render);$('ff60-state').addEventListener('change',render);$('ff60-branch').addEventListener('change',refresh);
 window.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.classList.contains('open'))close()});document.addEventListener('visibilitychange',()=>{if(!document.hidden&&panel.classList.contains('open'))void refresh()});
+// عرض العد التنازلي كل ثانية دون إعادة بناء البطاقات أو فقدان المدخلات.
+// المرجع الزمني من offer_expires_at في الخادم؛ العرض المحلي تقريبي حتى التحديث التالي.
+function ff60TickCountdowns(){
+ if(document.hidden||!panel.classList.contains('open'))return;
+ for(const el of panel.querySelectorAll('.ff60-live-countdown')){
+  const expiry=Date.parse(el.dataset.expiry||'');
+  if(!Number.isFinite(expiry)){el.textContent='غير محددة';continue;}
+  const remaining=Math.max(0,Math.ceil((expiry-Date.now())/1000));
+  el.textContent=remaining?`${Math.floor(remaining/60)}:${String(remaining%60).padStart(2,'0')}`:'انتهت المهلة';
+  el.classList.toggle('ff60-countdown-urgent',remaining>0&&remaining<=30);
+  if(remaining===0&&!el.dataset.expired){el.dataset.expired='1';void refresh();}
+ }
+}
+setInterval(ff60TickCountdowns,1000);
 setInterval(()=>{if(!document.hidden&&panel.classList.contains('open'))void refresh()},15000);
 })();
 </script>
 
+<script id="ff-assembly-script">
+/* Assembly monitor: stage actions require V10 server-side RPC and staging validation. */
+(function(){
+'use strict';
+const byId=id=>document.getElementById(id);
+const stages={waiting:'بانتظار استلام الكاشير',received:'تم استلام الطلب',printed:'تم قطع الفاتورة',preparing:'جاري التحضير',ready:'الطلب جاهز',handed_over:'تم تسليم الطلب للموصل'};
+const terminal=new Set(['delivered','cancelled','canceled','closed']);
+let lastSuccessfulSnapshotAt=0;
+let selectedBranch='';
+function node(tag,cls,content){const el=document.createElement(tag);if(cls)el.className=cls;if(content!==undefined)el.textContent=String(content);return el}
+function isAuthorized(){return typeof data!=='undefined'&&data&&['manager','cashier','customer_service','supervisor'].includes(data.role)}
+function freshness(){const el=byId('ff-assembly-freshness');if(!el)return;const age=lastSuccessfulSnapshotAt?Math.max(0,Math.floor((Date.now()-lastSuccessfulSnapshotAt)/1000)):null;el.textContent=age===null?'بانتظار أول تحديث ناجح من قاعدة البيانات':age>20?'⚠️ البيانات قديمة: آخر تحديث ناجح منذ '+age+' ثانية':'آخر تحديث ناجح منذ '+age+' ثانية';el.classList.toggle('ff-assembly-stale',age===null||age>20)}
+window.drawAssemblyMonitor=function(){
+ const root=byId('ff-assembly-monitor'),list=byId('ff-assembly-orders'),filter=byId('ff-assembly-branch');if(!root||!list)return;
+ const permitted=isAuthorized();root.classList.toggle('hidden',!permitted);if(!permitted){list.replaceChildren();return}
+ const branches=Array.isArray(data.branches)?data.branches:[];
+ // Preserve branch selection when snapshots arrive; never widen a selected branch silently.
+ const current=selectedBranch||filter.value;
+ filter.replaceChildren(new Option('كل الفروع المصرح بها',''));
+ branches.forEach(b=>filter.add(new Option(b.name||b.code||'فرع',b.id)));
+ selectedBranch=branches.some(b=>String(b.id)===String(current))?String(current):'';filter.value=selectedBranch;
+ const permittedBranchIds=new Set(branches.map(b=>String(b.id)));
+ const orders=(Array.isArray(data.orders)?data.orders:[]).filter(o=>o&&!terminal.has(o.phase)&&!terminal.has(o.status)&&o.cashier_stage!=='handed_over'&&permittedBranchIds.has(String(o.branch_id))&&(!selectedBranch||String(o.branch_id)===selectedBranch));
+ byId('ff-assembly-summary').textContent='إجمالي قيد المتابعة: '+orders.length+' | جاهزة: '+orders.filter(o=>o.cashier_stage==='ready').length+' | قيد التحضير: '+orders.filter(o=>o.cashier_stage==='preparing').length;
+ list.replaceChildren();if(!orders.length){list.append(node('div','empty','لا توجد طلبات قيد التجميع ضمن الفرع المحدد.'));return}
+ orders.forEach(o=>{
+  const card=node('article','ff-assembly-order');
+  card.append(node('strong','','طلب #'+(o.number||o.order_number||'—')));
+  card.append(node('div','ff-assembly-stage',stages[o.cashier_stage]||'بانتظار تحديث الحالة'));
+  card.append(node('div','muted','الموصل: '+(o.driver_name||'لم يحدد بعد')));
+  const elapsed=node('div','ff-assembly-time');if(o.created_at){elapsed.dataset.ffAssemblyCreated=o.created_at}else{elapsed.textContent='وقت الإنشاء غير متاح'}card.append(elapsed);
+  const items=node('div','ff-assembly-items');
+  // Never inject order/item content into the DOM as HTML from the assembly screen.
+  if(Array.isArray(o.items))items.textContent=o.items.map(i=>`${i.qty??i.quantity??0} × ${i.name??i.item_name??'صنف'}`).join('\n')||'لا توجد تفاصيل أصناف';
+  else items.textContent='تفاصيل الأصناف غير متاحة';
+  card.append(items);if(o.notes)card.append(node('div','muted','ملاحظة: '+o.notes));
+  const next={printed:['preparing','بدء التحضير'],preparing:['ready','الطلب جاهز'],ready:['handed_over','تسليم الطلب للموصل']}[o.cashier_stage];
+  if(next){const b=node('button','primary',next[1]);b.type='button';b.disabled=!o.id||!o.driver_id||!o.cashier_stage;
+    b.addEventListener('click',async()=>{
+      if(!confirm('تأكيد الإجراء: '+next[1]+' للطلب '+(o.number||o.order_number||'' )+'؟'))return;
+      b.disabled=true;const label=b.textContent;b.textContent='جارٍ الحفظ...';
+      try{if(typeof rpc!=='function')throw Error('الاتصال بالخادم غير مهيأ');
+        await rpc('ff_v9_assembly_set_stage',{p_order:o.id,p_stage:next[0],p_expected_stage:o.cashier_stage});
+        if(typeof reload==='function')await reload(true);
+        else if(typeof window.drawAssemblyMonitor==='function')window.drawAssemblyMonitor();
+      }catch(err){alert('لم يُحفظ التغيير: '+(err?.message||err));b.disabled=false;b.textContent=label;}
+    });card.append(b);
+  }
+  list.append(card);
+ });tick();
+};
+function tick(){
+ const root=byId('ff-assembly-monitor');if(!root||root.classList.contains('hidden'))return;freshness();
+ root.querySelectorAll('[data-ff-assembly-created]').forEach(el=>{
+  const t=Date.parse(el.dataset.ffAssemblyCreated);if(!Number.isFinite(t)){el.textContent='وقت غير صالح';return}
+  const seconds=Math.max(0,Math.floor((Date.now()-t)/1000)),mins=Math.floor(seconds/60);
+  el.textContent='منذ '+String(mins).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')+' دقيقة';
+  el.classList.toggle('late',mins>=20);el.classList.toggle('warn',mins>=10&&mins<20);
+ });
+}
+window.addEventListener('ff-assembly-snapshot-success',()=>{lastSuccessfulSnapshotAt=Date.now();freshness()});
+document.addEventListener('change',e=>{if(e.target?.id==='ff-assembly-branch'){selectedBranch=e.target.value;window.drawAssemblyMonitor()}});
+document.addEventListener('click',e=>{if(e.target?.id==='ff-assembly-refresh'&&typeof reload==='function')void reload(true)});
+setInterval(tick,1000);
+})();
+</script>
+<script id="ff-fee-history-v8">
+/* Local snapshot hints only: no claim of complete historical coverage. No automatic overwriting of staff input. */
+(function(){'use strict';
+const el=document.getElementById('ff-fee-history');
+const branch=document.getElementById('newBranch'),area=document.getElementById('newArea');
+if(!el||!branch||!area)return;
+const normalize=v=>String(v??'').trim().replace(/\s+/g,' ').toLocaleLowerCase('ar');
+function render(){
+ const value=normalize(area.value),bid=String(branch.value||'');
+ const rows=typeof data!=='undefined'&&Array.isArray(data?.orders)?data.orders:[];
+ const matches=value&&bid?rows.filter(o=>String(o?.branch_id)===bid&&normalize(o?.area)===value&&o?.delivery_fee!==null&&o?.delivery_fee!==undefined&&String(o.delivery_fee).trim()!==''&&Number.isFinite(Number(o.delivery_fee))&&Number(o.delivery_fee)>0):[];
+ matches.sort((a,b)=>(Date.parse(b.created_at)||0)-(Date.parse(a.created_at)||0));
+ const fees=[...new Set(matches.map(o=>Number(o.delivery_fee)))].slice(0,8);
+ el.classList.toggle('hidden',fees.length===0);
+ el.textContent=fees.length?'رسوم سابقة ظاهرة في الطلبات المحمّلة (من الأحدث): '+fees.join(' ← ')+' ريال — للاسترشاد فقط':'';
+}
+area.addEventListener('input',render);branch.addEventListener('change',render);
+window.addEventListener('ff-assembly-snapshot-success',render);
+render();
+})();
+</script>
 </body></html>
