@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fresh Fries LUXE — V11 نقطة التجميع (بيئة اختبار فقط)</title>
+<title>Fresh Fries LUXE — نظام خدمة العملاء والتوصيل v38.23</title>
 <style>
 :root{--red:#d51e2c;--dark:#1a1a1a;--bg:#f6f6f6;--line:#e5e5e5;--muted:#767676;--good:#222222;--amber:#b31d27}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ffb-ink);font-family:Tahoma,Arial,sans-serif;font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:11px 14px;background:var(--ffb-soft2);color:var(--ffb-ink);font-weight:700}button:disabled{opacity:.48;cursor:not-allowed}button.primary{background:var(--red);color:white}button.dark{background:var(--dark);color:#fff}button.good{background:var(--good);color:#fff}button.outline{background:white;border:1px solid var(--line)}.head{background:var(--dark);color:white;border-bottom:4px solid var(--red);padding:14px max(14px,env(safe-area-inset-right));display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.brand{font-size:21px;font-weight:900}.brand span{color:#ff4d56}.sub{font-size:12px;color:#bebebe;margin-top:5px}.head .sub{max-width:420px}main{max-width:1170px;margin:auto;padding:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:var(--ffb-surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:13px;box-shadow:0 1px 2px #00000009}.card h2,.card h3{margin:0 0 12px;font-size:17px}.muted{color:var(--muted);font-size:12px}.stat{background:var(--ffb-surface);padding:13px;border:1px solid var(--line);border-radius:12px}.stat strong{font-size:23px;display:block;margin-top:4px}.flex{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:12px;font-weight:bold;margin:10px 0 5px}input,select,textarea{width:100%;padding:12px;border:1px solid #d9d9d9;background:var(--ffb-surface);border-radius:8px;outline:0}input:focus,textarea:focus,select:focus{border-color:var(--red)}textarea{resize:vertical;min-height:84px}.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.tag{font-size:12px;padding:5px 9px;border-radius:20px;background:var(--ffb-soft);white-space:nowrap;display:inline-block}.ready{background:var(--ffb-soft2);color:var(--ffb-ink)}.busy{background:var(--ffb-redwash);color:var(--ffb-redink)}.offline{background:var(--ffb-soft);color:var(--ffb-muted)}.warning{background:var(--ffb-redwash);border:1px solid #f1a9ae;border-radius:10px;padding:11px;color:var(--ffb-redink);margin:10px 0}.item{padding:12px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.tiny{font-size:12px}.note{padding:12px;border-radius:9px;background:var(--ffb-soft);margin:10px 0;line-height:1.9;white-space:pre-line}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}.topinfo{font-size:12px;color:#e6e6e6}.hidden{display:none!important}.login{position:fixed;inset:0;z-index:1000;background:#1a1a1aeb;display:flex;align-items:center;justify-content:center;padding:14px}.loginbox{width:min(440px,100%);background:white;border-radius:17px;padding:24px}.loginbox h2{margin-top:0}.alert{position:fixed;bottom:18px;right:15px;left:15px;z-index:1002;max-width:700px;margin:auto;background:#282828;color:white;padding:13px;border-radius:12px;box-shadow:0 3px 20px #0003}.chip{background:var(--ffb-soft);border-radius:7px;padding:8px 10px;font-size:12px}.danger{color:var(--red)}.offer{border-right:5px solid var(--red);background:var(--ffb-redwash);padding:12px;border-radius:10px;margin:10px 0}.notice{border-right:4px solid #e14650;padding-right:12px}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:9px}.pill{font-size:11px;color:#fff;background:var(--red);padding:3px 8px;border-radius:30px}footer{text-align:center;color:var(--muted);font-size:11px;margin:28px 0}.version{color:#b1b1b1;font-size:11px}.btnlink{background:none;border:0;color:var(--red);padding:4px;text-decoration:underline}.statusbar{background:var(--ffb-soft);padding:9px 12px;border-radius:8px;color:var(--ffb-muted);font-size:12px;margin:10px 0}.sectionbar{margin:15px 0 8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}.sectionbar h2{font-size:17px;margin:0}@media(max-width:840px){.grid{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}}@media(max-width:520px){.row{grid-template-columns:1fr}.brand{font-size:19px}.grid{grid-template-columns:repeat(2,1fr)}main{padding:10px}.card{padding:13px}}@media(prefers-reduced-motion:no-preference){.offer{animation:pulse 1.6s infinite}@keyframes pulse{50%{box-shadow:0 0 0 2px #f7c8cb}}}
@@ -2921,6 +2921,28 @@ function render(){
 area.addEventListener('input',render);branch.addEventListener('change',render);
 window.addEventListener('ff-assembly-snapshot-success',render);
 render();
+})();
+</script>
+<style id="ff-release-network-style">
+#ff-release-offline{position:fixed;z-index:1300;top:0;right:0;left:0;background:#9f1725;color:white;text-align:center;padding:11px 16px;font:700 13px Tahoma,Arial,sans-serif;box-shadow:0 4px 16px #0003}
+#ff-release-offline[hidden]{display:none!important}
+</style>
+<script id="ff-release-network-script">
+(function(){
+'use strict';
+const banner=document.createElement('div');
+banner.id='ff-release-offline';
+banner.setAttribute('role','alert');
+banner.textContent='انقطع اتصال الإنترنت — لا تعتمد على تحديث الطلبات حتى يعود الاتصال.';
+banner.hidden=true;
+document.body.appendChild(banner);
+function update(){
+ banner.hidden=navigator.onLine!==false;
+ if(!banner.hidden) console.warn('Fresh Fries: browser reports offline');
+}
+window.addEventListener('online',update);
+window.addEventListener('offline',update);
+update();
 })();
 </script>
 </body></html>
