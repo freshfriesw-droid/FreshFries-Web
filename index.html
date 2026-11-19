@@ -1036,10 +1036,10 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button[dat
   toast('تم تحديث الدور والفروع');await loadStaffAdmin()}catch(err){toast('تعذر تحديث الصلاحيات: '+err.message)}finally{b.disabled=false}});
 function syncLinkRole(){
  const assembly=$('addRole').value==='assembly';
- $('addName').parentElement.hidden=assembly;
+ $('addName').parentElement.hidden=false;
  $('addBranch').parentElement.hidden=!['driver','cashier','assembly'].includes($('addRole').value);
  $('linkUserBtn').textContent=assembly?'تفعيل نقطة التجميع':'ربط الحساب';
- $('assemblyLinkStatus').textContent=assembly?'اختر بريد حساب التجميع المستقل وفرعه.':'';
+ $('assemblyLinkStatus').textContent=assembly?'اختر بريد الحساب الموجود واسمه والفرع.':'';
 }
 $('addRole').addEventListener('change',syncLinkRole);
 syncLinkRole();
@@ -1049,8 +1049,8 @@ $('linkUserBtn').onclick=async()=>{
  b.disabled=true;
  try{
   if(role==='assembly'){
-   if(!email||!$('addEmail').checkValidity()||!branch)throw Error('أدخل بريد حساب التجميع واختر الفرع');
-   const r=await rpc('ff_v12_assembly_account_update',{p_email:email,p_branch:branch,p_enabled:true});
+   if(!email||!$('addEmail').checkValidity()||!$('addName').value.trim()||!branch)throw Error('أدخل البريد والاسم واختر الفرع');
+   const r=await rpc('ff71_admin_link_assembly',{p_email:email,p_name:$('addName').value.trim(),p_branch:branch});
    if(r?.ok!==true)throw Error('لم يعتمد الخادم تفعيل الحساب');
    $('assemblyLinkStatus').textContent='تم تفعيل نقطة التجميع في '+branchName(branch);
    toast($('assemblyLinkStatus').textContent);
@@ -1060,7 +1060,7 @@ $('linkUserBtn').onclick=async()=>{
   }
   $('addEmail').value='';$('addName').value='';await reload(true);
  }catch(e){
-  const msg=role==='assembly'&&e.code==='PGRST202'?'يلزم تشغيل ملف assembly_setup.sql المرفق في Supabase لتفعيل نقطة التجميع.':'تعذر ربط الحساب: '+e.message;
+  const msg='تعذر ربط الحساب: '+e.message;
   $('assemblyLinkStatus').textContent=msg;toast(msg);
  }finally{b.disabled=false}
 };
@@ -2734,7 +2734,7 @@ ffFixHandset();
 if(window.innerWidth<=850){requestAnimationFrame(()=>window.scrollTo({left:0,top:window.scrollY,behavior:'instant'}));}
 window.addEventListener('resize',ffFixHandset);
 window.visualViewport?.addEventListener('resize',ffFixHandset);
-const vtag=S('span',{id:'ffx-version-mobile'});vtag.textContent='v38.35.7';doc.body.append(vtag);
+const vtag=S('span',{id:'ffx-version-mobile'});vtag.textContent='v38.35.8';doc.body.append(vtag);
 const topbar=S('div',{id:'ffx-topbar'});
 topbar.innerHTML=`<button class="ffx-top-icon" id="ffx-menu" title="القائمة الرئيسية" aria-label="القائمة الرئيسية">${icon('menu')}</button><div class="ffx-top-intro"><strong id="ffx-greeting">مساحة التشغيل الذكية</strong><span>متابعة الطلبات والموصلين والفروع من مكان واحد</span></div><div class="ffx-top-right"><span class="ffx-chip" id="ffx-live"><i class="ffx-live-dot"></i> غير متصل</span><button class="ffx-top-icon" id="ffx-refresh" title="تحديث البيانات" aria-label="تحديث البيانات">${icon('refresh')}</button><button class="ffx-top-icon" id="ffx-bell" title="التنبيهات" aria-label="التنبيهات">${icon('bell')}<span class="ffx-top-badge" id="ffx-alert-num"></span></button><button class="ffx-top-icon" id="ffx-theme-toggle" title="النهاري / الليلي" aria-label="تغيير المظهر">${icon('moon')}</button><button class="ffx-top-icon" id="ffx-options" title="تخصيص النظام" aria-label="تخصيص النظام">${icon('settings')}</button></div>`;
 oldHeader.after(topbar);doc.body.append(dimmer,sidebar);
