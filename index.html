@@ -98,6 +98,7 @@
 .ff49-reservation{border:1px solid #e3e3e3;border-right:4px solid #bd2438;padding:13px;border-radius:11px;background:white}
 .ff49-reservation p{line-height:1.7;margin:6px 0}
 .ff49-reservation .actions button{font-size:12px}
+.ff70-item-note{display:block;font-size:12px;line-height:1.7;color:var(--ffb-redink,#a01828);font-weight:700;white-space:pre-wrap;margin:3px 0 5px}
 </style>
 <style id="ffx-luxe-style">
 /* FRESH FRIES LUXE — non-destructive presentation layer over v38.24 */
@@ -711,7 +712,7 @@ function ffV12Render(){
   item.append(ffV12Node('div',ffV12StageLabels[order.cashier_stage]||'قيد التجميع','ff-assembly-stage'));
   item.append(ffV12Node('div','🛵 الموصل: '+(order.driver_name||'غير محدد')+' · '+(order.area||'بدون منطقة'),'muted'));
   if(order.created_at){const age=Math.max(0,Math.round((Date.now()-Date.parse(order.created_at))/60000));item.append(ffV12Node('div','عمر الطلب: '+age+' دقيقة','ff-assembly-time'));}
-  const lines=Array.isArray(order.items)?order.items.map(x=>String(x.qty??0)+' × '+String(x.name??'صنف')).join('\n'):'الأصناف غير متاحة';
+  const lines=Array.isArray(order.items)?order.items.map(x=>String(x.qty??0)+' × '+String(x.name??'صنف')+(x.item_notes?' — ملاحظة الصنف: '+String(x.item_notes):'')).join('\n'):'الأصناف غير متاحة';
   item.append(ffV12Node('div',lines||'بدون أصناف','ff-assembly-items'));
   if(order.notes)item.append(ffV12Node('div','ملاحظات: '+order.notes,'muted'));
   const next={printed:['preparing','بدء التحضير'],preparing:['ready','الطلب جاهز'],ready:['handed_over','تم التسليم للموصل']}[order.cashier_stage];
@@ -775,7 +776,7 @@ async function rpc(name,args={}){if(!client)throw Error('الاتصال غير �
 function branchName(id){return data?.branches?.find(b=>b.id===id)?.name||'فرع غير معروف'}
 function driverName(id){return data?.drivers?.find(d=>d.id===id)?.name||(data?.driver_id===id?'أنا':'—')}
 function statusTag(state){const color=state==='ready'?'ready':state==='busy'?'busy':'offline';return `<span class="tag ${color}">${esc(presenceNames[state]||state)}</span>`}
-function itemLines(order){return (order.items||[]).map(i=>`${esc(i.qty)} × ${esc(i.name)} — ${amount(Number(i.price)*Number(i.qty))} ريال`).join('<br>')||'لا توجد أصناف'}
+function itemLines(order){return (order.items||[]).map(i=>`${esc(i.qty)} × ${esc(i.name)} — ${amount(Number(i.price)*Number(i.qty))} ريال${i.item_notes?'<div class="ff70-item-note">📝 '+esc(i.item_notes)+'</div>':''}`).join('<br>')||'لا توجد أصناف'}
 function rejectAllowed(id){return rejectPermissions[id]===true}
 function rejectControl(o){if(!['manager','customer_service'].includes(data?.role)||!canAction('manage_drivers'))return '';if(o.phase||['delivered','cancelled'].includes(o.status))return '';const allowed=rejectAllowed(o.id);return `<button class="${allowed?'good':'outline'}" data-toggle-reject="${esc(o.id)}" data-allow="${!allowed}">${allowed?'✅ رفض الموصل مسموح — اضغط للمنع':'🔒 رفض الموصل ممنوع — اضغط للسماح'}</button>`}
 function additionsFor(order){return additionData.filter(a=>a.order_id===order.id)}
@@ -820,7 +821,13 @@ function drawCashier(){const arr=(data.orders||[]).filter(o=>o.phase&&o.phase!==
 function fillBranchSelects(){for(const id of ['newBranch','addBranch']){let el=$(id);let old=el.value;el.innerHTML=(data.branches||[]).map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');if(data.branches.some(b=>b.id===old))el.value=old}let f=$('orderBranchFilter');if(f){let old=f.value;f.innerHTML='<option value="">كل الفروع</option>'+(data.branches||[]).map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');f.value=(data.branches||[]).some(b=>b.id===old)?old:''}}
 function draw(){if(!data)return;if(typeof ffRenderAssemblyLauncher==='function')ffRenderAssemblyLauncher();$('createBtn').disabled=!canAction('create_order');$('createBtn').title=canAction('create_order')?'':'إنشاء الطلبات ممنوع وفق صلاحيات حسابك';$('auditCard').classList.toggle('hidden',!canAction('view_reports')||!['manager','customer_service'].includes(data.role));$('identity').textContent=(user?.email||user?.phone||'حساب الموظف')+' — '+({manager:'المدير العام',driver:'موصل',cashier:'الكاشير',customer_service:'خدمة العملاء المركزية',supervisor:'مشرف'}[data.role]||data.role);$('driverView').classList.toggle('hidden',data.role!=='driver');$('staffView').classList.toggle('hidden',!['manager','customer_service','supervisor'].includes(data.role));$('cashierView').classList.toggle('hidden',data.role!=='cashier');$('managerLinks').hidden=data.role!=='manager';$('staffAdminCard').hidden=data.role!=='manager';$('serviceOnly').classList.toggle('hidden',!['manager','customer_service'].includes(data.role));$('metrics').classList.remove('hidden');drawMetrics();if(data.role==='driver')drawDriver();if(['manager','customer_service','supervisor'].includes(data.role)){fillBranchSelects();drawRoster();drawOffers();drawOrders()}if(data.role==='cashier')drawCashier()}
 let ffSnapshotRetryAfter=0,ffSnapshotConsecutiveFailures=0;
-async function reload(force=false){if(ffV12AssemblyActive||!client||!user||inFlight||(!force&&Date.now()<ffSnapshotRetryAfter))return; if(!force && activeAdditionForm && document.activeElement?.id==='additionItemsInput')return;inFlight=true;const loadingUser=user.id;try{let incoming=await rpc('ff49_snapshot');if(user?.id!==loadingUser||ffV12AssemblyActive)return;if(!incoming||typeof incoming!=='object'||!incoming.role)throw Error('استجابة ملخص الطلبات غير مكتملة');ffSnapshotConsecutiveFailures=0;ffSnapshotRetryAfter=0;data=incoming;window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
+async function reload(force=false){if(ffV12AssemblyActive||!client||!user||inFlight||(!force&&Date.now()<ffSnapshotRetryAfter))return; if(!force && activeAdditionForm && document.activeElement?.id==='additionItemsInput')return;inFlight=true;const loadingUser=user.id;try{let incoming=await rpc('ff49_snapshot');if(user?.id!==loadingUser||ffV12AssemblyActive)return;if(!incoming||typeof incoming!=='object'||!incoming.role)throw Error('استجابة ملخص الطلبات غير مكتملة');ffSnapshotConsecutiveFailures=0;ffSnapshotRetryAfter=0;data=incoming;
+ try{const notes=await rpc('ff70_visible_item_notes');if(user?.id!==loadingUser)return;
+  if(Array.isArray(notes)){const byOrder=new Map();for(const n of notes){if(!byOrder.has(n.order_id))byOrder.set(n.order_id,[]);byOrder.get(n.order_id).push(n)}
+   for(const o of incoming.orders||[]){const pool=byOrder.get(o.id)||[];for(const i of o.items||[]){const index=pool.findIndex(n=>n.item_name===i.name&&Number(n.quantity)===Number(i.qty)&&Number(n.unit_price)===Number(i.price));if(index>=0){i.item_notes=pool.splice(index,1)[0].item_notes}}}
+  }
+ }catch(err){console.warn('ملاحظات الأصناف غير متاحة',err.code||err.message)}
+ window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
  if(incoming?.role!=='manager' && Date.now()>=selfPermissionsNextTry && (!selfPermissions || Date.now()-selfPermissionsFetchedAt>60000)){
     selfPermissionsNextTry=Date.now()+60000;
     try{const p=await rpc('ff38_my_permissions');if(!p || typeof p!=='object')throw Error('صلاحيات غير صالحة');selfPermissions=p;selfPermissionsFetchedAt=Date.now()}
@@ -2227,13 +2234,13 @@ $('createBtn').onclick=async()=>{
  try{
   await ff49LoadCatalog();const parsed=ff49ParseItemsAndNotes($('newItems').value);
   const notes=[$('newNotes').value.trim(),parsed.notes,parsed.meta.driver?'الموصل المطلوب: '+parsed.meta.driver:''].filter(Boolean).join(' | ');
-  const x=await ff27Submit('delivery',{
+  const x=await ff70AtomicSubmit('delivery',{
    p_branch:$('newBranch').value,p_phone:(parsed.meta.phone||$('newPhone').value).trim(),p_area:(parsed.meta.area||$('newArea').value).trim(),
    p_items:parsed.items,p_delivery_fee:window.ffRequiredDeliveryFee(parsed.meta.fee??$('newFee').value),p_notes:notes,
    p_customer_name:(parsed.meta.customer||$('newCustomerName').value).trim(),p_channel:$('newChannel').value,
    p_full_address:$('newFullAddress').value.trim()
   });
-  if(parsed.items.some(i=>i.item_notes)){try{await rpc('ff70_set_item_notes',{p_order:x.order_id,p_items:parsed.items})}catch(noteError){toast('تنبيه: الطلب محفوظ، لكن ملاحظات الأصناف لم تُحفظ: '+noteError.message);return}}
+
   toast('تم اعتماد الطلب #'+x.order_number+' — '+(x.dispatch?.state==='assigned_cumulative'?'إسناد تراكمي مباشر':x.dispatch?.state==='offered'?'أُرسل عرض للموصل وفق المهلة المحددة':'بانتظار موصل مناسب'));
   for(const field of ['newCustomerName','newPhone','newArea','newFullAddress','newNotes','newItems'])$(field).value='';
   await reload(true);
@@ -2933,7 +2940,7 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
  
  window.ffRequiredDeliveryFee(fee);
  let total=p.items.reduce((a,x)=>a+Number(x.price)*x.qty,0);const notes=[$('newNotes').value,p.notes].filter(Boolean).join(' | ');
- $('ffbReviewBody').innerHTML='<div class="ffb-v2-reviewline"><b>الفرع</b><span>'+esc($('newBranch').selectedOptions[0]?.textContent||'')+'</span></div><div class="ffb-v2-reviewline"><b>العميل</b><span>'+esc(name)+' • '+esc(phone)+'</span></div><div class="ffb-v2-reviewline"><b>المنطقة والعنوان</b><span>'+esc(area)+' — '+esc(address)+'</span></div><h4>الأصناف</h4>'+p.items.map(x=>'<div class="ffb-v2-reviewline"><span>'+x.qty+' × '+esc(x.name)+'</span><b>'+(x.qty*Number(x.price)).toLocaleString('ar-YE')+' ريال</b></div>').join('')+'<div class="ffb-v2-reviewline"><b>رسوم التوصيل</b><span>'+Number(fee).toLocaleString('ar-YE')+' ريال</span></div><div class="ffb-v2-reviewline"><b>الإجمالي المتوقع</b><strong>'+(total+Number(fee)).toLocaleString('ar-YE')+' ريال</strong></div>'+(notes?'<div class="ffb-v2-reviewnotes">الملاحظات: '+esc(notes)+'</div>':'')+(p.warnings.length?'<p class="warning">'+esc(p.warnings.join(' | '))+'</p>':'')+'<p class="muted">بعد الاعتماد سيتم توزيع الطلب وفق قواعد الخادم والصلاحيات؛ هذه المعاينة ليست فاتورة مالية.</p>';
+ $('ffbReviewBody').innerHTML='<div class="ffb-v2-reviewline"><b>الفرع</b><span>'+esc($('newBranch').selectedOptions[0]?.textContent||'')+'</span></div><div class="ffb-v2-reviewline"><b>العميل</b><span>'+esc(name)+' • '+esc(phone)+'</span></div><div class="ffb-v2-reviewline"><b>المنطقة والعنوان</b><span>'+esc(area)+' — '+esc(address)+'</span></div><h4>الأصناف</h4>'+p.items.map(x=>'<div class="ffb-v2-reviewline"><span>'+x.qty+' × '+esc(x.name)+(x.item_notes?'<small class="ff70-item-note">📝 '+esc(x.item_notes)+'</small>':'')+'</span><b>'+(x.qty*Number(x.price)).toLocaleString('ar-YE')+' ريال</b></div>').join('')+'<div class="ffb-v2-reviewline"><b>رسوم التوصيل</b><span>'+Number(fee).toLocaleString('ar-YE')+' ريال</span></div><div class="ffb-v2-reviewline"><b>الإجمالي المتوقع</b><strong>'+(total+Number(fee)).toLocaleString('ar-YE')+' ريال</strong></div>'+(notes?'<div class="ffb-v2-reviewnotes">الملاحظات: '+esc(notes)+'</div>':'')+(p.warnings.length?'<p class="warning">'+esc(p.warnings.join(' | '))+'</p>':'')+'<p class="muted">بعد الاعتماد سيتم توزيع الطلب وفق قواعد الخادم والصلاحيات؛ هذه المعاينة ليست فاتورة مالية.</p>';
  previewReady=true;layer.classList.remove('hidden');$('ffbConfirmSave').focus();status('المعاينة جاهزة. راجع البيانات ثم أكّد.');
  }catch(e){status('تعذر عرض المعاينة: '+e.message,true)}}
  btn.textContent='مراجعة الطلب ثم اعتماده';btn.onclick=async function(){if(!previewReady){await openReview();return}previewReady=false;layer.classList.add('hidden');await original.call(this);if(!$('newItems').value.trim()){cart.clear();renderCart();render();autoNotes='';$('ffbQuickInput').value='';$('ffbQuickReview').classList.add('hidden')} };
@@ -3384,6 +3391,24 @@ render();
 })();
 
 const ff27Pending=new Map();
+// FF70: Atomic server transaction for order and per-item notes, with FF27 idempotency key.
+function ff70AtomicSubmit(kind,input){
+ if(!Array.isArray(input?.p_items)||!input.p_items.some(i=>String(i.item_notes||'').trim()))return ff27Submit(kind,input);
+ const slot='ff27-request-'+user.id+'-'+kind;
+ const payload=JSON.stringify(input);
+ const pending=ff27Pending.get(slot);
+ if(pending)return pending.payload===payload?pending.work:Promise.reject(Error('انتظر نتيجة الطلب الجاري قبل إنشاء طلب مختلف'));
+ const work=(async()=>{
+  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(payload));
+  const digest=Array.from(new Uint8Array(bytes),x=>x.toString(16).padStart(2,'0')).join('');
+  const prev=JSON.parse(sessionStorage.getItem(slot)||'null');
+  const request=prev?.digest===digest?prev.request:crypto.randomUUID();
+  sessionStorage.setItem(slot,JSON.stringify({digest,request}));
+  const result=await rpc('ff70_submit_atomic',{p_request:request,p_kind:kind,p_input:input});
+  sessionStorage.removeItem(slot);return result;
+ })().finally(()=>ff27Pending.delete(slot));
+ ff27Pending.set(slot,{payload,work});return work;
+}
 function ff27Submit(kind,input){
  const slot='ff27-request-'+user.id+'-'+kind;
  const payload=JSON.stringify(input);
