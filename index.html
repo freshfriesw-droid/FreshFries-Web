@@ -3393,7 +3393,7 @@ render();
 const ff27Pending=new Map();
 // FF70: Atomic server transaction for order and per-item notes, with FF27 idempotency key.
 function ff70AtomicSubmit(kind,input){
- if(!Array.isArray(input?.p_items)||!input.p_items.some(i=>String(i.item_notes||'').trim()))return ff27Submit(kind,input);
+ if(kind!=='delivery')throw Error('FF70 يدعم إنشاء طلبات التوصيل فقط');
  const slot='ff27-request-'+user.id+'-'+kind;
  const payload=JSON.stringify(input);
  const pending=ff27Pending.get(slot);
