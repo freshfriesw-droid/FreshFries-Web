@@ -266,7 +266,44 @@ body.ff-v12-assembly-mode #ffx-toast{display:none!important}
 </style>
 <script>// إعدادات الاتصال العامة فقط. راجع عنوان المشروع قبل تشغيل نسخة الاختبار.
 window.FF_CONFIG={url:'https://dmduuidfvqpvmcwgoffi.supabase.co',key:'sb_publishable_CJ8mR24mwpTyh2NerElb7g_R_t6xuQ4'};
-</script><link rel="manifest" href="./manifest.webmanifest"><style>body[data-access=locked]>:not(#loginOverlay),body:is([data-access=customer],[data-access=applicant])>:not(#ff28Portal){display:none!important}#ff28Portal{display:none;margin:5vh auto;max-width:520px;padding:24px;border-top:5px solid #a21b2b;background:white;color:#222}body:is([data-access=customer],[data-access=applicant])>#ff28Portal{display:block}#ff28Portal article{padding:12px 0;border-bottom:1px solid #ddd}#ff28Portal [hidden]{display:none!important}</style></head>
+</script><link rel="manifest" href="./manifest.webmanifest"><style>body[data-access=locked]>:not(#loginOverlay),body:is([data-access=customer],[data-access=applicant])>:not(#ff28Portal){display:none!important}#ff28Portal{display:none;margin:5vh auto;max-width:520px;padding:24px;border-top:5px solid #a21b2b;background:white;color:#222}body:is([data-access=customer],[data-access=applicant])>#ff28Portal{display:block}#ff28Portal article{padding:12px 0;border-bottom:1px solid #ddd}#ff28Portal [hidden]{display:none!important}</style>
+<style id="ff61-new-employees-style">
+#ffAssemblyLauncher.ff61-legacy-disabled{display:none!important}
+#loginOverlay .loginbox{max-height:94vh;overflow:auto;overscroll-behavior:contain}
+.ff61-login-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.ff61-login-actions button{flex:1 1 130px}
+.ff61-public-panel{background:var(--ffb-soft);border:1px solid var(--ffb-line);border-radius:13px;padding:14px;margin-top:13px}
+.ff61-public-panel h3{margin:0 0 8px;font-size:17px}
+.ff61-public-panel label{display:block;margin:8px 0 0;font-weight:700;font-size:12px}
+.ff61-public-panel input,.ff61-public-panel select,.ff61-public-panel textarea{width:100%;margin:5px 0 9px}
+.ff61-public-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ff61-check{display:flex!important;align-items:center;gap:7px;font-weight:500!important;line-height:1.6}
+.ff61-check input{width:18px!important;height:18px;flex:none;margin:0!important}
+.ff61-feedback{font-size:12px;margin:9px 0;overflow-wrap:anywhere;line-height:1.8}
+.ff61-feedback input{font-size:12px}
+#ff61ManageShortcut{font-size:11px;white-space:nowrap;padding:10px}
+#ff61AdminDialog{width:min(96vw,790px);max-height:88vh;overflow:auto;background:var(--ffb-surface);color:var(--ffb-ink);border:1px solid var(--ffb-line);border-radius:18px;padding:0;box-shadow:0 26px 80px #0005}
+#ff61AdminDialog::backdrop{background:#0b0b0bc9;backdrop-filter:blur(2px)}
+.ff61-admin-shell{padding:20px}
+.ff61-dialog-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ff61-dialog-head h2{font-size:19px;margin:0}
+.ff61-application-card,.ff61-delegate-card{border:1px solid var(--ffb-line);border-right:4px solid var(--ffb-red);border-radius:13px;padding:15px;margin:12px 0;background:var(--ffb-soft)}
+.ff61-application-card h3,.ff61-delegate-card h3{font-size:15px;margin:0 0 8px}
+.ff61-app-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ff61-status{font-size:12px;padding:4px 8px;background:#d7253822;border-radius:9px;color:var(--ffb-ink)}
+.ff61-info-row{font-size:12px;border-bottom:1px solid var(--ffb-line);padding:4px 0;margin:0;overflow-wrap:anywhere}
+.ff61-decision{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:13px;border-top:1px solid var(--ffb-line);padding-top:13px}
+.ff61-decision label,.ff61-reject label{font-size:12px;font-weight:700}
+.ff61-decision input,.ff61-decision select{display:block;width:100%;margin-top:5px}
+.ff61-decision label:has(input[type=password]){grid-column:1/-1}
+.ff61-decision button{grid-column:1/-1}
+.ff61-reject{display:grid;gap:9px;margin-top:10px}
+.ff61-reject textarea{min-height:60px}
+.ff61-delegate-card .ff61-check{margin:8px 0}
+.ff61-management-entry{border:1px solid var(--ffb-line);border-radius:12px;padding:13px;margin:12px 0}
+.ff61-reset-section{border-top:1px solid var(--ffb-line);margin-top:20px;padding-top:17px}
+@media(max-width:600px){.ff61-public-row,.ff61-decision{grid-template-columns:1fr}#ff61AdminDialog{width:98vw}.ff61-admin-shell{padding:12px}}
+</style></head>
 <body data-access="locked"><section id="ff28Portal" aria-live="polite"><h1 id="ff28Title"></h1><p id="ff28State"></p><form id="ff28Apply" hidden><label>الاسم<input id="ff28Name" maxlength="100" minlength="2" required></label><label>الوظيفة المطلوبة<select id="ff28Role"><option value="driver">موصل</option><option value="cashier">كاشير</option><option value="customer_service">خدمة العملاء</option><option value="supervisor">مشرف</option></select></label><button>تقديم الطلب</button></form><div id="ff28Rows"></div><button id="ff28Refresh">تحديث</button><button id="ff28Logout">خروج</button></section>
 <header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.28</small></div><div class="sub">منصة خدمة العملاء والتوصيل</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><span id="ff48VersionStatus" class="ff48-version hidden" role="status" aria-live="polite">فحص توافق الإصدار...</span><button id="ff52RoutesBtn" class="outline hidden" type="button">📍 توجيه مناطق الجامعات</button><button id="ff51CatalogBtn" class="outline hidden" type="button">🍟 المنيو والعروض</button><button id="ff51CustomersBtn" class="outline hidden" type="button">👥 العملاء</button><button id="ff51ArchiveBtn" class="outline hidden" type="button">📁 الأرشيف</button><button id="ff51RatingsBtn" class="outline hidden" type="button">⭐ التقييمات</button><button id="ff50ChangesBtn" class="outline hidden" type="button">📝 تعديلات الطلبات</button><button id="ff49ReservationsBtn" class="outline hidden" type="button">📅 الحجوزات</button><button id="ff49TransferBtn" class="outline hidden" type="button">🔄 نقل الموصل</button><button id="ff48DiagnosticsBtn" class="outline hidden" type="button">🩺 تشخيص النسخة</button><button id="ff47QABtn" class="outline hidden" type="button">📋 الاختبار الشامل</button><button id="ff46ReadinessBtn" class="outline hidden" type="button">🧪 جاهزية الإطلاق</button><button id="ff45AccessBtn" class="outline hidden" type="button">🔐 عزل الفروع</button><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
 <main>
@@ -453,9 +490,9 @@ window.FF_CONFIG={url:'https://dmduuidfvqpvmcwgoffi.supabase.co',key:'sb_publish
  <div class="card"><h2>📦 طلباتي المسندة</h2><div id="driverTasks"></div></div>
  <div class="card"><h2>📘 تعليمات مختصرة</h2><div class="note">اقبل العرض خلال المدة المعروضة (الافتراضي 3 دقائق عند وجود بديل جاهز، و10 دقائق دون بديل)؛ أما الطلبات التراكمية وقت الضغط فتُسند تلقائيًا دون انتظار القبول؛ لا يظهر خيار الرفض إلا إذا سمحت خدمة العملاء بذلك. انتظر تأكيد الكاشير بتسليم الطلب قبل الضغط على «استلمت وأنا في الطريق». بعد التسليم سجّل الحالة فورًا؛ إذا بقيت لديك طلبات أخرى ستظل حالتك «مشغول».</div></div>
 </section>
-<section id="ffAssemblyLauncher" class="card hidden" aria-label="إدارة حسابات نقطة التجميع">
+<section id="ffAssemblyLauncher" class="card hidden ff61-legacy-disabled" aria-label="إدارة حسابات نقطة التجميع">
  <h2>📦 حسابات نقطة التجميع — الإدارة فقط</h2>
- <p class="muted">نظام واحد ورابط واحد. أنشئ مستخدمًا مستقلًا ببريد وكلمة مرور في Supabase Authentication، ثم خصّص له صلاحية «تجميع فقط» وفرعًا واحدًا هنا. عند دخوله تظهر نقطة تجميع فرعه وحدها، ولا تعمل إلا أثناء فتح حسابه.</p>
+ <p class="muted">إدارة حسابات نقطة التجميع انتقلت إلى «الموظفون والصلاحيات ← طلبات الانضمام». واجهة نقطة التجميع التشغيلية للفرع محفوظة.</p>
  <div class="actions"><button type="button" id="ffV12ManagerToggle" class="outline">إدارة موظفي التجميع</button><button id="ffJoinReview" type="button" class="outline">طلبات الانضمام</button></div>
  <div id="ffV12ManagerForm" class="hidden" style="margin-top:15px">
   <div class="row"><div><label for="ffV12ManagerEmail">بريد حساب التجميع</label><input id="ffV12ManagerEmail" type="email" autocomplete="off" placeholder="assembly@example.com"></div><div><label for="ffV12ManagerBranch">الفرع المسموح</label><select id="ffV12ManagerBranch"></select></div></div>
@@ -464,11 +501,11 @@ window.FF_CONFIG={url:'https://dmduuidfvqpvmcwgoffi.supabase.co',key:'sb_publish
  </div>
 </section>
 <section id="staffView" class="hidden">
- <div class="card" id="managerLinks" hidden><h2>👥 ربط حساب موظف جديد</h2><p class="muted">أنشئ حساب الموظف أولًا في Supabase → Authentication → Users. بعد ذلك اربط بريده هنا؛ لا تدخل كلمة مروره في هذه الواجهة.</p>
- <div class="row"><div><label>بريد الموظف</label><input id="addEmail" type="email" placeholder="example@email.com"></div><div><label>اسم الموظف</label><input id="addName" placeholder="اسم الموظف"></div><div><label>الدور</label><select id="addRole"><option value="driver">موصل</option><option value="cashier">كاشير</option><option value="customer_service">خدمة عملاء</option><option value="supervisor">مشرف مشاهدة</option><option value="assembly">نقطة التجميع</option></select></div></div>
+ <div class="card" id="managerLinks" hidden><h2>👥 ربط حساب موظف موجود (للترحيل فقط)</h2><p class="muted">للموظفين الجدد استخدم زر «تقديم طلب انضمام» من شاشة الدخول، ثم اعتمد الطلب من «طلبات الانضمام» لإنشاء الحساب وتحديد الدور والفرع. هذه الواجهة فقط لربط الحسابات القديمة الموجودة مسبقًا.</p>
+ <div class="row"><div><label>بريد الموظف</label><input id="addEmail" type="email" placeholder="example@email.com"></div><div><label>اسم الموظف</label><input id="addName" placeholder="اسم الموظف"></div><div><label>الدور</label><select id="addRole"><option value="driver">موصل</option><option value="cashier">كاشير</option><option value="customer_service">خدمة عملاء</option><option value="supervisor">مشرف مشاهدة</option></select></div></div>
  <div class="row"><div><label>الفرع (للموصل والكاشير ونقطة التجميع)</label><select id="addBranch"></select></div></div><div class="actions"><span id="assemblyLinkStatus" role="status" aria-live="polite"></span><button id="linkUserBtn" class="dark">ربط الحساب</button></div></div>
 
- <div class="card" id="staffAdminCard" hidden><div class="sectionbar"><h2>👥 إدارة الموظفين والحسابات</h2><button id="staffAdminRefresh" class="outline" type="button">تحديث الموظفين</button></div><p class="muted">المدير العام فقط. خدمة العملاء مركزية لجميع الفروع. لا يمكن تعطيل موصل لديه طلبات أو عروض نشطة. <b>في v38.16:</b> عند تغيير الدور الوظيفي تُحذف الاستثناءات الفردية القديمة ويعود الموظف إلى صلاحيات دوره الجديد، مع تسجيل العملية. تغيير الفرع وحده لا يغيّر الصلاحيات.</p><div id="staffAdminList" class="empty">اضغط تحديث الموظفين لعرض الحسابات.</div><div class="sectionbar"><h3>🔐 الصلاحيات التفصيلية</h3></div><p class="muted">اختر الموظف من القائمة، ثم حدد السماح أو المنع أو العودة لافتراضيات الدور. تُفرض الصلاحيات على الطلبات والإسناد والإضافات والتحكم برفض الموصل. بعض الصلاحيات الإدارية الأخرى لا تزال قيد التكامل.</p><div class="row"><div><label>الموظف</label><select id="permissionEmployee"><option value="">اختر موظفًا</option></select></div><div style="align-self:end"><button id="permissionLoad" class="outline">عرض صلاحيات الموظف</button></div></div><div id="permissionMatrix"></div><div id="permissionAudit"></div><div class="sectionbar"><h3>📚 سجل تغييرات الموظفين</h3><button id="staffAuditRefresh" class="outline" type="button">عرض السجل</button></div><div id="staffAuditList"></div></div>
+ <div class="card" id="staffAdminCard" hidden><div class="sectionbar"><h2>👥 إدارة الموظفين والحسابات</h2><button id="staffAdminRefresh" class="outline" type="button">تحديث الموظفين</button></div><p class="muted">المدير العام فقط. خدمة العملاء مركزية لجميع الفروع. لا يمكن تعطيل موصل لديه طلبات أو عروض نشطة. <b>في v38.16:</b> عند تغيير الدور الوظيفي تُحذف الاستثناءات الفردية القديمة ويعود الموظف إلى صلاحيات دوره الجديد، مع تسجيل العملية. تغيير الفرع وحده لا يغيّر الصلاحيات.</p><div class="ff61-management-entry"><h3>📨 طلبات الانضمام وصلاحيات التفويض</h3><p class="muted">من شاشة الدخول يقدّم الموظف الطلب، ومن هنا تراجع الإدارة الطلب وتحدد الدور والفرع وتُنشئ كلمة مرور أولية. يمكن للمدير تفويض موظف بالاطلاع أو القبول أو الرفض أو الإشعارات بشكل مستقل.</p><div id="ff61StaffControls" class="actions"></div></div><div id="staffAdminList" class="empty">اضغط تحديث الموظفين لعرض الحسابات.</div><div class="sectionbar"><h3>🔐 الصلاحيات التفصيلية</h3></div><p class="muted">اختر الموظف من القائمة، ثم حدد السماح أو المنع أو العودة لافتراضيات الدور. تُفرض الصلاحيات على الطلبات والإسناد والإضافات والتحكم برفض الموصل. بعض الصلاحيات الإدارية الأخرى لا تزال قيد التكامل.</p><div class="row"><div><label>الموظف</label><select id="permissionEmployee"><option value="">اختر موظفًا</option></select></div><div style="align-self:end"><button id="permissionLoad" class="outline">عرض صلاحيات الموظف</button></div></div><div id="permissionMatrix"></div><div id="permissionAudit"></div><div class="sectionbar"><h3>📚 سجل تغييرات الموظفين</h3><button id="staffAuditRefresh" class="outline" type="button">عرض السجل</button></div><div id="staffAuditList"></div></div>
 <div id="serviceOnly" class="hidden"><div class="card ff-neworder-workspace"><h2>🍟 طلب جديد — خدمة العملاء</h2><p class="muted">أنشئ الطلب بخطوات واضحة: بيانات العميل ← اختيار الأصناف أو الكتابة السريعة ← معاينة دقيقة ← اعتماد وتوزيع تلقائي وفق الصلاحيات.</p>
  <div class="ff-step-label">01 <span>بيانات العميل</span></div>
  <div class="row"><div><label>الفرع</label><select id="newBranch"></select></div><div><label>هاتف العميل</label><input id="newPhone" inputmode="tel" placeholder="77xxxxxxx"></div><div><label>المنطقة</label><input id="newArea" placeholder="اسم المنطقة بالتحديد"></div></div>
@@ -570,7 +607,28 @@ window.FF_CONFIG={url:'https://dmduuidfvqpvmcwgoffi.supabase.co',key:'sb_publish
 </section>
 <footer>Fresh Fries v38.28 — نظام التشغيل الذكي. تسجيل الدخول بالهوية المركزية Supabase. لا يتم حفظ كلمات المرور في واجهة المطعم.</footer>
 </main>
-<div id="loginOverlay" class="login"><div class="loginbox"><h2>🔐 دخول نظام Fresh Fries</h2><p class="muted">أدخل بيانات حسابك لتظهر واجهتك بحسب صلاحياتك وفرعك.</p><label for="email">اسم المستخدم</label><input id="email" type="text" autocomplete="username" placeholder="اسم المستخدم أو البريد أو رقم الجوال"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" placeholder="••••••••"><div class="actions"><button id="loginBtn" class="primary" style="width:100%">تسجيل الدخول</button></div><div class="statusbar" id="loginStatus">في أول تجربة، ادخل بحساب المدير الحالي.</div></div></div>
+<div id="loginOverlay" class="login"><div class="loginbox"><h2>🔐 دخول نظام Fresh Fries</h2><p class="muted">أدخل بيانات حسابك لتظهر واجهتك بحسب صلاحياتك وفرعك.</p><label for="email">اسم المستخدم</label><input id="email" type="text" autocomplete="username" placeholder="اسم المستخدم أو البريد أو رقم الجوال"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" placeholder="••••••••"><div class="actions"><button id="loginBtn" class="primary" style="width:100%">تسجيل الدخول</button></div><div class="statusbar" id="loginStatus">في أول تجربة، ادخل بحساب المدير الحالي.</div>
+ <div class="ff61-login-actions"><button id="ff61ApplyToggle" class="primary" type="button">📝 تقديم طلب انضمام</button><button id="ff61StatusToggle" class="outline" type="button">🔎 متابعة طلبي</button></div>
+ <div id="ff61ApplyPanel" class="ff61-public-panel hidden">
+ <h3>طلب الانضمام إلى فريق فريش فرايز</h3><p class="muted">إرسال الطلب لا يُنشئ حساب دخول. تراجع الإدارة البيانات أولًا، ثم تحدد الدور والفرع وتوافق أو ترفض مع تسجيل السبب.</p>
+ <form id="ff61ApplyForm" autocomplete="on">
+  <label>الاسم الرباعي *<input name="full_name" type="text" minlength="9" maxlength="150" autocomplete="name" placeholder="الاسم الأول واسم الأب والجد والعائلة" required></label>
+  <label>البريد الإلكتروني *<input name="email" type="email" maxlength="254" autocomplete="email" required></label>
+  <label>رقم الهاتف *<input name="phone" type="tel" inputmode="tel" minlength="7" maxlength="22" autocomplete="tel" placeholder="77xxxxxxx" required></label>
+  <label>المؤهل العلمي *<input name="qualification" minlength="2" maxlength="150" required></label>
+  <label>العنوان *<input name="address" minlength="5" maxlength="240" autocomplete="street-address" required></label>
+  <div class="ff61-public-row"><label>العمر (بالسنوات) *<input name="age_years" type="number" min="16" max="90" required></label>
+  <label>الحالة الاجتماعية *<select name="marital_status" required><option value="">اختر...</option><option value="single">أعزب / عزباء</option><option value="married">متزوج / متزوجة</option><option value="other">أخرى</option><option value="prefer_not_say">أفضل عدم الإفصاح</option></select></label></div>
+  <div class="ff61-public-row"><label>الوظيفة المطلوبة *<select name="requested_role" required><option value="">اختر...</option><option value="customer_service">خدمة العملاء</option><option value="cashier">كاشير</option><option value="driver">موصل</option><option value="supervisor">مشرف</option><option value="assembly">نقطة التجميع</option></select></label>
+  <label>سنوات الخبرة<input name="experience_years" type="number" min="0" max="60" placeholder="اختياري"></label></div>
+  <label>خبرات إضافية أو رسالة للإدارة<textarea name="applicant_message" maxlength="1500" rows="3" placeholder="اختياري"></textarea></label>
+  <label class="ff61-check"><input id="ff61Consent" type="checkbox" required><span>أوافق على استخدام هذه البيانات لمراجعة طلب الانضمام وحفظها بصورة مقيدة لدى إدارة المطعم.</span></label>
+  <button id="ff61ApplySend" class="primary" type="submit">إرسال طلب الانضمام</button>
+ </form><div id="ff61ApplyInfo" class="ff61-feedback" role="status" aria-live="polite"></div></div>
+ <div id="ff61StatusPanel" class="ff61-public-panel hidden"><h3>متابعة حالة الطلب</h3><p class="muted">احتفظ برقم الطلب الذي ظهر بعد التقديم. عند الموافقة يُنشأ حسابك وتستلم كلمة المرور الأولية من الإدارة، ولا تُعرض هنا.</p>
+  <form id="ff61StatusForm"><label>رقم متابعة الطلب<input id="ff61TrackCode" type="text" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" maxlength="36" required></label><button id="ff61TrackSend" type="submit" class="primary">عرض الحالة</button></form><div id="ff61TrackInfo" class="ff61-feedback" role="status"></div>
+ </div>
+ </div></div>
 <div id="toast" class="alert hidden"></div>
 <script id="ff-fee-safety">
 /* Prevent blank delivery fees from silently becoming zero; zero is explicit. */
@@ -2578,7 +2636,7 @@ function icon(name,cls=''){return `<svg class="ffx-icon ${cls}" viewBox="0 0 24 
 const groups=[
  {title:'الرئيسية',items:[['لوحة التحكم','home','home'],['طلب جديد','plus','new'],['الطلبات والمتابعة','orders','orders'],['الطلبات المتأخرة','alert','late']]},
  {title:'تشغيل الفروع',items:[['الموصلون','bike','drivers'],['بوابة الموصل','bike','driver'],['شاشة الكاشير','wallet','cashier'],['المنيو والعروض','grid','catalog'],['العملاء','users','customers'],['الأرشيف','folder','archive'],['التقييمات','star','ratings'],['تعديل الطلبات','orders','changes'],['الحجوزات','calendar','reservations'],['نقل الموصل','refresh','transfer'],['توجيه مناطق الجامعات','filter','routes']]},
- {title:'التقارير والإدارة',items:[['التقارير','report','reports'],['تسويات الموصلين','wallet','settlements'],['الرسائل','message','messages'],['الشكاوى والتظلمات','message','cases'],['الموظفون والصلاحيات','shield','team'],['حسابات نقطة التجميع','grid','assembly_admin'],['أمان النظام','shield','security'],['تدقيق سلامة البيانات','check','integrity'],['عزل الفروع','shield','access'],['جاهزية الإطلاق','check','readiness'],['الاختبار الشامل','check','qa'],['تشخيص النسخة','settings','diagnostics']]}
+ {title:'التقارير والإدارة',items:[['التقارير','report','reports'],['تسويات الموصلين','wallet','settlements'],['الرسائل','message','messages'],['الشكاوى والتظلمات','message','cases'],['الموظفون والصلاحيات','shield','team'],['أمان النظام','shield','security'],['تدقيق سلامة البيانات','check','integrity'],['عزل الفروع','shield','access'],['جاهزية الإطلاق','check','readiness'],['الاختبار الشامل','check','qa'],['تشخيص النسخة','settings','diagnostics']]}
 ];
 const targets={catalog:'ff51CatalogBtn',customers:'ff51CustomersBtn',archive:'ff51ArchiveBtn',ratings:'ff51RatingsBtn',changes:'ff50ChangesBtn',reservations:'ff49ReservationsBtn',transfer:'ff49TransferBtn',routes:'ff52RoutesBtn',reports:'ff40ReportsBtn',settlements:'ff42SettlementsBtn',messages:'ff39InboxBtn',cases:'ff41CasesBtn',security:'ff43SecurityBtn',integrity:'ff44IntegrityBtn',access:'ff45AccessBtn',readiness:'ff46ReadinessBtn',qa:'ff47QABtn',diagnostics:'ff48DiagnosticsBtn'};
 const roleAllowed=(key)=>{const role=typeof data!=='undefined'&&data?.role||'';if(!role)return false;if(['home','settings'].includes(key))return true;if(key==='new')return ['manager','customer_service'].includes(role)&&(typeof canAction==='function'?canAction('create_order'):true);if(['orders','drivers'].includes(key))return ['manager','customer_service','supervisor'].includes(role);if(key==='driver')return role==='driver';if(key==='cashier')return role==='cashier';if(key==='team'||key==='assembly_admin')return role==='manager';if(key==='late')return !!($x('ff40AlertsBtn')&&!$x('ff40AlertsBtn').classList.contains('hidden'));
@@ -3189,7 +3247,7 @@ render();
  const close=node('button','إغلاق');close.onclick=()=>dialog.close();const content=node('section');
  dialog.append(close,content);document.body.append(dialog);
  const review=document.getElementById('ffJoinReview');let owner='',last=0,pending=false;
- function mayReview(id){return !!id && user?.id===id && data?.role==='manager'}
+ function mayReview(_id){return false} /* legacy ff27_review is missing: replaced by ff61-employees */
  async function load(show=false){
   const id=user?.id;if(!mayReview(id))return;
   const rows=await rpc('ff27_review');if(!mayReview(id))return;
@@ -3278,7 +3336,14 @@ function ff27Submit(kind,input){
 })();
 
 (()=>{
- const launch=document.createElement('button');launch.textContent='إدارة البيانات والتصفير';document.getElementById('ffJoinReview').after(launch);
+ const launch=document.createElement('button');launch.id='ff61DataResetShortcut';
+ launch.textContent='إدارة البيانات والتصفير (بانتظار التفعيل الخادمي)';
+ const resetPanel=document.createElement('section');resetPanel.className='ff61-reset-section';
+ const resetHeader=document.createElement('h3');resetHeader.textContent='🗂️ إدارة البيانات والتصفير';
+ const resetHint=document.createElement('p');resetHint.className='muted';
+ resetHint.textContent='قسم مستقل ضمن إدارة النظام. دالة ff27_data غير مثبتة في التصدير الحالي؛ تم تعطيل التصفير لحماية بيانات الفروع إلى أن تكتمل المراجعة والنسخ الاحتياطي والأذونات.';
+ resetPanel.append(resetHeader,resetHint,launch);document.getElementById('staffAdminCard').append(resetPanel);
+ launch.disabled=true;launch.title='يتطلب تركيب وظيفة تصفير مدققة ودعم الاسترجاع قبل الاستخدام';
  const dialog=document.createElement('dialog');dialog.dir='rtl';dialog.style.cssText='max-width:min(94vw,620px);max-height:85vh;border:0;border-radius:15px;padding:20px';
  dialog.innerHTML='<button data-close>إغلاق</button><h2>إدارة البيانات والتصفير</h2><label>الفرع<select data-branch></select></label><label>الفئة<select data-category><option value="closed_cases">البلاغات المغلقة وأحداثها</option><option value="driver_ratings">تقييمات الموصل المسجلة من الكاشير أو المدير</option></select></label><label>من<input type="date" data-from></label><label>إلى<input type="date" data-to></label><button data-preview>معاينة وحفظ نسخة احتياطية</button><p data-info role="status"></p><div data-list></div>';
  document.body.append(dialog);const get=k=>dialog.querySelector('[data-'+k+']');
@@ -3331,4 +3396,218 @@ function ff27Watch(branch=''){
  }).subscribe();
 }
 window.addEventListener('ff-assembly-snapshot-success',()=>ff27Watch());
+</script><script id="ff61-employees-application">
+/* Fresh Fries LUXE v38.29 — Employee onboarding portal (no service-role key in browser). */
+(() => {
+'use strict';
+const byId = x => document.getElementById(x);
+const ENDPOINT = String(window.FF_CONFIG?.url || '').replace(/\/$/, '') + '/functions/v1/ff61-employees';
+const ROLE_NAMES = {customer_service:'خدمة العملاء',cashier:'كاشير',driver:'موصل',supervisor:'مشرف',assembly:'نقطة التجميع'};
+const MARITAL = {single:'أعزب/عزباء',married:'متزوج/ة',other:'أخرى',prefer_not_say:'أفضل عدم الإفصاح'};
+const create=(tag,txt,cls)=>{const node=document.createElement(tag);if(txt!==undefined)node.textContent=txt;if(cls)node.className=cls;return node};
+const actionButton=(txt,css,fn)=>{const b=create('button',txt,css);b.type='button';b.onclick=fn;return b};
+async function request(action, payload={},privileged=false){
+ const head={'Content-Type':'application/json',apikey:window.FF_CONFIG.key};
+ if(privileged){
+  if(typeof client==='undefined'||!client)throw Error('سجّل الدخول بحساب الموظف أولًا');
+  const {data:{session},error}=await client.auth.getSession();
+  if(error||!session?.access_token)throw Error('انتهت جلسة الدخول، يرجى تسجيل الدخول مجددًا');
+  head.Authorization='Bearer '+session.access_token;
+ }
+ const ctrl=new AbortController();const timeout=setTimeout(()=>ctrl.abort(),25000);
+ try{
+  const res=await fetch(ENDPOINT,{method:'POST',headers:head,body:JSON.stringify({action,...payload}),signal:ctrl.signal});
+  const body=await res.json().catch(()=>({}));
+  if(!res.ok||!body.ok)throw Error(body.error||'تعذر الاتصال بخدمة طلبات الانضمام ('+res.status+')');
+  return body;
+ }finally{clearTimeout(timeout)}
+}
+
+// Public application forms are inside #loginOverlay so locked-mode CSS doesn't hide them.
+const applyToggle=byId('ff61ApplyToggle'),applyBox=byId('ff61ApplyPanel');
+const statusToggle=byId('ff61StatusToggle'),statusBox=byId('ff61StatusPanel');
+applyToggle.onclick=()=>{const closed=applyBox.classList.contains('hidden');applyBox.classList.toggle('hidden',!closed);statusBox.classList.add('hidden');if(closed)applyBox.scrollIntoView({behavior:'smooth',block:'nearest'})};
+statusToggle.onclick=()=>{const closed=statusBox.classList.contains('hidden');statusBox.classList.toggle('hidden',!closed);applyBox.classList.add('hidden');if(closed)statusBox.scrollIntoView({behavior:'smooth',block:'nearest'})};
+byId('ff61ApplyForm').onsubmit=async e=>{
+ e.preventDefault();const form=e.currentTarget,button=byId('ff61ApplySend'),info=byId('ff61ApplyInfo');
+ if(!form.reportValidity())return;
+ const values=Object.fromEntries(new FormData(form).entries());
+ const application={...values,privacy_agreement:byId('ff61Consent').checked};
+ button.disabled=true;info.textContent='جاري تقديم الطلب...';
+ try{
+  const r=await request('submit',{application});
+  info.replaceChildren(create('strong','تم استلام طلب الانضمام، واحتفظ برقم المتابعة التالي:'));
+  const field=create('input');field.readOnly=true;field.value=r.application_id;
+  field.style.marginTop='8px';info.append(field);
+  info.append(actionButton('نسخ رقم المتابعة','outline',async()=>{
+   try{await navigator.clipboard.writeText(r.application_id);info.append(create('p','تم النسخ'))}
+   catch{field.select()}
+  }));
+  byId('ff61TrackCode').value=r.application_id;
+  form.reset();
+ }catch(err){info.textContent='تعذر تقديم الطلب: '+(err.message||err)}finally{button.disabled=false}
+};
+byId('ff61StatusForm').onsubmit=async e=>{
+ e.preventDefault();const button=byId('ff61TrackSend'),out=byId('ff61TrackInfo');button.disabled=true;
+ try{
+  const r=await request('status',{application_id:byId('ff61TrackCode').value.trim()});
+  const labels={pending:'قيد المراجعة',approved:'مقبول',rejected:'مرفوض'};
+  out.textContent='حالة طلبك: '+(labels[r.status]||r.status)+'. '+(r.decision_reason||'') +
+    (r.status==='approved'?' تواصل مع إدارة المطعم لاستلام بيانات الدخول بشكل آمن.':'');
+ }catch(err){out.textContent=err.message||String(err)}finally{button.disabled=false}
+};
+
+const manageButton=actionButton('📨 طلبات الانضمام','outline',()=>openReview());
+manageButton.id='ff61ManageShortcut';manageButton.hidden=true;
+const badge=create('span','0','pill');badge.id='ff61PendingBadge';badge.style.marginInlineStart='6px';
+manageButton.append(badge);
+const topbar=document.querySelector('#ffx-topbar .ffx-top-right') || document.getElementById('ffx-topbar');
+if(topbar)topbar.prepend(manageButton);
+const managerButtons=byId('ff61StaffControls');
+if(managerButtons)managerButtons.append(actionButton('📨 مراجعة طلبات التوظيف','primary',()=>openReview()));
+
+const dialog=document.createElement('dialog');dialog.id='ff61AdminDialog';dialog.dir='rtl';
+const shell=create('div',undefined,'ff61-admin-shell');
+const header=create('div',undefined,'ff61-dialog-head');header.append(create('h2','طلبات الانضمام وإدارة التفويض'));
+header.append(actionButton('✕ إغلاق','outline',()=>dialog.close()));shell.append(header);
+const controls=create('div',undefined,'actions');
+const pendingBtn=actionButton('طلبات معلقة','primary',()=>showTab('pending'));
+const historyBtn=actionButton('سجل القرارات','outline',()=>showTab('history'));
+const delegateBtn=actionButton('تفويض الصلاحيات','outline',()=>showTab('delegations'));
+const refreshBtn=actionButton('تحديث','outline',()=>refreshView());
+controls.append(pendingBtn,historyBtn,delegateBtn,refreshBtn);shell.append(controls);
+const info=create('p','', 'muted');info.id='ff61AdminInfo';shell.append(info);
+const content=create('div');shell.append(content);dialog.append(shell);document.body.append(dialog);
+let currentTab='pending',cached=[],capabilities=null,previousPendingIds=null,shownAccount='',loading=false;
+const getActor=()=>typeof user!=='undefined'?user?.id||'':'';
+function clear(node){node.replaceChildren()}
+function row(label,value){const p=create('p',undefined,'ff61-info-row');p.append(create('strong',label+': '),create('span',value||'—'));return p}
+function showTab(tab){currentTab=tab;pendingBtn.className=tab==='pending'?'primary':'outline';historyBtn.className=tab==='history'?'primary':'outline';delegateBtn.className=tab==='delegations'?'primary':'outline';refreshView()}
+async function openReview(){
+ if(!capabilities?.view){toast('لا توجد صلاحية لاستعراض طلبات الانضمام');return}
+ dialog.showModal();showTab('pending');
+}
+async function refreshView(){
+ if(!dialog.open||loading)return;loading=true;info.textContent='جاري تحميل المعلومات...';clear(content);
+ try{
+  if(currentTab==='delegations')await renderDelegations();
+  else{
+   const r=await request('list',{},true);cached=r.applications||[];
+   renderList(currentTab==='pending'?'pending':'history');
+  }
+  info.textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar-YE',{timeZone:'Asia/Aden'});
+ }catch(err){info.textContent='تعذر التحميل: '+(err.message||err)}finally{loading=false}
+}
+function renderList(section){
+ clear(content);const rows=cached.filter(x=>section==='pending'?x.status==='pending':x.status!=='pending');
+ if(!rows.length){content.append(create('p',section==='pending'?'لا توجد طلبات بانتظار القرار.':'لا يوجد سجل قرارات حتى الآن.','muted'));return}
+ for(const a of rows){
+  const card=create('article',undefined,'ff61-application-card');
+  const header=create('div',undefined,'ff61-app-head');header.append(create('h3',a.full_name));
+  header.append(create('span',a.status==='pending'?'قيد المراجعة':a.status==='approved'?'مقبول':'مرفوض','ff61-status'));card.append(header);
+  card.append(row('البريد الإلكتروني',a.email),row('رقم الهاتف',a.phone),row('المؤهل العلمي',a.qualification),row('العنوان',a.address),row('العمر',String(a.age_years)),row('الحالة الاجتماعية',MARITAL[a.marital_status]),row('الوظيفة المطلوبة',ROLE_NAMES[a.requested_role]));
+  card.append(row('الخبرة',a.experience_years==null?'غير محددة':a.experience_years+' سنة'),row('ملاحظات مقدم الطلب',a.applicant_message||'لا توجد'));
+  card.append(row('تاريخ التقديم',new Date(a.submitted_at).toLocaleString('ar-YE',{timeZone:'Asia/Aden'})));
+  if(a.status!=='pending'){
+   card.append(row('نتيجة القرار',a.status==='approved'?'مقبول':'مرفوض'),row('السبب / الرسالة',a.decision_reason||'—'));
+   if(a.approved_role)card.append(row('الدور المعتمد',ROLE_NAMES[a.approved_role]));
+  }else{
+   if(capabilities?.approve){
+    const options=create('div',undefined,'ff61-decision');
+    const roleLabel=create('label','الدور المعتمد');const role=create('select');
+    for(const [k,v] of Object.entries(ROLE_NAMES))role.add(new Option(v,k));role.value=a.requested_role;
+    const branchLabel=create('label','الفرع المسموح');const branch=create('select');
+    for(const b of data?.branches||[])branch.add(new Option(b.name,b.id));
+    const passLabel=create('label','كلمة مرور أولية (12 خانة على الأقل، حروف وأرقام)');const pass=create('input');
+    pass.type='password';pass.autocomplete='new-password';pass.minLength=12;pass.maxLength=128;
+    const sync=()=>{branchLabel.hidden=!['driver','cashier','assembly'].includes(role.value);branch.disabled=branchLabel.hidden};role.onchange=sync;
+    roleLabel.append(role);branchLabel.append(branch);passLabel.append(pass);sync();
+    options.append(roleLabel,branchLabel,passLabel);
+    const accept=actionButton('✓ قبول وإنشاء حساب','primary',async()=>{
+     if(!confirm('اعتماد '+a.full_name+' وإنشاء حساب مستقل للدور '+ROLE_NAMES[role.value]+'؟'))return;
+     accept.disabled=true;const password=pass.value;pass.value='';
+     try{
+      await request('approve',{application_id:a.id,role:role.value,branch_id:branch.disabled?null:branch.value,password},true);
+      toast('تم إنشاء حساب الموظف واعتماد دوره. أبلغ الموظف بكلمة المرور عبر وسيلة آمنة.');
+      // Password is never re-displayed or stored. Manager must communicate it securely at creation time.
+      await refreshAfterDecision();
+     }catch(err){info.textContent=err.message||String(err)}finally{accept.disabled=false}
+    });options.append(accept);card.append(options);
+   }
+   if(capabilities?.reject){
+    const box=create('div',undefined,'ff61-reject');const reason=create('textarea');reason.rows=2;reason.maxLength=1200;reason.placeholder='سبب الرفض (إلزامي)';
+    const reject=actionButton('رفض الطلب مع تسجيل السبب','outline',async()=>{
+     if(reason.value.trim().length<5){info.textContent='اكتب سبب الرفض، خمسة أحرف على الأقل';return}
+     if(!confirm('رفض طلب '+a.full_name+'؟'))return;
+     reject.disabled=true;
+     try{await request('reject',{application_id:a.id,reason:reason.value.trim()},true);toast('تم رفض الطلب وحفظ السبب');await refreshAfterDecision()}
+     catch(err){info.textContent=err.message||String(err)}finally{reject.disabled=false}
+    });box.append(reason,reject);card.append(box);
+   }
+  }
+  content.append(card)
+ }
+}
+async function refreshAfterDecision(){
+ const r=await request('list',{},true);cached=r.applications||[];renderList(currentTab);await refreshBadge();
+}
+async function renderDelegations(){
+ clear(content);
+ if(data?.role!=='manager'){content.append(create('p','المدير العام فقط يستطيع تفويض الصلاحيات.'));return}
+ const r=await request('delegations',{},true);
+ const map=new Map(r.delegations.map(x=>[x.user_id,x]));
+ content.append(create('p','يمكن التفويض مستقلًا: الاطلاع على الطلبات، القبول، الرفض، واستلام الإشعارات. لا يستطيع الموظف منح الصلاحيات لنفسه.','muted'));
+ for(const p of r.staff.filter(x=>x.active)){
+  const card=create('article',undefined,'ff61-delegate-card');card.append(create('h3',p.display_name+' — '+(ROLE_NAMES[p.role]||p.role)));
+  const prior=map.get(p.user_id)||{};const checks={};
+  for(const [key,label] of [['view','عرض الطلبات'],['approve','قبول الطلبات'],['reject','رفض الطلبات'],['notify','استلام إشعارات جديدة']]){
+   const wrap=create('label',undefined,'ff61-check');const chk=create('input');chk.type='checkbox';chk.checked=prior['may_'+key]===true;checks[key]=chk;wrap.append(chk,create('span',label));card.append(wrap);
+  }
+  const save=actionButton('حفظ التفويض','primary',async()=>{
+   save.disabled=true;
+   try{await request('set_delegation',{user_id:p.user_id,...Object.fromEntries(Object.entries(checks).map(([k,v])=>[k,v.checked]))},true);toast('تم حفظ تفويض '+p.display_name)}
+   catch(err){info.textContent=err.message||String(err)}finally{save.disabled=false}
+  });card.append(save);content.append(card)
+ }
+}
+async function refreshBadge(){
+ if(!capabilities?.notify)return;
+ try{
+  const r=await request('alerts',{},true);
+  badge.textContent=String(r.pending_count||0);
+  const ids=new Set(r.ids||[]);
+  if(previousPendingIds!==null){const newer=[...ids].filter(id=>!previousPendingIds.has(id));
+   if(newer.length){toast('📨 وصل '+newer.length+' طلب انضمام جديد');
+    if(typeof sound==='function')try{sound('notification')}catch{}}
+  }
+  previousPendingIds=ids;
+ }catch(err){/* Avoid exposing errors in a noisy background poll. */}
+}
+async function refreshAccess(){
+ const id=getActor();
+ if(!id){capabilities=null;shownAccount='';previousPendingIds=null;manageButton.hidden=true;return}
+ if(shownAccount===id&&capabilities)return;
+ shownAccount=id;previousPendingIds=null;
+ try{
+  capabilities=await request('capabilities',{},true);
+  if(getActor()!==id)return;
+  manageButton.hidden=!(capabilities.view||capabilities.notify);
+  manageButton.onclick=()=>capabilities.view?openReview():toast('لديك إذن تنبيهات فقط؛ يلزم إذن الاطلاع لفتح الطلبات');
+  if(capabilities.notify)await refreshBadge();
+ }catch{if(getActor()===id)manageButton.hidden=true;capabilities=null;shownAccount=''}
+}
+// Scheduled refresh only while the application is open; offline push requires a separate PWA/Push deployment.
+const timer=setInterval(()=>{
+ if(document.hidden)return;
+ const id=getActor();if(id&&id!==shownAccount)void refreshAccess();
+ else if(id&&capabilities?.notify)void refreshBadge();
+ else if(!id&&shownAccount)void refreshAccess();
+},30000);
+window.addEventListener('ff-assembly-snapshot-success',()=>void refreshAccess());
+window.addEventListener('focus',()=>void refreshAccess());
+byId('logoutBtn').addEventListener('click',()=>{manageButton.hidden=true;shownAccount='';capabilities=null;previousPendingIds=null;dialog.close()});
+// First access check runs after legacy auth bootstrapping, as soon as the app emits its snapshot event.
+setTimeout(()=>void refreshAccess(),1800);
+})();
+
 </script></body></html>
