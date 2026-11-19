@@ -2207,7 +2207,7 @@ function ff49ParseItemsAndNotes(value){
    if(!found){if(explicitPrice===null){fail(raw,n,'الصنف غير معروف في المنيو؛ اكتب اسمًا أوضح');continue}found={name:parts[0].trim(),price:explicitPrice};warnings.push('سطر '+n+': صنف يدوي بسعر مدخل، راجع الاسم والسعر')}
    if(suffix&&(/(?:^|\s)(?:\d+\s+|\+\s*\d+\s*|و\s*\d+\s*)/u.test(suffix)||/(?:^|\s)و\s+(?:تشكن|استربس|برجر|رايس|فرايز)(?:\s|$)/u.test(suffix))){fail(raw,n,'لا تدمج صنفين في سطر واحد');continue}
    const price=explicitPrice??Number(found.price);if(!Number.isFinite(price)||price<0){fail(raw,n,'سعر الصنف غير صالح');continue}
-   items.push({name:found.name,qty,price});if(suffix)notes.push(found.name+' × '+qty+': '+suffix);
+   items.push({name:found.name,qty,price,item_notes:suffix});
    details.push({line:n,kind:'item',raw,value:found.name,qty,price,suffix});continue;
   }
   if(/^\d+(?:\.\d+)?$/.test(line) && meta.phone && meta.area && meta.fee===undefined){meta.fee=Number(line);details.push({line:n,kind:'fee',raw,value:meta.fee});continue}
@@ -2233,6 +2233,7 @@ $('createBtn').onclick=async()=>{
    p_customer_name:(parsed.meta.customer||$('newCustomerName').value).trim(),p_channel:$('newChannel').value,
    p_full_address:$('newFullAddress').value.trim()
   });
+  if(parsed.items.some(i=>i.item_notes)){try{await rpc('ff70_set_item_notes',{p_order:x.order_id,p_items:parsed.items})}catch(noteError){toast('تنبيه: الطلب محفوظ، لكن ملاحظات الأصناف لم تُحفظ: '+noteError.message);return}}
   toast('تم اعتماد الطلب #'+x.order_number+' — '+(x.dispatch?.state==='assigned_cumulative'?'إسناد تراكمي مباشر':x.dispatch?.state==='offered'?'أُرسل عرض للموصل وفق المهلة المحددة':'بانتظار موصل مناسب'));
   for(const field of ['newCustomerName','newPhone','newArea','newFullAddress','newNotes','newItems'])$(field).value='';
   await reload(true);
