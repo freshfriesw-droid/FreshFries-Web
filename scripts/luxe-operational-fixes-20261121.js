@@ -31,7 +31,7 @@ if(center&&box){
  const status=box.querySelector('[data-status]');
  const confirmBox=box.querySelector('[data-confirm]');
  const selectAll=box.querySelector('[data-select-all]');
- if(selectAll)selectAll.textContent='🔴 التصفير الشامل والكامل لبيانات التشغيل';
+ if(selectAll)selectAll.textContent='🔴 التصفير الشامل لجميع بيانات التشغيل (مع حفظ حسابات الموظفين والإعدادات)';
  const previewButton=document.createElement('button');previewButton.type='button';
  previewButton.className='primary';previewButton.textContent='🔍 معاينة عدد السجلات التي ستُصفّر';
  const report=document.createElement('div');report.className='ff-luxe-preview-report';report.setAttribute('role','status');
@@ -137,7 +137,30 @@ if(views){
     const card=document.createElement('article');card.className='ff-luxe-preview-card';
     const b=document.createElement('b');b.textContent='طلب #'+o.number+' — '+String(o.customer_name||'عميل');
     const state=document.createElement('p');state.textContent='الحالة: '+String(o.cashier_stage||'بانتظار الكاشير')+' | الموصل: '+String(o.driver_name||'—');
-    card.append(b,state);list.append(card);
+    card.append(b,state);
+    const nextStage=o.cashier_stage==='printed'?'preparing':o.cashier_stage==='preparing'?'ready':null;
+    if(nextStage){
+      const action=document.createElement('button');action.type='button';action.className='primary';
+      action.textContent=nextStage==='preparing'?'👑 بدء التحضير بإذن المدير':'👑 اعتماد جاهزية الطلب';
+      action.onclick=async()=>{
+        if(data?.role!=='manager')return;
+        if(!confirm('اعتماد مرحلة '+action.textContent+' للطلب #'+o.number+'؟'))return;
+        action.disabled=true;
+        try{
+          await rpc('ff38_cashier_set_stage',{p_order:o.id,p_stage:nextStage});
+          toast('تم تحديث حالة التجميع بصلاحية المدير');
+          await reload(true);render();
+        }catch(err){toast('تعذر تعديل المرحلة: '+(err.message||err))}
+        finally{action.disabled=false}
+      };
+      card.append(action);
+    }
+    if(o.cashier_stage==='ready'){
+      const info=document.createElement('p');info.className='muted';
+      info.textContent='تأكيد التسليم النهائي للموصل يتم من واجهة الكاشير حتى لا تُتخطى خطوة التسليم الفعلي.';
+      card.append(info);
+    }
+    list.append(card);
    }
    if(!orders.length)list.textContent='لا توجد طلبات حالية لهذا الفرع.';
   }
