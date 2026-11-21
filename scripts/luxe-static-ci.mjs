@@ -35,7 +35,8 @@ for (const icon of manifest.icons) {
   assert.ok(png.subarray(0,8).equals(signature), `PNG signature invalid: ${icon.src}`);
   const width=png.readUInt32BE(16),height=png.readUInt32BE(20),name=Number(icon.sizes.split('x')[0]);
   assert.equal(width,name); assert.equal(height,name);
-  assert.equal(png[24],2, 'PNG icons must use 2-bit indexed palette');
+  assert.equal(png[24],8, 'PNG icons must use 8-bit indexed palette');
+  assert.equal(png[25],3, 'PNG icons must use indexed color');
   const parts=[];
   for (let pos=8;pos<png.length;) {
     const size=png.readUInt32BE(pos),type=png.toString('ascii',pos+4,pos+8);
@@ -44,7 +45,7 @@ for (const icon of manifest.icons) {
     pos+=size+12;
   }
   const decompressed=zlib.inflateSync(Buffer.concat(parts));
-  assert.equal(decompressed.length,name*(1+Math.ceil(name/4)), `Invalid image raster length: ${icon.src}`);
+  assert.equal(decompressed.length,name*(1+name), `Invalid image raster length: ${icon.src}`);
 }
 const sw=get('sw.js').toString('utf8');
 assert.match(sw, /req\.mode === 'navigate'/, 'Navigation must not be served from a user-data cache');

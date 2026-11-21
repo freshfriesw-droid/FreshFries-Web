@@ -2,7 +2,7 @@
    NEVER cache Supabase responses, authenticated data, order screens or credentials.
    Web Push delivery requires a separately configured VAPID sender on the server. */
 'use strict';
-const SHELL_CACHE = 'ff-luxe-static-v38-36-rc1';
+const SHELL_CACHE = 'ff-luxe-static-v38-36-1-rc1';
 const STATIC_ASSETS = [
   './offline.html', './manifest.webmanifest',
   './assets/ff-icon-192.png', './assets/ff-icon-512.png'
