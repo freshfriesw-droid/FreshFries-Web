@@ -123,6 +123,7 @@ style.textContent = `
   #ffLuxeCancelledAlerts .ff-luxe-cancel-tag{font-size:clamp(23px,4.5vw,31px)!important;font-weight:950!important;line-height:1.55!important}
   #ffLuxeCancelledAlerts .ff-luxe-cancelled button{min-height:52px!important;font-weight:900!important;font-size:16px!important}
   #ffLuxeLeaveView, #ffLuxeAssemblyPreview [data-exit]{min-height:56px!important;font-size:19px!important;font-weight:950!important}
+  @media(min-width:851px){#ffx-sidebar{transition:none!important}#ffx-drawer-close{display:grid!important;place-items:center!important;min-width:44px!important;min-height:44px!important}}
 `;
 document.head.append(style);
 
