@@ -1,0 +1,47 @@
+name: Correct optional email in employee applications
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ff-optional-email-once.yml'
+permissions:
+  contents: write
+jobs:
+  fix-join-form:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Make email optional in the applicant form without changing other fields
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          f=Path('index.html')
+          html=f.read_text(encoding='utf-8')
+          assert 'id="ff61ApplyForm"' in html, 'Employee application form not found'
+          pattern=r"""(<label\b[^>]*>)\s*البريد الإلكتروني\s*\*?\s*(<input\b[^>]*\bname=["']email["'][^>]*>)"""
+          def fix(m):
+              field=re.sub(r'\s+required(?=[\s>])','',m.group(2),flags=re.I)
+              return m.group(1)+'البريد الإلكتروني (اختياري)'+field
+          html,count=re.subn(pattern,fix,html,count=1)
+          assert count==1, 'Could not match precisely the application email field'
+          form=html.split('id="ff61ApplyForm"',1)[1].split('</form>',1)[0]
+          assert 'البريد الإلكتروني (اختياري)' in form
+          email=re.search(r'<input\b[^>]*\bname=["\x27]email["\x27][^>]*>',form)
+          assert email and not re.search(r'\brequired\b',email.group(0)), 'Email is still required'
+          assert re.search(r'<input\b[^>]*\bname=["\x27]phone["\x27][^>]*\brequired',form), 'Phone field must remain required'
+          f.write_text(html,encoding='utf-8')
+          print('PASS: employee email is optional, contact phone remains mandatory')
+          PY
+      - name: Publish corrected web form
+        shell: bash
+        run: |
+          git config user.name "Fresh Fries Maintenance"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
+          git commit -m "Fix employee application: optional email, phone remains required"
+          git push origin HEAD:main
