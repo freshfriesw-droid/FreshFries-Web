@@ -1,0 +1,52 @@
+name: Refresh Fresh Fries official brand icons
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/brand-icon-sync.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  generate-brand-icons:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install image support
+        run: python -m pip install --quiet Pillow
+      - name: Generate PWA icons from original approved logo embedded in index.html
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re, base64, io, pathlib
+          from PIL import Image
+          source=pathlib.Path("index.html").read_text(encoding="utf-8")
+          match=re.search(r"""const\s+FF_OFFICIAL_LOGO\s*=\s*['"]data:image/png;base64,([^'"]+)""",source)
+          if not match:
+              raise SystemExit("Official Fresh Fries logo not found in index.html; no changes applied.")
+          logo=Image.open(io.BytesIO(base64.b64decode(match.group(1)))).convert("RGBA")
+          pathlib.Path("assets").mkdir(exist_ok=True)
+          def make_icon(size):
+              canvas=Image.new("RGBA",(size,size),"white")
+              ratio=min((size*.80)/logo.width,(size*.80)/logo.height)
+              dimensions=(max(1,round(logo.width*ratio)),max(1,round(logo.height*ratio)))
+              art=logo.resize(dimensions,Image.Resampling.LANCZOS)
+              canvas.alpha_composite(art,((size-dimensions[0])//2,(size-dimensions[1])//2))
+              return canvas.convert("RGB")
+          for size in (192,512):
+              make_icon(size).save(f"assets/ff-icon-{size}.png", optimize=True)
+          make_icon(180).save("apple-touch-icon.png",optimize=True)
+          make_icon(256).save("favicon.ico",format="ICO",sizes=[(16,16),(32,32),(48,48),(64,64),(128,128),(256,256)])
+          print("Original logo successfully rendered to PWA and favicon assets.")
+          PY
+      - name: Publish only logo assets
+        shell: bash
+        run: |
+          git config user.name "Fresh Fries Icon Sync"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/ff-icon-192.png assets/ff-icon-512.png apple-touch-icon.png favicon.ico
+          if git diff --cached --quiet; then echo "No icon changes required"; exit 0; fi
+          git commit -m "Brand: replace PWA and launcher icons with original Fresh Fries logo"
+          git push origin HEAD:main
