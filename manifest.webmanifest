@@ -1,0 +1,16 @@
+{
+  "name": "Fresh Fries LUXE — نظام التشغيل والتوصيل",
+  "short_name": "Fresh Fries",
+  "description": "نظام التشغيل والتوصيل لفروع فريش فرايز — قيد التطوير والاختبار",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#d51e2c",
+  "icons": [
+    {"src":"./assets/ff-icon-192.png", "sizes":"192x192", "type":"image/png", "purpose":"any"},
+    {"src":"./assets/ff-icon-512.png", "sizes":"512x512", "type":"image/png", "purpose":"any maskable"}
+  ]
+}
