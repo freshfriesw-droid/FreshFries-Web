@@ -910,7 +910,7 @@ function ding(){try{soundCtx=soundCtx||new(window.AudioContext||window.webkitAud
 function notify(title,body){if('Notification'in window&&Notification.permission==='granted')try{new Notification(title,{body,tag:'ff38-offer'})}catch{}}
 function tick(){document.querySelectorAll('[data-exp]').forEach(el=>el.textContent=Math.max(0,Math.ceil((new Date(el.dataset.exp)-Date.now())/1000)))}
 async function perform(name,args,message){try{await rpc(name,args);toast(message);await reload(true)}catch(e){toast('تعذر التنفيذ: '+e.message)}}
-function resetUI(){ff28Lock();ffV12Reset();ff39Reset();data=null;user=null;if(typeof ff27Watch==="function")ff27Watch();selfPermissions=null;selfPermissionsFetchedAt=0;selfPermissionsNextTry=0;rejectPermissionsNextTry=0;ffSnapshotRetryAfter=0;ffSnapshotConsecutiveFailures=0;ffHeartbeatRequiresClockIn=false;ffHeartbeatLastError='';lastOfferKey='';additionData=[];additionReady=false;rejectPermissions={};rejectPermissionReady=false;activeAdditionForm=null;additionDraft='';lastAdditionKey='';$('loginOverlay').classList.remove('hidden');$('metrics').classList.add('hidden');for(const id of ['driverView','staffView','cashierView','ff39InboxBtn','notificationsBtn','refreshBtn','logoutBtn'])$(id).classList.add('hidden');$('identity').textContent='لم يتم تسجيل الدخول';conn('تسجيل الدخول مطلوب')}
+function resetUI(){inFlight=false;ff28Lock();ffV12Reset();ff39Reset();data=null;user=null;if(typeof ff27Watch==="function")ff27Watch();selfPermissions=null;selfPermissionsFetchedAt=0;selfPermissionsNextTry=0;rejectPermissionsNextTry=0;ffSnapshotRetryAfter=0;ffSnapshotConsecutiveFailures=0;ffHeartbeatRequiresClockIn=false;ffHeartbeatLastError='';lastOfferKey='';additionData=[];additionReady=false;rejectPermissions={};rejectPermissionReady=false;activeAdditionForm=null;additionDraft='';lastAdditionKey='';$('loginOverlay').classList.remove('hidden');$('metrics').classList.add('hidden');for(const id of ['driverView','staffView','cashierView','ff39InboxBtn','notificationsBtn','refreshBtn','logoutBtn'])$(id).classList.add('hidden');$('identity').textContent='لم يتم تسجيل الدخول';conn('تسجيل الدخول مطلوب')}
 let ff28Epoch=0,ff28AccountId='';
 function ff28Lock(){
  ff28AccountId='';ff28Epoch++;
@@ -992,8 +992,8 @@ async function setSession(session){
   window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
   draw();
   conn('🟢 متصل بقاعدة البيانات المركزية — تم تحميل الواجهة');
-  // Additional permissions and addons are populated after the interface is visible.
-  void reload(true);
+  // A complete snapshot has already been loaded on the sign-in hot path.
+  // Defer extra RPCs to the normal live-update cycle; avoid duplicate heavy queries here.
  }else{
   await reload(true);
  }
@@ -1040,7 +1040,7 @@ async function initialize(){if(!window.supabase?.createClient){for(let i=0;i<40&
  document.body.classList.remove('ff-booting');
 }let ffLastSweepAt=0;pollTimer=setInterval(async()=>{if(!user||document.hidden||ffV12AssemblyActive)return;/* نبضات الموصل مستقلة؛ تنظيف العروض لا يلزم كل 4 ثوانٍ */if(['manager','customer_service'].includes(data?.role)&&Date.now()-ffLastSweepAt>20000){ffLastSweepAt=Date.now();try{await rpc('ff38_sweep_offers')}catch(e){console.warn('تعذر تنظيف عروض الإسناد',e.code||e.message)}}await reload();},4000);clockTimer=setInterval(tick,1000);window.addEventListener('focus',()=>reload());document.addEventListener('visibilitychange',()=>{if(!document.hidden)reload()});try{signal=client.channel('ff38-live-hint').on('postgres_changes',{event:'*',schema:'public',table:'ff_orders'},()=>reload()).subscribe()}catch{}
 }
-$('loginBtn').onclick=async()=>{let b=$('loginBtn');b.disabled=true;try{let {data:auth,error}=await client.auth.signInWithPassword(ff28Credentials($('email').value,$('password').value));if(error)throw error;await setSession(auth.session);$('password').value=''}catch(e){$('loginStatus').textContent='فشل الدخول: '+(e.message||e)}finally{b.disabled=false}};
+$('loginBtn').onclick=async()=>{let b=$('loginBtn');b.disabled=true;$('loginStatus').textContent='جارٍ التحقق من بيانات الدخول وتحميل الصلاحيات...';try{let {data:auth,error}=await client.auth.signInWithPassword(ff28Credentials($('email').value,$('password').value));if(error)throw error;await setSession(auth.session);$('password').value=''}catch(e){$('loginStatus').textContent='فشل الدخول: '+(e.message||e)}finally{b.disabled=false}};
 $('logoutBtn').onclick=async()=>{if(data?.role==='driver')try{await rpc('ff38_clock_out')}catch(e){return toast('لا يمكن الخروج: '+e.message)}try{await client.auth.signOut({scope:'local'})}catch(e){toast(e.message)}resetUI()};
 $('refreshBtn').onclick=()=>reload(true);
 for(const id of ['orderSearch','orderBranchFilter','orderStatusFilter'])$(id).addEventListener(id==='orderSearch'?'input':'change',()=>{if(data)drawOrders()});
@@ -4285,16 +4285,16 @@ return new Promise(resolve=>{
 'use strict';
 let busy=false,lastRole='';
 async function refreshCancelled(){
- if(busy || !data || !['cashier','manager'].includes(data.role))return;
+ if(busy || !data || (data.role!=='cashier' && !(data.role==='manager' && document.body.classList.contains('ff-luxe-preview'))))return;
  busy=true;lastRole=data.role;
  try{
   const arr=await rpc('ff_luxe_cashier_cancel_alerts');
   let root=document.getElementById('ffLuxeCancelledAlerts');
-  if(!root){root=document.createElement('section');root.id='ffLuxeCancelledAlerts';const header=document.createElement('h2');header.textContent='🚫 الطلبات الملغية — تأكيد إلغاء الفاتورة';root.append(header);(document.getElementById('cashierOrders')?.parentElement||document.body).append(root)}
+  if(!root){root=document.createElement('section');root.id='ffLuxeCancelledAlerts';const header=document.createElement('h2');header.textContent='🚫 الطلبات الملغية — تأكيد إلغاء الفاتورة';root.append(header);document.getElementById('cashierOrders')?.before(root)}
   const pending=(Array.isArray(arr)?arr:[]).filter(x=>!x.acknowledged);
-  root.classList.toggle('hidden',!pending.length||data.role!=='cashier');
+  root.classList.toggle('hidden',!pending.length || (data.role!=='cashier' && !(data.role==='manager' && document.body.classList.contains('ff-luxe-preview'))));
   root.querySelectorAll('.ff-luxe-cancelled').forEach(x=>x.remove());
-  for(const o of pending){const el=document.createElement('article');el.className='item ff-luxe-cancelled';el.innerHTML='<div class="ff-luxe-cancel-tag">🚫 الطلب ملغي #'+String(o.number).replace(/[&<>"]/g,'')+'</div><p><b>سبب الإلغاء:</b> '+String(o.reason||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</p><p>إذا تم قطع الفاتورة في برنامج الكاشير، ألغِها هناك أولاً، ثم أكد العلم بالإلغاء.</p><button type="button" class="primary">✅ تأكيد العلم وإلغاء الفاتورة إن وجدت</button>';el.querySelector('button').onclick=async()=>{if(!confirm('هل تحققت من الفاتورة وألغيتها في برنامج الكاشير إذا كانت مقطوعة؟'))return;const b=el.querySelector('button');b.disabled=true;try{await rpc('ff_luxe_ack_cashier_cancel',{p_order:o.order_id});el.remove();toast('تم توثيق علم الكاشير بإلغاء الطلب')}catch(err){toast(err.message);b.disabled=false}};root.append(el)}
+  for(const o of pending){const el=document.createElement('article');el.className='item ff-luxe-cancelled';el.setAttribute('role','alert');el.innerHTML='<div class="ff-luxe-cancel-tag">🚫 الطلب ملغي #'+String(o.number).replace(/[&<>"]/g,'')+'</div><p><b>سبب الإلغاء:</b> '+String(o.reason||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</p><p>إذا تم قطع الفاتورة في برنامج الكاشير، ألغِها هناك أولاً، ثم أكد العلم بالإلغاء.</p><button type="button" class="primary">✅ تأكيد العلم وإلغاء الفاتورة إن وجدت</button>';el.querySelector('button').onclick=async()=>{if(!confirm('هل تحققت من الفاتورة وألغيتها في برنامج الكاشير إذا كانت مقطوعة؟'))return;const b=el.querySelector('button');b.disabled=true;try{await rpc('ff_luxe_ack_cashier_cancel',{p_order:o.order_id});el.remove();toast('تم توثيق علم الكاشير بإلغاء الطلب')}catch(err){toast(err.message);b.disabled=false}};root.append(el)}
  }catch(err){console.warn('تعذر تحميل إشعارات الإلغاء',err.message)}finally{busy=false}
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refreshCancelled()});
@@ -4412,4 +4412,4 @@ run.onclick=async()=>{
 };
 center.append(box);
 })();
-</script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script></body></html>
+</script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script></body></html>
