@@ -1006,32 +1006,7 @@ $('clockInBtn').onclick=async()=>{try{await rpc('ff38_clock_in');ffHeartbeatRequ
 $('clockOutBtn').onclick=async()=>{try{await rpc('ff38_clock_out');ffHeartbeatRequiresClockIn=true;toast('تم إنهاء الدوام — لن تعود جاهزًا تلقائيًا');await reload(true)}catch(e){toast('تعذر إنهاء الدوام: '+e.message)}};
 $('notificationsBtn').onclick=async()=>{ding();if('Notification'in window){let p=await Notification.requestPermission();toast(p==='granted'?'تم تفعيل إشعارات المتصفح':'الإشعارات غير مفعلة؛ أبقِ الصفحة مفتوحة')}else toast('الإشعارات غير مدعومة في هذا المتصفح')};
 $('createBtn').onclick=async()=>{let b=$('createBtn');try{b.disabled=true;let p_items=parseItems($('newItems').value);let x=await rpc('ff38_create_delivery_order',{p_branch:$('newBranch').value,p_phone:$('newPhone').value.trim(),p_area:$('newArea').value.trim(),p_items,p_delivery_fee:window.ffRequiredDeliveryFee($('newFee').value),p_notes:$('newNotes').value});toast('تم اعتماد الطلب رقم '+x.order_number+' — التوزيع: '+(x.dispatch?.state==='offered'?'أُرسل عرض للموصل':x.dispatch?.state==='assigned_cumulative'?'أُسند تلقائيًا للموصل (تراكمي)':'بانتظار موصل متاح'));$('newItems').value='';$('newNotes').value='';await reload(true)}catch(e){toast('تعذر إنشاء الطلب: '+e.message)}finally{b.disabled=false}};
-async function loadStaffAdmin(){let box=$('staffAdminList');box.textContent='جاري تحميل الموظفين...';try{let arr=await rpc('ff38_admin_staff_list');box.innerHTML=arr.length?arr.map(p=>{const branches=p.role==='customer_service'?'جميع الفروع · مركزي':(p.branches||[]).map(branchName).join('، ');const roles={customer_service:'خدمة عملاء مركزية',cashier:'كاشير',driver:'موصل',supervisor:'مشرف مشاهدة',manager:'مدير عام',assembly:'نقطة التجميع'};if(p.role==='assembly'){const assemblyBranches=(data.branches||[]).map(b=>`<option value="${esc(b.id)}" ${(p.branches||[]).includes(b.id)?'selected':''}>${esc(b.name)}</option>`).join('');return `<div class="item"><div class="item-top"><b>${esc(p.name||'نقطة التجميع')}</b><span class="tag ${p.active?'ready':'offline'}">${p.active?'نشط':'معطّل'}</span></div><p class="muted">نقطة التجميع · ${esc(branches||'لا يوجد فرع نشط')}</p><div class="actions"><button class="${p.active?'outline':'good'}" data-staff-toggle="${esc(p.user_id)}" data-staff-active="${p.active?'false':'true'}">${p.active?'تعطيل حساب الدخول':'إعادة تفعيل الحساب'}</button></div><label>الفرع المسموح<select data-assembly-branch="${esc(p.user_id)}">${assemblyBranches}</select></label><div class="actions"><button class="primary" data-assembly-save="${esc(p.user_id)}" data-enabled="true">تفعيل التجميع لهذا الفرع</button><button class="outline" data-assembly-save="${esc(p.user_id)}" data-enabled="false">سحب صلاحية التجميع</button></div><label>التحويل إلى دور آخر (عند الحاجة)<select data-assembly-target="${esc(p.user_id)}"><option value="supervisor">مشرف</option><option value="customer_service">خدمة العملاء المركزية</option><option value="cashier">كاشير — الفرع المحدد</option><option value="driver">موصل — الفرع المحدد</option></select></label><button class="outline" data-assembly-convert="${esc(p.user_id)}">تحويل الدور الوظيفي</button><button type="button" class="outline" data-manager-password="${esc(p.user_id)}" data-manager-name="${esc(p.name||'نقطة التجميع')}">🔑 تغيير كلمة المرور</button></div>`;}const choices=Object.entries(roles).filter(([k])=>k!=='manager').map(([k,v])=>`<option value="${k}" ${p.role===k?'selected':''}>${v}</option>`).join('');const branchesUI=(data.branches||[]).map(b=>`<label style="display:inline-flex;align-items:center;gap:5px;margin:5px 12px 5px 0"><input style="width:auto" type="checkbox" data-access-branch="${esc(p.user_id)}" value="${esc(b.id)}" ${(p.branches||[]).includes(b.id)?'checked':''}>${esc(b.name)}</label>`).join('');return `<div class="item"><div class="item-top"><b>${esc(p.name||'بدون اسم')}</b><span class="tag ${p.active?'ready':'offline'}">${p.active?'نشط':'معطّل'}</span></div><p class="muted">${esc(roles[p.role]||p.role)}${branches?' — '+esc(branches):''}</p>${p.role!=='manager'?`<div class="actions"><button class="${p.active?'outline':'good'}" data-staff-toggle="${esc(p.user_id)}" data-staff-active="${p.active?'false':'true'}">${p.active?'تعطيل الحساب':'إعادة تفعيل الحساب'}</button></div><div style="margin-top:12px;border:1px solid #e2e5e9;padding:10px;border-radius:10px"><label>تعديل الدور</label><select data-original-role="${esc(p.role)}" data-access-role="${esc(p.user_id)}">${choices}</select><div data-access-branches="${esc(p.user_id)}" ${['driver','cashier','assembly'].includes(p.role)?'':'hidden'}><label>الفروع المسموحة للكاشير والموصل ونقطة التجميع (فرع واحد للتجميع والموصل). خدمة العملاء مركزية للفروع الثلاثة. عند تحويل الموصل يجب إنهاء طلباته أولًا</label>${branchesUI}</div><button class="primary" data-save-access="${esc(p.user_id)}" style="margin-top:9px">حفظ الدور والفروع</button><button type="button" class="outline" data-manager-password="${esc(p.user_id)}" data-manager-name="${esc(p.name||'الموظف')}" style="margin:9px 8px 0">🔑 تغيير كلمة المرور</button></div>`:''}</div>`}).join(''):'لا يوجد موظفون';}catch(e){box.textContent='تعذر تحميل الموظفين: '+e.message;}}
-
-document.getElementById('staffAdminList').addEventListener('click',async ev=>{
- const btn=ev.target.closest('button[data-manager-password]');if(!btn||data?.role!=='manager')return;
- const id=btn.dataset.managerPassword;const label=btn.dataset.managerName||'الموظف';
- if(!/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(id))return;
- const dialog=document.createElement('dialog');dialog.dir='rtl';dialog.style.cssText='border:0;border-radius:16px;max-width:min(94vw,440px);width:100%;padding:24px;box-shadow:0 20px 70px #0005';
- dialog.innerHTML='<h3>🔑 تغيير كلمة المرور</h3><p class="muted">للمدير العام فقط. كلمة المرور من 12 خانة على الأقل، وتتضمن أحرفًا إنجليزية وأرقامًا.</p><form method="dialog"><label>كلمة المرور الجديدة<input type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label><label>تأكيد كلمة المرور<input type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label><p role="status"></p><div class="actions"><button class="primary" type="submit">حفظ كلمة المرور</button><button class="outline" type="button" data-cancel>إلغاء</button></div></form>';
- dialog.querySelector('h3').textContent='🔑 تغيير كلمة مرور: '+label;
- document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.querySelector('[data-cancel]').onclick=()=>dialog.close();dialog.showModal();
- const form=dialog.querySelector('form'),inputs=form.querySelectorAll('input'),msg=form.querySelector('[role=status]'),save=form.querySelector('[type=submit]');
- form.addEventListener('submit',async e=>{
-  e.preventDefault();const password=inputs[0].value;
-  if(password!==inputs[1].value){msg.textContent='كلمتا المرور غير متطابقتين';return}
-  if(password.length<12||password.length>128||!/[A-Za-z]/.test(password)||!/[0-9]/.test(password)){msg.textContent='اكتب 12 خانة على الأقل تحتوي حروفًا إنجليزية وأرقامًا';return}
-  save.disabled=true;msg.textContent='جاري تغيير كلمة المرور...';
-  try{
-   const {data:auth,error}=await client.auth.getSession();const token=auth?.session?.access_token;if(error||!token)throw Error('جلسة الدخول غير صالحة');
-   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),25000);
-   let res;try{res=await fetch(String(window.FF_CONFIG.url).replace(/\/$/,'')+'/functions/v1/ff61-employees',{method:'POST',headers:{'Content-Type':'application/json',apikey:window.FF_CONFIG.key,Authorization:'Bearer '+token},body:JSON.stringify({action:'manager_reset_staff_password',user_id:id,password}),signal:ctrl.signal})}finally{clearTimeout(timer)}
-   const result=await res.json().catch(()=>({}));if(!res.ok||result.ok!==true)throw Error(result.error||'تعذر تغيير كلمة المرور');
-   inputs.forEach(x=>x.value='');msg.textContent='تم تغيير كلمة المرور بنجاح';save.remove();
-  }catch(err){msg.textContent='لم يتم التغيير: '+String(err.message||err)}
-  finally{save.disabled=false}
- });
-});
+async function loadStaffAdmin(){let box=$('staffAdminList');box.textContent='جاري تحميل الموظفين...';try{let arr=await rpc('ff38_admin_staff_list');box.innerHTML=arr.length?arr.map(p=>{const branches=p.role==='customer_service'?'جميع الفروع · مركزي':(p.branches||[]).map(branchName).join('، ');const roles={customer_service:'خدمة عملاء مركزية',cashier:'كاشير',driver:'موصل',supervisor:'مشرف مشاهدة',manager:'مدير عام',assembly:'نقطة التجميع'};if(p.role==='assembly'){const assemblyBranches=(data.branches||[]).map(b=>`<option value="${esc(b.id)}" ${(p.branches||[]).includes(b.id)?'selected':''}>${esc(b.name)}</option>`).join('');return `<div class="item"><div class="item-top"><b>${esc(p.name||'نقطة التجميع')}</b><span class="tag ${p.active?'ready':'offline'}">${p.active?'نشط':'معطّل'}</span></div><p class="muted">نقطة التجميع · ${esc(branches||'لا يوجد فرع نشط')}</p><div class="actions"><button class="${p.active?'outline':'good'}" data-staff-toggle="${esc(p.user_id)}" data-staff-active="${p.active?'false':'true'}">${p.active?'تعطيل حساب الدخول':'إعادة تفعيل الحساب'}</button></div><label>الفرع المسموح<select data-assembly-branch="${esc(p.user_id)}">${assemblyBranches}</select></label><div class="actions"><button class="primary" data-assembly-save="${esc(p.user_id)}" data-enabled="true">تفعيل التجميع لهذا الفرع</button><button class="outline" data-assembly-save="${esc(p.user_id)}" data-enabled="false">سحب صلاحية التجميع</button></div><label>التحويل إلى دور آخر (عند الحاجة)<select data-assembly-target="${esc(p.user_id)}"><option value="supervisor">مشرف</option><option value="customer_service">خدمة العملاء المركزية</option><option value="cashier">كاشير — الفرع المحدد</option><option value="driver">موصل — الفرع المحدد</option></select></label><button class="outline" data-assembly-convert="${esc(p.user_id)}">تحويل الدور الوظيفي</button><button type="button" class="primary" data-ffedit="${esc(p.user_id)}">✏️ تعديل</button></div>`;}const choices=Object.entries(roles).filter(([k])=>k!=='manager').map(([k,v])=>`<option value="${k}" ${p.role===k?'selected':''}>${v}</option>`).join('');const branchesUI=(data.branches||[]).map(b=>`<label style="display:inline-flex;align-items:center;gap:5px;margin:5px 12px 5px 0"><input style="width:auto" type="checkbox" data-access-branch="${esc(p.user_id)}" value="${esc(b.id)}" ${(p.branches||[]).includes(b.id)?'checked':''}>${esc(b.name)}</label>`).join('');return `<div class="item"><div class="actions"><button type="button" class="primary" data-ffedit="${esc(p.user_id)}">✏️ تعديل</button></div><div class="item-top"><b>${esc(p.name||'بدون اسم')}</b><span class="tag ${p.active?'ready':'offline'}">${p.active?'نشط':'معطّل'}</span></div><p class="muted">${esc(roles[p.role]||p.role)}${branches?' — '+esc(branches):''}</p>${p.role!=='manager'?`<div class="actions"><button class="${p.active?'outline':'good'}" data-staff-toggle="${esc(p.user_id)}" data-staff-active="${p.active?'false':'true'}">${p.active?'تعطيل الحساب':'إعادة تفعيل الحساب'}</button></div><div style="margin-top:12px;border:1px solid #e2e5e9;padding:10px;border-radius:10px"><label>تعديل الدور</label><select data-original-role="${esc(p.role)}" data-access-role="${esc(p.user_id)}">${choices}</select><div data-access-branches="${esc(p.user_id)}" ${['driver','cashier','assembly'].includes(p.role)?'':'hidden'}><label>الفروع المسموحة للكاشير والموصل ونقطة التجميع (فرع واحد للتجميع والموصل). خدمة العملاء مركزية للفروع الثلاثة. عند تحويل الموصل يجب إنهاء طلباته أولًا</label>${branchesUI}</div><button class="primary" data-save-access="${esc(p.user_id)}" style="margin-top:9px">حفظ الدور والفروع</button></div>`:''}</div>`}).join(''):'لا يوجد موظفون';}catch(e){box.textContent='تعذر تحميل الموظفين: '+e.message;}}
 
 $('staffAdminRefresh').onclick=loadStaffAdmin;
 document.addEventListener('click',async ev=>{const button=ev.target.closest('button[data-assembly-save]');if(!button)return;
@@ -4100,4 +4075,81 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-ff52-late]')||e
 })();
 </script>
 <script defer src="./assets/ff-pinned-cairo-v38-37.js"></script>
+
+<style id="ff-edit-css">
+#ffEditDialog{border:0;border-radius:18px;width:min(95vw,700px);max-height:90vh;padding:0;direction:rtl;box-shadow:0 20px 70px #0008}
+#ffEditDialog::backdrop{background:#0009}
+#ffEditDialog .inside{padding:20px;background:var(--card,#fff);color:var(--text,#222)}
+#ffEditDialog .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:15px 0}
+#ffEditDialog label{display:block;font-weight:700}
+#ffEditDialog input,#ffEditDialog select,#ffEditDialog textarea{display:block;width:100%;margin-top:6px;padding:11px;border-radius:9px;border:1px solid #aaa;background:#fff;color:#111}
+#ffEditDialog .actions{display:flex;gap:8px;flex-wrap:wrap}
+#ffEditDialog .actions button{flex:1 1 145px}
+</style>
+<dialog id="ffEditDialog"><div class="inside">
+<div class="sectionbar"><h3>✏️ تعديل بيانات الموظف</h3><button type="button" id="ffEditClose" class="outline">إغلاق ✕</button></div>
+<p class="muted">يمكن للمدير تعديل جميع معلومات الموظف. كلمة المرور الحالية لا يمكن عرضها؛ لتغييرها أدخل كلمة جديدة ثم احفظ.</p>
+<form id="ffEditForm">
+<div class="fields">
+<label>الاسم الكامل<input name="name" required minlength="2" maxlength="150"></label>
+<label>اسم المستخدم<input name="username" dir="ltr" autocomplete="off" pattern="[a-zA-Z][a-zA-Z0-9._-]{1,62}" placeholder="ahmed.saleh"></label>
+<label>البريد الإلكتروني<input name="email" type="email" dir="ltr"></label>
+<label>رقم الجوال<input name="phone" dir="ltr" type="tel"></label>
+<label>المؤهل العلمي<input name="qualification"></label>
+<label>العنوان<input name="address"></label>
+<label>العمر<input name="age_years" type="number" min="16" max="90"></label>
+<label>الحالة الاجتماعية<select name="marital_status"><option value="">غير محددة</option><option value="single">أعزب</option><option value="married">متزوج</option><option value="other">أخرى</option><option value="prefer_not_say">أفضل عدم الإفصاح</option></select></label>
+<label>سنوات الخبرة<input name="experience_years" type="number" min="0" max="60"></label>
+<label>كلمة مرور جديدة (اختياري)<input name="password" type="text" autocomplete="off" maxlength="32" spellcheck="false" placeholder="8 خانات بالضبط"></label>
+</div>
+<label>ملاحظات أو معلومات إضافية<textarea name="applicant_message" rows="2"></textarea></label>
+<p class="muted">كلمة المرور الجديدة 8 خانات بالضبط، أرقام أو حروف أو رموز. لا تكتب كلمة مرور إذا لم ترد تغييرها.</p>
+<div class="actions"><button class="primary" id="ffEditSave" type="submit">💾 حفظ البيانات</button><button class="outline" id="ffEditShare" type="button" disabled>📤 مشاركة بيانات الدخول</button></div>
+<p id="ffEditStatus" role="status" aria-live="polite"></p>
+</form></div></dialog>
+<script id="ff-edit-script">
+(()=>{
+const dlg=document.getElementById('ffEditDialog'),form=document.getElementById('ffEditForm'),status=document.getElementById('ffEditStatus'),share=document.getElementById('ffEditShare');
+let selected='',saved=null;
+async function invoke(action,payload){
+ if(typeof client==='undefined'||!client)throw Error('الاتصال بقاعدة البيانات غير جاهز');
+ const {data:session,error}=await client.auth.getSession();
+ if(error||!session?.session?.access_token)throw Error('يرجى تسجيل الدخول مجددًا');
+ const res=await fetch(window.FF_CONFIG.url.replace(/\/$/,'')+'/functions/v1/ff61-employees',{method:'POST',headers:{'Content-Type':'application/json','apikey':window.FF_CONFIG.key,'Authorization':'Bearer '+session.session.access_token},body:JSON.stringify({action,...payload})});
+ const result=await res.json().catch(()=>({}));
+ if(!res.ok||!result.ok)throw Error(result.error||'تعذر تنفيذ العملية');
+ return result;
+}
+function reset(){selected='';saved=null;form.reset();share.disabled=true;status.textContent='';}
+function close(){dlg.close();reset();}
+document.getElementById('ffEditClose').onclick=close;
+dlg.addEventListener('cancel',()=>reset());
+async function open(id){
+ if(typeof data==='undefined'||data?.role!=='manager')return;
+ reset();selected=id;dlg.showModal();status.textContent='جاري تحميل بيانات الموظف...';
+ try{const r=await invoke('staff_details',{user_id:id});for(const [k,v] of Object.entries(r.employee||{})){const f=form.elements.namedItem(k);if(f&&'value' in f)f.value=v==null?'':String(v)}status.textContent='';}
+ catch(e){status.textContent='تعذر التحميل: '+e.message}
+}
+document.addEventListener('click',e=>{const btn=e.target.closest('[data-ffedit]');if(btn)void open(btn.dataset.ffedit)});
+form.addEventListener('submit',async e=>{
+ e.preventDefault();if(!selected||typeof data==='undefined'||data?.role!=='manager')return;
+ const v=Object.fromEntries(new FormData(form).entries());
+ if(v.password&&Array.from(v.password).length!==8){status.textContent='كلمة المرور يجب أن تكون 8 خانات بالضبط';return}
+ const saveBtn=document.getElementById('ffEditSave');saveBtn.disabled=true;status.textContent='جاري الحفظ...';saved=null;share.disabled=true;
+ try{const r=await invoke('staff_update',{user_id:selected,employee:v});
+  if(v.password)saved={login:r.login_username||v.username||v.email||v.phone,password:v.password};
+  share.disabled=!saved;form.elements.namedItem('password').value='';
+  status.textContent=saved?'تم الحفظ، ويمكنك مشاركة بيانات الدخول الجديدة.':'تم حفظ بيانات الموظف بنجاح.';
+  if(typeof loadStaffAdmin==='function')void loadStaffAdmin();
+ }catch(err){status.textContent='تعذر الحفظ: '+err.message}
+ finally{saveBtn.disabled=false}
+});
+share.onclick=async()=>{
+ if(!saved)return;
+ const msg='بيانات الدخول إلى نظام فريش فرايز\nاسم المستخدم: '+saved.login+'\nكلمة المرور: '+saved.password+'\nيرجى عدم مشاركة هذه البيانات مع الآخرين.';
+ try{if(navigator.share)await navigator.share({title:'بيانات الدخول - فريش فرايز',text:msg});else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(msg);status.textContent='تم نسخ البيانات للمشاركة مع الموظف بشكل خاص.'}else status.textContent='المشاركة غير مدعومة في المتصفح.'}
+ catch(err){if(err.name!=='AbortError')status.textContent='فشلت المشاركة: '+err.message}
+};
+})();
+</script>
 </body></html>
