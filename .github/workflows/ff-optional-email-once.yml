@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
-      - name: Make email optional in the applicant form without changing other fields
+      - name: Update only the email field of the employee join form
         shell: bash
         run: |
           python - <<'PY'
@@ -21,27 +21,34 @@ jobs:
           from pathlib import Path
           f=Path('index.html')
           html=f.read_text(encoding='utf-8')
-          assert 'id="ff61ApplyForm"' in html, 'Employee application form not found'
-          pattern=r"""(<label\b[^>]*>)\s*البريد الإلكتروني\s*\*?\s*(<input\b[^>]*\bname=["']email["'][^>]*>)"""
-          def fix(m):
-              field=re.sub(r'\s+required(?=[\s>])','',m.group(2),flags=re.I)
-              return m.group(1)+'البريد الإلكتروني (اختياري)'+field
-          html,count=re.subn(pattern,fix,html,count=1)
-          assert count==1, 'Could not match precisely the application email field'
-          form=html.split('id="ff61ApplyForm"',1)[1].split('</form>',1)[0]
-          assert 'البريد الإلكتروني (اختياري)' in form
-          email=re.search(r'<input\b[^>]*\bname=["\x27]email["\x27][^>]*>',form)
-          assert email and not re.search(r'\brequired\b',email.group(0)), 'Email is still required'
-          assert re.search(r'<input\b[^>]*\bname=["\x27]phone["\x27][^>]*\brequired',form), 'Phone field must remain required'
-          f.write_text(html,encoding='utf-8')
-          print('PASS: employee email is optional, contact phone remains mandatory')
+          start=html.find('id="ff61ApplyForm"')
+          assert start!=-1, "Application form missing"
+          stop=html.find('</form>',start)
+          assert stop>start, "Application form end missing"
+          form=html[start:stop]
+          pat=re.compile(r"""<input\b(?=[^>]*\bname\s*=\s*["']email["'])[^>]*>""", re.I|re.S)
+          match=pat.search(form)
+          if not match:
+              print("JOIN FORM (first 1200 chars):",form[:1200])
+              raise SystemExit("Application email field not found")
+          tag=match.group(0)
+          new_tag=re.sub(r'\s+required\b(?:\s*=\s*["\x27]?required["\x27]?)?','',tag,flags=re.I)
+          form=form[:match.start()]+new_tag+form[match.end():]
+          form=form.replace('البريد الإلكتروني *','البريد الإلكتروني (اختياري)')
+          form=form.replace('البريد الإلكتروني (إلزامي)','البريد الإلكتروني (اختياري)')
+          test=pat.search(form)
+          assert test and not re.search(r'\brequired\b',test.group(0)), 'Email still required'
+          assert re.search(r"""<input\b(?=[^>]*\bname\s*=\s*["']phone["'])[^>]*\brequired""",form,re.I|re.S), 'Phone must stay required'
+          html=html[:start]+form+html[stop:]
+          f.write_text(html, encoding='utf-8')
+          print("PASS: application email optional, phone required")
           PY
-      - name: Publish corrected web form
+      - name: Commit only the corrected application form
         shell: bash
         run: |
           git config user.name "Fresh Fries Maintenance"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html
-          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
-          git commit -m "Fix employee application: optional email, phone remains required"
+          if git diff --cached --quiet; then echo "No change"; exit 0; fi
+          git commit -m "Fix joining Fresh Fries without an email address"
           git push origin HEAD:main
