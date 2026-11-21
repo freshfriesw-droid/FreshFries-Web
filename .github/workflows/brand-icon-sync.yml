@@ -34,7 +34,7 @@ jobs:
               dimensions=(max(1,round(logo.width*ratio)),max(1,round(logo.height*ratio)))
               art=logo.resize(dimensions,Image.Resampling.LANCZOS)
               canvas.alpha_composite(art,((size-dimensions[0])//2,(size-dimensions[1])//2))
-              return canvas.convert("RGB")
+              return canvas.convert("RGB").quantize(colors=256, method=Image.Quantize.MEDIANCUT)
           for size in (192,512):
               make_icon(size).save(f"assets/ff-icon-{size}.png", optimize=True)
           make_icon(180).save("apple-touch-icon.png",optimize=True)
