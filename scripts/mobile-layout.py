@@ -51,6 +51,26 @@ with sync_playwright() as playwright:
             check_width(page, width, "#ffx-preferences")
             page.locator("#ffx-pref-close").click()
             assert page.locator("#ffx-preferences").is_hidden()
+            if width == 390:
+                page.evaluate("""() => {
+                  user={id:'fixture-manager'};
+                  data={role:'manager', orders:[], branches:[], drivers:[], offers:[]};
+                  rpc=async name=>{
+                    if(name==='ff62_manager_data_overview')return {mode:'read_only',orders:7};
+                    throw Error('Unconfigured test fixture');
+                  };
+                }""")
+                page.locator("#ffx-menu").click()
+                entry = page.locator("#ffx-nav [data-key=data_center]")
+                entry.click()
+                dialog = page.locator("#ff62DataCenter")
+                check_width(page, width, "#ff62DataCenter")
+                dialog.get_by_role("button", name="عرض ملخص البيانات", exact=False).click()
+                dialog.get_by_text("تمت قراءة الملخص", exact=False).wait_for()
+                dialog.get_by_role("button", name="إغلاق", exact=True).click()
+                page.evaluate("data.role='cashier'")
+                entry.wait_for(state="detached")
+                assert dialog.is_hidden()
             page.locator("#ffx-menu").click()
             page.set_viewport_size({"width":1100, "height":700})
             page.wait_for_function("!document.body.classList.contains('ffx-menu-open')")
