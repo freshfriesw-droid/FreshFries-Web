@@ -125,4 +125,66 @@ style.textContent = `
   #ffLuxeLeaveView, #ffLuxeAssemblyPreview [data-exit]{min-height:56px!important;font-size:19px!important;font-weight:950!important}
 `;
 document.head.append(style);
+
+
+// Manager interventions are explicitly audited and executed as manager, never
+// by impersonating or borrowing a delivery employee's session.
+function attachManagerDeliveryActions() {
+  if (typeof data === 'undefined' || data?.role !== 'manager' ||
+      !document.body.classList.contains('ff-luxe-preview') ||
+      $('driverView')?.classList.contains('hidden')) return;
+  const orders = data.orders || [];
+  for (const card of $('driverTasks')?.querySelectorAll(':scope > .item') || []) {
+    const number = card.querySelector('.item-top strong')?.textContent?.match(/#\s*(\d+)/)?.[1];
+    const order = orders.find(o => String(o.number) === number);
+    const actions = card.querySelector('.actions');
+    if (!order || !actions || actions.querySelector('[data-manager-progress]')) continue;
+    actions.querySelectorAll('button[data-progress]').forEach(b => b.classList.add('hidden'));
+    const phases = order.phase === 'assigned' && order.cashier_stage === 'handed_over'
+      ? [['on_way','🛵 اعتماد استلام الموصل']]
+      : order.phase === 'on_way'
+      ? [['arrived','📍 اعتماد وصول الموصل'],['delivered','✅ اعتماد تسليم الطلب']]
+      : order.phase === 'arrived'
+      ? [['delivered','✅ اعتماد تسليم الطلب']] : [];
+    for (const [phase,label] of phases) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'outline';
+      b.dataset.managerProgress = phase; b.textContent = '👑 '+label;
+      b.onclick = async () => {
+        if (data?.role !== 'manager' || !document.body.classList.contains('ff-luxe-preview')) return;
+        const reason = prompt('سبب التدخل الإداري في الطلب #'+order.number+' (إلزامي):','متابعة إدارية بعد التحقق من الموصل');
+        if (reason === null) return;
+        if (reason.trim().length < 5 || reason.trim().length > 500) return toast('اكتب سببًا بين 5 و500 حرف');
+        if (!confirm('اعتماد مرحلة «'+label+'» للطلب #'+order.number+'؟ سيُسجل باسم المدير.')) return;
+        b.disabled = true;
+        try {
+          await rpc('ff_luxe_manager_driver_progress',{
+            p_order:order.id,p_phase:phase,p_reason:reason.trim()
+          });
+          toast('تم تحديث مرحلة التوصيل وتوثيق التدخل الإداري');
+          await reload(true);
+        } catch (error) {
+          toast('تعذر اعتماد المرحلة: '+(error.message||error));
+        } finally { b.disabled = false; }
+      };
+      actions.append(b);
+    }
+  }
+}
+const ffLuxeBeforeManagerOpsDraw = draw;
+draw = function (...args) {
+  const value=ffLuxeBeforeManagerOpsDraw.apply(this,args);
+  attachManagerDeliveryActions();
+  return value;
+};
+if (typeof data !== 'undefined' && data?.role === 'manager') attachManagerDeliveryActions();
+
+function closeOperationalMenu() {
+  document.body.classList.remove('ffx-menu-open');
+  $('ffx-menu')?.setAttribute('aria-expanded','false');
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&document.body.classList.contains('ffx-menu-open'))closeOperationalMenu();
+});
+document.querySelector('.ffx-screen-dimmer')?.addEventListener('click',closeOperationalMenu);
 })();
