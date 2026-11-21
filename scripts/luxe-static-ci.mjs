@@ -34,7 +34,7 @@ assert.match(html, /v38\.38\.0/, 'Version not updated');
 assert.match(html, /ff_luxe_cancel_assigned/, 'Assigned-order cancellation missing');
 assert.match(html, /ff_luxe_ack_cashier_cancel/, 'Cashier cancellation acknowledgement missing');
 assert.match(html, /ff_luxe_dispatch_preview/, 'Courier candidate preview missing');
-assert.match(html, /ff_luxe_reset_safe/, 'Protected selective reset missing');
+assert.match(get(operationalFiles[0]).toString('utf8'), /ff_luxe_reset_safe/, 'Protected selective reset missing');
 assert.match(html, /ff_luxe_driver_rate_order/, 'Courier feedback missing');
 assert.match(html, /ff_luxe_driver_grievance/, 'Courier grievance form missing');
 assert.match(get(operationalFiles[1]).toString('utf8'), /ff_luxe_manager_driver_progress/,
