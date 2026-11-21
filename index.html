@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fresh Fries LUXE — v38.37 بوابة التشغيل والموظفين</title>
+<title>Fresh Fries LUXE — v38.37.1 بوابة التشغيل والموظفين</title>
 <link rel="icon" type="image/png" href="./assets/ff-icon-192.png"><link rel="apple-touch-icon" href="./assets/ff-icon-192.png"><meta name="theme-color" content="#d51e2c">
 <style>
 :root{--red:#d51e2c;--dark:#1a1a1a;--bg:#f6f6f6;--line:#e5e5e5;--muted:#767676;--good:#222222;--amber:#b31d27}
@@ -955,20 +955,24 @@ function ff28Credentials(name,password){
  return {email:input.toLowerCase()+'@users.freshfriesz.com',password};
 }
 
+/* v38.37.1: Obtain the staff snapshot once on the sign-in hot path. */
+let ffLuxeInitialSnapshot=null;
 async function ff28ReadRole(){
+ ffLuxeInitialSnapshot=null;
+ try{
+  const snapshot=await rpc('ff49_snapshot');
+  if(['manager','supervisor','customer_service','cashier','driver'].includes(snapshot?.role)){
+   ffLuxeInitialSnapshot=snapshot;
+   return snapshot.role;
+  }
+ }catch(err){console.info('سيتم التحقق من نوع الحساب بالطريقة البديلة',err.code||err.message)}
  try{return await rpc('ff28_my_role')}
  catch(error){if(error.code!=='PGRST202')throw error}
  try{
   const info=await rpc('ff_v12_assembly_me');
   if(info?.is_assembly===true)return 'assembly';
  }catch(error){if(error.code!=='PGRST202')throw error}
- try{
-  const snapshot=await rpc('ff49_snapshot');
-  if(['manager','supervisor','customer_service','cashier','driver'].includes(snapshot?.role))return snapshot.role;
- }catch(error){
-  if(!['PGRST202','42501'].includes(error.code))throw error;
- }
- throw Error('تعذر تحديد واجهة هذا الحساب. تحقق من تفعيله ومن تطبيق إعداد v38.28 في مشروع Supabase المرتبط.');
+ throw Error('تعذر تحديد واجهة الحساب، تحقق من الاتصال وصلاحيات الحساب.');
 }
 async function setSession(session){
  resetUI();if(!session?.user)return;
@@ -982,7 +986,17 @@ async function setSession(session){
  if(!['manager','supervisor','customer_service','cashier','driver','assembly'].includes(role))throw Error('الحساب غير مصرح');
  user=session.user;
  if(role==='assembly'){document.body.dataset.access='staff';$('loginOverlay').classList.add('hidden');await ffV12Start();return;}
- await reload(true);
+ const initial=ffLuxeInitialSnapshot;ffLuxeInitialSnapshot=null;
+ if(initial?.role===role){
+  data=initial;
+  window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
+  draw();
+  conn('🟢 متصل بقاعدة البيانات المركزية — تم تحميل الواجهة');
+  // Additional permissions and addons are populated after the interface is visible.
+  void reload(true);
+ }else{
+  await reload(true);
+ }
  if(seq!==ff28Epoch)return;
  if(!data||data.role!==role){resetUI();throw Error('تعذر تحميل صلاحيات الحساب');}
  document.body.dataset.access='staff';$('loginOverlay').classList.add('hidden');
@@ -1015,7 +1029,16 @@ async function ffDriverHeartbeat(){
 setInterval(ffDriverHeartbeat,30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)void ffDriverHeartbeat()});
 window.addEventListener('online',()=>void ffDriverHeartbeat());
-async function initialize(){if(!window.supabase?.createClient){for(let i=0;i<40&&!window.supabase?.createClient;i++)await new Promise(r=>setTimeout(r,200))}if(!window.supabase?.createClient){$('loginStatus').textContent='تعذر تحميل مكتبة Supabase. تحتاج إلى إنترنت.';return}client=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'freshfries-v38-pilot-session'}});client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){resetUI()}else if(event==='SIGNED_IN'&&ff28AccountId&&session?.user?.id!==ff28AccountId){location.reload()}});const {data:auth}=await client.auth.getSession();if(auth.session)await setSession(auth.session);document.body.classList.remove("ff-booting");let ffLastSweepAt=0;pollTimer=setInterval(async()=>{if(!user||document.hidden||ffV12AssemblyActive)return;/* نبضات الموصل مستقلة؛ تنظيف العروض لا يلزم كل 4 ثوانٍ */if(['manager','customer_service'].includes(data?.role)&&Date.now()-ffLastSweepAt>20000){ffLastSweepAt=Date.now();try{await rpc('ff38_sweep_offers')}catch(e){console.warn('تعذر تنظيف عروض الإسناد',e.code||e.message)}}await reload();},4000);clockTimer=setInterval(tick,1000);window.addEventListener('focus',()=>reload());document.addEventListener('visibilitychange',()=>{if(!document.hidden)reload()});try{signal=client.channel('ff38-live-hint').on('postgres_changes',{event:'*',schema:'public',table:'ff_orders'},()=>reload()).subscribe()}catch{}
+async function initialize(){if(!window.supabase?.createClient){for(let i=0;i<40&&!window.supabase?.createClient;i++)await new Promise(r=>setTimeout(r,200))}if(!window.supabase?.createClient){$('loginStatus').textContent='تعذر تحميل مكتبة Supabase. تحتاج إلى إنترنت.';return}client=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'freshfries-v38-pilot-session'}});client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){resetUI()}else if(event==='SIGNED_IN'&&ff28AccountId&&session?.user?.id!==ff28AccountId){location.reload()}});try{
+ const {data:auth,error:restoreError}=await client.auth.getSession();
+ if(restoreError)throw restoreError;
+ if(auth.session)await setSession(auth.session);
+}catch(restoreError){
+ console.warn('تعذرت استعادة جلسة المستخدم، يمكن إعادة تسجيل الدخول',restoreError);
+ $('loginStatus').textContent='تعذرت استعادة الجلسة تلقائياً، حاول تسجيل الدخول مجدداً.';
+}finally{
+ document.body.classList.remove('ff-booting');
+}let ffLastSweepAt=0;pollTimer=setInterval(async()=>{if(!user||document.hidden||ffV12AssemblyActive)return;/* نبضات الموصل مستقلة؛ تنظيف العروض لا يلزم كل 4 ثوانٍ */if(['manager','customer_service'].includes(data?.role)&&Date.now()-ffLastSweepAt>20000){ffLastSweepAt=Date.now();try{await rpc('ff38_sweep_offers')}catch(e){console.warn('تعذر تنظيف عروض الإسناد',e.code||e.message)}}await reload();},4000);clockTimer=setInterval(tick,1000);window.addEventListener('focus',()=>reload());document.addEventListener('visibilitychange',()=>{if(!document.hidden)reload()});try{signal=client.channel('ff38-live-hint').on('postgres_changes',{event:'*',schema:'public',table:'ff_orders'},()=>reload()).subscribe()}catch{}
 }
 $('loginBtn').onclick=async()=>{let b=$('loginBtn');b.disabled=true;try{let {data:auth,error}=await client.auth.signInWithPassword(ff28Credentials($('email').value,$('password').value));if(error)throw error;await setSession(auth.session);$('password').value=''}catch(e){$('loginStatus').textContent='فشل الدخول: '+(e.message||e)}finally{b.disabled=false}};
 $('logoutBtn').onclick=async()=>{if(data?.role==='driver')try{await rpc('ff38_clock_out')}catch(e){return toast('لا يمكن الخروج: '+e.message)}try{await client.auth.signOut({scope:'local'})}catch(e){toast(e.message)}resetUI()};
@@ -4389,4 +4412,4 @@ run.onclick=async()=>{
 };
 center.append(box);
 })();
-</script></body></html>
+</script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script></body></html>
