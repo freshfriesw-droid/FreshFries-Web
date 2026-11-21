@@ -4343,4 +4343,40 @@ function showView(){
 const prev=draw;draw=function(){prev();showView()};
 const reset=resetUI;resetUI=function(){mode='';document.body.classList.remove('ff-luxe-preview');reset()};
 })();
+</script><style id="ff-luxe-reset-style">
+#ffLuxeResetOptions{margin:16px 0;padding:14px;border:2px solid #ad1717;border-radius:12px}
+#ffLuxeResetOptions label{display:flex;align-items:center;gap:9px;min-height:38px;font-size:15px}
+#ffLuxeResetOptions input[type=checkbox]{width:20px;height:20px;accent-color:#c71f1f}
+#ffLuxeResetOptions input[type=text]{width:100%;padding:12px}
+#ffLuxeResetOptions [data-reset-run]{background:#b00000;color:#fff;padding:12px 16px;font-weight:800}
+</style>
+<script id="ff-luxe-reset-ui-20261121">
+(function(){
+'use strict';
+const center=document.getElementById('ff62DataCenter');if(!center)return;
+const box=document.createElement('section');box.id='ffLuxeResetOptions';
+box.innerHTML='<h3>🗑️ التصفير الانتقائي للمدير</h3><p>حدد البيانات المطلوب حذفها. العملية نهائية ولا تنفذ إلا بعد تأكيد صريح. ننصح بتصدير نسخة احتياطية قبل التنفيذ.</p><div data-reset-choices></div><div class="actions"><button type="button" class="outline" data-select-all>تحديد التصفير التشغيلي الشامل</button><button type="button" class="outline" data-clear>إلغاء التحديد</button></div><p class="muted">التصفير الشامل التشغيلي لا يحذف حسابات Supabase Authentication أو صلاحيات المدير أو سجلات التدقيق الأساسية أو إعدادات الفروع والأصناف. إلغاء بيانات الموظفين بشكل نهائي يحتاج إجراء مستقلاً ومراجعة للصلاحيات.</p><label>للتأكيد اكتب: تصفير فريش فرايز<input type="text" data-confirm placeholder="تصفير فريش فرايز" autocomplete="off"></label><div class="actions"><button type="button" data-reset-run>🔴 تنفيذ تصفير البيانات المحددة</button></div><p data-status role="status"></p>';
+const options=[['orders','الطلبات وما يرتبط بها من أصناف وإسنادات وإضافات'],['customers','العملاء وملاحظاتهم'],['ratings','التقييمات'],['grievances','تظلمات الموصلين'],['messages','الرسائل والإشعارات'],['diagnostics','سجلات تشخيص الأجهزة'],['tests','نتائج الاختبارات'],['applications','طلبات الانضمام المؤرشفة والحالية']];
+const choices=box.querySelector('[data-reset-choices]');
+for(const [value,label] of options){const row=document.createElement('label');const inp=document.createElement('input');inp.type='checkbox';inp.value=value;const txt=document.createElement('span');txt.textContent=label;row.append(inp,txt);choices.append(row)}
+box.querySelector('[data-select-all]').onclick=()=>choices.querySelectorAll('input').forEach(x=>x.checked=true);
+box.querySelector('[data-clear]').onclick=()=>choices.querySelectorAll('input').forEach(x=>x.checked=false);
+const run=box.querySelector('[data-reset-run]'),status=box.querySelector('[data-status]');
+run.onclick=async()=>{
+ if(data?.role!=='manager')return status.textContent='هذه العملية خاصة بالمدير العام فقط';
+ const scopes=[...choices.querySelectorAll('input:checked')].map(x=>x.value);
+ if(!scopes.length)return status.textContent='حدد فئة واحدة على الأقل';
+ const confirmPhrase=box.querySelector('[data-confirm]').value.trim();
+ if(confirmPhrase!=='تصفير فريش فرايز')return status.textContent='أدخل عبارة التأكيد كاملة';
+ const names=options.filter(([key])=>scopes.includes(key)).map(([,label])=>label).join('، ');
+ if(!confirm('تنبيه: حذف نهائي لبيانات: '+names+'\nهل أنت متأكد بعد أخذ النسخة الاحتياطية؟'))return;
+ if(!confirm('تأكيد ثانٍ: العملية لا يمكن التراجع عنها. هل تريد تنفيذ التصفير الآن؟'))return;
+ run.disabled=true;status.textContent='جاري تنفيذ التصفير المعتمد...';
+ try{const result=await rpc('ff_luxe_reset_scoped',{p_scopes:scopes,p_confirmation:confirmPhrase});
+ if(result?.success!==true)throw Error('لم يؤكد الخادم اكتمال التصفير');
+ status.textContent='✅ تم تنفيذ تصفير الفئات المحددة. قم بتحديث النظام.';box.querySelector('[data-confirm]').value='';choices.querySelectorAll('input').forEach(x=>x.checked=false);void reload(true)
+ }catch(e){status.textContent='تعذر التصفير ولم يؤكد الخادم نجاحه: '+e.message}finally{run.disabled=false}
+};
+center.append(box);
+})();
 </script></body></html>
