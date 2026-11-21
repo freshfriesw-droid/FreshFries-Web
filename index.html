@@ -1029,7 +1029,7 @@ async function ffDriverHeartbeat(){
 setInterval(ffDriverHeartbeat,30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)void ffDriverHeartbeat()});
 window.addEventListener('online',()=>void ffDriverHeartbeat());
-async function initialize(){if(!window.supabase?.createClient){for(let i=0;i<40&&!window.supabase?.createClient;i++)await new Promise(r=>setTimeout(r,200))}if(!window.supabase?.createClient){$('loginStatus').textContent='تعذر تحميل مكتبة Supabase. تحتاج إلى إنترنت.';return}client=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'freshfries-v38-pilot-session'}});client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){resetUI()}else if(event==='SIGNED_IN'&&ff28AccountId&&session?.user?.id!==ff28AccountId){location.reload()}});try{
+async function initialize(){if(!window.supabase?.createClient){for(let i=0;i<40&&!window.supabase?.createClient;i++)await new Promise(r=>setTimeout(r,200))}if(!window.supabase?.createClient){$('loginStatus').textContent='تعذر تحميل مكتبة الاتصال بقاعدة البيانات. تحقق من الإنترنت ثم أعد المحاولة.';document.body.classList.remove('ff-booting');return}client=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'freshfries-v38-pilot-session'}});client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){resetUI()}else if(event==='SIGNED_IN'&&ff28AccountId&&session?.user?.id!==ff28AccountId){location.reload()}});try{
  const {data:auth,error:restoreError}=await client.auth.getSession();
  if(restoreError)throw restoreError;
  if(auth.session)await setSession(auth.session);
