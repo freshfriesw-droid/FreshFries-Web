@@ -4270,4 +4270,46 @@ setInterval(()=>{if(!document.hidden)void refreshCancelled()},10000);
 const originalDraw=draw;draw=function(){originalDraw();void refreshCancelled()};
 const originalReset=resetUI;resetUI=function(){originalReset();const x=document.getElementById('ffLuxeCancelledAlerts');if(x)x.remove()};
 })();
+</script><script id="ff-luxe-feedback-20261121">
+(function(){
+'use strict';
+const escText=t=>String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+async function multiRate(orderId){
+ const dlg=document.createElement('dialog');dlg.className='ff-luxe-rate-dialog';
+ dlg.innerHTML='<h2>⭐ تقييم الطلب من الموصل</h2><p>قيّم الخدمة والكاشير والعميل والطلب بشكل عام.</p><div id="ffLuxeFourScores"></div><textarea maxlength="1000" placeholder="تعليق أو ملاحظة (اختياري)"></textarea><div class="actions"><button class="primary" data-submit>حفظ التقييم</button><button class="outline" data-close>إغلاق</button></div>';
+ const state={cs:0,cashier:0,customer:0,overall:0};let rows=dlg.querySelector('#ffLuxeFourScores');
+ for(const [key,label] of [['cs','خدمة العملاء'],['cashier','الكاشير'],['customer','العميل'],['overall','الطلب بشكل عام']]){
+  const row=document.createElement('div');row.className='ff-luxe-multirate';const title=document.createElement('b');title.textContent=label;const stars=document.createElement('div');stars.className='ff-luxe-stars';
+  for(let n=1;n<=5;n++){const b=document.createElement('button');b.type='button';b.textContent='★';b.setAttribute('aria-label',label+' '+n+' نجوم');b.onclick=()=>{state[key]=n;[...stars.children].forEach((el,i)=>el.setAttribute('aria-pressed',String(i<n)))};stars.append(b)}row.append(title,stars);rows.append(row)
+ }
+ dlg.querySelector('[data-close]').onclick=()=>dlg.close();
+ dlg.querySelector('[data-submit]').onclick=async()=>{
+  if(Object.values(state).some(x=>x<1)){alert('قيّم كل بند من 1 إلى 5 نجوم');return}
+  const b=dlg.querySelector('[data-submit]');b.disabled=true;
+  try{await rpc('ff_luxe_driver_rate_order',{p_order:orderId,p_cs:state.cs,p_cashier:state.cashier,p_customer:state.customer,p_overall:state.overall,p_note:dlg.querySelector('textarea').value});toast('تم حفظ تقييمك');dlg.close()}catch(e){toast('تعذر حفظ التقييم: '+e.message);b.disabled=false}
+ };
+ dlg.addEventListener('close',()=>dlg.remove());document.body.append(dlg);dlg.showModal()
+}
+async function grievance(orderId){
+ const dlg=document.createElement('dialog');dlg.className='ff-luxe-rate-dialog';dlg.innerHTML='<h2>⚖️ تظلم موجه للإدارة</h2><label>نوع التظلم<select><option value="delivery_fee">سعر التوصيل</option><option value="cashier">الكاشير</option><option value="customer_service">خدمة العملاء</option><option value="customer">العميل</option><option value="other">أخرى</option></select></label><label>تفاصيل التظلم<textarea maxlength="1500" minlength="10" placeholder="اشرح الواقعة والمبلغ المطلوب مراجعته إن وجد"></textarea></label><div class="actions"><button class="primary" data-save>إرسال للإدارة</button><button class="outline" data-close>إغلاق</button></div>';
+ dlg.querySelector('[data-close]').onclick=()=>dlg.close();dlg.querySelector('[data-save]').onclick=async()=>{const btn=dlg.querySelector('[data-save]');btn.disabled=true;try{await rpc('ff_luxe_driver_grievance',{p_order:orderId,p_category:dlg.querySelector('select').value,p_details:dlg.querySelector('textarea').value.trim()});toast('تم إرسال التظلم وحفظه للإدارة');dlg.close()}catch(e){toast('تعذر إرسال التظلم: '+e.message);btn.disabled=false}};
+ dlg.addEventListener('close',()=>dlg.remove());document.body.append(dlg);dlg.showModal()
+}
+function addControls(){
+ if(!data)return;
+ if(['customer_service','manager'].includes(data.role)){
+  const cards=[...document.querySelectorAll('#staffOrders>.item')];
+  const visible=(data.orders||[]).filter(o=>o.status!=='delivered'&&o.status!=='cancelled'&&o.phase!=='delivered');
+  for(const card of cards){const no=card.querySelector('strong')?.textContent?.match(/#(\d+)/)?.[1];const o=visible.find(x=>String(x.number)===no);if(!o?.driver_id||card.querySelector('[data-ff-luxe-csrate]'))continue;const b=document.createElement('button');b.type='button';b.className='outline';b.textContent='⭐ تقييم الموصل';b.dataset.ffLuxeCsrate=o.id;b.onclick=async()=>{const rating=await window.ffLuxeStarPrompt('تقييم الموصل من خدمة العملاء');if(!rating)return;try{await rpc('ff_luxe_rate_driver_cs',{p_order:o.id,p_stars:rating.stars,p_note:rating.note});toast('تم حفظ التقييم')}catch(e){toast(e.message)}};card.querySelector('.actions')?.append(b)}
+ }
+ if(data.role==='driver'){
+ const cards=[...document.querySelectorAll('#driverTasks>.item')];
+ for(const card of cards){const no=card.querySelector('strong')?.textContent?.match(/#(\d+)/)?.[1];const o=(data.orders||[]).find(x=>String(x.number)===no);if(!o||card.querySelector('[data-ff-luxe-order-rate]'))continue;const actions=card.querySelector('.actions');if(!actions)continue;
+ const rate=document.createElement('button');rate.type='button';rate.className='outline';rate.dataset.ffLuxeOrderRate=o.id;rate.textContent='⭐ تقييم الطلب';rate.onclick=()=>void multiRate(o.id);
+ const appeal=document.createElement('button');appeal.type='button';appeal.className='outline';appeal.textContent='⚖️ تظلم للإدارة';appeal.onclick=()=>void grievance(o.id);actions.append(rate,appeal);
+ }
+ }
+}
+const prev=draw;draw=function(){prev();addControls()};
+})();
 </script></body></html>
