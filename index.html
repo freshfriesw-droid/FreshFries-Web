@@ -4312,4 +4312,35 @@ function addControls(){
 }
 const prev=draw;draw=function(){prev();addControls()};
 })();
+</script><style id="ff-luxe-manager-preview-style">
+#ffLuxeManagerViews{margin:12px 0;padding:14px;border:2px solid #ae1717;border-radius:14px;background:var(--ffb-surface,#fff)}
+#ffLuxeManagerViews summary{cursor:pointer;font-weight:900;font-size:18px;color:#c32121;padding:8px}
+#ffLuxeManagerViews .actions{margin-top:12px}
+#ffLuxeLeaveView{display:none;position:sticky;top:4px;z-index:100;padding:15px;font-size:19px;font-weight:900;width:100%;background:#b81414!important;color:white!important;border:3px solid white;border-radius:12px}
+body.ff-luxe-preview #ffLuxeLeaveView{display:block}
+body.ff-luxe-preview [data-progress],body.ff-luxe-preview [data-accept],body.ff-luxe-preview [data-reject]{pointer-events:none;opacity:.5}
+</style>
+<script id="ff-luxe-manager-preview-20261121">
+(function(){
+'use strict';
+let mode='';
+const entry=document.createElement('details');entry.id='ffLuxeManagerViews';entry.className='hidden';entry.innerHTML='<summary>👑 فتح واجهات النظام للمدير</summary><p>يمكن للمدير فتح شاشة خدمة العملاء أو الكاشير والتحكم بما تسمح به صلاحياته. واجهة الموصل للمعاينة فقط دون تنفيذ عمليات باسمه.</p><div class="actions"><button type="button" data-view="service">📋 خدمة العملاء</button><button type="button" data-view="cashier">🧾 الكاشير</button><button type="button" data-view="driver">🛵 الموصل (معاينة)</button></div>';
+const leave=document.createElement('button');leave.id='ffLuxeLeaveView';leave.type='button';leave.textContent='⬅ الخروج من الواجهة والعودة للإدارة';
+const anchor=document.getElementById('staffView');anchor?.parentElement?.insertBefore(entry,anchor);entry?.parentElement?.insertBefore(leave,entry.nextSibling);
+function exit(){mode='';document.body.classList.remove('ff-luxe-preview');if(data?.role==='manager')draw();else{for(const id of ['cashierView','driverView'])document.getElementById(id)?.classList.add('hidden')};entry.open=false;window.scrollTo({top:0,behavior:'smooth'})}
+leave.onclick=exit;
+entry.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{if(data?.role!=='manager')return;mode=b.dataset.view;entry.open=false;document.body.classList.add('ff-luxe-preview');showView();leave.scrollIntoView({block:'start',behavior:'smooth'})});
+function showView(){
+ const isManager=data?.role==='manager';
+ entry.classList.toggle('hidden',!isManager);
+ if(!isManager){mode='';document.body.classList.remove('ff-luxe-preview');return}
+ if(!mode)return;
+ const staff=document.getElementById('staffView'),cashier=document.getElementById('cashierView'),driver=document.getElementById('driverView');
+ staff?.classList.toggle('hidden',mode!=='service');cashier?.classList.toggle('hidden',mode!=='cashier');driver?.classList.toggle('hidden',mode!=='driver');
+ if(mode==='cashier')drawCashier();
+ if(mode==='driver'){drawDriver();driver?.querySelectorAll('button[data-progress],button[data-accept],button[data-reject],button[data-check-reject]').forEach(b=>{b.disabled=true;b.title='المعاينة فقط؛ العمليات ينفذها صاحب الحساب'})}
+}
+const prev=draw;draw=function(){prev();showView()};
+const reset=resetUI;resetUI=function(){mode='';document.body.classList.remove('ff-luxe-preview');reset()};
+})();
 </script></body></html>
