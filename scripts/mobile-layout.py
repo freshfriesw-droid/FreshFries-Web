@@ -76,7 +76,12 @@ with sync_playwright() as playwright:
             page.wait_for_function("!document.body.classList.contains('ffx-menu-open')")
             assert page.locator("#ffx-dimmer").is_hidden()
         else:
-            assert page.locator("#ffx-sidebar").is_visible()
+            # User-facing requirement: the sidebar is collapsed on desktop too.
+            assert page.locator("#ffx-sidebar").is_hidden()
+            page.locator("#ffx-menu").click()
+            check_width(page, width, "#ffx-sidebar")
+            page.locator("#ffx-drawer-close").click()
+            assert page.locator("#ffx-sidebar").is_hidden()
         print(f"PASS {width}px", flush=True)
         context.close()
     browser.close()
