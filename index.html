@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fresh Fries LUXE — v38.37.1 بوابة التشغيل والموظفين</title>
+<title>Fresh Fries LUXE — v38.38.0 بوابة التشغيل والموظفين</title>
 <link rel="icon" type="image/png" href="./assets/ff-icon-192.png"><link rel="apple-touch-icon" href="./assets/ff-icon-192.png"><meta name="theme-color" content="#d51e2c">
 <style>
 :root{--red:#d51e2c;--dark:#1a1a1a;--bg:#f6f6f6;--line:#e5e5e5;--muted:#767676;--good:#222222;--amber:#b31d27}
@@ -1029,7 +1029,7 @@ async function ffDriverHeartbeat(){
 setInterval(ffDriverHeartbeat,30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)void ffDriverHeartbeat()});
 window.addEventListener('online',()=>void ffDriverHeartbeat());
-async function initialize(){if(!window.supabase?.createClient){for(let i=0;i<40&&!window.supabase?.createClient;i++)await new Promise(r=>setTimeout(r,200))}if(!window.supabase?.createClient){$('loginStatus').textContent='تعذر تحميل مكتبة الاتصال بقاعدة البيانات. تحقق من الإنترنت ثم أعد المحاولة.';document.body.classList.remove('ff-booting');return}client=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'freshfries-v38-pilot-session'}});client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){resetUI()}else if(event==='SIGNED_IN'&&ff28AccountId&&session?.user?.id!==ff28AccountId){location.reload()}});try{
+async function initialize(){if(!window.supabase?.createClient){for(let i=0;i<40&&!window.supabase?.createClient;i++)await new Promise(r=>setTimeout(r,200))}if(!window.supabase?.createClient){$('loginStatus').textContent='تعذر تحميل مكتبة الاتصال بقاعدة البيانات. تحقق من الإنترنت ثم أعد المحاولة.';document.body.classList.remove('ff-booting');return}client=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'freshfries-v38-pilot-session'}});client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){resetUI()}else if(event==='SIGNED_IN'&&ff28AccountId&&session?.user?.id!==ff28AccountId){resetUI();$('loginStatus').textContent='تم تبديل الحساب؛ جارٍ تهيئة الجلسة الجديدة دون إعادة تحميل الصفحة.'}});try{
  const {data:auth,error:restoreError}=await client.auth.getSession();
  if(restoreError)throw restoreError;
  if(auth.session)await setSession(auth.session);
@@ -1040,7 +1040,7 @@ async function initialize(){if(!window.supabase?.createClient){for(let i=0;i<40&
  document.body.classList.remove('ff-booting');
 }let ffLastSweepAt=0;pollTimer=setInterval(async()=>{if(!user||document.hidden||ffV12AssemblyActive)return;/* نبضات الموصل مستقلة؛ تنظيف العروض لا يلزم كل 4 ثوانٍ */if(['manager','customer_service'].includes(data?.role)&&Date.now()-ffLastSweepAt>20000){ffLastSweepAt=Date.now();try{await rpc('ff38_sweep_offers')}catch(e){console.warn('تعذر تنظيف عروض الإسناد',e.code||e.message)}}await reload();},4000);clockTimer=setInterval(tick,1000);window.addEventListener('focus',()=>reload());document.addEventListener('visibilitychange',()=>{if(!document.hidden)reload()});try{signal=client.channel('ff38-live-hint').on('postgres_changes',{event:'*',schema:'public',table:'ff_orders'},()=>reload()).subscribe()}catch{}
 }
-$('loginBtn').onclick=async()=>{let b=$('loginBtn');b.disabled=true;$('loginStatus').textContent='جارٍ التحقق من بيانات الدخول وتحميل الصلاحيات...';try{let {data:auth,error}=await client.auth.signInWithPassword(ff28Credentials($('email').value,$('password').value));if(error)throw error;await setSession(auth.session);$('password').value=''}catch(e){$('loginStatus').textContent='فشل الدخول: '+(e.message||e)}finally{b.disabled=false}};
+$('loginBtn').onclick=async()=>{let b=$('loginBtn');b.disabled=true;$('loginStatus').textContent='جارٍ التحقق من بيانات الدخول وتحميل الصلاحيات...';try{let {data:auth,error}=await client.auth.signInWithPassword(ff28Credentials($('email').value,$('password').value));if(error)throw error;$('loginStatus').textContent='تم التحقق من بيانات الدخول؛ جارٍ تجهيز واجهة الحساب...';await setSession(auth.session);$('password').value=''}catch(e){$('loginStatus').textContent='فشل الدخول: '+(e.message||e)}finally{b.disabled=false}};
 $('logoutBtn').onclick=async()=>{if(data?.role==='driver')try{await rpc('ff38_clock_out')}catch(e){return toast('لا يمكن الخروج: '+e.message)}try{await client.auth.signOut({scope:'local'})}catch(e){toast(e.message)}resetUI()};
 $('refreshBtn').onclick=()=>reload(true);
 for(const id of ['orderSearch','orderBranchFilter','orderStatusFilter'])$(id).addEventListener(id==='orderSearch'?'input':'change',()=>{if(data)drawOrders()});
@@ -2687,7 +2687,7 @@ document.addEventListener('click',async e=>{
  e.stopImmediatePropagation();e.preventDefault();b.disabled=true;
  try{await rpc('ff38_cashier_set_stage',{p_order:b.dataset.cashier,p_stage:'handed_over'});toast('تم تسليم الطلب للموصل');
   const rating=await window.ffLuxeStarPrompt('تقييم الموصل بعد تسليم الطلب');
-  if(rating){await rpc('ff51_rate_driver',{p_order:b.dataset.cashier,p_stars:rating.stars,p_note:rating.note});toast('تم حفظ تقييم الموصل');}
+  if(rating){try{await rpc('ff_luxe_rate_driver_cashier',{p_order:b.dataset.cashier,p_stars:rating.stars,p_note:rating.note});toast('تم حفظ تقييم الموصل');}catch(rateError){toast('تم تسليم الطلب بنجاح، لكن تعذر حفظ تقييم الموصل: '+rateError.message);}}
   await reload(true);
  }catch(err){toast('تعذر الإجراء: '+err.message)}finally{b.disabled=false}
 },true);
