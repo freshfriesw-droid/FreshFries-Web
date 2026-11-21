@@ -4252,7 +4252,7 @@ return new Promise(resolve=>{
 'use strict';
 let busy=false,lastRole='';
 async function refreshCancelled(){
- if(busy || !window.data || !['cashier','manager'].includes(data.role))return;
+ if(busy || !data || !['cashier','manager'].includes(data.role))return;
  busy=true;lastRole=data.role;
  try{
   const arr=await rpc('ff_luxe_cashier_cancel_alerts');
