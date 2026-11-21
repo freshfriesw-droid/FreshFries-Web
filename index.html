@@ -2306,7 +2306,7 @@ $('createBtn').onclick=async()=>{
   });
   if(parsed.items.some(i=>i.item_notes)){try{await rpc('ff70_set_item_notes',{p_order:x.order_id,p_items:parsed.items})}catch(noteError){toast('تنبيه: الطلب محفوظ، لكن ملاحظات الأصناف لم تُحفظ: '+noteError.message);return}}
   toast('تم اعتماد الطلب #'+x.order_number+' — '+(x.dispatch?.state==='assigned_cumulative'?'إسناد تراكمي مباشر':x.dispatch?.state==='offered'?'أُرسل عرض للموصل وفق المهلة المحددة':'بانتظار موصل مناسب'));
-  for(const field of ['newCustomerName','newPhone','newArea','newFullAddress','newNotes','newItems'])$(field).value='';
+  window.dispatchEvent(new CustomEvent('ff:order-created',{detail:{orderNumber:x.order_number}}));
   await reload(true);
  }catch(e){toast('تعذر إنشاء الطلب: '+e.message)}finally{b.disabled=false}
 };
@@ -2917,7 +2917,7 @@ function originalButton(key){const el=$x(targets[key]);return el&&roleAllowed(ke
 function scrollToEl(element){if(!element)return;const ev=element.closest('.hidden');if(ev)return;element.scrollIntoView({behavior:prefs.motion?'smooth':'auto',block:'start'})}
 function navigate(key){closeNav();if(!['refresh','logout','settings'].includes(key)){activeKey=key;markActive();drawMobile()}if(key==='home'){window.scrollTo({top:0,behavior:'smooth'});return}if(key==='settings'){openPrefs();return}if(key==='refresh'){if(userLogged()){void reload(true);void updateOverdue(true)}else showToast('سجل الدخول للتحديث من قاعدة البيانات');return}if(key==='logout'){$x('logoutBtn')?.click();return}
 if(!roleAllowed(key)){showToast('هذا القسم غير متاح لصلاحيات حسابك');return}
-if(key==='new'){scrollToEl($x('serviceOnly'));$x('newPhone')?.focus({preventScroll:true});window.dispatchEvent(new Event('ff:open-order'));return}if(key==='orders'){scrollToEl($x('staffOrders'));return}if(key==='drivers'){scrollToEl($x('driversRoster'));return}if(key==='cashier'){scrollToEl($x('cashierView'));return}if(key==='driver'){scrollToEl($x('driverView'));return}if(key==='data_center'){$x('ff62DataCenter').showModal();return}if(key==='team'){scrollToEl($x('staffAdminCard'));return}if(key==='assembly_admin'){scrollToEl($x('staffAdminCard'));return}if(key==='late'){scrollToEl($x('ffx-overdue'));void updateOverdue(true);return}
+if(key==='new'){window.ffbStartNewOrder?.();scrollToEl($x('ffbTextPanel')||$x('serviceOnly'));requestAnimationFrame(()=>$x('ffbQuickInput')?.focus({preventScroll:true}));window.dispatchEvent(new Event('ff:open-order'));return}if(key==='orders'){scrollToEl($x('staffOrders'));return}if(key==='drivers'){scrollToEl($x('driversRoster'));return}if(key==='cashier'){scrollToEl($x('cashierView'));return}if(key==='driver'){scrollToEl($x('driverView'));return}if(key==='data_center'){$x('ff62DataCenter').showModal();return}if(key==='team'){scrollToEl($x('staffAdminCard'));return}if(key==='assembly_admin'){scrollToEl($x('staffAdminCard'));return}if(key==='late'){scrollToEl($x('ffx-overdue'));void updateOverdue(true);return}
 const btn=originalButton(key);if(btn){btn.click();const panel=btn.id.replace('Btn','Panel');setTimeout(()=>{const id={catalog:'ff51CatalogPanel',customers:'ff51CustomersPanel',archive:'ff51ArchivePanel',ratings:'ff51RatingsPanel',changes:'ff50ChangesPanel',reservations:'ff49ReservationsPanel',transfer:'ff49TransferPanel',routes:'ff52RoutesPanel',reports:'ff40ReportsPanel',settlements:'ff42Panel',messages:'ff39Panel',cases:'ff41Panel',security:'ff43SecurityPanel',integrity:'ff44IntegrityPanel',access:'ff45AccessPanel',readiness:'ff46ReadinessPanel',qa:'ff47QAPanel',diagnostics:'ff48DiagnosticsPanel'}[key];scrollToEl($x(id)||$x(panel)||btn)},100)}}
 const quickKeys=[['طلب جديد','plus','new'],['الطلبات','orders','orders'],['الموصلون','bike','drivers'],['المتأخرة','alert','late'],['التقارير','report','reports'],['حسابات التجميع','grid','assembly_admin'],['الرسائل','message','messages'],['بوابة الموصل','bike','driver'],['الكاشير','wallet','cashier'],['الإعدادات','settings','settings']];
 let scSig='';function drawShortcuts(){const root=$x('ffx-shortcuts');if(!root)return;const sig=prefs.fast+'|'+quickKeys.map(k=>roleAllowed(k[2])?1:0).join('');if(sig===scSig&&root.childNodes.length)return;scSig=sig;root.replaceChildren();if(!prefs.fast){root.innerHTML='<div class="ffx-empty" style="grid-column:1/-1">الاختصارات السريعة معطلة من التفضيلات.</div>';return}for(const [title,ic,key]of quickKeys){if(!roleAllowed(key)&&key!=='settings')continue;const b=S('button',{type:'button',class:'ffx-action'});b.innerHTML=`${icon(ic)}<span>${title}</span>`;b.onclick=()=>navigate(key);root.append(b)}if(!root.children.length)root.innerHTML='<div class="ffx-empty">لا تتوفر اختصارات.</div>'}
@@ -2998,6 +2998,22 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
  function status(s,isError=false){const el=$('ffbParseStatus');el.textContent=s;el.classList.toggle('ffb-error',isError)}
  function image(i){if(!i.image_path||typeof client==='undefined'||!client)return '';const path=String(i.image_path);if(!/^(menu|offer)\/[0-9a-f-]{36}\.(png|jpg|jpeg|webp)$/i.test(path))return '';try{const url=client.storage.from('ff_menu_media').getPublicUrl(path).data.publicUrl;return url+(i.image_version?'?v='+encodeURIComponent(i.image_version):'')}catch{return ''}}
  function showMode(m){mode=m;$('ffbMenuPanel').classList.toggle('hidden',m!=='menu');$('ffbTabMenu').className=m==='menu'?'primary':'outline';$('ffbTabText').className=m==='text'?'primary':'outline';if(m==='text'){$('ffbTextPanel').scrollIntoView({behavior:'smooth',block:'center'});$('ffbQuickInput').focus({preventScroll:true})}}
+ // A clean draft is started explicitly or only after successful server submission.
+ function resetDraft(){
+   for(const id of ['newPhone','newArea','newFee','newNotes','newItems','newCustomerName','newFullAddress','ffbQuickInput','ffbMenuSearch']){
+     const el=$(id);if(el)el.value='';
+   }
+   const channel=$('newChannel');if(channel)channel.value='phone';
+   cart.clear();autoNotes='';previewReady=false;
+   $('ffbQuickReview').classList.add('hidden');$('ffbQuickReview').replaceChildren();
+   $('ffbParseStatus').textContent='';
+   const history=$('ff-fee-history');if(history){history.classList.add('hidden');history.textContent='';}
+   const confirmation=$('ffbConfirmLayer');if(confirmation)confirmation.classList.add('hidden');
+   const review=$('ffbReviewBody');if(review)review.replaceChildren();
+   renderCart();render();showMode('text');
+ }
+ window.ffbStartNewOrder=resetDraft;
+ window.addEventListener('ff:order-created',resetDraft);
  $('ffbTabMenu').onclick=()=>{showMode('menu');void load()};$('ffbTabText').onclick=()=>showMode('text');
  async function load(force=false){if(!user)return;const box=$('ffbMenuGrid');if(force){ff49CatalogAt=0;loaded=false}if(!loaded)box.textContent='جارٍ تحميل المنيو من قاعدة البيانات...';try{await ff49LoadCatalog();catalog=(Array.isArray(ff49Catalog)?ff49Catalog:[]).filter(i=>i.active!==false&&i.name&&Number.isFinite(Number(i.price)));loaded=!!catalog.length;if(!loaded)throw Error('لم تُحمّل أصناف متاحة لهذا الحساب');renderCategories();render()}catch(e){box.textContent='تعذر تحميل المنيو: '+e.message;status('تحقق من الاتصال وصلاحية قراءة المنيو',true)}}
  function renderCategories(){const box=$('ffbCategories');box.replaceChildren();const existing=new Set(catalog.map(categoryOf));for(const name of ['الكل',...order.filter(x=>existing.has(x))]){const b=document.createElement('button');b.type='button';b.textContent=name;b.className='ffb-cat-btn'+(category===name?' selected':'');b.setAttribute('aria-pressed',String(category===name));b.onclick=()=>{category=name;renderCategories();render()};box.append(b)}}
