@@ -3619,12 +3619,12 @@ setTimeout(()=>void refreshAccess(),1800);
  const esc62=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  let pinned=null, busy=false, reviewMode=false;
  const style=document.createElement('style');
- style.textContent='.ff62-panel{border:1px solid #dc2626;border-radius:12px;background:var(--card,#fff);padding:12px;margin:12px 0;max-width:100%;box-shadow:0 2px 10px #0001}.ff62-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.ff62-panel select{min-width:180px;max-width:100%;padding:10px}.ff62-panel button{padding:10px 14px}.ff62-badge{font-size:.9em;color:var(--muted,#666)}.ff62-primary{background:#bf1717!important;color:white!important;border:1px solid #ad1212!important}.ff62-hidden{display:none!important}';
+ style.textContent='.ff62-panel{box-sizing:border-box;border:1px solid var(--border,#ddd);border-radius:14px;background:var(--card,#fff);padding:14px;margin:12px 0;min-width:0;width:100%;max-width:100%;overflow-wrap:anywhere}.ff62-panel *{box-sizing:border-box;min-width:0}.ff62-panel .ff62-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.ff62-panel select{flex:1 1 180px;min-width:0;width:auto;max-width:100%;padding:10px}.ff62-panel button{white-space:normal;max-width:100%;min-height:43px;padding:10px 12px}.ff62-panel details{margin-top:10px;padding-top:10px;border-top:1px solid var(--border,#ddd)}.ff62-panel summary{cursor:pointer;font-weight:700;padding:5px 0}.ff62-panel .ff62-badge{font-size:.88em;color:var(--muted,#666);line-height:1.6}.ff62-panel .ff62-primary{background:#bf1717!important;color:white!important;border:1px solid #ad1212!important;flex:1 1 220px}.ff62-hidden{display:none!important}@media(max-width:560px){.ff62-panel{padding:12px;margin:10px 0}.ff62-panel .ff62-line{align-items:stretch;gap:9px}.ff62-panel select,.ff62-panel button{flex:1 1 100%;width:100%}.ff62-panel .ff62-badge{flex:1 1 100%}}';
  document.head.appendChild(style);
  const panel=document.createElement('div');panel.id='ff62PinnedPanel';panel.className='ff62-panel ff62-hidden';
- panel.innerHTML='<strong>🛵 الموصل المثبت — فرع القاهرة</strong><p class="ff62-badge">موصل خاص بأجر يومي، توصيل مجاني لكل طلباته، خارج الدور وحد الخمسة.</p><div class="ff62-line"><select id="ff62DriverSelect" aria-label="اختيار الموصل المثبت"><option value="">بدون موصل</option></select><button type="button" id="ff62SavePin" class="outline">حفظ التثبيت</button><button type="button" id="ff62ReloadPin" class="outline">تحديث</button></div><p id="ff62PinStatus" class="ff62-badge" aria-live="polite"></p><div class="ff62-line"><button id="ff62CreatePinned" type="button" class="ff62-primary">مراجعة ثم إسناد للموصل المثبت</button><span class="ff62-badge">إنشاء وإسناد فوري دون انتظار قبول</span></div>';
+ panel.innerHTML='<div class="ff62-line"><strong>🛵 الإسناد للموصل المثبت — القاهرة</strong><span id="ff62PinSummary" class="ff62-badge"></span></div><div class="ff62-line" style="margin-top:10px"><button id="ff62CreatePinned" type="button" class="ff62-primary">مراجعة وإسناد للموصل المثبت</button></div><details id="ff62Settings"><summary>⚙️ تغيير أو إلغاء تثبيت الموصل</summary><p class="ff62-badge">موصل خاص بأجر يومي؛ طلباته مجانية وخارج الدور وحد الخمسة.</p><div class="ff62-line"><select id="ff62DriverSelect" aria-label="اختيار الموصل المثبت"><option value="">بدون موصل</option></select><button type="button" id="ff62SavePin" class="outline">حفظ التثبيت</button><button type="button" id="ff62ReloadPin" class="outline">تحديث</button></div><p id="ff62PinStatus" class="ff62-badge" aria-live="polite"></p></details>';
  const create=$id('createBtn');if(!create)return;
- (create.closest('.actions')||create.parentElement).before(panel);
+ (create.closest('.actions')||create.parentElement).after(panel);
  const branch=$id('newBranch');const isCairo=()=>{const option=branch?.selectedOptions?.[0];return option?.textContent?.includes('القاهرة')||branch?.value===pinned?.branch_id;};
  const status=(t,error=false)=>{const el=$id('ff62PinStatus');if(el){el.textContent=t;el.style.color=error?'#c32121':''}};
  async function loadPin(){
@@ -3635,7 +3635,7 @@ setTimeout(()=>void refreshAccess(),1800);
    const list=Array.isArray(opts)?opts:[];
    $id('ff62DriverSelect').innerHTML='<option value="">بدون موصل</option>'+list.map(d=>'<option value="'+esc62(d.id)+'">'+esc62(d.name)+'</option>').join('');
    $id('ff62DriverSelect').value=r?.driver_id||'';
-   status(r?.driver_name?'المثبت حاليًا: '+r.driver_name:'لا يوجد موصل مثبت');
+   status(r?.driver_name?'المثبت حاليًا: '+r.driver_name:'لا يوجد موصل مثبت');$id('ff62PinSummary').textContent=r?.driver_name?'الموصل: '+r.driver_name:'لم يتم اختيار موصل';
    renderVisibility();
   }catch(e){status('تعذر جلب بيانات التثبيت: '+e.message,true)}
  }
@@ -3644,7 +3644,7 @@ setTimeout(()=>void refreshAccess(),1800);
  $id('ff62ReloadPin').onclick=()=>void loadPin();
  $id('ff62SavePin').onclick=async()=>{
   const b=$id('ff62SavePin');b.disabled=true;
-  try{const driver=$id('ff62DriverSelect').value||null;const r=await rpc('ff62_set_pinned',{p_driver:driver});pinned=r;status(driver?'تم تثبيت '+(r.driver_name||'الموصل')+' بنجاح':'تم إلغاء تثبيت الموصل');renderVisibility()}
+  try{const driver=$id('ff62DriverSelect').value||null;const r=await rpc('ff62_set_pinned',{p_driver:driver});pinned=r;status(driver?'تم تثبيت '+(r.driver_name||'الموصل')+' بنجاح':'تم إلغاء تثبيت الموصل');$id('ff62PinSummary').textContent=r?.driver_name?'الموصل: '+r.driver_name:'لم يتم اختيار موصل';renderVisibility()}
   catch(e){status('فشل حفظ التثبيت: '+e.message,true)}finally{b.disabled=false}
  };
  const review=$id('ffbConfirmLayer');
