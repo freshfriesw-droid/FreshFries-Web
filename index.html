@@ -3242,7 +3242,38 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
     const use=document.createElement('button');use.id='ffbQuickCommit';use.className='primary';use.type='button';use.textContent='نقل البيانات إلى الطلب';
     use.onclick=()=>{if(parsed.meta.kind==='reservation')return status('هذا حجز استلام وليس طلب توصيل',true);fillFromParsed(parsed);status('تم نقل الأصناف والملاحظات. راجع البيانات قبل الاعتماد.')};buttons.append(use);
     if(parsed.meta.kind==='reservation'){const booking=document.createElement('button');booking.id='ffbQuickReservation';booking.className='outline';booking.type='button';booking.textContent='فتح حجز الكاشير';booking.onclick=()=>{const trigger=$('ff49ReservationsBtn');if(!trigger||trigger.classList.contains('hidden'))return status('الحجوزات غير متاحة',true);trigger.click();setTimeout(()=>{const target=$('ff49ReserveItems');if(target){target.value=parsed.items.map(i=>i.qty+' '+i.name+' | '+i.price).join('\n');$('ff49ReserveName').value=parsed.meta.customer||$('newCustomerName').value;$('ff49ReservePhone').value=parsed.meta.phone||$('newPhone').value;$('ff49ReserveBranch').value=$('newBranch').value;$('ff49ReserveNotes').value=parsed.notes}},50)};buttons.append(booking)}
-    box.append(buttons);status('المعاينة جاهزة؛ راجعها ثم انقل البيانات.');
+    box.append(buttons);
+    // Two additional actions BELOW the original transfer button; existing buttons stay put.
+    if(parsed.meta.kind!=='reservation'){
+      const extra=document.createElement('div');
+      extra.className='actions ffb-quick-review-actions';
+      extra.style.cssText='margin-top:10px;display:flex;flex-wrap:wrap;gap:9px';
+      const review=document.createElement('button');
+      review.id='ffbQuickReviewApprove';review.type='button';review.className='primary';
+      review.textContent='مراجعة الطلب ثم اعتماده';
+      review.onclick=()=>{
+        if(parsed.warnings?.length)return status('راجع التحذيرات في المعاينة قبل الاعتماد.',true);
+        fillFromParsed(parsed);
+        status('تم نقل البيانات؛ راجع تفاصيل الطلب في شاشة التأكيد ثم اعتمده.');
+        btn.click(); // Only opens the existing confirmation screen.
+      };
+      extra.append(review);
+      const pinned=document.createElement('button');
+      pinned.id='ffbQuickReviewPinned';pinned.type='button';pinned.className='outline';
+      pinned.textContent='مراجعة وإسناد للموصل المثبت';
+      pinned.onclick=()=>{
+        if(parsed.warnings?.length)return status('راجع التحذيرات في المعاينة قبل الإسناد.',true);
+        if(!String($('newBranch').selectedOptions[0]?.textContent||'').includes('القاهرة'))
+          return status('الإسناد للموصل المثبت متاح لفرع القاهرة فقط.',true);
+        const direct=$('ffpcDirect');
+        if(!direct||direct.disabled)return status('لا يوجد موصل مثبت جاهز. من قسم الموصل المثبت حدّد الموصل واضغط تحديث ثم أعد المحاولة.',true);
+        fillFromParsed(parsed);
+        status('تم نقل البيانات؛ راجع تفاصيل الإسناد للموصل المثبت ثم أكّد. أجرة التوصيل لهذا المسار صفر.');
+        direct.click(); // Reuse the pinned-driver review and server-checked RPC.
+      };
+      extra.append(pinned);box.append(extra);
+    }
+    status('المعاينة جاهزة؛ راجعها ثم انقل البيانات.');
    }else status('هناك '+parsed.errors.length+' سطر يحتاج مراجعة؛ يمكنك تصحيحه دون إعادة كتابة البقية.',true);
   }catch(e){box.textContent=e.message;status('تعذر إكمال المعاينة: '+e.message,true)}
  }
@@ -4662,4 +4693,4 @@ run.onclick=async()=>{
 };
 center.append(box);
 })();
-</script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script></body></html>
+</script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script></body></html>
