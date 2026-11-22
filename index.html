@@ -428,7 +428,8 @@ body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{
 @media(max-width:660px){.ff-luxe-assignment-info{grid-template-columns:repeat(2,minmax(0,1fr))}.ff-luxe-assignment-field:first-child{grid-column:1/-1}}
 @media(max-width:380px){.ff-luxe-assignment-info{grid-template-columns:1fr}.ff-luxe-assignment-field:first-child{grid-column:auto}}
 </style>
-<style id="ff-luxe-audio-status-20261122">.ff-luxe-audio-health{margin:10px 0;padding:13px;border:1px solid var(--ffb-line,#ddd);background:var(--ffb-soft,#f7f7f7);border-radius:12px;line-height:1.8}.ff-luxe-audio-health button{width:100%;margin:8px 0 4px}.ff-luxe-audio-health p{font-size:12px;color:var(--ffb-muted,#666);line-height:1.7;margin:5px 0}</style><style id="ff-luxe-driver-candidate-css">.ff-luxe-candidate{border:2px solid #b91726;border-radius:12px;background:#fff0f0;color:#891019;font-size:16px;font-weight:900;padding:12px;margin:10px 0;flex-basis:100%;text-align:right}</style></head>
+<style id="ff-luxe-audio-status-20261122">.ff-luxe-audio-health{margin:10px 0;padding:13px;border:1px solid var(--ffb-line,#ddd);background:var(--ffb-soft,#f7f7f7);border-radius:12px;line-height:1.8}.ff-luxe-audio-health button{width:100%;margin:8px 0 4px}.ff-luxe-audio-health p{font-size:12px;color:var(--ffb-muted,#666);line-height:1.7;margin:5px 0}</style><style id="ff-luxe-driver-candidate-css">.ff-luxe-candidate{border:2px solid #b91726;border-radius:12px;background:#fff0f0;color:#891019;font-size:16px;font-weight:900;padding:12px;margin:10px 0;flex-basis:100%;text-align:right}</style><style id="ffb-quick-review-buttons-fix">.ffb-quick-review-buttons{display:flex!important;flex-direction:column!important;gap:11px!important;align-items:stretch!important;margin-top:16px!important}.ffb-quick-review-buttons>button{width:100%!important;display:flex!important;visibility:visible!important;min-height:52px!important;opacity:1!important}</style>
+</head>
 <body class="ff-booting" data-access="locked"><div id="ff65Boot" role="status">جارِ استعادة جلسة فريش فرايز…</div><section id="ff28Portal" aria-live="polite"><h1 id="ff28Title"></h1><p id="ff28State"></p><form id="ff28Apply" hidden><label>الاسم<input id="ff28Name" maxlength="100" minlength="2" required></label><label>الوظيفة المطلوبة<select id="ff28Role"><option value="driver">موصل</option><option value="cashier">كاشير</option><option value="customer_service">خدمة العملاء</option><option value="supervisor">مشرف</option><option value="assembly">نقطة التجميع</option></select></label><button>تقديم الطلب</button></form><div id="ff28Rows"></div><button id="ff28Refresh">تحديث</button><button id="ff28Logout">خروج</button></section>
 <header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.36.1-rc1</small></div><div class="sub">منصة خدمة العملاء والتوصيل</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><span id="ff48VersionStatus" class="ff48-version hidden" role="status" aria-live="polite">فحص توافق الإصدار...</span><button id="ff52RoutesBtn" class="outline hidden" type="button">📍 توجيه مناطق الجامعات</button><button id="ff51CatalogBtn" class="outline hidden" type="button">🍟 المنيو والعروض</button><button id="ff51CustomersBtn" class="outline hidden" type="button">👥 العملاء</button><button id="ff51ArchiveBtn" class="outline hidden" type="button">📁 الأرشيف</button><button id="ff51RatingsBtn" class="outline hidden" type="button">⭐ التقييمات</button><button id="ff50ChangesBtn" class="outline hidden" type="button">📝 تعديلات الطلبات</button><button id="ff49ReservationsBtn" class="outline hidden" type="button">📅 الحجوزات</button><button id="ff49TransferBtn" class="outline hidden" type="button">🔄 نقل الموصل</button><button id="ff48DiagnosticsBtn" class="outline hidden" type="button">🩺 تشخيص النسخة</button><button id="ff47QABtn" class="outline hidden" type="button">📋 الاختبار الشامل</button><button id="ff46ReadinessBtn" class="outline hidden" type="button">🧪 جاهزية الإطلاق</button><button id="ff45AccessBtn" class="outline hidden" type="button">🔐 عزل الفروع</button><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
 <main>
@@ -3238,41 +3239,39 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
   try{await load();await ff49LoadCatalog();const parsed=ff49ParseItemsAndNotes($('ffbQuickInput').value,{allowPartial:true});
    box.innerHTML=window.ff75RenderReview(parsed,'الطلب الجديد');
    if(!parsed.errors.length){
-    const buttons=document.createElement('div');buttons.className='actions';
+    const buttons=document.createElement('div');buttons.className='actions ffb-quick-review-buttons';buttons.style.cssText='display:flex;flex-direction:column;align-items:stretch;gap:11px;margin-top:16px';
     const use=document.createElement('button');use.id='ffbQuickCommit';use.className='primary';use.type='button';use.textContent='نقل البيانات إلى الطلب';
     use.onclick=()=>{if(parsed.meta.kind==='reservation')return status('هذا حجز استلام وليس طلب توصيل',true);fillFromParsed(parsed);status('تم نقل الأصناف والملاحظات. راجع البيانات قبل الاعتماد.')};buttons.append(use);
     if(parsed.meta.kind==='reservation'){const booking=document.createElement('button');booking.id='ffbQuickReservation';booking.className='outline';booking.type='button';booking.textContent='فتح حجز الكاشير';booking.onclick=()=>{const trigger=$('ff49ReservationsBtn');if(!trigger||trigger.classList.contains('hidden'))return status('الحجوزات غير متاحة',true);trigger.click();setTimeout(()=>{const target=$('ff49ReserveItems');if(target){target.value=parsed.items.map(i=>i.qty+' '+i.name+' | '+i.price).join('\n');$('ff49ReserveName').value=parsed.meta.customer||$('newCustomerName').value;$('ff49ReservePhone').value=parsed.meta.phone||$('newPhone').value;$('ff49ReserveBranch').value=$('newBranch').value;$('ff49ReserveNotes').value=parsed.notes}},50)};buttons.append(booking)}
-    box.append(buttons);
-    // Two additional actions BELOW the original transfer button; existing buttons stay put.
+    // New shortcuts remain in the exact same button group, immediately after Transfer.
     if(parsed.meta.kind!=='reservation'){
-      const extra=document.createElement('div');
-      extra.className='actions ffb-quick-review-actions';
-      extra.style.cssText='margin-top:10px;display:flex;flex-wrap:wrap;gap:9px';
       const review=document.createElement('button');
       review.id='ffbQuickReviewApprove';review.type='button';review.className='primary';
       review.textContent='مراجعة الطلب ثم اعتماده';
+      review.style.cssText='min-height:52px;width:100%;font-size:15px;font-weight:900';
       review.onclick=()=>{
         if(parsed.warnings?.length)return status('راجع التحذيرات في المعاينة قبل الاعتماد.',true);
-        fillFromParsed(parsed);
-        status('تم نقل البيانات؛ راجع تفاصيل الطلب في شاشة التأكيد ثم اعتمده.');
-        btn.click(); // Only opens the existing confirmation screen.
+        use.click(); // Transfer exactly as before.
+        $('createBtn').click(); // Show the original final confirmation.
       };
-      extra.append(review);
+      buttons.append(review);
       const pinned=document.createElement('button');
       pinned.id='ffbQuickReviewPinned';pinned.type='button';pinned.className='outline';
       pinned.textContent='مراجعة وإسناد للموصل المثبت';
+      pinned.style.cssText='min-height:52px;width:100%;font-size:15px;font-weight:900;border:2px solid #cf1732';
       pinned.onclick=()=>{
         if(parsed.warnings?.length)return status('راجع التحذيرات في المعاينة قبل الإسناد.',true);
         if(!String($('newBranch').selectedOptions[0]?.textContent||'').includes('القاهرة'))
           return status('الإسناد للموصل المثبت متاح لفرع القاهرة فقط.',true);
         const direct=$('ffpcDirect');
         if(!direct||direct.disabled)return status('لا يوجد موصل مثبت جاهز. من قسم الموصل المثبت حدّد الموصل واضغط تحديث ثم أعد المحاولة.',true);
-        fillFromParsed(parsed);
+        use.click(); // Transfer exactly as before.
         status('تم نقل البيانات؛ راجع تفاصيل الإسناد للموصل المثبت ثم أكّد. أجرة التوصيل لهذا المسار صفر.');
-        direct.click(); // Reuse the pinned-driver review and server-checked RPC.
+        direct.click(); // Existing two-stage pinned-courier review.
       };
-      extra.append(pinned);box.append(extra);
+      buttons.append(pinned);
     }
+    box.append(buttons);
     status('المعاينة جاهزة؛ راجعها ثم انقل البيانات.');
    }else status('هناك '+parsed.errors.length+' سطر يحتاج مراجعة؛ يمكنك تصحيحه دون إعادة كتابة البقية.',true);
   }catch(e){box.textContent=e.message;status('تعذر إكمال المعاينة: '+e.message,true)}
