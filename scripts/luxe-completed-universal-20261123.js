@@ -3,8 +3,11 @@
 'use strict';
 (()=>{
  const $=id=>document.getElementById(id);
- const view=$('cashierView'),live=$('cashierOrders');
- if(!view||!live)return;
+ const role=()=>document.body.classList.contains('ff-v12-assembly-mode')?'assembly':(typeof data!=='undefined'?data?.role:null);
+ const anchor=()=>document.getElementById(({cashier:'cashierOrders',driver:'driverOffers',assembly:'ffV12AssemblyOrders',manager:'staffOrders',supervisor:'staffOrders',customer_service:'staffOrders'})[role()]||'cashierOrders');
+ const eligible=()=>typeof user!=='undefined'&&!!user?.id&&['cashier','driver','assembly','manager','supervisor','customer_service'].includes(role());
+ const yemenDay=()=>{const p=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const g=x=>p.find(t=>t.type===x)?.value||'';return g('year')+'-'+g('month')+'-'+g('day')};
+ function mount(){const a=anchor();if(a&&box.nextElementSibling!==a)a.before(box)}
  const style=document.createElement('style');style.id='ff-luxe-completed-cashier-styles';
  style.textContent=[
  '#fflCashierFinished{margin:12px 0 19px;direction:rtl}',
@@ -59,7 +62,7 @@
  '<p id="fflFinishedStatus" class="ffl-finished-result" role="status" aria-live="polite"></p>'+
  '<div id="fflFinishedList"></div>'+
  '<div class="ffl-finished-tools"><button type="button" class="outline" id="fflFinishedMore" hidden>عرض 30 طلبًا أقدم</button></div>';
- box.append(button,panel);live.before(box);
+ box.append(button,panel);$('cashierOrders')?.before(box);
  const status=$('fflFinishedStatus'),list=$('fflFinishedList'),search=$('fflFinishedSearch');
  const more=$('fflFinishedMore'),refresh=$('fflFinishedRefresh');
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -69,16 +72,16 @@
  const seen=new Map();
  let viewer='',loaded=[],offset=0,hasMore=true,loading=false,open=false,lastUpdated=0,generation=0;
  let openCards=new Set(),activeAction=null;
- function cashier(){return typeof data!=='undefined'&&data?.role==='cashier'&&!!user?.id}
+ /* all staff roles use eligible() above */
  function clear(){
   generation++;viewer='';loaded=[];offset=0;hasMore=true;loading=false;open=false;lastUpdated=0;openCards.clear();
   activeAction=null;seen.clear();list.replaceChildren();status.textContent='';
   search.value='';panel.hidden=true;button.setAttribute('aria-expanded','false');box.hidden=true;
  }
  function maintainViewer(){
-  const current=cashier()?String(user.id)+':'+String(data?.cashier_desk?.code||'unassigned'):'';
+  const current=eligible()?String(user.id)+':'+role()+':'+String(data?.cashier_desk?.code||'unassigned'):'';
   if(viewer!==current){clear();viewer=current}
-  box.hidden=!current;
+  box.hidden=!current;if(current)mount();
   return !!current;
  }
  function info(o){
@@ -86,7 +89,7 @@
   const workDone=!cancellation&&o.cashier_stage==='handed_over';
   const label=cancellation?'🚫 ملغي':o.status==='delivered'?'✅ تم التسليم للعميل':workDone?'✅ انتهى دور الكاشير — التوصيل مستمر':'✅ منتهٍ';
   const invoice=String(o.invoice_ref||'').trim();
-  const stars=Number(o.cashier_rating||0);
+  const stars=Number((role()==='driver'?o.driver_feedback:o.role_rating)||0);
   const canInvoice=!cancellation&&!invoice&&(o.status==='delivered'||workDone);
   const canRate=!cancellation&&!stars&&workDone&&o.driver_id;
   return {cancellation,label,invoice,stars,canInvoice,canRate};
@@ -96,7 +99,7 @@
   const el=document.createElement('details');el.className='ffl-finished-card';el.dataset.fflFinishedOrder=String(o.id);
   el.open=openCards.has(o.id);
   const invoices=summary.invoice?'🧾 فاتورة: '+esc(summary.invoice):'⚠️ رقم فاتورة غير مسجل';
-  const rating=summary.stars?'⭐ تقييم الكاشير: '+summary.stars+'/5':'⚠️ تقييم الكاشير ناقص';
+  const rating=summary.stars?'⭐ التقييم من حسابك: '+summary.stars+'/5':'⚠️ تقييمك ناقص';
   const top=document.createElement('summary');
   const meta=esc(o.customer_name||'عميل')+' · '+esc(o.driver_name||'—')+' · '+esc(o.area||'—');
   top.innerHTML='<div class="ffl-finished-main"><b>طلب #'+esc(o.number)+'</b><span class="ffl-finished-status'+(summary.cancellation?' cancelled':'')+'">'+summary.label+'</span></div>'+
@@ -125,11 +128,11 @@
     (o.notes?'<p><b>ملاحظات الطلب:</b> '+esc(o.notes)+'</p>':'')+
     (summary.cancellation?'<p style="color:#bb142d"><b>سبب الإلغاء:</b> '+esc(o.cancel_reason||'غير مذكور')+'</p>':'')+
     '<p><b>رقم الفاتورة:</b> '+(summary.invoice?esc(summary.invoice):'غير موثق')+
-    ' · <b>تقييم الكاشير:</b> '+(summary.stars?summary.stars+'/5':'غير مسجل')+'</p>'+
-    (summary.stars&&o.cashier_rating_note?'<p class="muted">ملاحظة التقييم: '+esc(o.cashier_rating_note)+'</p>':'')+
+    ' · <b>التقييم من حسابك:</b> '+(summary.stars?summary.stars+'/5':'غير مسجل')+'</p>'+
+    (summary.stars&&o.role_rating_note?'<p class="muted">ملاحظة التقييم: '+esc(o.role_rating_note)+'</p>':'')+
     '<div class="ffl-finished-actions">'+
     (summary.canInvoice?'<button type="button" class="primary" data-ffl-show="invoice">🧾 إضافة رقم الفاتورة</button>':'')+
-    (summary.canRate?'<button type="button" class="outline" data-ffl-show="rating">⭐ إضافة تقييم الموصل</button>':'')+
+    (summary.canRate?'<button type="button" class="outline" data-ffl-show="rating">⭐ '+(role()==='driver'?'تقييم الخدمة':'إضافة تقييم الموصل')+'</button>':'')+
     '<button type="button" class="outline" data-ffl-show="report">📢 بلاغ / شكوى للإدارة</button>'+
     '</div>'+
     (summary.cancellation?'<p class="muted">الطلب ملغي؛ لا يمكن إضافة فاتورة جديدة أو تقييم موصل له من الأرشيف.</p>':'')+
@@ -166,7 +169,7 @@
   const frag=document.createDocumentFragment();
   if(!result.length){
     const empty=document.createElement('p');empty.className='ffl-finished-empty';
-    empty.textContent=value?'لا توجد نتائج في الطلبات المحمّلة. استخدم «عرض 30 طلبًا أقدم» للبحث في طلبات أقدم.':'لا توجد طلبات منتهية لهذا الكاشير.';
+    empty.textContent=value?'لا توجد نتائج في الطلبات المحمّلة. استخدم «عرض 30 طلبًا أقدم» للبحث في طلبات أقدم.':'لا توجد طلبات منتهية ضمن نطاق حسابك.';
     frag.append(empty);
   }else for(const o of result)frag.append(makeCard(o));
   list.replaceChildren(frag);
@@ -181,7 +184,7 @@
   status.textContent=reset?'جارٍ تحديث الطلبات المنتهية...':'جارٍ تحميل طلبات أقدم...';
   try{
    const result=await rpc('ff_luxe_cashier_completed_orders',{p_limit:30,p_offset:reset?0:offset});
-   if(requestGeneration!==generation||!cashier()||String(user.id)!==current||!open)return;
+   if(requestGeneration!==generation||!eligible()||String(user.id)!==current||!open)return;
    if(!result||!Array.isArray(result.items))throw Error('استجابة قائمة الطلبات المنتهية غير مكتملة');
    loaded=reset?result.items:[...loaded,...result.items.filter(o=>!loaded.some(x=>x.id===o.id))];
    offset=(reset?0:offset)+result.items.length;
@@ -256,7 +259,7 @@
   if(open&&Date.now()-lastUpdated>90000&&!loading)void load(true);
  });
  document.addEventListener('visibilitychange',()=>{
-  if(!document.hidden&&open&&cashier()&&Date.now()-lastUpdated>90000)void load(true)
+  if(!document.hidden&&open&&eligible()&&Date.now()-lastUpdated>90000)void load(true)
  });
  const oldReset=resetUI;resetUI=function(){clear();oldReset()};
  // Keep the active order stream untouched.
