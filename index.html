@@ -1433,8 +1433,8 @@ function ff40TodayYemen(){
 }
 function ff40InitialDates(){
  if($('ff40From').value&&$('ff40To').value)return;
- const today=ff40TodayYemen(),day=new Date(today+'T12:00:00Z');day.setUTCDate(day.getUTCDate()-6);
- $('ff40From').value=day.toISOString().slice(0,10);$('ff40To').value=today;
+ const today=ff40TodayYemen();
+ $('ff40From').value=today;$('ff40To').value=today;
  $('ff40To').max=today;
 }
 function ff40Table(cols,rows){
@@ -2755,7 +2755,7 @@ $('ff51CustomerNoteSave').onclick=async()=>{
 };
 function ff51DefaultArchiveDates(){const t=new Date();const today=new Date(t.toLocaleString('en-US',{timeZone:'Asia/Aden'}));
  const dateString=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
- $('ff51ArchiveTo').value=dateString(today);const past=new Date(today);past.setDate(past.getDate()-30);$('ff51ArchiveFrom').value=dateString(past);
+ $('ff51ArchiveTo').value=dateString(today);$('ff51ArchiveFrom').value=dateString(today);
 }
 async function ff51LoadArchive(reset=false){
  if(reset)ff51ArchiveOffset=0;
@@ -4778,4 +4778,4 @@ run.onclick=async()=>{
 };
 center.append(box);
 })();
-</script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-cashier-finished-20261123.js" defer></script></body></html>
+</script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js" defer></script></body></html>
