@@ -76,7 +76,7 @@
   search.value='';panel.hidden=true;button.setAttribute('aria-expanded','false');box.hidden=true;
  }
  function maintainViewer(){
-  const current=cashier()?String(user.id):'';
+  const current=cashier()?String(user.id)+':'+String(data?.cashier_desk?.code||'unassigned'):'';
   if(viewer!==current){clear();viewer=current}
   box.hidden=!current;
   return !!current;
