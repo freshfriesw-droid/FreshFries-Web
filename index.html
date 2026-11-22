@@ -732,7 +732,7 @@ body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{
 <section id="ff51RatingsPanel" class="card hidden">
  <div class="sectionbar"><h2>⭐ تقييم الموصلين</h2><div class="flex"><button id="ff51RatingsRefresh" class="primary">تحديث</button><button id="ff51RatingsClose" class="outline">إغلاق</button></div></div>
  <p class="muted">متوسط تقييمات الكاشير والإدارة بعد تسليم الطلب للموصل. تقييم العميل مستقل ويتطلب قناة موافقة خاصة.</p>
- <div id="ff51RatingsList" class="ff49-items"></div>
+ <div class="row"><div><label>فرع تقييمات الموصلين</label><select id="ff51RatingBranch"><option value="">كل الفروع</option></select></div></div><div id="ff51RatingsList" class="ff49-items"></div>
 </section>
 <section id="ff50ChangesPanel" class="card hidden" aria-label="طلب تعديل أصناف بعد الاعتماد">
  <div class="sectionbar"><h2>📝 تعديلات الطلبات بموافقة الكاشير</h2><div class="flex"><button id="ff50Refresh" class="outline">تحديث</button><button id="ff50Close" class="outline">إغلاق</button></div></div>
@@ -2787,10 +2787,18 @@ $('ff51ArchiveExport').onclick=()=>{
 };
 async function ff51LoadRatings(){
  const box=$('ff51RatingsList');box.textContent='جاري تحميل التقييمات...';
- try{const list=await rpc('ff51_driver_rating_summary');box.innerHTML=list.length?list.map(x=>`<div class="item"><b>${esc(x.name)}</b> — ⭐ ${esc(x.average)} / 5 <span class="muted">(${esc(x.count)} تقييم)</span></div>`).join(''):'<div class="empty">لا توجد تقييمات حتى الآن.</div>';
+ try{const period=window.ffLuxeHistoryPeriod||{from:ff40TodayYemen(),to:ff40TodayYemen()};const list=await rpc('ff_luxe_rating_summary_period',{p_from:period.from,p_to:period.to,p_branch:$('ff51RatingBranch')?.value||null});box.innerHTML=list.length?list.map(x=>`<div class="item"><b>${esc(x.name)}</b> — ⭐ ${esc(x.average)} / 5 <span class="muted">(${esc(x.count)} تقييم)</span></div>`).join(''):'<div class="empty">لا توجد تقييمات حتى الآن.</div>';
  }catch(e){box.textContent='تعذر تحميل التقييمات: '+e.message}
 }
-$('ff51RatingsBtn').onclick=()=>{ff51Open('ff51RatingsPanel');void ff51LoadRatings()};
+$('ff51RatingsBtn').onclick=()=>{
+  ff51Open('ff51RatingsPanel');
+  const selected=$('ff51RatingBranch'),old=selected.value;
+  selected.innerHTML='<option value="">كل الفروع</option>'+
+   (data?.branches||[]).map(b=>'<option value="'+esc(b.id)+'">'+esc(b.name)+'</option>').join('');
+  if([...selected.options].some(x=>x.value===old))selected.value=old;
+  void ff51LoadRatings()
+ };
+ $('ff51RatingBranch').onchange=()=>void ff51LoadRatings();
 $('ff51RatingsRefresh').onclick=ff51LoadRatings;
 $('ff51RatingsClose').onclick=()=>$('ff51RatingsPanel').classList.add('hidden');
 $('ff51BreakBtn').onclick=async()=>{
