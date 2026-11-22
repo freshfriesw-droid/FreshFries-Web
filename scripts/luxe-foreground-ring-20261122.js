@@ -7,6 +7,9 @@
   '@media(prefers-reduced-motion:reduce){#driverOffers .ff-live-ringing,#cashierOrders .ff-live-ringing{animation:none}}';
  const style=document.createElement('style');style.id='ff-luxe-foreground-ring';style.textContent=css;document.head.append(style);
  let lastPlay=0,ringing=false,actor='';
+ let suppressFirst=(()=>{try{return new URL(location.href).searchParams.get('ff_push_opened')==='1'}catch{return false}})();
+ const mutedKeys=new Set();
+ if(suppressFirst)try{const url=new URL(location.href);url.searchParams.delete('ff_push_opened');history.replaceState(history.state,'',url.pathname+url.search+url.hash)}catch{}
  const activeRole=()=>{
   try{return document.hidden||!user?.id||!data?.role?null:data.role}catch{return null}
  };
@@ -38,9 +41,12 @@
  }
  function reconcile(){
   const role=activeRole(),who=role?String(user.id)+':'+role:'';
-  if(actor!==who){stop();clearIndicators();actor=who}
+  if(actor!==who){stop();clearIndicators();actor=who;mutedKeys.clear()}
   if(!who)return;
-  const active=pending(),cards=new Set(active.map(item=>item.card));
+  const all=pending();
+  if(suppressFirst&&who){for(const item of all)mutedKeys.add(item.key);suppressFirst=false}
+  const liveKeys=new Set(all.map(item=>item.key));for(const key of mutedKeys)if(!liveKeys.has(key))mutedKeys.delete(key);
+  const active=all.filter(item=>!mutedKeys.has(item.key)),cards=new Set(active.map(item=>item.card));
   for(const card of document.querySelectorAll('.ff-live-ringing'))if(!cards.has(card)){
    card.classList.remove('ff-live-ringing');card.querySelector('.ff-live-ring-note')?.remove();
   }
@@ -59,6 +65,12 @@
   }
  }
  window.ffLuxeRefreshForegroundRinging=reconcile;
+ navigator.serviceWorker?.addEventListener('message',event=>{
+  if(event.data?.type!=='FF_LUXE_NOTIFICATION_OPENED')return;
+  const all=pending();
+  if(all.length){for(const item of all)mutedKeys.add(item.key)}else suppressFirst=true;
+  stop();clearIndicators();
+ });
  document.addEventListener('visibilitychange',()=>{if(document.hidden){stop();clearIndicators()}else reconcile()});
  window.addEventListener('pagehide',()=>{stop();clearIndicators()});
  window.addEventListener('focus',reconcile);
