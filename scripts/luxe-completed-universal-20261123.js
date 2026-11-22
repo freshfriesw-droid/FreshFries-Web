@@ -132,6 +132,8 @@
     '<div><b>📞 هاتف العميل:</b> '+esc(o.phone||'—')+'</div>'+
     '<div><b>📍 العنوان:</b> '+esc(o.full_address||o.area||'—')+'</div>'+
     '<div><b>🛵 الموصل:</b> '+esc(o.driver_name||'—')+'</div>'+
+    '<div><b>👩‍💼 خدمة العملاء:</b> '+esc(o.customer_service_name||'غير محدد')+'</div>'+
+    '<div><b>🧾 الكاشير:</b> '+esc(o.cashier_employee_name||'بانتظار استلام الكاشير')+'</div>'+
     '<div><b>🕒 الإسناد:</b> '+esc(fmt(o.assigned_at))+'</div>'+
     '<div><b>🕒 انتهاء التوصيل:</b> '+esc(fmt(o.delivered_at))+'</div>'+
     '</div>'+
