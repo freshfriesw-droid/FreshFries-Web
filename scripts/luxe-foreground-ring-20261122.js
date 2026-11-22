@@ -2,9 +2,9 @@
 'use strict';
 (()=>{
  const css='@keyframes ffOrderRingPulse{0%,100%{box-shadow:0 0 0 2px #dc262655}50%{box-shadow:0 0 0 6px #dc262633}}'+
-  '#driverOffers .ff-live-ringing,#cashierOrders .ff-live-ringing{border:4px solid #2563eb!important;outline:2px solid #dc2626;border-radius:18px;animation:ffOrderRingPulse 1.6s ease-in-out infinite}'+
+  '#driverOffers .ff-live-ringing,#driverTasks .ff-live-ringing,#cashierOrders .ff-live-ringing{border:4px solid #2563eb!important;outline:2px solid #dc2626;border-radius:18px;animation:ffOrderRingPulse 1.6s ease-in-out infinite}'+
   '.ff-live-ring-note{display:block;background:#fee2e2;color:#991b1b;border:2px solid #dc2626;border-radius:11px;margin:0 0 12px;padding:10px 12px;font-size:clamp(14px,2.4vw,18px);line-height:1.6;font-weight:900}'+
-  '@media(prefers-reduced-motion:reduce){#driverOffers .ff-live-ringing,#cashierOrders .ff-live-ringing{animation:none}}';
+  '@media(prefers-reduced-motion:reduce){#driverOffers .ff-live-ringing,#driverTasks .ff-live-ringing,#cashierOrders .ff-live-ringing{animation:none}}';
  const style=document.createElement('style');style.id='ff-luxe-foreground-ring';style.textContent=css;document.head.append(style);
  let lastPlay=0,ringing=false,actor='';
  let suppressFirst=(()=>{try{return new URL(location.href).searchParams.get('ff_push_opened')==='1'}catch{return false}})();
@@ -26,6 +26,9 @@
   if(role==='driver')for(const offer of data.offers||[]){
    const card=[...document.querySelectorAll('#driverOffers .offer[data-ff-ring-offer]')].find(el=>el.dataset.ffRingOffer===String(offer.id));
    if(card)result.push({key:'offer:'+offer.id,card,tip:'🔔 طلب توصيل جديد — اضغط «قبول الطلب» لإيقاف الرنين'});
+  }
+  if(role==='driver')for(const card of document.querySelectorAll('#driverTasks .ff-luxe-cancelled[data-ff-luxe-driver-cancel]')){
+   result.push({key:'cancel:'+card.dataset.ffLuxeDriverCancel,card,tip:'🚫 طلب ملغي — اضغط «تخطي» بعد الاطلاع عليه لإيقاف التنبيه'});
   }
   if(role==='cashier'){
    for(const o of data.orders||[]){
@@ -76,7 +79,7 @@
  window.addEventListener('focus',reconcile);
  window.addEventListener('ff-assembly-snapshot-success',()=>requestAnimationFrame(reconcile));
  document.addEventListener('click',e=>{
-  if(e.target.closest('[data-accept],[data-ff49-receive],[data-ff-luxe-ack]'))setTimeout(reconcile,1200);
+  if(e.target.closest('[data-accept],[data-ff49-receive],[data-ff-luxe-ack],[data-ff-luxe-driver-skip]'))setTimeout(reconcile,1200);
  });
  setInterval(reconcile,1200);
  reconcile();
