@@ -37,16 +37,43 @@ self.addEventListener('fetch', event => {
   }
 });
 self.addEventListener('push', event => {
-  // Neutral notifications intentionally omit customer names, phone numbers and order details.
-  event.waitUntil(self.registration.showNotification('فريش فرايز • تحديث جديد', {
-    body: 'افتح النظام للاطلاع على الإشعار الجديد.',
-    icon: new URL('./assets/ff-icon-192.png', self.registration.scope).href,
-    badge: new URL('./assets/ff-icon-192.png', self.registration.scope).href,
-    tag: 'fresh-fries-luxe-update',
-    renotify: true,
-    data: { path: self.registration.scope }
-  }));
+  let payload={};
+  try { payload=event.data?.json() || {}; } catch {
+    payload={};
+  }
+  // Only non-sensitive metadata appears on the lock screen.
+  const kinds=new Set(['new','assigned','driver_assigned','offer','ready','cancelled','late']);
+  const kind=kinds.has(payload.kind)?payload.kind:'general';
+  const title=typeof payload.title==='string'&&payload.title.length<=90
+    ?payload.title:'🍟 فريش فرايز — تنبيه جديد';
+  const body=typeof payload.body==='string'&&payload.body.length<=180
+    ?payload.body:'افتح تطبيق فريش فرايز للاطلاع على التفاصيل.';
+  const tag=typeof payload.tag==='string'&&/^[a-zA-Z0-9_-]{1,90}$/.test(payload.tag)
+    ?payload.tag:'fresh-fries-luxe-alert';
+  event.waitUntil((async()=>{
+    await self.registration.showNotification(title,{
+      body,
+      icon:new URL('./assets/ff-icon-192.png',self.registration.scope).href,
+      badge:new URL('./assets/ff-icon-192.png',self.registration.scope).href,
+      tag,renotify:true,
+      // Browser/OS chooses the audible alert. Custom audio cannot be played inside a SW.
+      vibrate:kind==='cancelled'||kind==='late'?[220,110,220]:[140,70,140],
+      requireInteraction:kind==='cancelled'||kind==='late',
+      data:{path:new URL('./index.html',self.registration.scope).href,kind}
+    });
+    const clients=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+    for(const client of clients){
+      client.postMessage({type:'FF_LUXE_PUSH_RECEIVED',kind});
+    }
+  })());
 });
+self.addEventListener('pushsubscriptionchange',event=>{
+ event.waitUntil((async()=>{
+  const clients=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+  for(const client of clients)client.postMessage({type:'FF_LUXE_PUSH_SUBSCRIPTION_CHANGED'});
+ })());
+});
+
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil((async () => {
