@@ -3048,7 +3048,7 @@ window.ffLuxePlayAlert=function(kind){return sound((kind==='late'?prefs.delaySou
 $x('ff-luxe-audio-unlock')?.addEventListener('click',()=>void ffLuxeUnlockAudio(true));
 for(const evt of ['pointerdown','keydown','touchstart']){
  doc.addEventListener(evt,()=>{
-  if(typeof user!=='undefined'&&user?.id&&prefs.audio&&(!audioCtx||audioCtx.state!=='running'))void ffLuxeUnlockAudio();
+  if(prefs.audio&&(!audioCtx||audioCtx.state!=='running'))void ffLuxeUnlockAudio();
  },{passive:true});
 }
 doc.addEventListener('visibilitychange',()=>{
