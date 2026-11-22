@@ -429,6 +429,69 @@ body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{
 @media(max-width:380px){.ff-luxe-assignment-info{grid-template-columns:1fr}.ff-luxe-assignment-field:first-child{grid-column:auto}}
 </style>
 <style id="ff-luxe-audio-status-20261122">.ff-luxe-audio-health{margin:10px 0;padding:13px;border:1px solid var(--ffb-line,#ddd);background:var(--ffb-soft,#f7f7f7);border-radius:12px;line-height:1.8}.ff-luxe-audio-health button{width:100%;margin:8px 0 4px}.ff-luxe-audio-health p{font-size:12px;color:var(--ffb-muted,#666);line-height:1.7;margin:5px 0}</style><style id="ff-luxe-driver-candidate-css">.ff-luxe-candidate{border:2px solid #b91726;border-radius:12px;background:#fff0f0;color:#891019;font-size:16px;font-weight:900;padding:12px;margin:10px 0;flex-basis:100%;text-align:right}</style><style id="ffb-quick-review-buttons-fix">.ffb-quick-review-buttons{display:flex!important;flex-direction:column!important;gap:11px!important;align-items:stretch!important;margin-top:16px!important}.ffb-quick-review-buttons>button{width:100%!important;display:flex!important;visibility:visible!important;min-height:52px!important;opacity:1!important}</style>
+<style id="ff-luxe-header-admin-alert-visibility">
+/* High-contrast manager topbar shortcuts in both night/light modes. */
+#ffx-topbar #ff61ManageShortcut,
+#ffx-topbar #ff63NotificationsShortcut {
+  background:linear-gradient(135deg,#b80e26 0%,#e4213b 100%)!important;
+  border:2px solid #ff5367!important;
+  color:#ffffff!important;
+  box-shadow:0 3px 12px rgba(224,30,58,.28)!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.28);
+  font-size:clamp(12px,2.5vw,15px)!important;
+  font-weight:900!important;
+  line-height:1.5!important;
+  min-height:52px!important;
+  padding:10px 12px!important;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  white-space:normal!important;
+  overflow-wrap:break-word;
+  transition:background .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+#ffx-topbar #ff61ManageShortcut:hover,
+#ffx-topbar #ff63NotificationsShortcut:hover {
+  background:linear-gradient(135deg,#a50b21 0%,#db0e2d 100%)!important;
+  box-shadow:0 4px 16px rgba(224,30,58,.42)!important;
+}
+#ffx-topbar #ff61ManageShortcut:focus-visible,
+#ffx-topbar #ff63NotificationsShortcut:focus-visible{
+  outline:3px solid #fff!important;
+  outline-offset:3px!important;
+}
+#ffx-topbar #ff61ManageShortcut .pill,
+#ffx-topbar #ff63NotificationsShortcut .pill,
+#ffx-topbar #ff61PendingBadge,
+#ffx-topbar #ff63UnreadBadge {
+  background:#fff!important;
+  color:#a50b21!important;
+  border:1px solid #fff!important;
+  border-radius:100px!important;
+  min-width:27px;
+  height:27px;
+  padding:3px 7px!important;
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  font-size:13px!important;
+  font-weight:950!important;
+  font-variant-numeric:tabular-nums;
+  text-shadow:none!important;
+  box-shadow:0 2px 4px rgba(0,0,0,.22);
+}
+#ffx-topbar #ff61ManageShortcut[hidden],
+#ffx-topbar #ff63NotificationsShortcut[hidden] { display:none!important }
+@media(max-width:850px){
+  #ffx-topbar #ff61ManageShortcut,
+  #ffx-topbar #ff63NotificationsShortcut{
+    flex:1 1 calc(50% - 8px);
+    min-width:0;
+    min-height:56px!important;
+  }
+}
+</style>
 </head>
 <body class="ff-booting" data-access="locked"><div id="ff65Boot" role="status">جارِ استعادة جلسة فريش فرايز…</div><section id="ff28Portal" aria-live="polite"><h1 id="ff28Title"></h1><p id="ff28State"></p><form id="ff28Apply" hidden><label>الاسم<input id="ff28Name" maxlength="100" minlength="2" required></label><label>الوظيفة المطلوبة<select id="ff28Role"><option value="driver">موصل</option><option value="cashier">كاشير</option><option value="customer_service">خدمة العملاء</option><option value="supervisor">مشرف</option><option value="assembly">نقطة التجميع</option></select></label><button>تقديم الطلب</button></form><div id="ff28Rows"></div><button id="ff28Refresh">تحديث</button><button id="ff28Logout">خروج</button></section>
 <header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.36.1-rc1</small></div><div class="sub">منصة خدمة العملاء والتوصيل</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><span id="ff48VersionStatus" class="ff48-version hidden" role="status" aria-live="polite">فحص توافق الإصدار...</span><button id="ff52RoutesBtn" class="outline hidden" type="button">📍 توجيه مناطق الجامعات</button><button id="ff51CatalogBtn" class="outline hidden" type="button">🍟 المنيو والعروض</button><button id="ff51CustomersBtn" class="outline hidden" type="button">👥 العملاء</button><button id="ff51ArchiveBtn" class="outline hidden" type="button">📁 الأرشيف</button><button id="ff51RatingsBtn" class="outline hidden" type="button">⭐ التقييمات</button><button id="ff50ChangesBtn" class="outline hidden" type="button">📝 تعديلات الطلبات</button><button id="ff49ReservationsBtn" class="outline hidden" type="button">📅 الحجوزات</button><button id="ff49TransferBtn" class="outline hidden" type="button">🔄 نقل الموصل</button><button id="ff48DiagnosticsBtn" class="outline hidden" type="button">🩺 تشخيص النسخة</button><button id="ff47QABtn" class="outline hidden" type="button">📋 الاختبار الشامل</button><button id="ff46ReadinessBtn" class="outline hidden" type="button">🧪 جاهزية الإطلاق</button><button id="ff45AccessBtn" class="outline hidden" type="button">🔐 عزل الفروع</button><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
