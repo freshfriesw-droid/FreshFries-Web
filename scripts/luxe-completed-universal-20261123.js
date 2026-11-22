@@ -141,10 +141,12 @@
       '<p class="ffl-help">التوثيق لاحق فقط. لن نعيد فتح الطلب أو نغيّر حالته.</p>'+
       '<button type="submit" class="primary">حفظ رقم الفاتورة</button></form>':'')+
     (summary.canRate?'<form class="ffl-finished-form" data-ffl-action="rating" hidden>'+
-      '<label>تقييم الموصل</label><select name="rating" required>'+
-      '<option value="">اختر عدد النجوم</option>'+
-      [1,2,3,4,5].map(n=>'<option value="'+n+'">'+n+' من 5 ⭐</option>').join('')+
-      '</select><label>ملاحظة التقييم (اختيارية)</label><textarea name="note" maxlength="500" placeholder="ملاحظات أداء الموصل"></textarea>'+
+      (role()==='driver'?[['cs','خدمة العملاء'],['cashier','الكاشير'],['customer','تعامل العميل'],['overall','التقييم العام']].map(([key,label])=>
+       '<label>'+label+'</label><select name="'+key+'" required><option value="">اختر التقييم</option>'+
+       [1,2,3,4,5].map(n=>'<option value="'+n+'">'+n+' من 5 ⭐</option>').join('')+'</select>').join(''):
+      '<label>تقييم الموصل</label><select name="rating" required><option value="">اختر عدد النجوم</option>'+
+      [1,2,3,4,5].map(n=>'<option value="'+n+'">'+n+' من 5 ⭐</option>').join('')+'</select>')+
+      '<label>ملاحظة التقييم (اختيارية)</label><textarea name="note" maxlength="500" placeholder="ملاحظات التقييم"></textarea>'+
       '<button type="submit" class="primary">حفظ التقييم</button></form>':'')+
     '<form class="ffl-finished-form" data-ffl-action="report" hidden>'+
     '<label>نوع البلاغ</label><select name="category" required>'+
