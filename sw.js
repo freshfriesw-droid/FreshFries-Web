@@ -79,7 +79,16 @@ self.addEventListener('notificationclick', event => {
   event.waitUntil((async () => {
     const windows = await self.clients.matchAll({type:'window',includeUncontrolled:true});
     const existing = windows.find(c => c.url.startsWith(self.registration.scope));
-    if (existing) return existing.focus();
-    return self.clients.openWindow(self.registration.scope);
+    if (existing) {
+      // Background ringtone must stop when the user opens the notification,
+      // without requiring a second "accept order" tap after returning to the app.
+      if (existing.visibilityState !== 'visible') {
+        existing.postMessage({type:'FF_LUXE_NOTIFICATION_OPENED'});
+      }
+      return existing.focus();
+    }
+    const target=new URL('./index.html',self.registration.scope);
+    target.searchParams.set('ff_push_opened','1');
+    return self.clients.openWindow(target.href);
   })());
 });
