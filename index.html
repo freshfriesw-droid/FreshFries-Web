@@ -400,7 +400,23 @@ body.ffx-menu-open #ffx-sidebar{transform:translateX(0)!important}
 #ffx-topbar,main{margin-right:0!important}
 body.ffx-menu-open .ffx-screen-dimmer{display:block!important}
 #ffx-nav-toggle{display:inline-flex!important}
-</style><style id="ff-luxe-driver-candidate-css">.ff-luxe-candidate{border:2px solid #b91726;border-radius:12px;background:#fff0f0;color:#891019;font-size:16px;font-weight:900;padding:12px;margin:10px 0;flex-basis:100%;text-align:right}</style></head>
+</style><style id="ff-luxe-cashier-20261122">
+body:has(#cashierView:not(.hidden)) main{max-width:1480px}
+#cashierView>.card{width:100%;padding:clamp(14px,2.8vw,28px)}
+#cashierOrders>.item{border:4px solid #2563eb!important;border-radius:20px!important;padding:clamp(16px,2.7vw,28px)!important;margin:0 0 20px!important;background:var(--ffb-surface,#fff);box-shadow:0 7px 24px #1752b02b!important}
+#cashierOrders .ff-cashier-status{font-size:clamp(19px,3.5vw,25px)!important;font-weight:950!important;color:#b9081d!important;background:#fff0f2!important;border:2px solid #d31329!important;border-radius:12px!important;padding:10px 14px!important;line-height:1.6!important;white-space:normal!important}
+#cashierOrders .item-top strong{font-size:clamp(19px,3vw,24px);font-weight:900}
+#cashierOrders>.ff-luxe-cancelled{background:var(--ffb-surface,#fff)!important;border:4px solid #2563eb!important;box-shadow:0 0 0 3px #f0445544,0 7px 24px #1752b02b!important;opacity:1!important}
+#cashierOrders .ff-luxe-cancel-banner{background:#ffe1e4;border:2px solid #d31329;border-radius:12px;padding:12px;color:#9a0010;font-size:clamp(19px,3vw,25px);font-weight:950;line-height:1.5}
+#cashierOrders .ff-luxe-cancel-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:13px 0}
+#cashierOrders .ff-luxe-cancel-meta>div{background:var(--ffb-soft,#f7f7f7);padding:11px;border-radius:10px;overflow-wrap:anywhere}
+#cashierOrders .ff-luxe-cancel-note{background:#fff0f2;color:#9a0010;border-inline-start:5px solid #d31329;border-radius:10px;padding:12px;margin:12px 0;line-height:1.85;overflow-wrap:anywhere}
+#cashierOrders .ff-luxe-cancelled button.primary{background:#b9081d!important;color:#fff!important;min-height:52px;font-size:15px}
+#cashierOrders .ff-luxe-cancel-detail{line-height:1.9}
+@media(max-width:620px){#cashierOrders .ff-luxe-cancel-meta{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:no-preference){#cashierOrders .ff-luxe-cancel-banner{animation:ffCancelPulse 1.8s ease-in-out infinite}@keyframes ffCancelPulse{50%{box-shadow:0 0 0 4px #ef444455}}}
+</style>
+<style id="ff-luxe-driver-candidate-css">.ff-luxe-candidate{border:2px solid #b91726;border-radius:12px;background:#fff0f0;color:#891019;font-size:16px;font-weight:900;padding:12px;margin:10px 0;flex-basis:100%;text-align:right}</style></head>
 <body class="ff-booting" data-access="locked"><div id="ff65Boot" role="status">جارِ استعادة جلسة فريش فرايز…</div><section id="ff28Portal" aria-live="polite"><h1 id="ff28Title"></h1><p id="ff28State"></p><form id="ff28Apply" hidden><label>الاسم<input id="ff28Name" maxlength="100" minlength="2" required></label><label>الوظيفة المطلوبة<select id="ff28Role"><option value="driver">موصل</option><option value="cashier">كاشير</option><option value="customer_service">خدمة العملاء</option><option value="supervisor">مشرف</option><option value="assembly">نقطة التجميع</option></select></label><button>تقديم الطلب</button></form><div id="ff28Rows"></div><button id="ff28Refresh">تحديث</button><button id="ff28Logout">خروج</button></section>
 <header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.36.1-rc1</small></div><div class="sub">منصة خدمة العملاء والتوصيل</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><span id="ff48VersionStatus" class="ff48-version hidden" role="status" aria-live="polite">فحص توافق الإصدار...</span><button id="ff52RoutesBtn" class="outline hidden" type="button">📍 توجيه مناطق الجامعات</button><button id="ff51CatalogBtn" class="outline hidden" type="button">🍟 المنيو والعروض</button><button id="ff51CustomersBtn" class="outline hidden" type="button">👥 العملاء</button><button id="ff51ArchiveBtn" class="outline hidden" type="button">📁 الأرشيف</button><button id="ff51RatingsBtn" class="outline hidden" type="button">⭐ التقييمات</button><button id="ff50ChangesBtn" class="outline hidden" type="button">📝 تعديلات الطلبات</button><button id="ff49ReservationsBtn" class="outline hidden" type="button">📅 الحجوزات</button><button id="ff49TransferBtn" class="outline hidden" type="button">🔄 نقل الموصل</button><button id="ff48DiagnosticsBtn" class="outline hidden" type="button">🩺 تشخيص النسخة</button><button id="ff47QABtn" class="outline hidden" type="button">📋 الاختبار الشامل</button><button id="ff46ReadinessBtn" class="outline hidden" type="button">🧪 جاهزية الإطلاق</button><button id="ff45AccessBtn" class="outline hidden" type="button">🔐 عزل الفروع</button><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
 <main>
@@ -894,7 +910,7 @@ function drawDriver(){const offers=data.offers||[],tasks=(data.orders||[]).filte
 function drawRoster(){let arr=data.drivers||[];$('driversRoster').innerHTML=arr.length?arr.map(d=>`<div class="item"><div class="item-top"><strong>${esc(d.name)}</strong>${statusTag(d.connected?d.state:'offline')}</div><span class="muted">${esc(branchName(d.branch_id))} · ${Number(d.active_count)||0} من 5 طلبات نشطة ${(Number(d.active_count)||0)>=5?'· 🔒 ممتلئ':''} ${!d.connected?'· غير متصل':''}</span></div>`).join(''):'<div class="empty">لم تُضف حسابات الموصلين بعد.</div>'}
 function drawOffers(){const arr=data.offers||[];$('openOffers').innerHTML=arr.length?arr.map(o=>`<div class="item"><div class="item-top"><b>طلب #${esc(o.order_number)}</b><span>${esc(driverName(o.driver_id))}</span></div><p class="muted">${esc(o.area)} — ينتهي العرض ${time(o.expires_at)}</p></div>`).join(''):'<div class="empty">لا توجد عروض بانتظار الرد.</div>'}
 function drawOrders(){if($('additionItemsInput'))additionDraft=$('additionItemsInput').value;let ro=data.role==='supervisor';let q=($('orderSearch')?.value||'').trim().toLowerCase(),branch=$('orderBranchFilter')?.value||'',status=$('orderStatusFilter')?.value||'';let orders=(data.orders||[]).filter(o=>o.status!=='delivered'&&o.status!=='cancelled'&&o.phase!=='delivered').filter(o=>(!q||[o.number,o.phone,o.area,o.driver_name].some(v=>String(v??'').toLowerCase().includes(q)))&&(!branch||o.branch_id===branch)&&(!status||(status==='unassigned'?!o.phase:o.phase===status)));$('staffOrders').innerHTML=orders.length?orders.map(o=>`<div class="item"><div class="item-top"><strong>طلب #${esc(o.number)} — ${esc(branchName(o.branch_id))}</strong><span class="tag ${o.phase?'busy':'offline'}">${o.phase?esc(phaseNames[o.phase]||o.phase):'بانتظار الإسناد'}</span></div><p class="tiny"><b>${esc(o.customer_name||"عميل")}</b> · ${esc(o.phone)} · ${esc(o.area)} · ${esc(o.channel||"phone")} · ${esc(o.driver_name||driverName(o.driver_id))}</p><p class="tiny">📍 ${esc(o.full_address||o.area)}</p><div class="note">${itemLines(o)}</div>${totalPanel(o)}${additionsPanel(o,data.role)}${additionForm(o)}${o.notes?`<p class="muted">ملاحظات: ${esc(o.notes)}</p>`:''}<div class="actions">${!ro&&canAction('assign_driver')&&!o.phase?`<button class="primary" data-auto="${esc(o.id)}">إسناد تلقائي</button><button class="outline" data-manual="${esc(o.id)}">إسناد يدوي</button>`:''}${o.phase?`<span class="chip">الكاشير: ${esc(cashierNames[o.cashier_stage]||'')}</span>`:''}${addButton(o)}${o.phase==='assigned'&&o.cashier_stage!=='handed_over'&&canAction('edit_order')?`<button class="outline" data-ff50-change="${esc(o.id)}">📝 طلب تعديل أصناف</button>`:''}${o.phase==='assigned'&&o.cashier_stage==='waiting'&&canAction('assign_driver')?`<button class="outline" data-ff52-reassign="${esc(o.id)}">🔄 تغيير الموصل قبل الفاتورة</button>`:''}${o.phase==='assigned'&&o.cashier_stage&&o.cashier_stage!=='waiting'&&canAction('assign_driver')?`<button class="outline" data-ff49-transfer="${esc(o.id)}">🔄 طلب نقل موصل بعد القطع</button>`:''}${rejectControl(o)}${!ro&&canAction('cancel_order')?`<button class="outline" data-cancel-order="${esc(o.id)}">🚫 إلغاء الطلب</button>`:''}</div></div>`).join(''):'<div class="empty">لا توجد طلبات قيد المعالجة.</div>'}
-function drawCashier(){const arr=(data.orders||[]).filter(o=>o.phase&&o.phase!=='delivered'&&(o.cashier_stage!=='handed_over'||additionsFor(o).some(a=>a.status==='pending'||a.late_state==='invoiced')));const steps=['waiting','printed','preparing','ready','handed_over'];const next={waiting:'printed',printed:'preparing',preparing:'ready',ready:'handed_over'};const labels={printed:'تم قطع الطلب في برنامج الكاشير',preparing:'بدء التحضير',ready:'الطلب جاهز',handed_over:'تم تسليم الطلب للموصل'};
+function drawCashier(){const arr=(data.orders||[]).filter(o=>o.phase&&o.phase!=='delivered'&&!['cancelled','canceled','delivered','closed'].includes(String(o.status||'').toLowerCase())&&(o.cashier_stage!=='handed_over'||additionsFor(o).some(a=>a.status==='pending'||a.late_state==='invoiced')));const steps=['waiting','printed','preparing','ready','handed_over'];const next={waiting:'printed',printed:'preparing',preparing:'ready',ready:'handed_over'};const labels={printed:'تم قطع الطلب في برنامج الكاشير',preparing:'بدء التحضير',ready:'الطلب جاهز',handed_over:'تم تسليم الطلب للموصل'};
  $('cashierOrders').innerHTML=arr.length?arr.map(o=>`<div class="item"><div class="item-top"><strong>طلب #${esc(o.number)}</strong><span class="tag busy ff-cashier-status">${esc(cashierNames[o.cashier_stage]||'')}</span></div><p>🛵 <b>الموصل: ${esc(o.driver_name||driverName(o.driver_id))}</b></p><p>${esc(o.customer_name||"عميل")} · ${esc(o.full_address||o.area)} · ${esc(o.phone)}</p>${o.external_invoice_ref?`<p class="tiny">مرجع فاتورة MicroPOS: <b>${esc(o.external_invoice_ref)}</b></p>`:(o.cashier_stage!=='waiting'?'<p class="tiny">تم القطع · رقم الفاتورة غير موثق</p>':'')}<div class="note">${itemLines(o)}</div>${o.notes?`<p class="muted">📝 ${esc(o.notes)}</p>`:''}${totalPanel(o)}${additionsPanel(o,"cashier")}<div class="actions">${o.cashier_stage==='waiting'?(o.cashier_received_at?`<button class="primary" data-ff49-invoice="${esc(o.id)}">🧾 اعتماد القطع (المرجع اختياري)</button>`:`<button class="primary" data-ff49-receive="${esc(o.id)}">📥 استلمت الطلب</button>`):next[o.cashier_stage]?`<button class="primary" data-cashier="${esc(o.id)}" data-stage="${esc(next[o.cashier_stage])}">${esc(labels[next[o.cashier_stage]])}</button>`:""}</div></div>`).join(''):'<div class="empty">لا توجد طلبات مسندة لموصلين في هذا الفرع.</div>'}
 function fillBranchSelects(){for(const id of ['newBranch','addBranch']){let el=$(id);let old=el.value;el.innerHTML=(data.branches||[]).map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');if(data.branches.some(b=>b.id===old))el.value=old}let f=$('orderBranchFilter');if(f){let old=f.value;f.innerHTML='<option value="">كل الفروع</option>'+(data.branches||[]).map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');f.value=(data.branches||[]).some(b=>b.id===old)?old:''}}
 function draw(){if(!data)return;if(data.role!=='manager'&&$('ff62DataCenter')?.open)$('ff62DataCenter').close();if(typeof ffRenderAssemblyLauncher==='function')ffRenderAssemblyLauncher();$('createBtn').disabled=!canAction('create_order');$('createBtn').title=canAction('create_order')?'':'إنشاء الطلبات ممنوع وفق صلاحيات حسابك';$('auditCard').classList.toggle('hidden',!canAction('view_reports')||!['manager','customer_service'].includes(data.role));$('identity').textContent=(user?.email||user?.phone||'حساب الموظف')+' — '+({manager:'المدير العام',driver:'موصل',cashier:'الكاشير',customer_service:'خدمة العملاء المركزية',supervisor:'مشرف'}[data.role]||data.role);$('driverView').classList.toggle('hidden',data.role!=='driver');$('staffView').classList.toggle('hidden',!['manager','customer_service','supervisor'].includes(data.role));$('cashierView').classList.toggle('hidden',data.role!=='cashier');$('managerLinks').hidden=data.role!=='manager';$('staffAdminCard').hidden=data.role!=='manager';$('serviceOnly').classList.toggle('hidden',!['manager','customer_service'].includes(data.role));$('metrics').classList.remove('hidden');drawMetrics();if(data.role==='driver')drawDriver();if(['manager','customer_service','supervisor'].includes(data.role)){fillBranchSelects();drawRoster();drawOffers();drawOrders()}if(data.role==='cashier')drawCashier()}
@@ -4280,28 +4296,71 @@ return new Promise(resolve=>{
 });
 };
 })();
-</script><script id="ff-luxe-cancel-cashier-20261121">
+</script><script id="ff-luxe-cancel-cashier-20261122">
 (function(){
 'use strict';
-let busy=false,lastRole='';
-async function refreshCancelled(){
- if(busy || !data || (data.role!=='cashier' && !(data.role==='manager' && document.body.classList.contains('ff-luxe-preview'))))return;
- busy=true;lastRole=data.role;
- try{
-  const arr=await rpc('ff_luxe_cashier_cancel_alerts');
-  let root=document.getElementById('ffLuxeCancelledAlerts');
-  if(!root){root=document.createElement('section');root.id='ffLuxeCancelledAlerts';const header=document.createElement('h2');header.textContent='🚫 الطلبات الملغية — تأكيد إلغاء الفاتورة';root.append(header);document.getElementById('cashierOrders')?.before(root)}
-  const pending=(Array.isArray(arr)?arr:[]).filter(x=>!x.acknowledged);
-  root.classList.toggle('hidden',!pending.length || (data.role!=='cashier' && !(data.role==='manager' && document.body.classList.contains('ff-luxe-preview'))));
-  root.querySelectorAll('.ff-luxe-cancelled').forEach(x=>x.remove());
-  for(const o of pending){const el=document.createElement('article');el.className='item ff-luxe-cancelled';el.setAttribute('role','alert');el.innerHTML='<div class="ff-luxe-cancel-tag">🚫 الطلب ملغي #'+String(o.number).replace(/[&<>"]/g,'')+'</div><p><b>سبب الإلغاء:</b> '+String(o.reason||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</p><p>إذا تم قطع الفاتورة في برنامج الكاشير، ألغِها هناك أولاً، ثم أكد العلم بالإلغاء.</p><button type="button" class="primary">✅ تأكيد العلم وإلغاء الفاتورة إن وجدت</button>';el.querySelector('button').onclick=async()=>{if(!confirm('هل تحققت من الفاتورة وألغيتها في برنامج الكاشير إذا كانت مقطوعة؟'))return;const b=el.querySelector('button');b.disabled=true;try{await rpc('ff_luxe_ack_cashier_cancel',{p_order:o.order_id});el.remove();toast('تم توثيق علم الكاشير بإلغاء الطلب')}catch(err){toast(err.message);b.disabled=false}};root.append(el)}
- }catch(err){console.warn('تعذر تحميل إشعارات الإلغاء',err.message)}finally{busy=false}
+let busy=false,lastFetch=0,cached=[],generation=0;
+const seen=new Set(),acknowledgedHere=new Set();
+const allowed=()=>!!data&&(data.role==='cashier'||(data.role==='manager'&&document.body.classList.contains('ff-luxe-preview')));
+function renderCancelled(){
+ const host=document.getElementById('cashierOrders');if(!host)return;
+ host.querySelectorAll('[data-ff-luxe-cancel]').forEach(el=>el.remove());
+ if(!allowed())return;
+ const pending=cached.filter(o=>o&&!o.acknowledged&&!acknowledgedHere.has(String(o.order_id)));
+ if(pending.length)host.querySelectorAll(':scope>.empty').forEach(el=>el.remove());
+ for(let i=pending.length-1;i>=0;i--){
+  const o=pending[i],el=document.createElement('article');el.className='item ff-luxe-cancelled';
+  el.dataset.ffLuxeCancel=String(o.order_id||'');el.setAttribute('role','group');
+  el.setAttribute('aria-label','طلب ملغي رقم '+String(o.number||''));
+  const items=(Array.isArray(o.items)?o.items:[]).map(v=>esc(v.qty||0)+' × '+esc(v.name||'صنف')+(v.notes?' <span class="ff75-item-note">ملاحظة: '+esc(v.notes)+'</span>':'')).join('<br>')||'لا توجد أصناف';
+  const hasInvoice=!!o.invoice_ref||(o.cashier_stage&&o.cashier_stage!=='waiting');
+  el.innerHTML=
+   '<div class="ff-luxe-cancel-banner">🚫 تنبيه إلغاء الطلب #'+esc(o.number||'—')+'</div>'+
+   '<div class="ff-luxe-cancel-meta">'+
+   '<div><b>🛵 الموصل:</b> '+esc(o.driver_name||'لم يُحدد')+'</div>'+
+   '<div><b>👤 العميل:</b> '+esc(o.customer_name||'عميل')+'</div>'+
+   '<div><b>📍 المنطقة:</b> '+esc(o.area||'—')+'</div>'+
+   '<div><b>📞 الهاتف:</b> '+esc(o.phone||'—')+'</div></div>'+
+   '<b>تفاصيل الأصناف:</b><div class="note ff-luxe-cancel-detail">'+items+'</div>'+
+   (o.notes?'<p class="ff-luxe-cancel-detail">📝 '+esc(o.notes)+'</p>':'')+
+   '<p>الإجمالي: <b>'+amount(Number(o.total||0))+' ريال</b> · التوصيل: '+amount(Number(o.delivery_fee||0))+' ريال</p>'+
+   (o.invoice_ref?'<p>🧾 فاتورة MicroPOS: <b>'+esc(o.invoice_ref)+'</b></p>':'')+
+   '<div class="ff-luxe-cancel-note"><b>سبب الإلغاء:</b> '+esc(o.reason||'لم يُذكر سبب')+
+   '<div>'+(hasInvoice?'⚠️ تحقق من إلغاء الفاتورة في MicroPOS قبل الإقرار.':'تحقق من عدم وجود فاتورة في MicroPOS قبل الإقرار.')+'</div></div>'+
+   '<div class="actions"><button type="button" class="primary" data-ff-luxe-ack>✅ راجعت الطلب وألغيت الفاتورة إن وجدت — إخفاء</button></div>';
+  const button=el.querySelector('[data-ff-luxe-ack]');
+  button.onclick=async()=>{
+   if(!confirm('هل تأكدت من إلغاء الفاتورة في MicroPOS إن وجدت؟ هذا الزر يسجل الإقرار فقط، ولا يلغي الفاتورة تلقائيًا.'))return;
+   button.disabled=true;button.textContent='جارٍ تسجيل الإقرار...';
+   try{
+    const r=await rpc('ff_luxe_ack_cashier_cancel',{p_order:o.order_id});
+    if(r?.acknowledged!==true)throw Error('لم يؤكد الخادم إتمام الإقرار');
+    acknowledgedHere.add(String(o.order_id));cached=cached.filter(x=>String(x.order_id)!==String(o.order_id));
+    renderCancelled();toast('✅ تم تسجيل إقرار إلغاء الطلب #'+String(o.number||''));void refreshCancelled(true);
+   }catch(e){toast('تعذر تسجيل الإقرار: '+(e.message||e));button.disabled=false;button.textContent='✅ راجعت الطلب وألغيت الفاتورة إن وجدت — إخفاء'}
+  };
+  host.prepend(el);
+ }
 }
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refreshCancelled()});
-window.addEventListener('focus',()=>void refreshCancelled());
+async function refreshCancelled(force=false){
+ if(!allowed()||busy||(!force&&Date.now()-lastFetch<9000))return;
+ busy=true;lastFetch=Date.now();const id=++generation,viewer=String(user?.id||'');
+ try{
+  const list=await rpc('ff_luxe_cashier_cancel_alerts');
+  if(id!==generation||!allowed()||viewer!==String(user?.id||''))return;
+  cached=(Array.isArray(list)?list:[]).filter(o=>!o.acknowledged&&!acknowledgedHere.has(String(o.order_id)));
+  for(const o of cached){const k=String(o.order_id);if(seen.has(k))continue;seen.add(k);if(typeof window.ff65Alert==='function')window.ff65Alert('late','cancel:'+k,'طلب ملغي للكاشير','الطلب #'+String(o.number||'')+' — راجع إلغاء الفاتورة')}
+  renderCancelled();
+ }catch(e){console.warn('تعذر تحميل إشعارات إلغاء الكاشير',e?.message||e)}
+ finally{busy=false}
+}
+const originalDrawCashier=drawCashier;
+drawCashier=function(){originalDrawCashier();renderCancelled();void refreshCancelled()};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refreshCancelled(true)});
+window.addEventListener('focus',()=>void refreshCancelled(true));
 setInterval(()=>{if(!document.hidden)void refreshCancelled()},10000);
-const originalDraw=draw;draw=function(){originalDraw();void refreshCancelled()};
-const originalReset=resetUI;resetUI=function(){originalReset();const x=document.getElementById('ffLuxeCancelledAlerts');if(x)x.remove()};
+const originalReset=resetUI;
+resetUI=function(){generation++;cached=[];lastFetch=0;seen.clear();acknowledgedHere.clear();originalReset()};
 })();
 </script><script id="ff-luxe-feedback-20261121">
 (function(){
