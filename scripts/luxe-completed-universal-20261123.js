@@ -47,6 +47,9 @@
  '.ffl-finished-form .ffl-help{font-size:12px;color:var(--ffb-muted,#666)}',
  '.ffl-finished-empty{padding:20px;border-radius:12px;background:var(--ffb-soft,#f4f4f4);text-align:center}',
  '@media(max-width:560px){.ffl-finished-meta{grid-template-columns:1fr}.ffl-finished-main b{font-size:15px}.ffl-finished-card>summary{padding:12px}}'
+ ,'.ffl-range-controls label{display:flex;flex-direction:column;gap:4px;flex:1 1 120px;min-width:112px;font-size:13px;font-weight:850}',
+ '.ffl-range-controls label[hidden]{display:none!important}',
+ '.ffl-range-controls input,.ffl-range-controls select{width:100%;max-width:100%;min-height:44px}'
  ].join('\n');document.head.append(style);
 
  const box=document.createElement('section');box.id='fflCashierFinished';box.hidden=true;
@@ -58,6 +61,12 @@
  button.append(text,arrow);
  const panel=document.createElement('div');panel.id='fflCashierFinishedPanel';panel.hidden=true;
  panel.innerHTML='<p class="muted">الطلبات المكتملة أو التي انتهى دور الكاشير فيها. استكمل رقم فاتورة MicroPOS أو تقييم الموصل، أو ارفع بلاغًا مرتبطًا بالطلب. لا تتغير حالة الطلب أثناء الاستكمال.</p>'+
+ '<div class="ffl-finished-tools ffl-range-controls">'+
+ '<label>من تاريخ<input id="fflFinishedFrom" type="date"></label>'+
+ '<label>إلى تاريخ<input id="fflFinishedTo" type="date"></label>'+
+ '<label id="fflFinishedBranchLabel" hidden>الفرع<select id="fflFinishedBranch"><option value="">كل الفروع</option></select></label>'+
+ '<button type="button" class="outline" id="fflFinishedToday">📅 اليوم</button>'+
+ '<button type="button" class="primary" id="fflFinishedApply">عرض الفترة</button></div>'+
  '<div class="ffl-finished-tools"><input id="fflFinishedSearch" placeholder="🔎 ابحث في الطلبات المحمّلة: رقم الطلب، هاتف العميل، الموصل" aria-label="بحث في الطلبات المنتهية"><button id="fflFinishedRefresh" type="button" class="outline">🔄 تحديث</button></div>'+
  '<p id="fflFinishedStatus" class="ffl-finished-result" role="status" aria-live="polite"></p>'+
  '<div id="fflFinishedList"></div>'+
@@ -70,13 +79,15 @@
  const fmt=t=>{if(!t)return '—';const d=new Date(t);return Number.isNaN(d.getTime())?'—':d.toLocaleString('ar-YE',{timeZone:'Asia/Aden',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})};
  const finished=o=>!['cancelled','canceled','closed'].includes(String(o.status||'')) ;
  const seen=new Map();
+ const rangeFrom=$('fflFinishedFrom'),rangeTo=$('fflFinishedTo'),branch=$('fflFinishedBranch');
+ const d=yemenDay();rangeFrom.value=rangeTo.value=d;rangeFrom.max=rangeTo.max=d;
  let viewer='',loaded=[],offset=0,hasMore=true,loading=false,open=false,lastUpdated=0,generation=0;
  let openCards=new Set(),activeAction=null;
  /* all staff roles use eligible() above */
  function clear(){
   generation++;viewer='';loaded=[];offset=0;hasMore=true;loading=false;open=false;lastUpdated=0;openCards.clear();
   activeAction=null;seen.clear();list.replaceChildren();status.textContent='';
-  search.value='';panel.hidden=true;button.setAttribute('aria-expanded','false');box.hidden=true;
+  search.value='';panel.hidden=true;button.setAttribute('aria-expanded','false');box.hidden=true;branch.replaceChildren(new Option('كل الفروع',''));
  }
  function maintainViewer(){
   const current=eligible()?String(user.id)+':'+role()+':'+String(data?.cashier_desk?.code||'unassigned'):'';
@@ -185,7 +196,18 @@
   more.disabled=true;refresh.disabled=true;
   status.textContent=reset?'جارٍ تحديث الطلبات المنتهية...':'جارٍ تحميل طلبات أقدم...';
   try{
-   const result=await rpc('ff_luxe_cashier_completed_orders',{p_limit:30,p_offset:reset?0:offset});
+   if(!rangeFrom.value||!rangeTo.value||rangeFrom.value>rangeTo.value||rangeTo.value>yemenDay())
+      throw Error('حدد نطاقًا صحيحًا: من تاريخ إلى تاريخ');
+    const selectedBranch=['manager','supervisor'].includes(role())?branch.value||null:
+     role()==='customer_service'?$('newBranch')?.value||null:null;
+    const result=await rpc('ff_luxe_completed_universal',{p_from:rangeFrom.value,p_to:rangeTo.value,
+      p_branch:selectedBranch,p_limit:30,p_offset:reset?0:offset});
+    if(['manager','supervisor'].includes(role())){
+      const old=branch.value;branch.replaceChildren(new Option('كل الفروع',''));
+      for(const b of result?.branches||[])branch.add(new Option(b.name,b.id));
+      if([...branch.options].some(x=>x.value===old))branch.value=old;
+      $('fflFinishedBranchLabel').hidden=false;
+    }else $('fflFinishedBranchLabel').hidden=true;
    if(requestGeneration!==generation||!eligible()||String(user.id)!==current||!open)return;
    if(!result||!Array.isArray(result.items))throw Error('استجابة قائمة الطلبات المنتهية غير مكتملة');
    loaded=reset?result.items:[...loaded,...result.items.filter(o=>!loaded.some(x=>x.id===o.id))];
@@ -204,6 +226,19 @@
  });
  refresh.onclick=()=>void load(true);
  more.onclick=()=>void load(false);
+ $('fflFinishedToday').onclick=()=>{
+   rangeFrom.value=rangeTo.value=yemenDay();
+   window.dispatchEvent(new CustomEvent('ff-luxe-history-range',{detail:{from:rangeFrom.value,to:rangeTo.value}}));
+   if(open)void load(true);
+ };
+ $('fflFinishedApply').onclick=()=>{
+   window.dispatchEvent(new CustomEvent('ff-luxe-history-range',{detail:{from:rangeFrom.value,to:rangeTo.value}}));
+   if(open)void load(true);
+ };
+ branch.onchange=()=>{loaded=[];offset=0;if(open)void load(true)};
+ window.addEventListener('ff-luxe-history-range',e=>{
+   const d=e.detail||{};if(d.from&&d.to){rangeFrom.value=d.from;rangeTo.value=d.to;if(open&&!loading)void load(true)}
+ });
  search.addEventListener('input',render);
  list.addEventListener('click',event=>{
   const b=event.target.closest('[data-ffl-show]');if(!b)return;
@@ -263,6 +298,7 @@
  document.addEventListener('visibilitychange',()=>{
   if(!document.hidden&&open&&eligible()&&Date.now()-lastUpdated>90000)void load(true)
  });
+ setInterval(()=>{if(document.body.classList.contains('ff-v12-assembly-mode')){if(maintainViewer()&&open&&Date.now()-lastUpdated>120000&&!loading)void load(true)}},12000);
  const oldReset=resetUI;resetUI=function(){clear();oldReset()};
  // Keep the active order stream untouched.
  maintainViewer();
