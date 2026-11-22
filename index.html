@@ -416,7 +416,7 @@ body:has(#cashierView:not(.hidden)) main{max-width:1480px}
 @media(max-width:620px){#cashierOrders .ff-luxe-cancel-meta{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:no-preference){#cashierOrders .ff-luxe-cancel-banner{animation:ffCancelPulse 1.8s ease-in-out infinite}@keyframes ffCancelPulse{50%{box-shadow:0 0 0 4px #ef444455}}}
 </style>
-<style id="ff-luxe-driver-candidate-css">.ff-luxe-candidate{border:2px solid #b91726;border-radius:12px;background:#fff0f0;color:#891019;font-size:16px;font-weight:900;padding:12px;margin:10px 0;flex-basis:100%;text-align:right}</style></head>
+<style id="ff-luxe-audio-status-20261122">.ff-luxe-audio-health{margin:10px 0;padding:13px;border:1px solid var(--ffb-line,#ddd);background:var(--ffb-soft,#f7f7f7);border-radius:12px;line-height:1.8}.ff-luxe-audio-health button{width:100%;margin:8px 0 4px}.ff-luxe-audio-health p{font-size:12px;color:var(--ffb-muted,#666);line-height:1.7;margin:5px 0}</style><style id="ff-luxe-driver-candidate-css">.ff-luxe-candidate{border:2px solid #b91726;border-radius:12px;background:#fff0f0;color:#891019;font-size:16px;font-weight:900;padding:12px;margin:10px 0;flex-basis:100%;text-align:right}</style></head>
 <body class="ff-booting" data-access="locked"><div id="ff65Boot" role="status">جارِ استعادة جلسة فريش فرايز…</div><section id="ff28Portal" aria-live="polite"><h1 id="ff28Title"></h1><p id="ff28State"></p><form id="ff28Apply" hidden><label>الاسم<input id="ff28Name" maxlength="100" minlength="2" required></label><label>الوظيفة المطلوبة<select id="ff28Role"><option value="driver">موصل</option><option value="cashier">كاشير</option><option value="customer_service">خدمة العملاء</option><option value="supervisor">مشرف</option><option value="assembly">نقطة التجميع</option></select></label><button>تقديم الطلب</button></form><div id="ff28Rows"></div><button id="ff28Refresh">تحديث</button><button id="ff28Logout">خروج</button></section>
 <header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.36.1-rc1</small></div><div class="sub">منصة خدمة العملاء والتوصيل</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><span id="ff48VersionStatus" class="ff48-version hidden" role="status" aria-live="polite">فحص توافق الإصدار...</span><button id="ff52RoutesBtn" class="outline hidden" type="button">📍 توجيه مناطق الجامعات</button><button id="ff51CatalogBtn" class="outline hidden" type="button">🍟 المنيو والعروض</button><button id="ff51CustomersBtn" class="outline hidden" type="button">👥 العملاء</button><button id="ff51ArchiveBtn" class="outline hidden" type="button">📁 الأرشيف</button><button id="ff51RatingsBtn" class="outline hidden" type="button">⭐ التقييمات</button><button id="ff50ChangesBtn" class="outline hidden" type="button">📝 تعديلات الطلبات</button><button id="ff49ReservationsBtn" class="outline hidden" type="button">📅 الحجوزات</button><button id="ff49TransferBtn" class="outline hidden" type="button">🔄 نقل الموصل</button><button id="ff48DiagnosticsBtn" class="outline hidden" type="button">🩺 تشخيص النسخة</button><button id="ff47QABtn" class="outline hidden" type="button">📋 الاختبار الشامل</button><button id="ff46ReadinessBtn" class="outline hidden" type="button">🧪 جاهزية الإطلاق</button><button id="ff45AccessBtn" class="outline hidden" type="button">🔐 عزل الفروع</button><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
 <main>
@@ -2813,7 +2813,7 @@ const prefPanel=S('section',{id:'ffx-preferences','aria-label':'تخصيص ال�
 prefPanel.innerHTML=`<div class="ffx-pref-head"><div><div class="ffx-eyebrow">PERSONALIZE YOUR SPACE</div><b style="font-size:16px">الذوق والتفضيلات</b></div><button id="ffx-pref-close" class="ffx-top-icon" aria-label="إغلاق الإعدادات">${icon('close')}</button></div><div class="ffx-pref-scroll">
 <div class="ffx-pref-group"><h3>المظهر والتصميم</h3><div class="ffx-theme-grid" id="ffx-themes"></div><label>حجم الواجهة</label><select id="ffx-density"><option value="normal">مريح ومتوازن</option><option value="compact">مضغوط للمعلومات الكثيرة</option></select><label>الوضع الليلي تلقائيًا</label><select id="ffx-auto"><option value="manual">تبديل يدوي حسب الثيم</option><option value="auto">مطابقة إعداد الجهاز</option></select></div>
 <div class="ffx-pref-group"><h3>الأصوات والإشعارات الذكية</h3><div class="ffx-switchrow"><span>تشغيل التنبيهات الصوتية</span><input type="checkbox" id="ffx-audio"></div><div class="ffx-switchrow"><span>عرض تنبيهات مرئية</span><input type="checkbox" id="ffx-visual"></div><div class="ffx-switchrow"><span>تنبيه تجاوز مهلة التوصيل</span><input type="checkbox" id="ffx-delay"></div><label>صوت الطلب الجديد والتنبيه</label><select id="ffx-sound"><option value="soft">نغمة هادئة</option><option value="digital">تنبيه رقمي أنيق</option><option value="classic">جرس كلاسيكي</option><option value="double">جرس مزدوج</option><option value="urgent">تنبيه عاجل</option></select><label>صوت التأخير</label><select id="ffx-delay-sound"><option value="soft">نغمة هادئة</option><option value="digital">تنبيه رقمي أنيق</option><option value="classic">جرس كلاسيكي</option><option value="double">جرس مزدوج</option><option value="urgent">تنبيه عاجل</option></select><label>مستوى الصوت <b id="ffx-volume-label">100%</b></label><input type="range" min="0" max="100" step="5" id="ffx-volume"><label>إعادة تنبيه التأخير (دقائق)</label><select id="ffx-repeat"><option value="0">عند حدوث التأخير فقط</option><option value="3">كل 3 دقائق</option><option value="5">كل 5 دقائق</option><option value="10">كل 10 دقائق</option></select><div class="ffx-preview-btns"><button class="primary" id="ffx-play-sound">${icon('volume','sm')} تجربة النغمة</button><button class="ffx-smallbtn" id="ffx-play-delay">تجربة تنبيه التأخير</button><button class="ffx-smallbtn" id="ffx-push-permission">إذن إشعارات الجهاز</button></div><p class="ffx-muted" style="margin-top:12px">يعمل الصوت أثناء فتح الصفحة وبعد السماح به من المتصفح. الإشعارات خارج التطبيق تتطلب إعداد خدمة دفع مستقلة.</p>
- <div id="ff66-tone-library"><h4>🎼 إدارة النغمات — مكتبة المطعم</h4><p class="ff66-help">اختيار النغمات وإضافتها للمدير فقط. تُطبَّق النغمتان المعتمدتان مركزيًا على جميع الموظفين بعد تسجيل الدخول.</p>
+ <div id="ff-luxe-audio-health" class="ff-luxe-audio-health"><b id="ff-luxe-audio-status" role="status" aria-live="polite">🔔 فحص صوت الجهاز</b><button type="button" id="ff-luxe-audio-unlock" class="primary">🔊 تفعيل وتشغيل النغمة التجريبية</button><p>يحاول النظام استعادة الصوت تلقائيًا عند العودة. تشغيل نغمة مخصصة عندما يوقف أندرويد المتصفح يحتاج ربط إشعارات خلفية أو تطبيقًا أصليًا.</p></div><div id="ff66-tone-library"><h4>🎼 إدارة النغمات — مكتبة المطعم</h4><p class="ff66-help">اختيار النغمات وإضافتها للمدير فقط. تُطبَّق النغمتان المعتمدتان مركزيًا على جميع الموظفين بعد تسجيل الدخول.</p>
  <div id="ff66-tone-status" role="status" aria-live="polite">سجل الدخول لتحميل النغمات المشتركة.</div>
  <div id="ff66-manager" class="ff66-tone-manage" hidden><label>اسم النغمة<input id="ff66-tone-name" maxlength="65" placeholder="مثلاً: نغمة وصول طلب جديد"></label><label>إضافة ملف نغمة (MP3 / WAV / OGG / M4A، حتى 2MB)<input id="ff66-tone-file" type="file" accept=".mp3,.wav,.ogg,.m4a,audio/mpeg,audio/wav,audio/ogg,audio/mp4"></label><button id="ff66-tone-add" type="button" class="primary">➕ إضافة النغمة للمطعم</button><div id="ff66-tone-list"></div></div>
  <button id="ff66-tone-refresh" type="button" class="ffx-smallbtn" style="width:100%;margin-top:10px">🔄 تحديث مكتبة النغمات</button>
@@ -2956,12 +2956,19 @@ async function ff66Load(force=false){
  }catch(e){if(ff66Ready()&&String(user.id)===viewer)ff66SetStatus('تعذر تحميل المكتبة: '+e.message+' — تأكد من تطبيق FF66.');}
  finally{ff66Loading=false}
 }
+const ffLuxeTonePlayers=new Map();
 function ff66PlayTone(kind){
  if(!ff66Ready())return false;
- const id=kind.slice(5),url=ff66Urls.get(id);
+ const id=String(kind).slice(5),url=ff66Urls.get(id);
  if(!url){void ff66Load(true);return false}
- try{const audio=new Audio(url);audio.volume=Math.max(0,Math.min(1,prefs.volume/100));
- audio.play().catch(()=>{sound('soft',true)});return true;}catch{return false}
+ try{
+  let audio=ffLuxeTonePlayers.get(id);
+  if(!audio||audio.src!==url){audio=new Audio(url);audio.preload='auto';ffLuxeTonePlayers.set(id,audio)}
+  audio.volume=Math.max(0,Math.min(1,Number(prefs.volume)/100));
+  audio.pause();try{audio.currentTime=0}catch{}
+  void audio.play().catch(()=>{sound('soft',true);ffLuxeAudioStatus('⚠️ ملف النغمة محجوب من الجهاز؛ تمت محاولة تشغيل النغمة الافتراضية')});
+  return true;
+ }catch{return false}
 }
 $x('ff66-tone-refresh').onclick=()=>ff66Load(true);
 setInterval(()=>{if(ff66Ready()&&(String(prefs.sound).startsWith('tone:')||String(prefs.delaySound).startsWith('tone:')))
@@ -2982,11 +2989,74 @@ $x('ff66-tone-add').onclick=async()=>{
  }catch(e){ff66SetStatus('فشل رفع النغمة: '+e.message)}finally{button.disabled=false}
 };
 
-let audioCtx=null,lastSoundAt=0;
-function sound(kind='soft',force=false){if(!force&&!prefs.audio||prefs.volume===0)return false;const nowMs=Date.now();if(!force&&nowMs-lastSoundAt<1300)return false;lastSoundAt=nowMs;if(kind.startsWith('tone:'))return ff66PlayTone(kind);try{
-const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return false;audioCtx=audioCtx||new AC();void audioCtx.resume();const notes={soft:[[0,523,.25],[.27,659,.26]],digital:[[0,880,.11],[.14,1175,.13]],classic:[[0,660,.31]],double:[[0,740,.15],[.23,740,.15]],urgent:[[0,890,.17],[.21,890,.17],[.42,1050,.19]]}[kind]||[[0,523,.25]];
-for(const [delay,freq,dur]of notes){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=kind==='soft'?'sine':'triangle';o.frequency.value=freq;const t=audioCtx.currentTime+delay;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0003,prefs.volume/100*.13),t+.025);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+dur+.05)}return true
-}catch(e){return false}}
+let audioCtx=null,lastSoundAt=0,ffLuxeQueuedTone='';
+function ffLuxeAudioStatus(message){const el=$x('ff-luxe-audio-status');if(el)el.textContent=message}
+function ffLuxeAudioContext(){
+ const AC=window.AudioContext||window.webkitAudioContext;
+ if(!AC)return null;
+ if(!audioCtx||audioCtx.state==='closed')audioCtx=new AC();
+ return audioCtx;
+}
+async function ffLuxeUnlockAudio(test=false){
+ if(!prefs.audio||Number(prefs.volume)<=0){ffLuxeAudioStatus('🔕 التنبيهات الصوتية معطلة من إعدادات الحساب');return false}
+ try{
+  const ctx=ffLuxeAudioContext();
+  if(!ctx){ffLuxeAudioStatus('⚠️ المتصفح لا يدعم تشغيل النغمات');return false}
+  if(ctx.state!=='running')await ctx.resume();
+  if(ctx.state!=='running'){ffLuxeAudioStatus('⚠️ اضغط تفعيل الصوت للسماح بالرنين');return false}
+  ffLuxeAudioStatus('✅ الصوت جاهز أثناء عمل التطبيق');
+  const queued=ffLuxeQueuedTone;ffLuxeQueuedTone='';
+  if(test)sound(prefs.sound,true);
+  else if(queued&&!document.hidden)sound(queued,true);
+  return true;
+ }catch(e){ffLuxeAudioStatus('⚠️ افتح الإعدادات واضغط زر تفعيل الصوت');return false}
+}
+function sound(kind='soft',force=false){
+ if((!force&&!prefs.audio)||Number(prefs.volume)<=0)return false;
+ const now=Date.now();
+ if(!force&&now-lastSoundAt<1000)return false;
+ if(String(kind).startsWith('tone:')){
+  const ok=ff66PlayTone(String(kind));
+  if(ok){lastSoundAt=now;return true}
+  kind='soft';
+ }
+ try{
+  const ctx=ffLuxeAudioContext();
+  if(!ctx){ffLuxeAudioStatus('⚠️ الصوت غير مدعوم في هذا الجهاز');return false}
+  if(ctx.state!=='running'){
+   ffLuxeQueuedTone=kind;
+   void ffLuxeUnlockAudio();
+   return false;
+  }
+  const notes={
+    soft:[[0,523,.25],[.27,659,.26]],digital:[[0,880,.11],[.14,1175,.13]],
+    classic:[[0,660,.31]],double:[[0,740,.15],[.23,740,.15]],
+    urgent:[[0,890,.17],[.21,890,.17],[.42,1050,.19]]
+  }[kind]||[[0,523,.25]];
+  for(const [delay,freq,dur] of notes){
+   const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+delay;
+   o.type=kind==='soft'?'sine':'triangle';o.frequency.value=freq;
+   g.gain.setValueAtTime(.0001,t);
+   g.gain.exponentialRampToValueAtTime(Math.max(.0003,Number(prefs.volume)/100*.13),t+.025);
+   g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+   o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+dur+.05);
+  }
+  lastSoundAt=now;ffLuxeAudioStatus('✅ الصوت جاهز أثناء عمل التطبيق');return true;
+ }catch(e){ffLuxeAudioStatus('⚠️ تعذر تشغيل الصوت');return false}
+}
+window.ffLuxePlayAlert=function(kind){return sound((kind==='late'?prefs.delaySound:prefs.sound)||'soft')};
+$x('ff-luxe-audio-unlock')?.addEventListener('click',()=>void ffLuxeUnlockAudio(true));
+for(const evt of ['pointerdown','keydown','touchstart']){
+ doc.addEventListener(evt,()=>{
+  if(typeof user!=='undefined'&&user?.id&&prefs.audio&&(!audioCtx||audioCtx.state!=='running'))void ffLuxeUnlockAudio();
+ },{passive:true});
+}
+doc.addEventListener('visibilitychange',()=>{
+ if(!doc.hidden&&typeof user!=='undefined'&&user?.id&&prefs.audio)void ffLuxeUnlockAudio();
+});
+window.addEventListener('focus',()=>{
+ if(typeof user!=='undefined'&&user?.id&&prefs.audio)void ffLuxeUnlockAudio();
+});
 $x('ffx-play-sound').onclick=()=>{sound(prefs.sound,true);showToast('معاينة: '+($x('ffx-sound').selectedOptions[0]?.textContent||'النغمة'))};
 $x('ffx-play-delay').onclick=()=>{sound(prefs.delaySound,true);showToast('معاينة صوت تجاوز مهلة التوصيل')};
 $x('ffx-push-permission').onclick=async()=>{if(!('Notification'in window)){showToast('متصفحك لا يدعم إشعارات الجهاز');return}try{const p=await Notification.requestPermission();showToast('إذن الإشعارات: '+(p==='granted'?'مسموح':p==='denied'?'مرفوض':'لم يتم السماح'))}catch{showToast('تعذر طلب الإذن في هذا السياق')}};
@@ -4270,7 +4340,7 @@ share.onclick=async()=>{
  const done=new Set(['delivered','cancelled','canceled','closed']);
  const keyOf=o=>String(o?.id??o?.order_id??o?.number??o?.order_number??'');
  function pref(){try{return {...{audio:true,visual:true,delay:true,volume:100,sound:'soft',delaySound:'soft'},...JSON.parse(localStorage.getItem('freshfries_luxe_prefs_'+user.id)||'{}')}}catch{return {audio:true,visual:true,delay:true,volume:100,sound:'soft',delaySound:'soft'}}}
- function tone(kind){const p=pref();if(!p.audio||Number(p.volume)<=0)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const a=new AC();const patterns={new:[[600,0],[820,.2]],ready:[[720,0],[970,.2]],late:[[830,0],[830,.25],[1040,.5]]};for(const [f,dt] of patterns[kind]||patterns.new){let o=a.createOscillator(),g=a.createGain(),t=a.currentTime+dt;o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.001,Math.min(1,Number(p.volume)/100)*.12),t+.025);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+.2)}setTimeout(()=>a.close().catch(()=>{}),1700)}catch{}}
+  function tone(kind){if(typeof window.ffLuxePlayAlert==='function')window.ffLuxePlayAlert(kind);}
  function emit(kind,k,title,body){if(!user?.id)return;const now=Date.now(),id=kind+':'+k;if(sent.has(id)&&now-sent.get(id)<180000)return;sent.set(id,now);if(sent.size>500)for(const [x,t] of sent)if(now-t>3600000)sent.delete(x);tone(kind);const p=pref();if(p.visual&&typeof toast==='function'&&!document.hidden)toast('🔔 '+title+' — '+body);if('Notification' in window&&Notification.permission==='granted')try{new Notification(title,{body,tag:'ff65-'+id})}catch{}}
  function snapshot(){if(!user?.id||!data?.role)return;const actor=user.id+':'+data.role;if(actor!==identity){identity=actor;bootstrapped=false;oldOrders=new Map();oldOffers=new Set();sent.clear()}const role=data.role,orders=new Map((data.orders||[]).map(o=>[keyOf(o),o]).filter(x=>x[0])),offers=new Set((data.offers||[]).map(o=>keyOf(o)).filter(Boolean));if(bootstrapped){if(role==='driver'){for(const o of data.offers||[])if(!oldOffers.has(keyOf(o)))emit('new',keyOf(o),'طلب توصيل جديد','طلب رقم '+(o.order_number||o.number||'جديد')+' بانتظار قبولك');for(const [id,o] of orders){const prev=oldOrders.get(id);if(!prev&&!done.has(o.phase))emit('new',id,'طلب مسند لك','طلب رقم '+(o.number||o.order_number||'جديد'));if(prev&&prev.cashier_stage!=='ready'&&o.cashier_stage==='ready')emit('ready',id,'الطلب جاهز للاستلام','طلب رقم '+(o.number||o.order_number||''));}}if(role==='cashier')for(const [id,o] of orders)if(!oldOrders.has(id)&&!done.has(o.phase))emit('new',id,'طلب جديد للكاشير','طلب رقم '+(o.number||o.order_number||''));}bootstrapped=true;oldOrders=orders;oldOffers=offers;}
  window.addEventListener('ff-assembly-snapshot-success',snapshot);
