@@ -492,6 +492,69 @@ body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{
   }
 }
 </style>
+<style id="ff-luxe-all-order-blue-cards-v39">
+/* Unified, prominent per-order blue outline across all operating views. */
+#staffOrders>.item,
+#cashierOrders>.item,
+#driverTasks>.item,
+#driverOffers>.offer,
+#ffV12AssemblyOrders>.ff-assembly-order,
+#ff51ArchiveList>details,
+#fflFinishedList>.ffl-finished-card,
+#ffLuxeDoneRows>.ffl-finished-card,
+.ff60-order,
+.ff-luxe-cancelled,
+.ff-luxe-driver-cancel-card {
+  border:4px solid #2563eb!important;
+  border-radius:18px!important;
+  box-shadow:0 6px 22px rgba(37,99,235,.20)!important;
+  padding:clamp(13px,2.5vw,22px)!important;
+  margin-block:12px 18px!important;
+  background:var(--ffb-surface,#fff);
+  overflow-wrap:anywhere;
+}
+.ff-luxe-cashier-stage,
+#driverTasks .ff-luxe-cashier-stage,
+#staffOrders .ff-luxe-cashier-stage,
+#cashierOrders .ff-cashier-status,
+#ffV12AssemblyOrders .ff-assembly-stage {
+  display:inline-flex!important;
+  align-items:center;
+  max-width:100%;
+  margin-block:9px!important;
+  min-height:45px;
+  padding:9px 14px!important;
+  border-radius:12px!important;
+  border:2px solid #bb1231!important;
+  color:#ab0925!important;
+  background:#fff1f3!important;
+  font-size:clamp(16px,3vw,21px)!important;
+  font-weight:950!important;
+  line-height:1.55!important;
+  text-align:center;
+  white-space:normal!important;
+  box-shadow:0 3px 10px rgba(178,11,39,.12);
+}
+.ff-luxe-employee-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 16px;
+  border:1px solid #9dc1fb;
+  border-inline-start:5px solid #2563eb;
+  background:var(--ffb-soft,#f4f7fe);
+  color:var(--ffb-text,#1f2937);
+  padding:10px 12px;
+  border-radius:10px;
+  margin:10px 0;
+  line-height:1.7;
+  font-size:clamp(12px,2.5vw,15px);
+  font-weight:650;
+}
+.ff-luxe-employee-meta b{font-weight:900}
+@media(max-width:620px){
+ .ff-luxe-employee-meta{flex-direction:column;gap:5px}
+}
+</style>
 </head>
 <body class="ff-booting" data-access="locked"><div id="ff65Boot" role="status">جارِ استعادة جلسة فريش فرايز…</div><section id="ff28Portal" aria-live="polite"><h1 id="ff28Title"></h1><p id="ff28State"></p><form id="ff28Apply" hidden><label>الاسم<input id="ff28Name" maxlength="100" minlength="2" required></label><label>الوظيفة المطلوبة<select id="ff28Role"><option value="driver">موصل</option><option value="cashier">كاشير</option><option value="customer_service">خدمة العملاء</option><option value="supervisor">مشرف</option><option value="assembly">نقطة التجميع</option></select></label><button>تقديم الطلب</button></form><div id="ff28Rows"></div><button id="ff28Refresh">تحديث</button><button id="ff28Logout">خروج</button></section>
 <header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.36.1-rc1</small></div><div class="sub">منصة خدمة العملاء والتوصيل</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><span id="ff48VersionStatus" class="ff48-version hidden" role="status" aria-live="polite">فحص توافق الإصدار...</span><button id="ff52RoutesBtn" class="outline hidden" type="button">📍 توجيه مناطق الجامعات</button><button id="ff51CatalogBtn" class="outline hidden" type="button">🍟 المنيو والعروض</button><button id="ff51CustomersBtn" class="outline hidden" type="button">👥 العملاء</button><button id="ff51ArchiveBtn" class="outline hidden" type="button">📁 الأرشيف</button><button id="ff51RatingsBtn" class="outline hidden" type="button">⭐ التقييمات</button><button id="ff50ChangesBtn" class="outline hidden" type="button">📝 تعديلات الطلبات</button><button id="ff49ReservationsBtn" class="outline hidden" type="button">📅 الحجوزات</button><button id="ff49TransferBtn" class="outline hidden" type="button">🔄 نقل الموصل</button><button id="ff48DiagnosticsBtn" class="outline hidden" type="button">🩺 تشخيص النسخة</button><button id="ff47QABtn" class="outline hidden" type="button">📋 الاختبار الشامل</button><button id="ff46ReadinessBtn" class="outline hidden" type="button">🧪 جاهزية الإطلاق</button><button id="ff45AccessBtn" class="outline hidden" type="button">🔐 عزل الفروع</button><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
@@ -879,8 +942,9 @@ function ffV12Render(){
  for(const order of live){
   const item=ffV12Node('article',undefined,'ff-assembly-order');
   item.append(ffV12Node('strong','طلب #'+(order.number||'—')));
-  item.append(ffV12Node('div',ffV12StageLabels[order.cashier_stage]||'قيد التجميع','ff-assembly-stage'));
+  item.append(ffV12Node('div',ffV12StageLabels[order.cashier_stage]||'قيد التجميع','ff-assembly-stage ff-luxe-cashier-stage'));
   item.append(ffV12Node('div','🛵 الموصل: '+(order.driver_name||'غير محدد')+' · '+(order.area||'بدون منطقة'),'muted'));
+   item.append(ffV12Node('div','👩‍💼 خدمة العملاء: '+(order.customer_service_name||'غير محدد')+' · 🧾 الكاشير: '+(order.cashier_employee_name||'بانتظار استلام الكاشير'),'ff-luxe-employee-meta'));
   if(order.created_at){const age=Math.max(0,Math.round((Date.now()-Date.parse(order.created_at))/60000));item.append(ffV12Node('div','عمر الطلب: '+age+' دقيقة','ff-assembly-time'));}
   const lines=Array.isArray(order.items)?order.items.map(x=>String(x.qty??0)+' × '+String(x.name??'صنف')).join('\n'):'الأصناف غير متاحة';
   item.append(ffV12Node('div',lines||'بدون أصناف','ff-assembly-items'));
@@ -935,6 +999,13 @@ const amount=x=>Number(x||0).toLocaleString('ar-YE');
 const time=x=>x?new Date(x).toLocaleString('ar-YE',{timeZone:'Asia/Aden',hour:'2-digit',minute:'2-digit',year:'numeric',month:'2-digit',day:'2-digit'}):'—';
 const phaseNames={assigned:'بانتظار الاستلام',on_way:'في الطريق للعميل',arrived:'وصل إلى العميل',delivered:'تم التسليم'};
 const cashierNames={waiting:'بانتظار الكاشير',printed:'تم قطع الفاتورة',preparing:'جاري التحضير',ready:'جاهز للاستلام',handed_over:'تم تسليمه للموصل'};
+function ffLuxeOrderStaffMeta(order){
+ const service=String(order?.customer_service_name||'غير محدد');
+ const cashier=String(order?.cashier_employee_name||'بانتظار استلام الكاشير');
+ return '<div class="ff-luxe-employee-meta">'+
+ '<span>👩‍💼 <b>خدمة العملاء:</b> '+esc(service)+'</span>'+
+ '<span>🧾 <b>الكاشير:</b> '+esc(cashier)+'</span></div>';
+}
 const presenceNames={ready:'حاضر وجاهز',busy:'مشغول',paused:'متوقف مؤقتًا',offline:'متوقف'};
 let selfPermissions=null,selfPermissionsFetchedAt=0,selfPermissionsNextTry=0;
 function canAction(key){return data?.role==='manager' || selfPermissions?.[key]===true}
@@ -1003,14 +1074,14 @@ function ff27DriverCall(o){
 function drawDriver(){const offers=data.offers||[],tasks=(data.orders||[]).filter(o=>o.phase&&o.phase!=='delivered'&&o.status!=='cancelled');$('offersCount').textContent=offers.length;
  let status=data.my_presence||'offline';if(status!=='offline'&&status!=='paused')status=tasks.length?'busy':'ready';$('myPresence').textContent=presenceNames[status];$('myPresence').className='tag '+status;
  $('driverOffers').innerHTML=offers.length?offers.map(o=>`<div class="offer" data-ff-ring-offer="${esc(o.id)}"><div class="item-top"><strong>طلب رقم ${esc(o.order_number)}</strong><span class="pill">متبقي <span data-exp="${esc(o.expires_at)}">600</span> ثانية</span></div><p>📍 ${esc(o.area)} — ${esc(branchName(o.branch_id))}</p><div class="actions"><button class="good" data-accept="${esc(o.id)}">✅ قبول الطلب</button>${rejectPermissionReady&&rejectAllowed(o.order_id)?`<button class="outline" data-reject="${esc(o.id)}">رفض وتحويل للتالي</button>`:`<button class="outline" data-check-reject="${esc(o.id)}">${rejectPermissionReady?'🔒 الرفض غير مسموح — تحقق من الإذن':'⏳ تحقق من صلاحية الرفض'}</button>`}</div></div>`).join(''):'<div class="empty">لا يوجد عرض جديد الآن.</div>';
- $('driverTasks').innerHTML=tasks.length?tasks.map(o=>`<div class="item"><div class="item-top"><strong>طلب #${esc(o.number)}</strong><span class="tag busy">${esc(phaseNames[o.phase]||o.phase)}</span></div>${ffLuxeAssignmentPanel(o)}<p>📍 ${esc(o.full_address||o.area)} | 📞 ${ff27DriverCall(o)} | ${esc(o.customer_name||"")}</p><div class="note">${itemLines(o)}</div>${totalPanel(o)}<p class="muted">التوصيل ضمن أصل الطلب: ${amount(o.delivery_fee)} ريال</p>${additionsPanel(o,"driver")}${additionAlert(o)}<p class="muted">${esc(cashierNames[o.cashier_stage]||'')}</p>${o.notes?`<div class="note">📝 ${esc(o.notes)}</div>`:''}<div class="actions">${o.phase==='assigned'&&o.cashier_stage==='handed_over'&&!additionSum(o,'pending')?`<button class="primary" data-progress="${esc(o.id)}" data-phase="on_way">🛵 استلمت الطلب وأنا في الطريق</button>`:o.phase==='assigned'?'<span class="chip">بانتظار تسليم الكاشير</span>':''}${o.phase==='on_way'?`<button class="primary" data-progress="${esc(o.id)}" data-phase="arrived">📍 وصلت لموقع العميل</button>`:''}${['on_way','arrived'].includes(o.phase)?`<button class="good" data-progress="${esc(o.id)}" data-phase="delivered">✅ تم تسليم الطلب</button>`:''}</div></div>`).join(''):'<div class="empty">ليس لديك طلبات قيد التوصيل.</div>';
+ $('driverTasks').innerHTML=tasks.length?tasks.map(o=>`<div class="item"><div class="item-top"><strong>طلب #${esc(o.number)}</strong><span class="tag busy">${esc(phaseNames[o.phase]||o.phase)}</span></div>${ffLuxeAssignmentPanel(o)}${ffLuxeOrderStaffMeta(o)}<p>📍 ${esc(o.full_address||o.area)} | 📞 ${ff27DriverCall(o)} | ${esc(o.customer_name||"")}</p><div class="note">${itemLines(o)}</div>${totalPanel(o)}<p class="muted">التوصيل ضمن أصل الطلب: ${amount(o.delivery_fee)} ريال</p>${additionsPanel(o,"driver")}${additionAlert(o)}<p class="ff-luxe-cashier-stage">🧾 حالة الكاشير: ${esc(cashierNames[o.cashier_stage]||'بانتظار استلام الكاشير')}</p>${o.notes?`<div class="note">📝 ${esc(o.notes)}</div>`:''}<div class="actions">${o.phase==='assigned'&&o.cashier_stage==='handed_over'&&!additionSum(o,'pending')?`<button class="primary" data-progress="${esc(o.id)}" data-phase="on_way">🛵 استلمت الطلب وأنا في الطريق</button>`:o.phase==='assigned'?'<span class="chip ff-luxe-cashier-stage">بانتظار تسليم الكاشير</span>':''}${o.phase==='on_way'?`<button class="primary" data-progress="${esc(o.id)}" data-phase="arrived">📍 وصلت لموقع العميل</button>`:''}${['on_way','arrived'].includes(o.phase)?`<button class="good" data-progress="${esc(o.id)}" data-phase="delivered">✅ تم تسليم الطلب</button>`:''}</div></div>`).join(''):'<div class="empty">ليس لديك طلبات قيد التوصيل.</div>';
  if(offers.length){const key=offers.map(x=>x.id).join('/');if(key!==lastOfferKey){lastOfferKey=key;ding();notify('طلب توصيل جديد','يوجد طلب جديد بانتظار قبولك')}}else lastOfferKey='';
  }
 function drawRoster(){let arr=data.drivers||[];$('driversRoster').innerHTML=arr.length?arr.map(d=>`<div class="item"><div class="item-top"><strong>${esc(d.name)}</strong>${statusTag(d.connected?d.state:'offline')}</div><span class="muted">${esc(branchName(d.branch_id))} · ${Number(d.active_count)||0} من 5 طلبات نشطة ${(Number(d.active_count)||0)>=5?'· 🔒 ممتلئ':''} ${!d.connected?'· غير متصل':''}</span></div>`).join(''):'<div class="empty">لم تُضف حسابات الموصلين بعد.</div>'}
 function drawOffers(){const arr=data.offers||[];$('openOffers').innerHTML=arr.length?arr.map(o=>`<div class="item"><div class="item-top"><b>طلب #${esc(o.order_number)}</b><span>${esc(driverName(o.driver_id))}</span></div><p class="muted">${esc(o.area)} — ينتهي العرض ${time(o.expires_at)}</p></div>`).join(''):'<div class="empty">لا توجد عروض بانتظار الرد.</div>'}
-function drawOrders(){if($('additionItemsInput'))additionDraft=$('additionItemsInput').value;let ro=data.role==='supervisor';let q=($('orderSearch')?.value||'').trim().toLowerCase(),branch=$('orderBranchFilter')?.value||'',status=$('orderStatusFilter')?.value||'';let orders=(data.orders||[]).filter(o=>o.status!=='delivered'&&o.status!=='cancelled'&&o.phase!=='delivered').filter(o=>(!q||[o.number,o.phone,o.area,o.driver_name].some(v=>String(v??'').toLowerCase().includes(q)))&&(!branch||o.branch_id===branch)&&(!status||(status==='unassigned'?!o.phase:o.phase===status)));$('staffOrders').innerHTML=orders.length?orders.map(o=>`<div class="item"><div class="item-top"><strong>طلب #${esc(o.number)} — ${esc(o.cashier_desk_name||branchName(o.branch_id))}</strong><span class="tag ${o.phase?'busy':'offline'}">${o.phase?esc(phaseNames[o.phase]||o.phase):'بانتظار الإسناد'}</span></div>${ffLuxeAssignmentPanel(o)}<p class="tiny"><b>${esc(o.customer_name||"عميل")}</b> · ${esc(o.phone)} · ${esc(o.area)} · ${esc(o.channel||"phone")} · ${esc(o.driver_name||driverName(o.driver_id))}</p><p class="tiny">📍 ${esc(o.full_address||o.area)}</p><div class="note">${itemLines(o)}</div>${totalPanel(o)}${additionsPanel(o,data.role)}${additionForm(o)}${o.notes?`<p class="muted">ملاحظات: ${esc(o.notes)}</p>`:''}<div class="actions">${!ro&&canAction('assign_driver')&&!o.phase?`<button class="primary" data-auto="${esc(o.id)}">إسناد تلقائي</button><button class="outline" data-manual="${esc(o.id)}">إسناد يدوي</button>`:''}${o.phase?`<span class="chip">الكاشير: ${esc(cashierNames[o.cashier_stage]||'')}</span>`:''}${addButton(o)}${o.phase==='assigned'&&o.cashier_stage!=='handed_over'&&canAction('edit_order')?`<button class="outline" data-ff50-change="${esc(o.id)}">📝 طلب تعديل أصناف</button>`:''}${o.phase==='assigned'&&o.cashier_stage==='waiting'&&canAction('assign_driver')?`<button class="outline" data-ff52-reassign="${esc(o.id)}">🔄 تغيير الموصل قبل الفاتورة</button>`:''}${o.phase==='assigned'&&o.cashier_stage&&o.cashier_stage!=='waiting'&&canAction('assign_driver')?`<button class="outline" data-ff49-transfer="${esc(o.id)}">🔄 طلب نقل موصل بعد القطع</button>`:''}${rejectControl(o)}${!ro&&canAction('cancel_order')?`<button class="outline" data-cancel-order="${esc(o.id)}">🚫 إلغاء الطلب</button>`:''}</div></div>`).join(''):'<div class="empty">لا توجد طلبات قيد المعالجة.</div>'}
+function drawOrders(){if($('additionItemsInput'))additionDraft=$('additionItemsInput').value;let ro=data.role==='supervisor';let q=($('orderSearch')?.value||'').trim().toLowerCase(),branch=$('orderBranchFilter')?.value||'',status=$('orderStatusFilter')?.value||'';let orders=(data.orders||[]).filter(o=>o.status!=='delivered'&&o.status!=='cancelled'&&o.phase!=='delivered').filter(o=>(!q||[o.number,o.phone,o.area,o.driver_name].some(v=>String(v??'').toLowerCase().includes(q)))&&(!branch||o.branch_id===branch)&&(!status||(status==='unassigned'?!o.phase:o.phase===status)));$('staffOrders').innerHTML=orders.length?orders.map(o=>`<div class="item"><div class="item-top"><strong>طلب #${esc(o.number)} — ${esc(o.cashier_desk_name||branchName(o.branch_id))}</strong><span class="tag ${o.phase?'busy':'offline'}">${o.phase?esc(phaseNames[o.phase]||o.phase):'بانتظار الإسناد'}</span></div>${ffLuxeAssignmentPanel(o)}${ffLuxeOrderStaffMeta(o)}<p class="tiny"><b>${esc(o.customer_name||"عميل")}</b> · ${esc(o.phone)} · ${esc(o.area)} · ${esc(o.channel||"phone")} · ${esc(o.driver_name||driverName(o.driver_id))}</p><p class="tiny">📍 ${esc(o.full_address||o.area)}</p><div class="note">${itemLines(o)}</div>${totalPanel(o)}${additionsPanel(o,data.role)}${additionForm(o)}${o.notes?`<p class="muted">ملاحظات: ${esc(o.notes)}</p>`:''}<div class="actions">${!ro&&canAction('assign_driver')&&!o.phase?`<button class="primary" data-auto="${esc(o.id)}">إسناد تلقائي</button><button class="outline" data-manual="${esc(o.id)}">إسناد يدوي</button>`:''}${o.phase?`<span class="chip ff-luxe-cashier-stage">🧾 حالة الكاشير: ${esc(cashierNames[o.cashier_stage]||'بانتظار الكاشير')}</span>`:''}${addButton(o)}${o.phase==='assigned'&&o.cashier_stage!=='handed_over'&&canAction('edit_order')?`<button class="outline" data-ff50-change="${esc(o.id)}">📝 طلب تعديل أصناف</button>`:''}${o.phase==='assigned'&&o.cashier_stage==='waiting'&&canAction('assign_driver')?`<button class="outline" data-ff52-reassign="${esc(o.id)}">🔄 تغيير الموصل قبل الفاتورة</button>`:''}${o.phase==='assigned'&&o.cashier_stage&&o.cashier_stage!=='waiting'&&canAction('assign_driver')?`<button class="outline" data-ff49-transfer="${esc(o.id)}">🔄 طلب نقل موصل بعد القطع</button>`:''}${rejectControl(o)}${!ro&&canAction('cancel_order')&&o.cashier_stage!=='handed_over'&&!['on_way','arrived','delivered'].includes(o.phase)&&!o.picked_up_at?`<button class="outline" data-cancel-order="${esc(o.id)}">🚫 إلغاء الطلب</button>`:''}</div></div>`).join(''):'<div class="empty">لا توجد طلبات قيد المعالجة.</div>'}
 function drawCashier(){const arr=(data.orders||[]).filter(o=>o.phase&&o.phase!=='delivered'&&!['cancelled','canceled','delivered','closed'].includes(String(o.status||'').toLowerCase())&&(o.cashier_stage!=='handed_over'||additionsFor(o).some(a=>a.status==='pending'||a.late_state==='invoiced')));const steps=['waiting','printed','preparing','ready','handed_over'];const next={waiting:'printed',printed:'preparing',preparing:'ready',ready:'handed_over'};const labels={printed:'تم قطع الطلب في برنامج الكاشير',preparing:'بدء التحضير',ready:'الطلب جاهز',handed_over:'تم تسليم الطلب للموصل'};
- $('cashierOrders').innerHTML=arr.length?arr.map(o=>`<div class="item" data-ff-ring-order="${esc(o.id)}"><div class="item-top"><strong>طلب #${esc(o.number)}</strong><span class="tag busy ff-cashier-status">${esc(cashierNames[o.cashier_stage]||'')}</span></div>${ffLuxeAssignmentPanel(o)}<p>${esc(o.customer_name||"عميل")} · ${esc(o.full_address||o.area)} · ${esc(o.phone)}</p>${o.external_invoice_ref?`<p class="tiny">مرجع فاتورة MicroPOS: <b>${esc(o.external_invoice_ref)}</b></p>`:(o.cashier_stage!=='waiting'?'<p class="tiny">تم القطع · رقم الفاتورة غير موثق</p>':'')}<div class="note">${itemLines(o)}</div>${o.notes?`<p class="muted">📝 ${esc(o.notes)}</p>`:''}${totalPanel(o)}${additionsPanel(o,"cashier")}<div class="actions">${o.cashier_stage==='waiting'?(o.cashier_received_at?`<button class="primary" data-ff49-invoice="${esc(o.id)}">🧾 اعتماد القطع (المرجع اختياري)</button>`:`<button class="primary" data-ff49-receive="${esc(o.id)}">📥 استلمت الطلب</button>`):next[o.cashier_stage]?`<button class="primary" data-cashier="${esc(o.id)}" data-stage="${esc(next[o.cashier_stage])}">${esc(labels[next[o.cashier_stage]])}</button>`:""}</div></div>`).join(''):'<div class="empty">لا توجد طلبات مسندة لموصلين في هذا الفرع.</div>'}
+ $('cashierOrders').innerHTML=arr.length?arr.map(o=>`<div class="item" data-ff-ring-order="${esc(o.id)}"><div class="item-top"><strong>طلب #${esc(o.number)}</strong><span class="tag busy ff-cashier-status">${esc(cashierNames[o.cashier_stage]||'')}</span></div>${ffLuxeAssignmentPanel(o)}${ffLuxeOrderStaffMeta(o)}<p>${esc(o.customer_name||"عميل")} · ${esc(o.full_address||o.area)} · ${esc(o.phone)}</p>${o.external_invoice_ref?`<p class="tiny">مرجع فاتورة MicroPOS: <b>${esc(o.external_invoice_ref)}</b></p>`:(o.cashier_stage!=='waiting'?'<p class="tiny">تم القطع · رقم الفاتورة غير موثق</p>':'')}<div class="note">${itemLines(o)}</div>${o.notes?`<p class="muted">📝 ${esc(o.notes)}</p>`:''}${totalPanel(o)}${additionsPanel(o,"cashier")}<div class="actions">${o.cashier_stage==='waiting'?(o.cashier_received_at?`<button class="primary" data-ff49-invoice="${esc(o.id)}">🧾 اعتماد القطع (المرجع اختياري)</button>`:`<button class="primary" data-ff49-receive="${esc(o.id)}">📥 استلمت الطلب</button>`):next[o.cashier_stage]?`<button class="primary" data-cashier="${esc(o.id)}" data-stage="${esc(next[o.cashier_stage])}">${esc(labels[next[o.cashier_stage]])}</button>`:""}</div></div>`).join(''):'<div class="empty">لا توجد طلبات مسندة لموصلين في هذا الفرع.</div>'}
 function fillBranchSelects(){for(const id of ['newBranch','addBranch']){let el=$(id);let old=el.value;el.innerHTML=(data.branches||[]).map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');if(data.branches.some(b=>b.id===old))el.value=old}let f=$('orderBranchFilter');if(f){let old=f.value;f.innerHTML='<option value="">كل الفروع</option>'+(data.branches||[]).map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');f.value=(data.branches||[]).some(b=>b.id===old)?old:''}}
 function draw(){if(!data)return;if(data.role!=='manager'&&$('ff62DataCenter')?.open)$('ff62DataCenter').close();if(typeof ffRenderAssemblyLauncher==='function')ffRenderAssemblyLauncher();$('createBtn').disabled=!canAction('create_order');$('createBtn').title=canAction('create_order')?'':'إنشاء الطلبات ممنوع وفق صلاحيات حسابك';$('auditCard').classList.toggle('hidden',!canAction('view_reports')||!['manager','customer_service'].includes(data.role));$('identity').textContent=(user?.email||user?.phone||'حساب الموظف')+' — '+({manager:'المدير العام',driver:'موصل',cashier:'الكاشير',customer_service:'خدمة العملاء المركزية',supervisor:'مشرف'}[data.role]||data.role);$('driverView').classList.toggle('hidden',data.role!=='driver');$('staffView').classList.toggle('hidden',!['manager','customer_service','supervisor'].includes(data.role));$('cashierView').classList.toggle('hidden',data.role!=='cashier');$('managerLinks').hidden=data.role!=='manager';$('staffAdminCard').hidden=data.role!=='manager';$('serviceOnly').classList.toggle('hidden',!['manager','customer_service'].includes(data.role));$('metrics').classList.remove('hidden');drawMetrics();if(data.role==='driver')drawDriver();if(['manager','customer_service','supervisor'].includes(data.role)){fillBranchSelects();drawRoster();drawOffers();drawOrders()}if(data.role==='cashier')drawCashier()}
 let ffSnapshotRetryAfter=0,ffSnapshotConsecutiveFailures=0;
