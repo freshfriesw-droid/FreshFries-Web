@@ -498,6 +498,8 @@ body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{
 #cashierOrders>.item,
 #driverTasks>.item,
 #driverOffers>.offer,
+#openOffers>.item,
+#ff40AlertsList>article.ff40-alert,
 #ffV12AssemblyOrders>.ff-assembly-order,
 #ff51ArchiveList>details,
 #fflFinishedList>.ffl-finished-card,
@@ -3740,7 +3742,7 @@ function render(){if(!panel.classList.contains('open'))return;
  const active=rows.filter(o=>!closed(o));const pending=active.filter(o=>state(o)==='unassigned').length;const inOffers=active.filter(o=>state(o)==='offer').length;const toPrepare=active.filter(o=>state(o)==='cashier'||state(o)==='handoff').length;const onRoute=active.filter(o=>state(o)==='on_way').length;const issues=active.filter(hasIssues).length;
  $('ff60-metrics').innerHTML=[['طلبات جارية',active.length],['دون موصل',pending],['عروض جديدة',inOffers],['الكاشير',toPrepare],['في الطريق',onRoute],['تحتاج معالجة',issues]].map(([n,v])=>`<div class="ff60-metric"><span>${esc(n)}</span><b>${v}</b></div>`).join('');
  const list=visible();$('ff60-list').innerHTML=list.map(o=>{const block=[];if(o.pending_additions)block.push(`${o.pending_additions} إضافة بانتظار الفاتورة`);if(o.pending_transfer)block.push('نقل موصل معلق لدى الكاشير');if(o.pending_late_pickup)block.push('إضافة متأخرة لم تُستلم');const overdue=!closed(o)&&age(o)>=30;
- return `<article class="ff60-order ${block.length||overdue?'urgent':''}"><div class="ff60-order-head"><h3>طلب #${esc(o.order_number||'—')}</h3><span class="ff60-tag ${block.length||overdue?'attention':''}">${esc(stageLabel(o))}</span></div><div class="ff60-meta">${esc(branchLabel(o.branch_id))} · ${esc(o.area||'—')}<br>الموصل: ${esc(o.driver_name||driverLabel(o.driver_id))} · العمر: ${age(o)} دقيقة${overdue?' · متأخر':''}${o.offer_id&&state(o)==='offer'?`<br>مهلة القبول: <b class="ff60-live-countdown" data-expiry="${esc(o.offer_expires_at||'')}">${esc(timer(o))}</b>`:''}${o.cashier_received?' · استلم الكاشير':''}</div>${block.length?`<div class="ff60-issue">${esc(block.join(' • '))}</div>`:''}<div class="ff60-actions">${actions(o)}</div>${form(o)}${historyPanel(o)}</article>`}).join('')||'<div class="ff60-loading">لا توجد طلبات مطابقة وفق صلاحياتك وعوامل التصفية.</div>';
+ return `<article class="ff60-order ${block.length||overdue?'urgent':''}"><div class="ff60-order-head"><h3>طلب #${esc(o.order_number||'—')}</h3><span class="ff60-tag ${block.length||overdue?'attention':''}">${esc(stageLabel(o))}</span></div><div class="ff60-meta">${esc(branchLabel(o.branch_id))} · ${esc(o.area||'—')}<br>الموصل: ${esc(o.driver_name||driverLabel(o.driver_id))} · العمر: ${age(o)} دقيقة${overdue?' · متأخر':''}${o.offer_id&&state(o)==='offer'?`<br>مهلة القبول: <b class="ff60-live-countdown" data-expiry="${esc(o.offer_expires_at||'')}">${esc(timer(o))}</b>`:''}${o.cashier_received?' · استلم الكاشير':''}</div>${typeof ffLuxeOrderStaffMeta==='function'?ffLuxeOrderStaffMeta((data?.orders||[]).find(v=>String(v.id)===String(o.id))||{}):''}${block.length?`<div class="ff60-issue">${esc(block.join(' • '))}</div>`:''}<div class="ff60-actions">${actions(o)}</div>${form(o)}${historyPanel(o)}</article>`}).join('')||'<div class="ff60-loading">لا توجد طلبات مطابقة وفق صلاحياتك وعوامل التصفية.</div>';
  $('ff60-updated').textContent=`${list.length} نتيجة · آخر عرض ${now()} · مجموع البيانات المتاحة ${rows.length}`;
 }
 async function refresh(){if(!canUse()){err('يجب تسجيل الدخول أولًا.');return;}if(loading||busy)return;loading=true;err('');$('ff60-server-status').textContent='جاري الاتصال بقاعدة البيانات...';try{
