@@ -268,22 +268,21 @@
    if(action==='invoice'){
     const invoice=form.elements.namedItem('invoice').value.trim();
     if(!invoice)throw Error('أدخل رقم الفاتورة أولًا');
-    result=await rpc('ff_luxe_cashier_completed_invoice',{p_order:orderId,p_invoice_ref:invoice});
+    result=await rpc('ff_luxe_completed_universal_action',{p_order:orderId,p_action:'invoice',p_payload:{invoice}});
    }else if(action==='rating'){
-    const stars=Number(form.elements.namedItem('rating').value);
-    result=await rpc('ff_luxe_cashier_completed_rating',{
-      p_order:orderId,p_stars:stars,p_note:form.elements.namedItem('note').value.trim()
-    });
+    const payload={note:form.elements.namedItem('note').value.trim()};
+     if(role()==='driver')for(const name of ['cs','cashier','customer','overall'])payload[name]=form.elements.namedItem(name).value;
+     else payload.stars=Number(form.elements.namedItem('rating').value);
+     result=await rpc('ff_luxe_completed_universal_action',{p_order:orderId,p_action:'rating',p_payload:payload});
    }else{
     const title=form.elements.namedItem('subject').value.trim(),description=form.elements.namedItem('description').value.trim();
-    result=await rpc('ff_luxe_cashier_completed_report',{
-      p_order:orderId,p_category:form.elements.namedItem('category').value,
-      p_subject:title,p_description:description,p_priority:form.elements.namedItem('priority').value
-    });
+    result=await rpc('ff_luxe_completed_universal_action',{p_order:orderId,p_action:'report',
+       p_payload:{category:form.elements.namedItem('category').value,
+        subject:title,description,priority:form.elements.namedItem('priority').value}});
    }
    if(!result?.saved&&!result?.case_id)throw Error('لم يؤكد الخادم حفظ الإجراء');
    if(current!==String(user?.id||''))return;
-   const message={invoice:'تم حفظ رقم الفاتورة وتوثيق الاستكمال',rating:'تم إرسال تقييم الكاشير',report:'تم إرسال البلاغ وربطه بالطلب'};
+   const message={invoice:'تم حفظ رقم الفاتورة وتوثيق الاستكمال',rating:'تم إرسال التقييم',report:'تم إرسال البلاغ وربطه بالطلب'};
    toast('✅ '+message[action]);
    openCards.add(orderId);
    await load(true);
