@@ -78,7 +78,7 @@
  const amount=n=>Number(n||0).toLocaleString('ar-YE',{maximumFractionDigits:2});
  const fmt=t=>{if(!t)return '—';const d=new Date(t);return Number.isNaN(d.getTime())?'—':d.toLocaleString('ar-YE',{timeZone:'Asia/Aden',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})};
  const finished=o=>!['cancelled','canceled','closed'].includes(String(o.status||'')) ;
- const seen=new Map();
+ const seen=new Map();let permittedBranches=[];
  const rangeFrom=$('fflFinishedFrom'),rangeTo=$('fflFinishedTo'),branch=$('fflFinishedBranch');
  const d=yemenDay();rangeFrom.value=rangeTo.value=d;rangeFrom.max=rangeTo.max=d;
  let viewer='',loaded=[],offset=0,hasMore=true,loading=false,open=false,lastUpdated=0,generation=0;
@@ -86,7 +86,7 @@
  /* all staff roles use eligible() above */
  function clear(){
   generation++;viewer='';loaded=[];offset=0;hasMore=true;loading=false;open=false;lastUpdated=0;openCards.clear();
-  activeAction=null;seen.clear();list.replaceChildren();status.textContent='';
+  activeAction=null;seen.clear();permittedBranches=[];list.replaceChildren();status.textContent='';
   search.value='';panel.hidden=true;button.setAttribute('aria-expanded','false');box.hidden=true;branch.replaceChildren(new Option('كل الفروع',''));
  }
  function maintainViewer(){
@@ -112,7 +112,8 @@
   const invoices=summary.invoice?'🧾 فاتورة: '+esc(summary.invoice):'⚠️ رقم فاتورة غير مسجل';
   const rating=summary.stars?'⭐ التقييم من حسابك: '+summary.stars+'/5':'⚠️ تقييمك ناقص';
   const top=document.createElement('summary');
-  const meta=esc(o.customer_name||'عميل')+' · '+esc(o.driver_name||'—')+' · '+esc(o.area||'—');
+  const branchName=permittedBranches.find(b=>b.id===o.branch_id)?.name||'';
+  const meta=(branchName?'📍 '+esc(branchName)+' · ':'')+esc(o.customer_name||'عميل')+' · '+esc(o.driver_name||'—')+' · '+esc(o.area||'—');
   top.innerHTML='<div class="ffl-finished-main"><b>طلب #'+esc(o.number)+'</b><span class="ffl-finished-status'+(summary.cancellation?' cancelled':'')+'">'+summary.label+'</span></div>'+
     '<span class="muted">'+meta+' · '+esc(fmt(o.created_at))+'</span>'+
     '<div class="ffl-finished-tags"><span class="'+(!summary.invoice?'missing':'')+'">'+invoices+'</span>'+
@@ -210,6 +211,7 @@
     }else $('fflFinishedBranchLabel').hidden=true;
    if(requestGeneration!==generation||!eligible()||String(user.id)!==current||!open)return;
    if(!result||!Array.isArray(result.items))throw Error('استجابة قائمة الطلبات المنتهية غير مكتملة');
+   permittedBranches=Array.isArray(result.branches)?result.branches:[];
    loaded=reset?result.items:[...loaded,...result.items.filter(o=>!loaded.some(x=>x.id===o.id))];
    offset=(reset?0:offset)+result.items.length;
    hasMore=result.has_more===true;
