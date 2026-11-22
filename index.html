@@ -2755,7 +2755,7 @@ $('ff51CustomerNoteSave').onclick=async()=>{
 };
 function ff51DefaultArchiveDates(){const t=new Date();const today=new Date(t.toLocaleString('en-US',{timeZone:'Asia/Aden'}));
  const dateString=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
- $('ff51ArchiveTo').value=dateString(today);$('ff51ArchiveFrom').value=dateString(today);
+ const period=window.ffLuxeHistoryPeriod;$('ff51ArchiveTo').value=period?.to||dateString(today);$('ff51ArchiveFrom').value=period?.from||dateString(today);
 }
 async function ff51LoadArchive(reset=false){
  if(reset)ff51ArchiveOffset=0;
@@ -4778,4 +4778,4 @@ run.onclick=async()=>{
 };
 center.append(box);
 })();
-</script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js" defer></script></body></html>
+</script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script></body></html>
