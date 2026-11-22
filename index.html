@@ -3045,6 +3045,15 @@ function sound(kind='soft',force=false){
  }catch(e){ffLuxeAudioStatus('⚠️ تعذر تشغيل الصوت');return false}
 }
 window.ffLuxePlayAlert=function(kind){return sound((kind==='late'?prefs.delaySound:prefs.sound)||'soft')};
+window.ffLuxeDeviceNotify=function(title,body,tag){
+ if(!('Notification' in window)||Notification.permission!=='granted')return;
+ const options={body:String(body||''),tag:String(tag||'ff-luxe-notice'),
+  icon:'./assets/ff-icon-192.png',badge:'./assets/ff-icon-192.png',renotify:true};
+ if('serviceWorker' in navigator){
+  void navigator.serviceWorker.ready.then(reg=>reg.showNotification(String(title),options))
+   .catch(err=>console.warn('تعذر إظهار إشعار الجهاز',err?.message||err));
+ }else try{new Notification(String(title),options)}catch{}
+};
 $x('ff-luxe-audio-unlock')?.addEventListener('click',()=>void ffLuxeUnlockAudio(true));
 for(const evt of ['pointerdown','keydown','touchstart']){
  doc.addEventListener(evt,()=>{
@@ -3066,7 +3075,7 @@ const origDing=typeof ding==='function'?ding:null,origNotify=typeof notify==='fu
 // The original app calls ding() for order offers, additions and staff messages; honor per-user sound settings.
 if(origDing)ding=function(){sound(prefs.sound)};
 toast=function(s){showToast(String(s??''),null,true)};/* ffb: one unified toast */
-if(origNotify)notify=function(title,body){showToast(`${title} — ${body}`);if(prefs.visual&&'Notification'in window&&Notification.permission==='granted')try{new Notification(title,{body,tag:'ff-luxe-notice'})}catch(e){}};
+if(origNotify)notify=function(title,body){showToast(`${title} — ${body}`);if(prefs.visual&&typeof window.ffLuxeDeviceNotify==='function')window.ffLuxeDeviceNotify(title,body,'ff-luxe-notice')};
 let navSig='',activeKey='home';function markActive(){doc.querySelectorAll('#ffx-nav .ffx-side-link[data-key],#ffx-mobile-nav button[data-key]').forEach(b=>b.classList.toggle('active',b.dataset.key===activeKey))}
 function setSidebarNav(){const sig=[userLogged()?data.role:'',groups.map(g=>g.items.filter(i=>roleAllowed(i[2])).map(i=>i[2]).join(',')).join(';'),$x('ffx-alert-num').textContent].join('|');if(sig===navSig)return;navSig=sig;const root=$x('ffx-nav');root.innerHTML='';groups.forEach(group=>{const shown=group.items.filter(item=>roleAllowed(item[2]));if(!shown.length)return;const title=S('div',{class:'ffx-section-label'});title.textContent=group.title;root.append(title);for(const [label,ic,key]of shown){const b=S('button',{type:'button',class:'ffx-side-link'+(key==='home'?' active':'')});b.innerHTML=`${icon(ic)}<span>${h(label)}</span><span class="ffx-badge" data-ffx-badge="${h(key)}" style="display:none"></span>`;b.dataset.key=key;b.addEventListener('click',()=>navigate(key));root.append(b)}});const footer=S('div',{class:'ffx-section-label'});footer.textContent='التفضيلات والحساب';root.append(footer);[['تخصيص المظهر والأصوات','settings','settings'],['تحديث البيانات','refresh','refresh'],['تسجيل الخروج','logout','logout']].forEach(([txt,ic,key])=>{if(key==='logout'&&!userLogged())return;const b=S('button',{class:'ffx-side-link',type:'button'});b.innerHTML=`${icon(ic)}<span>${txt}</span>`;b.onclick=()=>navigate(key);root.append(b)});const count=$x('ffx-alert-num').textContent;const bb=root.querySelector('[data-ffx-badge="late"]');if(bb&&count&&Number(count)>0){bb.textContent=count;bb.style.display='inline-block'}markActive()
 }
@@ -4341,7 +4350,7 @@ share.onclick=async()=>{
  const keyOf=o=>String(o?.id??o?.order_id??o?.number??o?.order_number??'');
  function pref(){try{return {...{audio:true,visual:true,delay:true,volume:100,sound:'soft',delaySound:'soft'},...JSON.parse(localStorage.getItem('freshfries_luxe_prefs_'+user.id)||'{}')}}catch{return {audio:true,visual:true,delay:true,volume:100,sound:'soft',delaySound:'soft'}}}
   function tone(kind){if(typeof window.ffLuxePlayAlert==='function')window.ffLuxePlayAlert(kind);}
- function emit(kind,k,title,body){if(!user?.id)return;const now=Date.now(),id=kind+':'+k;if(sent.has(id)&&now-sent.get(id)<180000)return;sent.set(id,now);if(sent.size>500)for(const [x,t] of sent)if(now-t>3600000)sent.delete(x);tone(kind);const p=pref();if(p.visual&&typeof toast==='function'&&!document.hidden)toast('🔔 '+title+' — '+body);if('Notification' in window&&Notification.permission==='granted')try{new Notification(title,{body,tag:'ff65-'+id})}catch{}}
+ function emit(kind,k,title,body){if(!user?.id)return;const now=Date.now(),id=kind+':'+k;if(sent.has(id)&&now-sent.get(id)<180000)return;sent.set(id,now);if(sent.size>500)for(const [x,t] of sent)if(now-t>3600000)sent.delete(x);tone(kind);const p=pref();if(p.visual&&typeof toast==='function'&&!document.hidden)toast('🔔 '+title+' — '+body);if(typeof window.ffLuxeDeviceNotify==='function')window.ffLuxeDeviceNotify(title,body,'ff65-'+id)}
  function snapshot(){if(!user?.id||!data?.role)return;const actor=user.id+':'+data.role;if(actor!==identity){identity=actor;bootstrapped=false;oldOrders=new Map();oldOffers=new Set();sent.clear()}const role=data.role,orders=new Map((data.orders||[]).map(o=>[keyOf(o),o]).filter(x=>x[0])),offers=new Set((data.offers||[]).map(o=>keyOf(o)).filter(Boolean));if(bootstrapped){if(role==='driver'){for(const o of data.offers||[])if(!oldOffers.has(keyOf(o)))emit('new',keyOf(o),'طلب توصيل جديد','طلب رقم '+(o.order_number||o.number||'جديد')+' بانتظار قبولك');for(const [id,o] of orders){const prev=oldOrders.get(id);if(!prev&&!done.has(o.phase))emit('new',id,'طلب مسند لك','طلب رقم '+(o.number||o.order_number||'جديد'));if(prev&&prev.cashier_stage!=='ready'&&o.cashier_stage==='ready')emit('ready',id,'الطلب جاهز للاستلام','طلب رقم '+(o.number||o.order_number||''));}}if(role==='cashier')for(const [id,o] of orders)if(!oldOrders.has(id)&&!done.has(o.phase))emit('new',id,'طلب جديد للكاشير','طلب رقم '+(o.number||o.order_number||''));}bootstrapped=true;oldOrders=orders;oldOffers=offers;}
  window.addEventListener('ff-assembly-snapshot-success',snapshot);
  document.addEventListener('pointerdown',()=>{if(!user?.id)return;try{const A=window.AudioContext||window.webkitAudioContext;if(A){const ctx=new A();void ctx.resume().then(()=>ctx.close())}}catch{}},{once:true,passive:true});
