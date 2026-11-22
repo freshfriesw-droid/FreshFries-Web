@@ -401,9 +401,9 @@ body.ffx-menu-open #ffx-sidebar{transform:translateX(0)!important}
 body.ffx-menu-open .ffx-screen-dimmer{display:block!important}
 #ffx-nav-toggle{display:inline-flex!important}
 </style><style id="ff-luxe-cashier-20261122">
-body:has(#cashierView:not(.hidden)) main{max-width:1480px}
+body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{max-width:1480px}
 #cashierView>.card{width:100%;padding:clamp(14px,2.8vw,28px)}
-#cashierOrders>.item{border:4px solid #2563eb!important;border-radius:20px!important;padding:clamp(16px,2.7vw,28px)!important;margin:0 0 20px!important;background:var(--ffb-surface,#fff);box-shadow:0 7px 24px #1752b02b!important}
+#cashierOrders>.item,#staffOrders>.item,#driverTasks>.item{border:4px solid #2563eb!important;border-radius:20px!important;padding:clamp(16px,2.7vw,28px)!important;margin:0 0 20px!important;background:var(--ffb-surface,#fff);box-shadow:0 7px 24px #1752b02b!important}
 #cashierOrders .ff-cashier-status{font-size:clamp(19px,3.5vw,25px)!important;font-weight:950!important;color:#b9081d!important;background:#fff0f2!important;border:2px solid #d31329!important;border-radius:12px!important;padding:10px 14px!important;line-height:1.6!important;white-space:normal!important}
 #cashierOrders .item-top strong{font-size:clamp(19px,3vw,24px);font-weight:900}
 #cashierOrders>.ff-luxe-cancelled{background:var(--ffb-surface,#fff)!important;border:4px solid #2563eb!important;box-shadow:0 0 0 3px #f0445544,0 7px 24px #1752b02b!important;opacity:1!important}
