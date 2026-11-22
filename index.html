@@ -2847,8 +2847,8 @@ doc.body.append(menu);
 const prefPanel=S('section',{id:'ffx-preferences','aria-label':'تخصيص الواجهة'});
 prefPanel.innerHTML=`<div class="ffx-pref-head"><div><div class="ffx-eyebrow">PERSONALIZE YOUR SPACE</div><b style="font-size:16px">الذوق والتفضيلات</b></div><button id="ffx-pref-close" class="ffx-top-icon" aria-label="إغلاق الإعدادات">${icon('close')}</button></div><div class="ffx-pref-scroll">
 <div class="ffx-pref-group"><h3>المظهر والتصميم</h3><div class="ffx-theme-grid" id="ffx-themes"></div><label>حجم الواجهة</label><select id="ffx-density"><option value="normal">مريح ومتوازن</option><option value="compact">مضغوط للمعلومات الكثيرة</option></select><label>الوضع الليلي تلقائيًا</label><select id="ffx-auto"><option value="manual">تبديل يدوي حسب الثيم</option><option value="auto">مطابقة إعداد الجهاز</option></select></div>
-<div class="ffx-pref-group"><h3>الأصوات والإشعارات الذكية</h3><div class="ffx-switchrow"><span>تشغيل التنبيهات الصوتية</span><input type="checkbox" id="ffx-audio"></div><div class="ffx-switchrow"><span>عرض تنبيهات مرئية</span><input type="checkbox" id="ffx-visual"></div><div class="ffx-switchrow"><span>تنبيه تجاوز مهلة التوصيل</span><input type="checkbox" id="ffx-delay"></div><label>صوت الطلب الجديد والتنبيه</label><select id="ffx-sound"><option value="soft">نغمة هادئة</option><option value="digital">تنبيه رقمي أنيق</option><option value="classic">جرس كلاسيكي</option><option value="double">جرس مزدوج</option><option value="urgent">تنبيه عاجل</option></select><label>صوت التأخير</label><select id="ffx-delay-sound"><option value="soft">نغمة هادئة</option><option value="digital">تنبيه رقمي أنيق</option><option value="classic">جرس كلاسيكي</option><option value="double">جرس مزدوج</option><option value="urgent">تنبيه عاجل</option></select><label>مستوى الصوت <b id="ffx-volume-label">100%</b></label><input type="range" min="0" max="100" step="5" id="ffx-volume"><label>إعادة تنبيه التأخير (دقائق)</label><select id="ffx-repeat"><option value="0">عند حدوث التأخير فقط</option><option value="3">كل 3 دقائق</option><option value="5">كل 5 دقائق</option><option value="10">كل 10 دقائق</option></select><div class="ffx-preview-btns"><button class="primary" id="ffx-play-sound">${icon('volume','sm')} تجربة النغمة</button><button class="ffx-smallbtn" id="ffx-play-delay">تجربة تنبيه التأخير</button><button class="ffx-smallbtn" id="ffx-push-permission">إذن إشعارات الجهاز</button></div><p class="ffx-muted" style="margin-top:12px">يعمل الصوت أثناء فتح الصفحة وبعد السماح به من المتصفح. الإشعارات خارج التطبيق تتطلب إعداد خدمة دفع مستقلة.</p>
- <div id="ff-luxe-audio-health" class="ff-luxe-audio-health"><b id="ff-luxe-audio-status" role="status" aria-live="polite">🔔 فحص صوت الجهاز</b><button type="button" id="ff-luxe-audio-unlock" class="primary">🔊 تفعيل وتشغيل النغمة التجريبية</button><p>يحاول النظام استعادة الصوت تلقائيًا عند العودة. تشغيل نغمة مخصصة عندما يوقف أندرويد المتصفح يحتاج ربط إشعارات خلفية أو تطبيقًا أصليًا.</p></div><div id="ff66-tone-library"><h4>🎼 إدارة النغمات — مكتبة المطعم</h4><p class="ff66-help">اختيار النغمات وإضافتها للمدير فقط. تُطبَّق النغمتان المعتمدتان مركزيًا على جميع الموظفين بعد تسجيل الدخول.</p>
+<div class="ffx-pref-group"><h3>الأصوات والإشعارات الذكية</h3><div class="ffx-switchrow"><span>تشغيل التنبيهات الصوتية</span><input type="checkbox" id="ffx-audio"></div><div class="ffx-switchrow"><span>عرض تنبيهات مرئية</span><input type="checkbox" id="ffx-visual"></div><div class="ffx-switchrow"><span>تنبيه تجاوز مهلة التوصيل</span><input type="checkbox" id="ffx-delay"></div><label>صوت الطلب الجديد والتنبيه</label><select id="ffx-sound"><option value="soft">نغمة هادئة</option><option value="digital">تنبيه رقمي أنيق</option><option value="classic">جرس كلاسيكي</option><option value="double">جرس مزدوج</option><option value="urgent">تنبيه عاجل</option></select><label>صوت التأخير</label><select id="ffx-delay-sound"><option value="soft">نغمة هادئة</option><option value="digital">تنبيه رقمي أنيق</option><option value="classic">جرس كلاسيكي</option><option value="double">جرس مزدوج</option><option value="urgent">تنبيه عاجل</option></select><label>مستوى الصوت <b id="ffx-volume-label">100%</b></label><input type="range" min="0" max="100" step="5" id="ffx-volume"><label>إعادة تنبيه التأخير (دقائق)</label><select id="ffx-repeat"><option value="0">عند حدوث التأخير فقط</option><option value="3">كل 3 دقائق</option><option value="5">كل 5 دقائق</option><option value="10">كل 10 دقائق</option></select><div class="ffx-preview-btns"><button class="primary" id="ffx-play-sound">${icon('volume','sm')} تجربة النغمة</button><button class="ffx-smallbtn" id="ffx-play-delay">تجربة تنبيه التأخير</button><button class="ffx-smallbtn" id="ffx-push-permission">🔔 تفعيل إشعارات الخلفية واختبارها</button></div><p class="ffx-muted" style="margin-top:12px">يعمل الصوت أثناء فتح الصفحة وبعد السماح به من المتصفح. تصل الإشعارات من خادم المطعم حتى عند إغلاق الصفحة بعد التفعيل. النغمة المخصصة تعمل أثناء فتح التطبيق؛ إشعار الخلفية يستخدم صوت الجهاز.</p>
+ <div id="ff-luxe-push-status" class="ff-luxe-audio-health" role="status" aria-live="polite">🔔 اضغط تفعيل إشعارات الخلفية واختبارها مرة واحدة.</div><div id="ff-luxe-audio-health" class="ff-luxe-audio-health"><b id="ff-luxe-audio-status" role="status" aria-live="polite">🔔 فحص صوت الجهاز</b><button type="button" id="ff-luxe-audio-unlock" class="primary">🔊 تفعيل وتشغيل النغمة التجريبية</button><p>يحاول النظام استعادة الصوت تلقائيًا عند العودة. تشغيل نغمة مخصصة عندما يوقف أندرويد المتصفح يحتاج ربط إشعارات خلفية أو تطبيقًا أصليًا.</p></div><div id="ff66-tone-library"><h4>🎼 إدارة النغمات — مكتبة المطعم</h4><p class="ff66-help">اختيار النغمات وإضافتها للمدير فقط. تُطبَّق النغمتان المعتمدتان مركزيًا على جميع الموظفين بعد تسجيل الدخول.</p>
  <div id="ff66-tone-status" role="status" aria-live="polite">سجل الدخول لتحميل النغمات المشتركة.</div>
  <div id="ff66-manager" class="ff66-tone-manage" hidden><label>اسم النغمة<input id="ff66-tone-name" maxlength="65" placeholder="مثلاً: نغمة وصول طلب جديد"></label><label>إضافة ملف نغمة (MP3 / WAV / OGG / M4A، حتى 2MB)<input id="ff66-tone-file" type="file" accept=".mp3,.wav,.ogg,.m4a,audio/mpeg,audio/wav,audio/ogg,audio/mp4"></label><button id="ff66-tone-add" type="button" class="primary">➕ إضافة النغمة للمطعم</button><div id="ff66-tone-list"></div></div>
  <button id="ff66-tone-refresh" type="button" class="ffx-smallbtn" style="width:100%;margin-top:10px">🔄 تحديث مكتبة النغمات</button>
@@ -3661,25 +3661,101 @@ render();
 (()=>{
  const node=(tag,text)=>Object.assign(document.createElement(tag),{textContent:text||''});
  const message=e=>toast(e.message||String(e));
- const btn=document.getElementById('ffx-push-permission'),original=btn?.onclick;
- const registration='serviceWorker' in navigator && window.isSecureContext ? navigator.serviceWorker.register('./sw.js').catch(()=>null):Promise.resolve(null);
- if(btn)btn.onclick=async e=>{
-  if(data?.role!=='driver')return original?.call(btn,e);
-  try{
-   const reg=await registration;if(!reg?.pushManager)throw Error('هذا المتصفح لا يدعم إشعارات الخلفية');
-   if(await Notification.requestPermission()!=='granted')throw Error('يلزم السماح بالإشعارات');
-   const key=await fetch(CONFIG.url+'/functions/v1/ff-push').then(r=>r.json()).then(r=>r.key);
-   if(!key)throw Error('لم يتم تهيئة مفتاح الإشعارات في الخادم');
-   const bytes=Uint8Array.from(atob(key.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
-   const ready=await navigator.serviceWorker.ready;
-   const sub=await ready.pushManager.getSubscription()||await ready.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:bytes});
-   await rpc('ff27_push_device',{p_sub:sub.toJSON(),p_enabled:true});toast('تم ربط جهازك بعروض التوصيل');
-  }catch(err){message(err)}
+ // FF Web Push: opt-in once; auto-resync permitted subscriptions after login.
+ const btn=document.getElementById('ffx-push-permission');
+ const pushRoles=new Set(['manager','supervisor','customer_service','cashier','driver','assembly']);
+ const registration='serviceWorker' in navigator&&window.isSecureContext
+  ?navigator.serviceWorker.register('./sw.js').catch(e=>{console.warn('SW registration',e);return null})
+  :Promise.resolve(null);
+ let ffPushBusy=false,ffPushSyncedAt=0,ffPushSyncedUser='';
+ const ffPushEligible=()=>!!user?.id&&!!data?.role&&pushRoles.has(data.role);
+ const ffPushStatus=t=>{const el=document.getElementById('ff-luxe-push-status');if(el)el.textContent=t};
+ const ffPushBytes=value=>{
+  const raw=String(value||'').replace(/-/g,'+').replace(/_/g,'/');
+  return Uint8Array.from(atob(raw+'='.repeat((4-raw.length%4)%4)),c=>c.charCodeAt(0));
  };
- // Unsubscribe on explicit logout, including when the server is unavailable.
- document.getElementById('logoutBtn').addEventListener('click',async()=>{
-  const reg=await registration;const sub=await reg?.pushManager?.getSubscription();
-  if(sub){try{await sub.unsubscribe()}catch{}}
+ async function ffPushTest(){
+  const {data:session,error}=await client.auth.getSession();
+  if(error||!session?.session?.access_token)throw Error('سجل الدخول مجددًا');
+  const response=await fetch(CONFIG.url.replace(/\/$/,'')+'/functions/v1/ff-push',{
+   method:'POST',headers:{'Content-Type':'application/json','apikey':CONFIG.key,
+     'Authorization':'Bearer '+session.session.access_token},
+   body:JSON.stringify({action:'test'}),cache:'no-store'
+  });
+  const r=await response.json().catch(()=>({}));
+  if(!response.ok||!r?.ok)throw Error('خادم الإشعارات لم يستجب للاختبار');
+  if(!r.sent)throw Error('لم يصل الاختبار لأي جهاز؛ افحص الإذن والاتصال');
+  return r.sent;
+ }
+ async function ffPushSubscribe(interactive=false,test=false){
+  if(!ffPushEligible()){if(interactive)toast('سجل الدخول بحساب موظف لتفعيل إشعارات الخلفية');return false}
+  if(!('Notification' in window)||!('serviceWorker' in navigator)||!window.isSecureContext){
+   ffPushStatus('⚠️ إشعارات الخلفية غير مدعومة. جرّب Chrome أو تطبيق الويب المثبت.');
+   if(interactive)toast('هذا المتصفح لا يدعم إشعارات الخلفية');return false;
+  }
+  let permission=Notification.permission;
+  if(interactive&&permission==='default')permission=await Notification.requestPermission();
+  if(permission!=='granted'){
+   ffPushStatus(permission==='denied'?'🔕 الإشعارات محظورة في إعدادات المتصفح':'🔔 اسمح بالإشعارات مرة واحدة من زر التفعيل');
+   if(interactive)toast('يجب السماح بإشعارات الجهاز');return false;
+  }
+  const viewer=String(user.id);
+  if(ffPushBusy)return false;
+  if(!interactive&&viewer===ffPushSyncedUser&&Date.now()-ffPushSyncedAt<7200000)return true;
+  ffPushBusy=true;
+  try{
+   const reg=await registration;if(!reg?.pushManager)throw Error('PushManager غير مدعوم على الجهاز');
+   const response=await fetch(CONFIG.url.replace(/\/$/,'')+'/functions/v1/ff-push',{cache:'no-store'});
+   const config=await response.json().catch(()=>({}));
+   if(!response.ok||!config?.key)throw Error('فشل جلب مفتاح الإشعارات من الخادم');
+   const key=ffPushBytes(config.key),ready=await navigator.serviceWorker.ready;
+   let sub=await ready.pushManager.getSubscription();
+   if(sub?.options?.applicationServerKey){
+    const old=new Uint8Array(sub.options.applicationServerKey);
+    if(old.length!==key.length||old.some((b,i)=>b!==key[i])){await sub.unsubscribe();sub=null}
+   }
+   if(!sub)sub=await ready.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key});
+   try{await rpc('ff27_push_device',{p_sub:sub.toJSON(),p_enabled:true})}
+   catch(e){
+    if(/SUBSCRIPTION_OWNED_BY_ANOTHER_USER/.test(String(e?.message))){
+     await sub.unsubscribe();sub=await ready.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key});
+     await rpc('ff27_push_device',{p_sub:sub.toJSON(),p_enabled:true});
+    }else throw e;
+   }
+   if(viewer!==String(user?.id||''))return false;
+   ffPushSyncedUser=viewer;ffPushSyncedAt=Date.now();
+   ffPushStatus('✅ إشعارات الخلفية مفعلة لهذا الجهاز — التفعيل مستمر بعد إعادة الدخول');
+   if(interactive){
+    if(test){const n=await ffPushTest();toast('🔔 أُرسل إشعار الاختبار إلى '+n+' جهاز')}
+    else toast('تم ربط جهازك بإشعارات فريش فرايز');
+   }
+   return true;
+  }catch(e){ffPushStatus('⚠️ تعذر تشغيل إشعارات الخلفية: '+String(e?.message||e).slice(0,130));
+   if(interactive)toast('تعذر تفعيل إشعارات الخلفية: '+(e?.message||e));return false;
+  }finally{ffPushBusy=false}
+ }
+ window.ffLuxeSubscribePush=()=>ffPushSubscribe(true,true);
+ if(btn)btn.onclick=()=>void ffPushSubscribe(true,true);
+ document.getElementById('notificationsBtn')?.addEventListener('click',()=>void ffPushSubscribe(true,false));
+ window.addEventListener('ff-assembly-snapshot-success',()=>{
+  if('Notification' in window&&Notification.permission==='granted'&&!document.hidden)void ffPushSubscribe()
+ });
+ document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden&&'Notification' in window&&Notification.permission==='granted')void ffPushSubscribe()
+ });
+ window.addEventListener('focus',()=>{
+  if('Notification' in window&&Notification.permission==='granted')void ffPushSubscribe()
+ });
+ navigator.serviceWorker?.addEventListener('message',e=>{
+  if(e.data?.type==='FF_LUXE_PUSH_SUBSCRIPTION_CHANGED'){ffPushSyncedAt=0;void ffPushSubscribe()}
+  if(e.data?.type==='FF_LUXE_PUSH_RECEIVED'&&!document.hidden&&ffPushEligible())void reload()
+ });
+ // Signing out revokes browser subscription rather than letting the next account receive notifications.
+ document.getElementById('logoutBtn')?.addEventListener('click',async()=>{
+  ffPushSyncedAt=0;ffPushSyncedUser='';
+  const reg=await registration,sub=await reg?.pushManager?.getSubscription();
+  if(sub){try{await rpc('ff27_push_device',{p_sub:sub.toJSON(),p_enabled:false})}catch{}
+          try{await sub.unsubscribe()}catch{}}
  },true);
  const dialog=node('dialog');dialog.dir='rtl';dialog.style.cssText='width:min(94vw,560px);max-height:85vh;border:0;border-radius:16px;padding:20px';
  const close=node('button','إغلاق');close.onclick=()=>dialog.close();const content=node('section');
