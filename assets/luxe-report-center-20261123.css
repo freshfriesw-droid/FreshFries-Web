@@ -1,0 +1,30 @@
+
+/* Fresh Fries LUXE — FF76 unified reports, mobile-first. */
+#ff76Center{--r:#c51b30;direction:rtl;background:var(--ffb-surface,#fff);color:var(--ffb-ink,#222);border:1px solid #ddd;border-radius:18px;padding:clamp(12px,2.2vw,25px);margin:16px 0 30px;box-shadow:0 9px 30px #00000010;scroll-margin-top:90px}
+#ff76Center.ff76-hidden{display:none!important}#ff76Center .r-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:linear-gradient(120deg,#161616,#373737);color:white;padding:18px;border-radius:15px}#ff76Center .r-head h2{margin:0;color:white;font-size:20px}#ff76Center .r-head p{color:#ddd;font-size:12px;margin:5px 0}
+#ff76Center button{padding:10px 12px;border-radius:10px;min-height:42px;font-weight:800;cursor:pointer}#ff76Center button:disabled{opacity:.48;cursor:not-allowed}
+#ff76Center .r-primary{background:#c51b30;color:#fff;border:1px solid #c51b30}#ff76Center .r-plain{background:var(--ffb-soft,#fafafa);border:1px solid #ccc;color:var(--ffb-ink,#222)}
+#ff76Center .r-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}#ff76Center .r-actions button{flex:0 1 auto}
+#ff76Center .r-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin:16px 0}
+#ff76Center label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:800}
+#ff76Center input,#ff76Center textarea,#ff76Center select{width:100%;min-width:0;max-width:100%;padding:10px;border:1px solid #d1d1d1;border-radius:10px;color:var(--ffb-ink,#222);background:var(--ffb-surface,#fff)}
+#ff76Center .r-choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;background:var(--ffb-soft,#f7f7f7);padding:13px;border-radius:10px}
+#ff76Center .r-choices label{display:flex;flex-direction:row;align-items:center;gap:6px}#ff76Center .r-choices input{width:auto}
+#ff76Center .r-muted{font-size:12px;color:var(--ffb-muted,#666);line-height:1.85;margin:10px 0}#ff76Center .r-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+#ff76Center .r-kpi{background:var(--ffb-soft,#f7f7f7);border:1px solid #ddd;border-radius:12px;padding:12px}
+#ff76Center .r-kpi small{font-size:11px}#ff76Center .r-kpi b{display:block;color:var(--ffb-ink,#222);font-size:20px;margin:7px 0}
+#ff76Center .r-section{border:1px solid #e2e2e2;background:var(--ffb-surface,#fff);border-radius:13px;margin:12px 0;padding:13px;break-inside:avoid-page}
+#ff76Center .r-section h3{font-size:16px;border-right:4px solid #c51b30;padding-right:10px;margin:0 0 12px}
+#ff76Center h4{margin:14px 0 7px}#ff76Center .r-scroll{overflow:auto;width:100%}#ff76Center table{border-collapse:collapse;width:100%;min-width:440px;font-size:12px}
+#ff76Center th,#ff76Center td{padding:9px;border-bottom:1px solid #ddd;text-align:right;vertical-align:top;overflow-wrap:anywhere}
+#ff76Center th{background:var(--ffb-soft,#f2f2f2)}#ff76Center .r-bars{height:155px;display:flex;gap:8px;align-items:flex-end;width:max-content;padding:5px 0}
+#ff76Center .r-barcol{height:145px;width:68px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px}
+#ff76Center .r-bar{background:linear-gradient(#dc2843,#9d0821);width:35px;border-radius:6px 6px 0 0}
+#ff76Center .r-barcol span{font-size:10px;text-align:center;line-height:1.2;color:var(--ffb-muted,#666);max-width:68px;overflow-wrap:anywhere}
+#ff76Center .r-stamp{border:2px dashed #c51b30;padding:12px;border-radius:10px;background:#fff6f7;color:#681223}
+#ff76PdfDialog{border:none;border-radius:15px;width:min(98vw,1050px);height:min(95vh,1000px);padding:12px;background:#fff;color:#111;box-shadow:0 10px 60px #0007}
+#ff76PdfDialog::backdrop{background:#0009}#ff76PdfDialog .r-dialoghead{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;padding-bottom:8px}
+#ff76PdfDialog iframe{width:100%;height:calc(100% - 76px);border:1px solid #ccc;border-radius:8px}
+#ff76PdfDialog button{padding:10px;border:1px solid #aaa;background:#fff;border-radius:9px;color:#111}
+#ff76PdfDialog button.r-primary{background:#c51b30;color:#fff;border-color:#c51b30}
+@media(max-width:600px){#ff76Center .r-actions button{flex:1 1 120px}#ff76Center .r-head h2{font-size:17px}#ff76PdfDialog iframe{height:calc(100% - 112px)}}
