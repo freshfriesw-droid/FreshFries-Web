@@ -185,6 +185,7 @@ window.ffBurgerStart=async()=>{
  document.body.classList.add('ff-burger-kitchen-mode');
  kitchen.classList.remove('hidden');$('logoutBtn')?.classList.remove('hidden');
  $('identity').textContent='🍔 موظف قسم البرجر · '+(user?.email||'');
+ attachKitchenDrawer(); // Logout must remain available even if a network/RPC request fails.
  profile=await rpc('ff_burger_my_branch');
  if(profile?.role!=='burger_kitchen'||profile.branches?.length!==1)throw Error('لا يوجد فرع محدد لموظف قسم البرجر');
  items=await rpc('ff_burger_menu');attachKitchenDrawer();subscribe();heartbeat();await refresh(true);
