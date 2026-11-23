@@ -156,6 +156,33 @@ with sync_playwright() as playwright:
                 dialog.get_by_role("button", name="عرض ملخص البيانات", exact=False).click()
                 dialog.get_by_text("تمت قراءة الملخص", exact=False).wait_for()
                 dialog.get_by_role("button", name="إغلاق", exact=True).click()
+                # A manager's in-flight settlement report must never appear after session reset.
+                page.evaluate("""() => {
+                  rpc=(name,args)=>{
+                    if(name==='ff_luxe_settlement_period')
+                      return new Promise(resolve=>{ window.__fixtureSettlementResolve=resolve; });
+                    throw Error('Unexpected test RPC: '+name);
+                  };
+                  const button=document.getElementById('ff42RangeApply');
+                  if (!button) throw Error('Missing settlement range report');
+                  button.click();
+                }""")
+                page.wait_for_function("typeof window.__fixtureSettlementResolve==='function'")
+                assert page.locator("#ff42RangeApply").is_disabled()
+                page.evaluate("""() => {
+                  window.dispatchEvent(new Event('ff-luxe-session-reset'));
+                  data.role='cashier';
+                  window.__fixtureSettlementResolve({
+                    from:'2026-11-01',to:'2026-11-23',
+                    totals:{delivered_orders:7,delivered_value:8000,cash_due:5000,cash_received:4500},
+                    rows:[{day:'2026-11-21',branch:'SENSITIVE-OLD-MANAGER-REPORT',
+                           delivered_orders:7,delivered_value:8000,settlements:1,cash_due:5000,cash_received:4500}]
+                  });
+                }""")
+                page.wait_for_function("!document.getElementById('ff42RangeApply').disabled")
+                assert page.locator("#ff42RangeTable").inner_text() == ''
+                assert page.locator("#ff42RangeStatus").inner_text() == ''
+                assert "SENSITIVE-OLD-MANAGER-REPORT" not in page.locator("body").inner_text()
                 page.evaluate("data.role='cashier'")
                 entry.wait_for(state="detached")
                 assert dialog.is_hidden()
