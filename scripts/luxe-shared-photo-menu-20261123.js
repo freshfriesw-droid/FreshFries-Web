@@ -13,18 +13,19 @@ style.textContent=[
 '.ffl-picker-product .ffb-v2-count{position:absolute;top:3px;left:3px}',
 '.ffl-picker-product .ffb-v2-count[hidden]{display:none!important}',
 '.ffl-picker-controls{display:flex;align-items:center;justify-content:space-between;gap:6px;direction:ltr}',
-'.ffl-picker-controls button{flex:1;min-width:37px;min-height:40px!important;border-radius:9px;padding:4px 9px;font-size:19px;font-weight:900;background:var(--ffb-red,#d51e2c);color:white}',
+'.ffl-picker-controls button{flex:1;min-width:42px;min-height:44px!important;border-radius:9px;padding:4px 9px;font-size:19px;font-weight:900;background:var(--ffb-red,#d51e2c);color:white}',
 '.ffl-picker-controls button.ffl-picker-minus{background:var(--ffb-soft2,#eee);color:var(--ffb-ink,#222);border:1px solid var(--ffb-line,#ddd)}',
 '.ffl-picker-controls .ffl-picker-qty{flex:1;text-align:center;font-size:17px;font-weight:900;font-variant-numeric:tabular-nums}',
-'.ffl-picker-controls input.ffl-picker-qty{min-width:0;width:62px;max-width:85px;min-height:40px;border:1px solid var(--ffb-line,#ddd);border-radius:8px;background:var(--ffb-surface,#fff);color:var(--ffb-ink,#222)}',
+'.ffl-picker-controls input.ffl-picker-qty{min-width:0;width:62px;max-width:85px;min-height:44px;border:1px solid var(--ffb-line,#ddd);border-radius:8px;background:var(--ffb-surface,#fff);color:var(--ffb-ink,#222)}',
 '.ffl-picker-categories{display:flex;gap:7px;overflow-x:auto;padding:7px 0 10px;scrollbar-width:thin}',
-'.ffl-picker-categories button{flex:none;border:1px solid var(--ffb-line,#ddd);border-radius:24px;padding:8px 14px;min-height:40px;background:var(--ffb-soft2,#eee);color:var(--ffb-ink,#222)}',
+'.ffl-picker-categories button{flex:none;border:1px solid var(--ffb-line,#ddd);border-radius:24px;padding:8px 14px;min-height:44px;background:var(--ffb-soft2,#eee);color:var(--ffb-ink,#222)}',
 '.ffl-picker-categories button.selected{background:var(--ffb-red,#d51e2c);color:white}',
 '#ffUnifiedMenuDialog{background:var(--ffb-surface,#fff)!important;color:var(--ffb-ink,#111)!important}',
 '#ffUnifiedMenuDialog .ffl-picker-summary{font-weight:900;margin:8px 0;color:var(--ffb-redink,#bb2133)}',
 '#ffBurgerMenuFields{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;align-items:start}',
 '#ffBurgerMenuFields>.ffl-picker-tile{margin:0;min-height:0}',
-'@media(max-width:540px){.ffl-picker-grid,#ffBurgerMenuFields{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ffl-picker-product img,.ffl-picker-product .ffb-placeholder{height:66px}.ffl-picker-tile{padding:6px}.ffl-picker-controls input.ffl-picker-qty{width:52px;max-width:65px}}'
+'@media(max-width:540px){.ffl-picker-grid,#ffBurgerMenuFields{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ffl-picker-product img,.ffl-picker-product .ffb-placeholder{height:66px}.ffl-picker-tile{padding:6px}.ffl-picker-controls input.ffl-picker-qty{width:52px;max-width:65px}}',
+'@media(max-width:370px){.ffl-picker-grid,#ffBurgerMenuFields{grid-template-columns:minmax(0,1fr)}}'
 ].join('\n');document.head.append(style);
 const norm=s=>String(s||'').toLocaleLowerCase('ar').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/\s+/g,' ').trim();
 const fallbackCategory=n=>{const s=norm(n);if(/عرض|باقة/.test(s))return 'العروض';if(/برجر|برغر/.test(s))return 'البرجر';if(/سمبوس|هالبينو|هلبينو|ذره/.test(s))return 'السمبوسة';if(/اكسترا|اضاف|شريحه|كاتشب|صوص|خبز/.test(s))return 'الإضافات';if(/مشروب|كولا|مياه|مويه|عصير/.test(s))return 'المشروبات';return 'الأصناف الرئيسية'};
@@ -58,7 +59,7 @@ function createTile(item,opts={}){
  const less=document.createElement('button');less.type='button';less.className='ffl-picker-minus';less.textContent='−';less.setAttribute('aria-label','إنقاص '+item.name);
  const plus=document.createElement('button');plus.type='button';plus.textContent='+';plus.setAttribute('aria-label','زيادة '+item.name);
  const qty=opts.quantityInput||document.createElement('span');qty.classList.add('ffl-picker-qty');if(!opts.quantityInput)qty.textContent='0';
- const refresh=n=>{const v=Number.isInteger(Number(n))&&Number(n)>0?Number(n):0;badge.hidden=!v;badge.textContent=String(v);root.classList.toggle('ffl-picker-selected',!!v);if(!opts.quantityInput)qty.textContent=String(v);less.disabled=v<=0;plus.disabled=v>=99};
+ const refresh=n=>{const v=Number.isInteger(Number(n))&&Number(n)>0?Number(n):0;badge.hidden=!v;badge.textContent=String(v);root.classList.toggle('ffl-picker-selected',!!v);product.setAttribute('aria-pressed',String(!!v));if(!opts.quantityInput)qty.textContent=String(v);less.disabled=v<=0;plus.disabled=v>=99};
  product.addEventListener('click',()=>opts.onAdd?.());plus.addEventListener('click',()=>opts.onAdd?.());less.addEventListener('click',()=>opts.onRemove?.());
  controls.append(less,qty,plus);root.append(product,controls);refresh(opts.quantity||0);
  return {element:root,refresh,quantityNode:qty};
