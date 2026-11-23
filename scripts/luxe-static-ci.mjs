@@ -244,13 +244,31 @@ assert.match(burgerScript,/data-ff-burger-start/, 'Prep timer missing');
 assert.match(burgerScript,/postgres_changes/, 'Realtime hint missing');
 assert.match(burgerScript,/ffBurgerCashierReady/, 'Ready alert list missing');
 
-assert.match(burgerScript,/ff-burger-product/, 'Tap-to-add burger buttons are missing');
-assert.match(burgerScript,/product\.addEventListener\('click',\(\)=>shift\(1\)\)/,'Tap burger should increment quantity by 1');
-assert.match(burgerScript,/plus\.addEventListener\('click',\(\)=>shift\(1\)\)/,'Burger plus should increment by 1');
-assert.match(burgerScript,/minus\.addEventListener\('click',\(\)=>shift\(-1\)\)/,'Burger minus should decrement by 1');
-assert.match(burgerScript,/qty\.dataset\.burgerItem=item\.id/,'Order payload must retain official menu ID');
-assert.match(burgerScript,/Math\.max\(0,Math\.min\(99,value\)\)/,'Quantity buttons must enforce 0–99 bounds');
-assert.match(burgerScript,/product\.setAttribute\('aria-pressed'/,'Selected product must be accessible');
+// FIX-02: The shared photo picker is the primary kitchen menu; a legacy text tile
+// remains as the safe fallback. Test both bridges rather than assuming obsolete inline handlers.
+const photoMenuScript=get('scripts/luxe-shared-photo-menu-20261123.js').toString('utf8');
+new vm.Script(photoMenuScript,{filename:'scripts/luxe-shared-photo-menu-20261123.js'});
+assert.match(html,/luxe-shared-photo-menu-20261123\.js/, 'Shared photo picker not loaded');
+assert.match(burgerScript,/ui\.createTile\(item,\{quantity:0,quantityInput:qty,showPrice:true,onAdd:\(\)=>shift\(1\),onRemove:\(\)=>shift\(-1\)\}\)/,
+  'Kitchen photo tile must wire tapping and +/- to the same quantity controller');
+assert.match(photoMenuScript,/product\.addEventListener\('click',\(\)=>opts\.onAdd\?\.\(\)\)/,
+  'Tap on a photo tile must call the add handler');
+assert.match(photoMenuScript,/plus\.addEventListener\('click',\(\)=>opts\.onAdd\?\.\(\)\)/,
+  'Photo tile plus must call the add handler');
+assert.match(photoMenuScript,/less\.addEventListener\('click',\(\)=>opts\.onRemove\?\.\(\)\)/,
+  'Photo tile minus must call the remove handler');
+assert.match(burgerScript,/product\.onclick=\(\)=>shift\(1\)/,
+  'Legacy burger tile must increment the same quantity controller');
+assert.match(burgerScript,/more\.onclick=\(\)=>shift\(1\)/,
+  'Legacy burger plus must increment the same quantity controller');
+assert.match(burgerScript,/less\.onclick=\(\)=>shift\(-1\)/,
+  'Legacy burger minus must decrement the same quantity controller');
+assert.match(burgerScript,/qty\.dataset\.burgerItem=item\.id/,
+  'Order payload must retain official menu ID');
+assert.match(burgerScript,/Math\.max\(0,Math\.min\(99,Number\(value\)\|\|0\)\)/,
+  'Burger quantity controller must cap input to 0-99');
+assert.match(burgerScript,/\.setAttribute\('aria-pressed',String\(valid&&value>0\)\)/,
+  'Selected burger tile must publish an accessible selection state');
 assert.match(burgerScript,/رقم فاتورة الكاشير \(اختياري\)/,'Burger invoice input must be visibly optional');
 assert.doesNotMatch(burgerScript,/name="invoice" required/,'Burger invoice cannot be required in HTML');
 assert.doesNotMatch(burgerScript,/if\(!f\('invoice'\)\.value\.trim\(\)\)/,'Burger invoice cannot be required before saving');
