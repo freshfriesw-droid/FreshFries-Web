@@ -263,7 +263,8 @@ assert.match(burgerScript,/product\.onclick=\(\)=>shift\(1\)/,'Fallback burger t
 assert.match(burgerScript,/less\.onclick=\(\)=>shift\(-1\);more\.onclick=\(\)=>shift\(1\)/,
   'Fallback burger plus/minus must adjust quantity');
 assert.match(burgerScript,/qty\.dataset\.burgerItem=item\.id/,'Order payload must retain official menu ID');
-assert.match(burgerScript,/Math\.max\(0,Math\.min\(99,value\)\)/,'Quantity buttons must enforce 0–99 bounds');
+assert.match(burgerScript,/Math\.max\(0,Math\.min\(99,Number\(value\)\|\|0\)\)/,
+  'Quantity buttons must enforce 0–99 bounds and normalize nonnumeric input');
 assert.match(burgerScript,/picker\.element\.querySelector\('\.ffl-picker-product'\)\?\.setAttribute\('aria-pressed'/,
   'Shared picker must expose the selected product state');
 assert.match(photoMenuScript,/product\.setAttribute\('aria-label','إضافة '/,
