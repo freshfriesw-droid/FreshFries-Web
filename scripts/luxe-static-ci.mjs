@@ -243,6 +243,12 @@ assert.match(burgerScript,/ff_burger_transition/, 'Accept-ready-skip RPC missing
 assert.match(burgerScript,/data-ff-burger-start/, 'Prep timer missing');
 assert.match(burgerScript,/postgres_changes/, 'Realtime hint missing');
 assert.match(burgerScript,/ffBurgerCashierReady/, 'Ready alert list missing');
+assert.match(burgerScript,/id="ffBurgerKitchenLogout"/,'Burger kitchen must show a dedicated visible logout button');
+assert.match(burgerScript,/ffBurgerDrawerLogout/,'Burger kitchen must show logout in mobile drawer');
+assert.match(burgerScript,/button\.click\(\)/,'Kitchen logout must invoke existing authenticated sign-out');
+assert.match(burgerScript,/attachKitchenDrawer\(\); \/\/ Logout must remain available even if a network\/RPC request fails/,'Logout must be visible before any kitchen RPC calls');
+assert.match(burgerScript,/\$\(kitchenNavId\)\?\.remove\(\)/,'Burger drawer logout must be removed when leaving kitchen mode');
+
 const burgerSQL=get('supabase/migrations/20261123_burger_kitchen_workflow.sql').toString('utf8');
 const burgerRoles=get('supabase/migrations/20261123_burger_kitchen_staff_roles.sql').toString('utf8');
 assert.match(burgerSQL,/ENABLE ROW LEVEL SECURITY/,'Burger ticket RLS missing');
