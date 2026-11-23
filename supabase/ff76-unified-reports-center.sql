@@ -283,7 +283,7 @@ BEGIN
    coalesce(sum(o.total) FILTER(WHERE o.status='delivered'),0) AS net
  FROM public.ff_orders AS o
  LEFT JOIN public.ff38_delivery_tasks AS t ON t.order_id=o.id
- WHERE o.order_type='delivery' AND o.business_date IN(v_end,v_end-1,v_end-7)
+ WHERE o.order_type='delivery' AND o.business_date BETWEEN v_end-7 AND v_end
    AND ((o.created_at AT TIME ZONE 'Asia/Aden')::time>=time '08:00'
      OR (o.created_at AT TIME ZONE 'Asia/Aden')::time<time '02:00')
    AND (p_branch IS NULL OR o.branch_id=p_branch)
@@ -300,7 +300,8 @@ BEGIN
  SELECT jsonb_build_object(
    'today',coalesce((SELECT to_jsonb(x) FROM comparison AS x WHERE x.work_day=v_end),'{}'::jsonb),
    'yesterday',coalesce((SELECT to_jsonb(x) FROM comparison AS x WHERE x.work_day=v_end-1),'{}'::jsonb),
-   'last_week',coalesce((SELECT to_jsonb(x) FROM comparison AS x WHERE x.work_day=v_end-7),'{}'::jsonb)
+   'last_week',coalesce((SELECT to_jsonb(x) FROM comparison AS x WHERE x.work_day=v_end-7),'{}'::jsonb),
+   'previous_week_average',jsonb_build_object('orders',coalesce((SELECT round(sum(x.orders)/7.0,1) FROM comparison AS x WHERE x.work_day BETWEEN v_end-7 AND v_end-1),0),'net',coalesce((SELECT round(sum(x.net)/7.0,1) FROM comparison AS x WHERE x.work_day BETWEEN v_end-7 AND v_end-1),0))
  ) INTO v_comparison;
  
  SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY x.driver_name),'[]'::jsonb)
