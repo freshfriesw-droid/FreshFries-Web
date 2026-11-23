@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS public.ff_burger_tickets (
   client_token uuid NOT NULL UNIQUE,
   branch_id uuid NOT NULL REFERENCES public.ff_branches(id),
   order_kind text NOT NULL CHECK (order_kind IN ('local','delivery')),
-  delivery_order_id uuid REFERENCES public.ff_orders(id) ON DELETE RESTRICT,
+  delivery_order_id uuid REFERENCES public.ff_orders(id) ON DELETE CASCADE,
   invoice_ref text NOT NULL CHECK (length(btrim(invoice_ref)) BETWEEN 1 AND 80),
   cashier_id uuid NOT NULL REFERENCES public.ff_profiles(user_id),
   cashier_name text NOT NULL,
@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS public.ff_burger_tickets (
    OR (status IN ('ready','acknowledged') AND accepted_at IS NOT NULL AND ready_at IS NOT NULL))
 );
 
+-- A deliberate manager reset of delivery orders may delete linked burger tickets;
+-- it must never be blocked by this module. Local burger tickets are independent.
 CREATE INDEX IF NOT EXISTS ff_burger_branch_status_idx
  ON public.ff_burger_tickets(branch_id,status,sent_at DESC);
 CREATE INDEX IF NOT EXISTS ff_burger_delivery_link_idx
