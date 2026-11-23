@@ -11,6 +11,34 @@ Thread(target=server.serve_forever, daemon=True).start()
 origin = f"http://127.0.0.1:{server.server_port}/"
 
 
+def check_order_status_colors(page):
+    # Real browser computed styles: cancellation red must not inherit the ordinary blue card rule.
+    result = page.evaluate("""() => {
+      const output = {};
+      for (const id of ['cashierOrders','driverTasks']) {
+        const parent = document.getElementById(id);
+        if (!parent) throw Error('Missing order list: ' + id);
+        const normal = document.createElement('article');
+        normal.className = 'item';
+        const canceled = document.createElement('article');
+        canceled.className = 'item ff-luxe-cancelled';
+        parent.append(normal, canceled);
+        output[id] = {
+          normal: getComputedStyle(normal).borderTopColor,
+          canceled: getComputedStyle(canceled).borderTopColor,
+          cancelledWidth: getComputedStyle(canceled).borderTopWidth
+        };
+        normal.remove();
+        canceled.remove();
+      }
+      return output;
+    }""")
+    for id in ('cashierOrders', 'driverTasks'):
+        assert result[id]['normal'] == 'rgb(37, 99, 235)', (id, result)
+        assert result[id]['canceled'] == 'rgb(185, 28, 28)', (id, result)
+        assert result[id]['cancelledWidth'] == '4px', (id, result)
+
+
 def check_width(page, width, selector):
     box = page.locator(selector).first.bounding_box()
     assert box and box["x"] >= -1 and box["x"] + box["width"] <= width + 1, (width, selector, box)
@@ -33,6 +61,7 @@ with sync_playwright() as playwright:
           for (const id of ['ff61ManageShortcut','ff63NotificationsShortcut'])
             document.getElementById(id).hidden=false;
         }""")
+        check_order_status_colors(page)
         for selector in ("main", "#ffx-topbar", "#ff61ManageShortcut", "#ff63NotificationsShortcut", "#ffx-options"):
             check_width(page, width, selector)
         if width <= 850:
