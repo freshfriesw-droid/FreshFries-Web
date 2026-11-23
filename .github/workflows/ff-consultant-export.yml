@@ -1,0 +1,88 @@
+name: Build five-part consultant snapshot
+
+on:
+  push:
+    branches: [consultant-export-v38-38-20261123]
+    paths:
+      - '.github/workflows/ff-consultant-export.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  split-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout temporary export branch with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Generate exact five-part archive from frozen production revision
+        shell: bash
+        env:
+          SNAPSHOT_COMMIT: 57ab198888f259acad0a09d813eceb132a795eec
+          BASENAME: FreshFries_LUXE_v38.38.0_2026-11-23
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+
+          commit = os.environ['SNAPSHOT_COMMIT']
+          basename = os.environ['BASENAME']
+          folder = Path('consultant-handoff')
+          folder.mkdir(exist_ok=True)
+          archive = folder / (basename + '.zip')
+          subprocess.run(['git', 'archive', '--format=zip', '--output='+str(archive), commit], check=True)
+          all_bytes = archive.read_bytes()
+          step = (len(all_bytes) + 4) // 5
+          parts = []
+          for i in range(5):
+              part = folder / (basename + '.zip.%03d' % (i+1))
+              part.write_bytes(all_bytes[i*step:(i+1)*step])
+              content=part.read_bytes()
+              parts.append({'name':part.name,'bytes':len(content),'sha256':hashlib.sha256(content).hexdigest()})
+          manifest = {'project':'Fresh Fries LUXE','source_repository':'freshfriesw-droid/FreshFries-Web',
+              'source_commit':commit,'source_date_utc':'2026-11-23T18:27:36Z',
+              'application_version':'v38.38.0','archive':archive.name,
+              'archive_bytes':len(all_bytes),'archive_sha256':hashlib.sha256(all_bytes).hexdigest(),
+              'parts':parts,'note':'Read-only source snapshot, no live Supabase data or secret keys exported.'}
+          (folder/'MANIFEST.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          (folder/'REASSEMBLE.py').write_text('''from pathlib import Path
+          import hashlib, json
+          root = Path(__file__).parent
+          manifest = json.loads((root / 'MANIFEST.json').read_text(encoding='utf-8'))
+          target = root / manifest['archive']
+          with target.open('wb') as out:
+              for part in manifest['parts']:
+                  data = (root / part['name']).read_bytes()
+                  if hashlib.sha256(data).hexdigest() != part['sha256']:
+                      raise ValueError('Corrupted part: ' + part['name'])
+                  out.write(data)
+          if hashlib.sha256(target.read_bytes()).hexdigest() != manifest['archive_sha256']:
+              raise ValueError('Final archive integrity check failed')
+          print('SUCCESS:', target)
+          ''',encoding='utf-8')
+          (folder/'README_AR.txt').write_text(
+              'Fresh Fries LUXE - consultant source handoff\\n'
+              'Version v38.38.0 | UTC 2026-11-23 18:27:36\\n'
+              'Snapshot commit: '+commit+'\\n'
+              'Download five .zip.001 to .zip.005 files together with MANIFEST.json and REASSEMBLE.py.\\n'
+              'Put all seven files in one folder, then run: python REASSEMBLE.py\\n'
+              'This creates the original complete source ZIP and verifies SHA-256.\\n'
+              'The ZIP contains front-end HTML/JS/CSS, project assets, Supabase SQL and Edge Functions source.\\n'
+              'It does NOT contain live database rows, authentication secrets, nor server credentials.\\n'
+              'Do not run migrations against production without backup and review.\\n'
+              'This export is isolated from the production/main branch.\\n',
+              encoding='utf-8')
+          print(json.dumps(manifest,indent=2))
+          PY
+      - name: Commit only separate handoff files to export branch
+        shell: bash
+        run: |
+          git config user.name "Fresh Fries Source Export"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add consultant-handoff/
+          git commit -m "Export frozen latest site source in five verified parts"
+          git push origin "HEAD:refs/heads/consultant-export-v38-38-20261123"
