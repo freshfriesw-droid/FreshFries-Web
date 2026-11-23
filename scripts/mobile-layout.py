@@ -11,6 +11,63 @@ Thread(target=server.serve_forever, daemon=True).start()
 origin = f"http://127.0.0.1:{server.server_port}/"
 
 
+
+def check_shared_burger_picker(page):
+    """Exercise the real shared product tile without backend credentials or live order writes."""
+    tested = page.evaluate("""() => {
+      const api = window.ffLuxePhotoMenu;
+      if (!api || typeof api.createTile !== 'function')
+        throw new Error('Shared photo picker was not loaded');
+      const qty = document.createElement('input');
+      qty.type = 'number';
+      qty.min = '0';
+      qty.max = '99';
+      qty.value = '0';
+      const item = {id:'fixture-burger', name:'سماش برجر اختبار', price:1000};
+      let picker;
+      function shift(delta) {
+        const n = Number(qty.value);
+        const prior = Number.isInteger(n) && n >= 0 && n <= 99 ? n : 0;
+        qty.value = String(Math.max(0, Math.min(99, prior + delta)));
+        picker.refresh(Number(qty.value));
+      }
+      picker = api.createTile(item, {
+        quantity:0,
+        quantityInput:qty,
+        showPrice:true,
+        onAdd:()=>shift(1),
+        onRemove:()=>shift(-1)
+      });
+      const surface = picker.element;
+      surface.id = 'fixture-burger-picker';
+      document.body.append(surface);
+      const product = surface.querySelector('.ffl-picker-product');
+      const plus = surface.querySelector('.ffl-picker-controls button:last-child');
+      const minus = surface.querySelector('.ffl-picker-minus');
+      if (!product || !plus || !minus) throw new Error('Burger tile controls missing');
+      if (!minus.disabled || plus.disabled) throw new Error('Initial quantity guard wrong');
+      product.click();
+      if (qty.value !== '1') throw new Error('Tapping burger must add exactly one');
+      plus.click();
+      if (qty.value !== '2') throw new Error('Plus must add exactly one');
+      minus.click();
+      if (qty.value !== '1') throw new Error('Minus must remove exactly one');
+      minus.click();
+      if (qty.value !== '0' || !minus.disabled) throw new Error('Quantity lower bound broken');
+      for (let i=0;i<110;i++) product.click();
+      if (qty.value !== '99' || !plus.disabled) throw new Error('Quantity upper bound broken');
+      product.click();
+      if (qty.value !== '99') throw new Error('Tap must not exceed 99');
+      minus.click();
+      if (qty.value !== '98' || plus.disabled) throw new Error('Plus should re-enable below 99');
+      const visibleBadge = !surface.querySelector('.ffb-v2-count').hidden;
+      const selected = surface.classList.contains('ffl-picker-selected');
+      surface.remove();
+      if (!visibleBadge || !selected) throw new Error('Selected quantity was not visible');
+      return {max:99, after_minus:98, selected:true};
+    }""")
+    assert tested['max'] == 99 and tested['after_minus'] == 98, tested
+
 def check_order_status_colors(page):
     # Real browser computed styles: cancellation red must not inherit the ordinary blue card rule.
     result = page.evaluate("""() => {
@@ -105,6 +162,8 @@ with sync_playwright() as playwright:
           for (const id of ['ff61ManageShortcut','ff63NotificationsShortcut'])
             document.getElementById(id).hidden=false;
         }""")
+        if width in (320, 390, 1280):
+            check_shared_burger_picker(page)
         check_order_status_colors(page)
         check_legacy_status_feedback(page, width)
         for selector in ("main", "#ffx-topbar", "#ff61ManageShortcut", "#ff63NotificationsShortcut", "#ffx-options"):
