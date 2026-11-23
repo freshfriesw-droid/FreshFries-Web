@@ -76,6 +76,11 @@
  const more=$('fflFinishedMore'),refresh=$('fflFinishedRefresh');
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const amount=n=>Number(n||0).toLocaleString('ar-YE',{maximumFractionDigits:2});
+ const dialPhone=value=>{
+   const raw=String(value||''),digits=raw.replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-1632)).replace(/[\s()-]/g,'');
+   return /^\+?[0-9]{7,15}$/.test(digits)?'<a href="tel:'+esc(digits)+'" class="ff-phone-link">📞 '+esc(raw)+'</a>':esc(raw||'—');
+ };
+ 
  const fmt=t=>{if(!t)return '—';const d=new Date(t);return Number.isNaN(d.getTime())?'—':d.toLocaleString('ar-YE',{timeZone:'Asia/Aden',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})};
  const finished=o=>!['cancelled','canceled','closed'].includes(String(o.status||'')) ;
  const seen=new Map();let permittedBranches=[];
@@ -129,7 +134,7 @@
   body.innerHTML=
     '<div class="ffl-finished-meta">'+
     '<div><b>👤 العميل:</b> '+esc(o.customer_name||'عميل')+'</div>'+
-    '<div><b>📞 هاتف العميل:</b> '+esc(o.phone||'—')+'</div>'+
+    '<div><b>📞 هاتف العميل:</b> '+dialPhone(o.phone)+'</div>'+
     '<div><b>📍 العنوان:</b> '+esc(o.full_address||o.area||'—')+'</div>'+
     '<div><b>🛵 الموصل:</b> '+esc(o.driver_name||'—')+'</div>'+
     '<div><b>👩‍💼 خدمة العملاء:</b> '+esc(o.customer_service_name||'غير محدد')+'</div>'+
