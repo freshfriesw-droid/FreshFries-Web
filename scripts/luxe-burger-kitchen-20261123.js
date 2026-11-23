@@ -72,7 +72,7 @@ const identity=()=>String(typeof user!=='undefined'&&user?.id||'');
    if(!isKitchenMode||!identity())return;
    const button=$('logoutBtn');
    if(!button){$('ffBurgerKitchenStatus').textContent='تعذر العثور على زر تسجيل الخروج؛ حدّث الصفحة';return}
-   void rpc('ff_burger_presence_ping',{p_online:false}).catch(()=>{}).finally(()=>button.click()); // Use original session logout even if heartbeat fails.
+   void rpc('ff_burger_presence_ping',{p_online:false}).catch(()=>{});button.click(); // Never wait for network to sign out.
  }
  function attachKitchenDrawer(){
    const nav=$('ffx-nav');
