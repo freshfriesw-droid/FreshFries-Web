@@ -3982,12 +3982,12 @@ render();
  const message=e=>toast(e.message||String(e));
  // FF Web Push: opt-in once; auto-resync permitted subscriptions after login.
  const btn=document.getElementById('ffx-push-permission');
- const pushRoles=new Set(['manager','supervisor','customer_service','cashier','driver','assembly']);
+ const pushRoles=new Set(['manager','supervisor','customer_service','cashier','driver','assembly','burger_kitchen']);
  const registration='serviceWorker' in navigator&&window.isSecureContext
   ?navigator.serviceWorker.register('./sw.js').catch(e=>{console.warn('SW registration',e);return null})
   :Promise.resolve(null);
  let ffPushBusy=false,ffPushSyncedAt=0,ffPushSyncedUser='';
- const ffPushEligible=()=>!!user?.id&&!!data?.role&&pushRoles.has(data.role);
+ const ffPushEligible=()=>!!user?.id&&((!!data?.role&&pushRoles.has(data.role))||window.ffBurgerActive?.()===true);
  const ffPushStatus=t=>{const el=document.getElementById('ff-luxe-push-status');if(el)el.textContent=t};
  const ffPushBytes=value=>{
   const raw=String(value||'').replace(/-/g,'+').replace(/_/g,'/');
@@ -4067,7 +4067,7 @@ render();
  });
  navigator.serviceWorker?.addEventListener('message',e=>{
   if(e.data?.type==='FF_LUXE_PUSH_SUBSCRIPTION_CHANGED'){ffPushSyncedAt=0;void ffPushSubscribe()}
-  if(e.data?.type==='FF_LUXE_PUSH_RECEIVED'&&!document.hidden&&ffPushEligible())void reload()
+  if(e.data?.type==='FF_LUXE_PUSH_RECEIVED'&&!document.hidden&&ffPushEligible()){if(window.ffBurgerActive?.())void window.ffBurgerRefresh?.();else void reload()}
  });
  // Signing out revokes browser subscription rather than letting the next account receive notifications.
  document.getElementById('logoutBtn')?.addEventListener('click',async()=>{
