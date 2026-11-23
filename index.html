@@ -4308,8 +4308,20 @@ controls.append(pendingBtn,historyBtn,notifyTabBtn,delegateBtn,refreshBtn);shell
 const info=create('p','', 'muted');info.id='ff61AdminInfo';shell.append(info);
 const content=create('div');shell.append(content);dialog.append(shell);document.body.append(dialog);
 let currentTab='pending',cached=[],capabilities=null,previousPendingIds=null,shownAccount='',loading=false,lastCapabilitiesCheck=0,currentPage=0,totalRows=0,pageSize=25,viewToken=0;
+let ff61SessionEpoch=0,ff61AccessToken=0,ff61BadgeToken=0;
 const getActor=()=>typeof user!=='undefined'?user?.id||'':'';
+const ff61Viewer=()=>String(getActor()||'')+':'+String(typeof data!=='undefined'?data?.role||'':'');
 function clear(node){node.replaceChildren()}
+function ff61ClearPrivate(){
+ ff61SessionEpoch++;ff61AccessToken++;ff61BadgeToken++;viewToken++;
+ capabilities=null;shownAccount='';previousPendingIds=null;cached=[];lastCapabilitiesCheck=0;
+ currentPage=0;totalRows=0;loading=false;
+ manageButton.hidden=true;notifyButton.hidden=true;pendingBtn.hidden=true;
+ historyBtn.hidden=true;delegateBtn.hidden=true;notifyTabBtn.hidden=true;
+ badge.textContent='0';notifyBadge.textContent='0';info.textContent='';
+ clear(content);if(dialog.open)dialog.close();
+}
+window.addEventListener('ff-luxe-session-reset',ff61ClearPrivate);
 function row(label,value){const p=create('p',undefined,'ff61-info-row');p.append(create('strong',label+': '),create('span',value||'—'));return p}
 function showTab(tab){
  if(tab==='notifications'&&!capabilities?.notify){toast('لا تملك صلاحية استلام الإشعارات');return}
@@ -4330,22 +4342,28 @@ async function openNotifications(){
 }
 async function refreshView(){
  if(!dialog.open)return;
- const actorOnStart=getActor(),requestToken=++viewToken,tabOnStart=currentTab;
+ if((currentTab==='notifications'&&!capabilities?.notify)||
+    (currentTab!=='notifications'&&!capabilities?.view)){
+  viewToken++;cached=[];clear(content);dialog.close();return;
+ }
+ const actorOnStart=ff61Viewer(),sessionOnStart=ff61SessionEpoch,requestToken=++viewToken,tabOnStart=currentTab;
+ const stillCurrent=()=>ff61Viewer()===actorOnStart&&ff61SessionEpoch===sessionOnStart&&
+    dialog.open&&requestToken===viewToken;
  loading=true;info.textContent='جاري تحميل المعلومات...';clear(content);
  try{
   if(tabOnStart==='notifications')await renderNotifications(requestToken);
   else if(tabOnStart==='delegations')await renderDelegations(requestToken);
   else{
    const r=await request('list',{status:tabOnStart,page:currentPage},true);
-   if(getActor()!==actorOnStart||!dialog.open||requestToken!==viewToken)return
+   if(!stillCurrent())return
    cached=r.applications||[];totalRows=r.total_count||0;pageSize=r.page_size||25;
    // Adjust when the last pending application on a later page is approved/rejected.
    if(!cached.length&&currentPage>0&&totalRows<=currentPage*pageSize){currentPage--;loading=false;return refreshView()}
    renderList(tabOnStart);
   }
-  if(getActor()!==actorOnStart||!dialog.open||requestToken!==viewToken)return
+  if(!stillCurrent())return
   info.textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar-YE',{timeZone:'Asia/Aden'});
- }catch(err){if(getActor()===actorOnStart&&requestToken===viewToken)info.textContent='تعذر التحميل: '+(err.message||err)}finally{if(requestToken===viewToken)loading=false}
+ }catch(err){if(stillCurrent())info.textContent='تعذر التحميل: '+(err.message||err)}finally{if(requestToken===viewToken)loading=false}
 }
 function renderList(section,records){
  clear(content);const rows=records||cached.filter(x=>section==='pending'?x.status==='pending':x.status!=='pending');
@@ -4514,14 +4532,20 @@ async function renderDelegations(requestToken=++viewToken){
  }
 }
 async function refreshBadge(){
- if(!capabilities?.notify)return;
- // Notifications are kept per account on the server; the counter has no personal applicant data.
+ if(!capabilities?.notify||!getActor())return;
+ const viewer=ff61Viewer(),epoch=ff61SessionEpoch,token=++ff61BadgeToken;
+ const current=()=>ff61BadgeToken===token&&ff61SessionEpoch===epoch&&
+  ff61Viewer()===viewer&&capabilities?.notify;
+ // Notifications and pending-application alerts must never move across accounts.
  try{
   const notices=await request('notifications_count',{},true);
+  if(!current())return;
   notifyBadge.textContent=String(notices.unread_count||0);
- }catch{notifyBadge.textContent='!'}
+ }catch{if(current())notifyBadge.textContent='!'}
+ if(!current())return;
  try{
   const r=await request('alerts',{},true);
+  if(!current())return;
   badge.textContent=String(r.pending_count||0);
   const ids=new Set(r.ids||[]);
   if(previousPendingIds!==null){const newer=[...ids].filter(id=>!previousPendingIds.has(id));
@@ -4532,24 +4556,36 @@ async function refreshBadge(){
  }catch(err){/* Avoid exposing errors in a noisy background poll. */}
 }
 async function refreshAccess(){
- const id=getActor();
- if(!id){capabilities=null;shownAccount='';previousPendingIds=null;manageButton.hidden=true;notifyButton.hidden=true;lastCapabilitiesCheck=0;return}
- if(shownAccount===id&&capabilities&&Date.now()-lastCapabilitiesCheck<25000)return;
- shownAccount=id;previousPendingIds=null;
+ const id=getActor(),viewer=ff61Viewer();
+ if(!id||!data?.role){
+  if(shownAccount||capabilities||dialog.open)ff61ClearPrivate();
+  return;
+ }
+ if(shownAccount&&shownAccount!==viewer)ff61ClearPrivate();
+ if(shownAccount===viewer&&capabilities&&Date.now()-lastCapabilitiesCheck<25000)return;
+ shownAccount=viewer;previousPendingIds=null;
+ const epoch=ff61SessionEpoch,token=++ff61AccessToken;
+ const current=()=>token===ff61AccessToken&&ff61SessionEpoch===epoch&&ff61Viewer()===viewer;
  try{
-  capabilities=await request('capabilities',{},true);lastCapabilitiesCheck=Date.now();
-  if(getActor()!==id)return;
-  manageButton.hidden=!capabilities.view;
-  notifyButton.hidden=!capabilities.notify;
-  pendingBtn.hidden=!capabilities.view;
-  historyBtn.hidden=!capabilities.view;
-  delegateBtn.hidden=!(capabilities.view&&data?.role==='manager');
-  notifyTabBtn.hidden=!capabilities.notify;
-  if(dialog.open && ((currentTab==='notifications'&&!capabilities.notify)||(currentTab!=='notifications'&&!capabilities.view))) {
-   cached=[];clear(content);dialog.close();
+  const permitted=await request('capabilities',{},true);
+  if(!current())return;
+  capabilities=permitted;lastCapabilitiesCheck=Date.now();
+  manageButton.hidden=!permitted.view;
+  notifyButton.hidden=!permitted.notify;
+  pendingBtn.hidden=!permitted.view;
+  historyBtn.hidden=!permitted.view;
+  delegateBtn.hidden=!(permitted.view&&data?.role==='manager');
+  notifyTabBtn.hidden=!permitted.notify;
+  if(!permitted.notify){ff61BadgeToken++;notifyBadge.textContent='0';badge.textContent='0';previousPendingIds=null}
+  if(dialog.open && ((currentTab==='notifications'&&!permitted.notify)||
+      (currentTab!=='notifications'&&!permitted.view))) {
+   viewToken++;cached=[];clear(content);dialog.close();info.textContent='';
   }
-  if(capabilities.notify)await refreshBadge();
- }catch{if(getActor()===id){manageButton.hidden=true;notifyButton.hidden=true;dialog.close();clear(content)}capabilities=null;shownAccount=''}
+  if(permitted.notify)await refreshBadge();
+ }catch{
+  if(!current())return;
+  ff61ClearPrivate();
+ }
 }
 // Scheduled refresh only while the application is open; offline push requires a separate PWA/Push deployment.
 const timer=setInterval(()=>{
@@ -4559,7 +4595,7 @@ const timer=setInterval(()=>{
 },30000);
 window.addEventListener('ff-assembly-snapshot-success',()=>void refreshAccess());
 window.addEventListener('focus',()=>void refreshAccess());
-byId('logoutBtn').addEventListener('click',()=>{manageButton.hidden=true;notifyButton.hidden=true;notifyBadge.textContent='0';shownAccount='';capabilities=null;cached=[];clear(content);previousPendingIds=null;dialog.close()});
+byId('logoutBtn').addEventListener('click',ff61ClearPrivate);
 // First access check runs after legacy auth bootstrapping, as soon as the app emits its snapshot event.
 setTimeout(()=>void refreshAccess(),1800);
 })();
