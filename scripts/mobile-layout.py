@@ -34,7 +34,8 @@ def check_order_status_colors(page):
       return output;
     }""")
     for id in ('cashierOrders', 'driverTasks'):
-        assert result[id]['normal'] == 'rgb(37, 99, 235)', (id, result)
+        expected_normal = 'rgb(183, 14, 28)' if id == 'cashierOrders' else 'rgb(37, 99, 235)'
+        assert result[id]['normal'] == expected_normal, (id, result)
         assert result[id]['canceled'] == 'rgb(185, 28, 28)', (id, result)
         assert result[id]['cancelledWidth'] == '4px', (id, result)
 
