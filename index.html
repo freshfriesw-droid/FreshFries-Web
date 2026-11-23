@@ -281,6 +281,39 @@ body.ff-v12-assembly-mode #ffx-toast{display:none!important}
 #ffV12AssemblyWorkspace>.sectionbar>.actions{display:flex;gap:8px;flex-wrap:wrap}
 @media(max-width:650px){body.ff-v12-assembly-mode #ffV12AssemblyWorkspace{margin:8px 3px;padding:12px}}
 </style>
+<style id="ff-v12-assembly-rebuilt-style">
+#ffV12AssemblyWorkspace{--assembly-red:#c51c34;--assembly-dark:#19191d;direction:rtl}
+#ffV12AssemblyWorkspace>.ff-assembly-brand{box-shadow:0 9px 24px #0002}
+#ffV12AssemblyWorkspace .sectionbar h2{font-size:clamp(17px,3vw,23px);margin:4px 0}
+#ffV12AssemblyWorkspace .sectionbar .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#ffV12AssemblyWorkspace .sectionbar .actions>button{min-height:47px}
+.ff-assembly-dashboard-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}
+.ff-assembly-dashboard-stats>div{padding:16px 10px;border:1px solid var(--ffb-line,#ddd);border-radius:13px;background:var(--ffb-surface,#fff);display:flex;flex-direction:column;align-items:center;gap:5px;box-shadow:0 3px 10px #0000000b}
+.ff-assembly-dashboard-stats strong{font-size:clamp(23px,4vw,32px);font-variant-numeric:tabular-nums;color:var(--assembly-red)}
+.ff-assembly-dashboard-stats span{font-size:13px;text-align:center;font-weight:700}
+.ff-assembly-filterbar{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 10px}
+.ff-assembly-filterbar button{border:1px solid #b9b9b9;background:var(--ffb-surface,#fff);color:var(--ffb-ink,#222);border-radius:11px;min-height:43px;padding:9px 13px}
+.ff-assembly-filterbar button.active{background:var(--assembly-dark);border-color:var(--assembly-red);color:#fff}
+.ff-assembly-workspace-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:10px 0}
+.ff-assembly-workspace-title h3{font-size:17px;margin:0}.ff-assembly-workspace-title span{font-size:13px;color:var(--ffb-muted,#666)}
+#ffV12AssemblyOrders{grid-template-columns:repeat(auto-fill,minmax(min(330px,100%),1fr));gap:13px}
+#ffV12AssemblyOrders .ff-assembly-order{border:1px solid #d2d2d2;border-right:5px solid var(--assembly-red);box-shadow:0 4px 17px #0001;padding:15px;display:flex;flex-direction:column;gap:10px;min-width:0}
+#ffV12AssemblyOrders .ff-assembly-order.ff-assembly-ready{border-right-color:#16845b}
+.ff-assembly-order-header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+#ffV12AssemblyOrders .ff-assembly-order-header strong{font-size:21px}
+.ff-assembly-order .ff-assembly-stage{display:inline-flex;align-items:center;border-radius:9px;background:#fbe9eb;padding:7px 10px;font-size:13px}
+.ff-assembly-order.ff-assembly-ready .ff-assembly-stage{color:#126e4e;background:#e5f7ed}
+.ff-assembly-order-meta{display:grid;gap:5px;line-height:1.6;font-size:13px}
+.ff-assembly-item-list{display:flex;flex-direction:column;gap:7px;border:1px solid var(--ffb-line,#ddd);border-radius:11px;background:var(--ffb-soft,#f6f6f6);padding:10px}
+.ff-assembly-item-title{font-weight:900;margin-bottom:2px}
+.ff-assembly-item-row{display:flex;align-items:flex-start;gap:10px;border:1px solid #ddd;padding:8px;border-radius:8px;background:var(--ffb-surface,#fff);font-size:15px;font-weight:800}
+.ff-assembly-item-qty{flex:none;min-width:55px;text-align:center;background:#b51b30;border-radius:7px;color:white;padding:4px 8px;font-variant-numeric:tabular-nums}
+.ff-assembly-item-name{flex:1;overflow-wrap:anywhere;line-height:1.5}
+.ff-assembly-order-note{border-right:4px solid #c51c34;border-radius:9px;background:#fff2e8;color:#6a291a;padding:10px;white-space:pre-wrap;font-weight:700}
+#ffV12AssemblyOrders .ff-assembly-stage-action{width:100%;min-height:50px;font-size:15px;margin-top:auto}
+#ffV12AssemblyStatus{border-radius:10px}
+@media(max-width:730px){.ff-assembly-dashboard-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ff-assembly-filterbar button{flex:1 1 42%}#ffV12AssemblyWorkspace .sectionbar .actions{width:100%}#ffV12AssemblyWorkspace .sectionbar .actions>button{flex:1 1 44%}.ff-assembly-brand img{width:61px;height:61px}}
+</style>
 <script>// إعدادات الاتصال العامة فقط. راجع عنوان المشروع قبل تشغيل نسخة الاختبار.
 window.FF_CONFIG={url:'https://api.freshfriesz.com',key:'sb_publishable_CJ8mR24mwpTyh2NerElb7g_R_t6xuQ4'};
 </script><link rel="manifest" href="./manifest.webmanifest"><style>body[data-access=locked]>:not(#loginOverlay),body:is([data-access=customer],[data-access=applicant])>:not(#ff28Portal){display:none!important}#ff28Portal{display:none;margin:5vh auto;max-width:520px;padding:24px;border-top:5px solid #a21b2b;background:white;color:#222}body:is([data-access=customer],[data-access=applicant])>#ff28Portal{display:block}#ff28Portal article{padding:12px 0;border-bottom:1px solid #ddd}#ff28Portal [hidden]{display:none!important}</style>
@@ -618,6 +651,19 @@ body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{
  <p class="muted">واجهة مستقلة وظيفيًا لحساب التجميع فقط. لا تعرض بيانات الفروع الأخرى ولا قوائم الكاشير وخدمة العملاء. تعمل أثناء فتحها فقط.</p>
  <div id="ffV12AssemblyStatus" class="statusbar" role="status" aria-live="polite">التحقق من تسجيل الدخول وصلاحيات الفرع...</div>
  <div id="ffV12AssemblySummary" class="muted" aria-live="polite" style="margin:14px 0"></div>
+ <div id="ffV12DashboardStats" class="ff-assembly-dashboard-stats" aria-live="polite">
+  <div><strong id="ffV12CountAll">0</strong><span>قيد المتابعة</span></div>
+  <div><strong id="ffV12CountPrinted">0</strong><span>تم قطع الفاتورة</span></div>
+  <div><strong id="ffV12CountPreparing">0</strong><span>جاري التحضير</span></div>
+  <div><strong id="ffV12CountReady">0</strong><span>جاهزة للتسليم</span></div>
+ </div>
+ <div class="ff-assembly-filterbar" role="group" aria-label="تصفية طلبات التجميع">
+  <button type="button" class="ff-assembly-filter active" data-assembly-filter="all" aria-pressed="true">جميع الطلبات</button>
+  <button type="button" class="ff-assembly-filter" data-assembly-filter="printed" aria-pressed="false">بانتظار التحضير</button>
+  <button type="button" class="ff-assembly-filter" data-assembly-filter="preparing" aria-pressed="false">قيد التحضير</button>
+  <button type="button" class="ff-assembly-filter" data-assembly-filter="ready" aria-pressed="false">جاهزة للتسليم</button>
+ </div>
+ <div class="ff-assembly-workspace-title"><h3>📋 طلبات التجميع</h3><span id="ffV12FilteredCount"></span></div>
  <div id="ffV12AssemblyOrders" class="ff-assembly-grid"></div>
 </section>
 
@@ -971,6 +1017,7 @@ function ffV12Reset(){
  ffV12Generation++;ffV12Request++;
  ffV12AssemblyActive=false;ffV12AssemblyBusy=false;ffV12AssemblyLoading=false;
  ffV12AssemblyPayload=null;ffV12AssemblyLastSuccess=0;
+ ffV12Filter='all';document.querySelectorAll('[data-assembly-filter]').forEach(b=>{const active=b.dataset.assemblyFilter==='all';b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
  if(ffV12AssemblyTimer){clearInterval(ffV12AssemblyTimer);ffV12AssemblyTimer=null;}
  document.body.classList.remove('ff-v12-assembly-mode');
  ffV12Get('ffV12AssemblyWorkspace')?.classList.add('hidden');
@@ -989,43 +1036,86 @@ async function ffV12Start(){
  window.ffBurgerOnAssemblyStart?.();
  await ffV12Refresh(true);
  if(generation!==ffV12Generation)return;
- window.ffBurgerOnAssemblyStart?.();
  ffV12AssemblyTimer=setInterval(()=>{if(!document.hidden&&!ffV12AssemblyBusy)void ffV12Refresh(false);},12000);
 }
+let ffV12Filter='all';
+function ffV12SetFilter(value){
+ ffV12Filter=['all','printed','preparing','ready'].includes(value)?value:'all';
+ document.querySelectorAll('[data-assembly-filter]').forEach(b=>{
+  const active=b.dataset.assemblyFilter===ffV12Filter;b.classList.toggle('active',active);
+  b.setAttribute('aria-pressed',String(active));
+ });
+ ffV12Render();
+}
+document.querySelectorAll('[data-assembly-filter]').forEach(b=>b.addEventListener('click',()=>ffV12SetFilter(b.dataset.assemblyFilter)));
 function ffV12Render(){
  const root=ffV12Get('ffV12AssemblyOrders');root.replaceChildren();
  const payload=ffV12AssemblyPayload;if(!payload)return;
  const orders=Array.isArray(payload.orders)?payload.orders:[];
  const live=orders.filter(o=>o&&['printed','preparing','ready'].includes(o.cashier_stage));
+ const counts={printed:0,preparing:0,ready:0};
+ for(const o of live)counts[o.cashier_stage]++;
  ffV12Get('ffV12BranchTitle').textContent=payload.branch?.name||'فرع غير محدد';
- ffV12Get('ffV12AssemblySummary').textContent='قيد المتابعة: '+live.length+' · قيد التحضير: '+live.filter(o=>o.cashier_stage==='preparing').length+' · جاهزة: '+live.filter(o=>o.cashier_stage==='ready').length;
- if(!live.length){root.append(ffV12Node('div','لا توجد طلبات بانتظار التجميع في هذا الفرع.','empty'));return;}
- for(const order of live){
-  const item=ffV12Node('article',undefined,'ff-assembly-order');
-  item.append(ffV12Node('strong','طلب #'+(order.number||'—')));
-  item.append(ffV12Node('div',ffV12StageLabels[order.cashier_stage]||'قيد التجميع','ff-assembly-stage ff-luxe-cashier-stage'));
-  item.append(ffV12Node('div','🛵 الموصل: '+(order.driver_name||'غير محدد')+' · '+(order.area||'بدون منطقة'),'muted'));
-   item.append(ffV12Node('div','👩‍💼 خدمة العملاء: '+(order.customer_service_name||'غير محدد')+' · 🧾 الكاشير: '+(order.cashier_employee_name||'بانتظار استلام الكاشير'),'ff-luxe-employee-meta'));
-  if(order.created_at){const age=Math.max(0,Math.round((Date.now()-Date.parse(order.created_at))/60000));item.append(ffV12Node('div','عمر الطلب: '+age+' دقيقة','ff-assembly-time'));}
-  const lines=Array.isArray(order.items)?order.items.map(x=>String(x.qty??0)+' × '+String(x.name??'صنف')).join('\n'):'الأصناف غير متاحة';
-  item.append(ffV12Node('div',lines||'بدون أصناف','ff-assembly-items'));
-  if(order.notes)item.append(ffV12Node('div','ملاحظات: '+order.notes,'muted'));
-  const next={printed:['preparing','بدء التحضير'],preparing:['ready','الطلب جاهز'],ready:['handed_over','تم التسليم للموصل']}[order.cashier_stage];
-  if(next){const button=ffV12Node('button',next[1],'primary');button.type='button';
+ ffV12Get('ffV12AssemblySummary').textContent='🔒 الصلاحية: نقطة تجميع · '+(payload.branch?.name||'فرعك')+' · تُعرض طلبات فرعك فقط';
+ for(const [id,value] of [['ffV12CountAll',live.length],['ffV12CountPrinted',counts.printed],['ffV12CountPreparing',counts.preparing],['ffV12CountReady',counts.ready]]){
+  const el=ffV12Get(id);if(el)el.textContent=String(value);
+ }
+ const shown=ffV12Filter==='all'?live:live.filter(o=>o.cashier_stage===ffV12Filter);
+ ffV12Get('ffV12FilteredCount').textContent=shown.length+' طلب';
+ if(!shown.length){
+  root.append(ffV12Node('div',live.length?'لا توجد طلبات في هذه المرحلة.':'لا توجد طلبات بانتظار التجميع في هذا الفرع.','empty'));return;
+ }
+ for(const order of shown){
+  const item=ffV12Node('article',undefined,'ff-assembly-order'+(order.cashier_stage==='ready'?' ff-assembly-ready':''));
+  const header=ffV12Node('div',undefined,'ff-assembly-order-header');
+  header.append(ffV12Node('strong','🧾 طلب #'+(order.number||'—')));
+  header.append(ffV12Node('span',ffV12StageLabels[order.cashier_stage]||'قيد التجميع','ff-assembly-stage'));
+  item.append(header);
+  const meta=ffV12Node('div',undefined,'ff-assembly-order-meta');
+  meta.append(ffV12Node('div','🛵 الموصل: '+(order.driver_name||'غير محدد')+' · 📍 '+(order.area||'بدون منطقة')));
+  meta.append(ffV12Node('div','👩‍💼 خدمة العملاء: '+(order.customer_service_name||'غير محدد')));
+  meta.append(ffV12Node('div','🧾 الكاشير: '+(order.cashier_employee_name||'بانتظار استلام الكاشير')));
+  if(order.created_at){
+   const age=Math.max(0,Math.floor((Date.now()-Date.parse(order.created_at))/60000));
+   meta.append(ffV12Node('div','⏱️ عمر الطلب: '+age+' دقيقة','ff-assembly-time'+(age>=40?' late':age>=25?' warn':'')));
+  }
+  item.append(meta);
+  const products=ffV12Node('div',undefined,'ff-assembly-item-list');
+  products.append(ffV12Node('div','🍟 أصناف الطلب','ff-assembly-item-title'));
+  const entries=Array.isArray(order.items)?order.items:[];
+  if(!entries.length)products.append(ffV12Node('p','الأصناف غير متاحة','muted'));
+  for(const product of entries){
+   const line=ffV12Node('div',undefined,'ff-assembly-item-row');
+   line.append(ffV12Node('span',String(product.qty??0)+' ×','ff-assembly-item-qty'));
+   line.append(ffV12Node('span',String(product.name??'صنف'),'ff-assembly-item-name'));
+   products.append(line);
+  }
+  item.append(products);
+  if(order.notes)item.append(ffV12Node('div','📝 ملاحظات الطلب:\n'+order.notes,'ff-assembly-order-note'));
+  const next={printed:['preparing','🍳 بدء التحضير'],preparing:['ready','✅ الطلب جاهز'],ready:['handed_over','📦 تم التسليم للموصل']}[order.cashier_stage];
+  if(next){
+   const button=ffV12Node('button',next[1],'primary ff-assembly-stage-action');button.type='button';
    button.disabled=!order.id||!order.driver_id||ffV12AssemblyBusy;
    button.addEventListener('click',async()=>{
     if(ffV12AssemblyBusy||!ffV12AssemblyActive||!navigator.onLine)return;
     if(!window.confirm('اعتماد «'+next[1]+'» للطلب #'+(order.number||'—')+'؟'))return;
-    const generation=ffV12Generation;ffV12Request++;ffV12AssemblyLoading=false;ffV12AssemblyBusy=true;button.disabled=true;button.textContent='جارٍ الحفظ...';
-    try{const r=await rpc('ff_v12_assembly_set_stage',{p_order:order.id,p_stage:next[0],p_expected_stage:order.cashier_stage});
+    const generation=ffV12Generation;ffV12Request++;ffV12AssemblyLoading=false;ffV12AssemblyBusy=true;
+    button.disabled=true;button.textContent='جارٍ الحفظ...';
+    try{
+     const result=await rpc('ff_v12_assembly_set_stage',{p_order:order.id,p_stage:next[0],p_expected_stage:order.cashier_stage});
      if(generation!==ffV12Generation)return;
-     if(!r?.ok)throw Error('الخادم لم يعتمد تغيير الحالة');
+     if(!result?.ok)throw Error('الخادم لم يعتمد تغيير الحالة');
      ffV12Get('ffV12AssemblyStatus').textContent='✅ تم حفظ المرحلة وتسجيلها في قاعدة البيانات';
      await ffV12Refresh(true);
-    }catch(e){if(generation!==ffV12Generation)return;ffV12Get('ffV12AssemblyStatus').textContent='⚠️ لم يُحفظ التغيير: '+(e?.message||'خطأ اتصال')+' — حدّث الشاشة ثم أعد المحاولة';
-     button.disabled=false;button.textContent=next[1];}
-    finally{if(generation===ffV12Generation){ffV12AssemblyBusy=false;if(ffV12AssemblyPayload)ffV12Render();}}
-   });item.append(button);}
+    }catch(e){
+     if(generation!==ffV12Generation)return;
+     ffV12Get('ffV12AssemblyStatus').textContent='⚠️ لم يُحفظ التغيير: '+(e?.message||'خطأ اتصال')+' — حدّث الشاشة ثم أعد المحاولة';
+     button.disabled=false;button.textContent=next[1];
+    }finally{
+     if(generation===ffV12Generation){ffV12AssemblyBusy=false;if(ffV12AssemblyPayload)ffV12Render();}
+    }
+   });item.append(button);
+  }
   root.append(item);
  }
 }
