@@ -6,7 +6,7 @@
  const role=()=>document.body.classList.contains('ff-v12-assembly-mode')?'assembly':(typeof data!=='undefined'?data?.role:null);
  const anchor=()=>document.getElementById(({cashier:'cashierOrders',driver:'driverOffers',assembly:'ffV12AssemblyOrders',manager:'staffOrders',supervisor:'staffOrders',customer_service:'staffOrders'})[role()]||'cashierOrders');
  const eligible=()=>typeof user!=='undefined'&&!!user?.id&&['cashier','driver','assembly','manager','supervisor','customer_service'].includes(role());
- const yemenDay=()=>{const p=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const g=x=>p.find(t=>t.type===x)?.value||'';return g('year')+'-'+g('month')+'-'+g('day')};
+ const yemenDay=()=>window.ffF01BusinessDate?.()||((()=>{const p=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const g=x=>p.find(t=>t.type===x)?.value||'';return g('year')+'-'+g('month')+'-'+g('day')})());
  function mount(){const a=anchor();if(a&&box.nextElementSibling!==a)a.before(box)}
  const style=document.createElement('style');style.id='ff-luxe-completed-cashier-styles';
  style.textContent=[
