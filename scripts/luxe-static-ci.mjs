@@ -12,6 +12,22 @@ assert.match(html, /ff61-employees/, 'Employee application portal missing');
 assert.match(html, /ff71-customer-phone-otp/, 'Customer OTP portal missing');
 assert.match(html, /ff_v12_assembly_set_stage/, 'Assembly workflow missing');
 
+assert.match(html, /function ff51ClearPrivate\(\)/, 'FF51 must clear all private customer/archive UI on logout');
+assert.match(html, /window\.addEventListener\('ff-luxe-session-reset',\(\)=>\{ff51ClearPrivate\(\)/,
+  'FF51 must listen for logout/session change');
+assert.match(html, /async function ff51LoadArchive\(reset=false\)[\s\S]*?if\(!current\(\)\)return;/,
+  'Archive result must recheck viewer and filter after RPC');
+assert.match(html, /ff51ArchiveSeq\+\+;ff51ArchiveRows=\[\];ff51ArchiveOffset=0;/,
+  'Archive close must erase page records and invalidate outstanding requests');
+assert.match(html, /async function ff51LoadCustomers\(\)[\s\S]*?if\(!current\(\)\)return;/,
+  'Customer directory must reject stale account responses');
+assert.match(html, /async function ff51CustomerNotes\(phone\)[\s\S]*?if\(!current\(\)\)return;/,
+  'Customer notes must reject stale account responses');
+assert.match(html, /async function ff51LoadRatings\(\)[\s\S]*?if\(!current\(\)\)return;/,
+  'Ratings must reject stale account responses');
+assert.match(html, /Prevent spreadsheet formula injection/, 'Archive CSV must protect spreadsheet users from formula injection');
+
+
 const completedFile=get('scripts/luxe-completed-universal-20261123.js').toString('utf8');
 new vm.Script(completedFile, {filename:'scripts/luxe-completed-universal-20261123.js'});
 assert.match(completedFile, /window\.addEventListener\('ff-luxe-session-reset',clear\)/,
