@@ -586,6 +586,7 @@ body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{
  .ff-luxe-employee-meta{flex-direction:column;gap:5px}
 }
 </style>
+<script src="./scripts/luxe-security-12-14-20261123.js"></script>
 </head>
 <body class="ff-booting" data-access="locked"><div id="ff65Boot" role="status" aria-live="polite" style="text-align:center;padding:20px"><div id="ff65BootMessage">جارِ استعادة جلسة فريش فرايز…</div><noscript><p style="font-size:14px">يلزم تفعيل JavaScript في المتصفح لاستخدام نظام فريش فرايز.</p></noscript></div>
 <script id="ff-luxe-boot-watchdog">
@@ -1214,7 +1215,13 @@ async function ff28ReadRole(){
 async function setSession(session){
  resetUI();if(!session?.user)return;
  ff28AccountId=session.user.id;const seq=ff28Epoch;
- const role=await ff28ReadRole();
+ const secureRole=await rpc('ff_security_my_role');
+ const role=secureRole||await ff28ReadRole();
+ if(['manager','customer_service'].includes(role)){
+  if(!window.ffSec)throw Error('تعذر تهيئة حماية الحساب');
+  await window.ffSec.ensureMfa(client,role);
+  ffLuxeInitialSnapshot=null;
+ }
  if(seq!==ff28Epoch)return;
  if(['customer','applicant'].includes(role)){
   document.body.dataset.access=role;$('ff28Title').textContent=role==='customer'?'طلباتي':'طلب الانضمام للعمل';$('ff28Apply').hidden=true;
@@ -1222,7 +1229,7 @@ async function setSession(session){
  }
  if(!['manager','supervisor','customer_service','cashier','driver','assembly'].includes(role))throw Error('الحساب غير مصرح');
  user=session.user;
- if(role==='assembly'){document.body.dataset.access='staff';$('loginOverlay').classList.add('hidden');await ffV12Start();return;}
+ if(role==='assembly'){document.body.dataset.access='staff';$('loginOverlay').classList.add('hidden');await ffV12Start();window.ffSec.afterLogin(client,role);return;}
  const initial=ffLuxeInitialSnapshot;ffLuxeInitialSnapshot=null;
  if(initial?.role===role){
   data=initial;
@@ -1239,6 +1246,7 @@ async function setSession(session){
  document.body.dataset.access='staff';$('loginOverlay').classList.add('hidden');
  for(const id of ['ff39InboxBtn','notificationsBtn','refreshBtn','logoutBtn'])$(id).classList.remove('hidden');
  if(role==='driver')void ffDriverHeartbeat();
+ window.ffSec.afterLogin(client,role);
 }
 $('ff28Refresh').onclick=ff28PortalLoad;
 $('ff28Logout').onclick=async()=>{try{const {error}=await client.auth.signOut({scope:'local'});if(error)throw error;resetUI()}catch(e){$('ff28State').textContent=e.message}};
@@ -1266,7 +1274,7 @@ async function ffDriverHeartbeat(){
 setInterval(ffDriverHeartbeat,30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)void ffDriverHeartbeat()});
 window.addEventListener('online',()=>void ffDriverHeartbeat());
-async function initialize(){if(!window.supabase?.createClient){for(let i=0;i<40&&!window.supabase?.createClient;i++)await new Promise(r=>setTimeout(r,200))}if(!window.supabase?.createClient){$('loginStatus').textContent='تعذر تحميل مكتبة الاتصال بقاعدة البيانات. تحقق من الإنترنت ثم أعد المحاولة.';document.body.classList.remove('ff-booting');return}client=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'freshfries-v38-pilot-session'}});client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){resetUI()}else if(event==='SIGNED_IN'&&ff28AccountId&&session?.user?.id!==ff28AccountId){resetUI();$('loginStatus').textContent='تم تبديل الحساب؛ جارٍ تهيئة الجلسة الجديدة دون إعادة تحميل الصفحة.'}});try{
+async function initialize(){if(!window.supabase?.createClient){for(let i=0;i<40&&!window.supabase?.createClient;i++)await new Promise(r=>setTimeout(r,200))}if(!window.supabase?.createClient){$('loginStatus').textContent='تعذر تحميل مكتبة الاتصال بقاعدة البيانات. تحقق من الإنترنت ثم أعد المحاولة.';document.body.classList.remove('ff-booting');return}client=window.supabase.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:window.ffSec.storageKey,storage:window.ffSec.storage}});client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){resetUI()}else if(event==='SIGNED_IN'&&ff28AccountId&&session?.user?.id!==ff28AccountId){resetUI();$('loginStatus').textContent='تم تبديل الحساب؛ جارٍ تهيئة الجلسة الجديدة دون إعادة تحميل الصفحة.'}});try{
  const {data:auth,error:restoreError}=await client.auth.getSession();
  if(restoreError)throw restoreError;
  if(auth.session)await setSession(auth.session);
@@ -4401,7 +4409,7 @@ function renderList(section,records){
      };rebuildBranch();
     const passLabel=create('label','كلمة مرور أولية (8 خانات بالضبط)');const pass=create('input');
     pass.type='password';pass.autocomplete='new-password';pass.minLength=8;pass.maxLength=8;
-    const sync=()=>{branchLabel.hidden=!['driver','cashier','assembly'].includes(role.value);branch.disabled=branchLabel.hidden;rebuildBranch()};role.onchange=sync;
+    const sync=()=>{branchLabel.hidden=!['driver','cashier','assembly','supervisor'].includes(role.value);branch.disabled=branchLabel.hidden;rebuildBranch()};role.onchange=sync;
     roleLabel.append(role);branchLabel.append(branch);passLabel.append(pass);sync();
     options.append(roleLabel,branchLabel,passLabel);
     const phoneCheck=create('label',undefined,'ff61-check ff67-verify-phone');
