@@ -228,3 +228,29 @@ assert.match(schemaSQL,/ff_f01_daily_summary/);
 assert.match(reportSQL,/ff40_operations_report/);
 assert.match(reportSQL,/ff51_order_archive/);
 assert.match(testSQL,/2026-11-24 08:00:00\+03/);
+
+
+// Burger station: login isolation, durable server-side transitions, audit and live alerts.
+const burgerScript=get('scripts/luxe-burger-kitchen-20261123.js').toString('utf8');
+new vm.Script(burgerScript,{filename:'scripts/luxe-burger-kitchen-20261123.js'});
+assert.match(html,/luxe-burger-kitchen-20261123\.js/, 'Burger station module missing');
+assert.match(html,/window\.ffBurgerStart\(\)/, 'Kitchen account must route to its dedicated interface');
+assert.match(html,/window\.ffBurgerActive\?\.\(\)/, 'Kitchen role must not poll staff snapshot');
+assert.match(html,/data-ff-burger-notify/, 'Cashier order burger shortcut missing');
+assert.match(html,/window\.ffBurgerReset\?\.\(\)/, 'Kitchen session logout cleanup missing');
+assert.match(burgerScript,/ff_burger_send/, 'Cashier order submission RPC missing');
+assert.match(burgerScript,/ff_burger_transition/, 'Accept-ready-skip RPC missing');
+assert.match(burgerScript,/data-ff-burger-start/, 'Prep timer missing');
+assert.match(burgerScript,/postgres_changes/, 'Realtime hint missing');
+assert.match(burgerScript,/ffBurgerCashierReady/, 'Ready alert list missing');
+const burgerSQL=get('supabase/migrations/20261123_burger_kitchen_workflow.sql').toString('utf8');
+const burgerRoles=get('supabase/migrations/20261123_burger_kitchen_staff_roles.sql').toString('utf8');
+assert.match(burgerSQL,/ENABLE ROW LEVEL SECURITY/,'Burger ticket RLS missing');
+assert.match(burgerSQL,/ff_burger_ticket_branch_read/,'Kitchen branch access policy missing');
+assert.match(burgerSQL,/ff_burger_event_and_notify/,'Burger notification trigger missing');
+assert.match(burgerSQL,/ON CONFLICT\(client_token\) DO NOTHING/,'Duplicate send guard missing');
+assert.match(burgerSQL,/t\.kitchen_id/, 'Kitchen receiver not present in list');
+assert.match(burgerRoles,/ff28_my_role/,'Kitchen login role not installed');
+assert.match(burgerRoles,/burger_kitchen/,'Kitchen staff role not supported');
+const edgeBurger=get('supabase/functions/ff61-employees/index.ts').toString('utf8');
+assert.match(edgeBurger, /"burger_kitchen"/,'Employee approval endpoint missing kitchen role');
