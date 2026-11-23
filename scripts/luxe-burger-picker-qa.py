@@ -67,9 +67,10 @@ try:
                   });
                   window.__burgerFixture={get,setQuantity};
                 }""")
-                product = page.locator(".ffl-picker-product")
-                plus = page.locator(".ffl-picker-controls button").last
-                minus = page.locator(".ffl-picker-minus")
+                first_tile = page.locator(".ffl-picker-tile").first
+                product = first_tile.locator(".ffl-picker-product")
+                plus = first_tile.locator(".ffl-picker-controls button").last
+                minus = first_tile.locator(".ffl-picker-minus")
                 qty = lambda: page.evaluate("window.__burgerFixture.get()")
                 assert qty()["qty"] == 0 and qty()["minusDisabled"]
                 assert product.get_attribute("aria-label") == "إضافة سماش برجر أسمر دبل"
