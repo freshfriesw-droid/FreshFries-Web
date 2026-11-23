@@ -61,9 +61,10 @@ dialog.innerHTML='<h2>🍔 إعلام قسم البرجر</h2><form id="ffBurger
 document.body.append(dialog);
 const form=$('ffBurgerForm'),f=name=>form.elements.namedItem(name);
 let isKitchenMode=false,profile=null,items=[],rows=[],channel=null,interval=null,loading=false,fetchAt=0,seq=0,owner='',initial=true,lastNew=new Set(),lastReady=new Set(),busy=false,token=null,presenceAt=0;
+const assemblyRole=()=>typeof ffV12AssemblyActive!=='undefined'&&ffV12AssemblyActive&&typeof user!=='undefined'&&!!user?.id;
 const cashierRole=()=>typeof data!=='undefined'&&data?.role==='cashier'&&typeof user!=='undefined'&&!!user?.id;
 const kitchenRole=()=>isKitchenMode&&profile?.role==='burger_kitchen'&&typeof user!=='undefined'&&!!user?.id;
-const authorized=()=>cashierRole()||kitchenRole();
+const authorized=()=>cashierRole()||assemblyRole()||kitchenRole();
 const identity=()=>String(typeof user!=='undefined'&&user?.id||'');
 // The regular navigation relies on data.role; kitchen sessions use data=null.
  // Render the account controls independently instead of displaying "not logged in".
@@ -172,7 +173,9 @@ function render(){
    const finished=rows.filter(t=>t.status==='ready'||t.status==='acknowledged');
    $('ffBurgerDoneCount').textContent=String(finished.length);
    fill('ffBurgerKitchenFinished',finished,'kitchen');
- }else if(cashierRole()){
+ }else if(cashierRole()||assemblyRole()){
+   const host=assemblyRole()?$('ffV12AssemblyWorkspace'):cashier;
+   if(host&&panel.parentElement!==host)host.prepend(panel);
    panel.classList.remove('hidden');kitchen.classList.add('hidden');
    const ready=rows.filter(t=>t.status==='ready'),active=rows.filter(t=>t.status==='sent'||t.status==='preparing');
    $('ffBurgerCashierStatus').textContent='جاهز للاستلام: '+ready.length+' · تحت التحضير: '+active.length;
@@ -202,7 +205,7 @@ async function updateOnline(force=false){
  presenceAt=Date.now();
  try{
   if(kitchenRole())await rpc('ff_burger_presence_ping',{p_online:true});
-  if(cashierRole()){
+  if(cashierRole()||assemblyRole()){
    const status=await rpc('ff_burger_online_status');
    const on=(Array.isArray(status)?status:[]).filter(x=>Number(x.online_count)>0);
    const badge=$('ffBurgerKitchenOnline');const live=on.length>0;
@@ -210,7 +213,7 @@ async function updateOnline(force=false){
     '🔴 قسم البرجر غير متصل الآن؛ يمكنك إرسال الطلب وسيظهر عند اتصال الموظف';
    badge.classList.toggle('live',live);badge.classList.toggle('offline',!live);
   }
- }catch(e){if(cashierRole())$('ffBurgerKitchenOnline').textContent='⚠️ تعذر التحقق من اتصال قسم البرجر'}
+ }catch(e){if(cashierRole()||assemblyRole())$('ffBurgerKitchenOnline').textContent='⚠️ تعذر التحقق من اتصال قسم البرجر'}
 }
 async function refresh(force=false){
  if(!authorized()||!identity()||loading||(!force&&Date.now()-fetchAt<5000))return;
@@ -224,7 +227,7 @@ async function refresh(force=false){
    const ready=new Set(list.filter(t=>t.status==='ready').map(t=>t.id));
    if(!initial){
     if(kitchenRole())for(const t of list.filter(t=>t.status==='sent'&&!lastNew.has(t.id)))notify('🍔 طلب برجر جديد',t.invoice_ref?.trim()?'فاتورة '+t.invoice_ref:'طلب بدون رقم فاتورة');
-    if(cashierRole())for(const t of list.filter(t=>t.status==='ready'&&!lastReady.has(t.id)))notify('✅ البرجر جاهز',t.invoice_ref?.trim()?'فاتورة '+t.invoice_ref:'طلب بدون رقم فاتورة');
+    if((cashierRole()||assemblyRole()))for(const t of list.filter(t=>t.status==='ready'&&!lastReady.has(t.id)))notify('✅ البرجر جاهز',t.invoice_ref?.trim()?'فاتورة '+t.invoice_ref:'طلب بدون رقم فاتورة');
    }
    lastNew=newer;lastReady=ready;initial=false;owner=identity();rows=list;render();
    void updateOnline(force);
@@ -256,10 +259,12 @@ window.ffBurgerStart=async()=>{
  items=await rpc('ff_burger_menu');attachKitchenDrawer();subscribe();heartbeat();await updateOnline(true);await refresh(true);
 };
 window.ffBurgerOnCashierDraw=()=>{
- if(!cashierRole())return;
+ if(!cashierRole()&&!assemblyRole())return;
  if(owner!==identity()){owner=identity();profile=null;initial=true;}
  panel.classList.remove('hidden');subscribe();heartbeat();void refresh();
 };
+window.ffBurgerOnAssemblyStart=()=>{if(!assemblyRole())return;window.ffBurgerOnCashierDraw();};
+window.ffBurgerOnAssemblyStop=()=>{reset();if(cashier&&panel.parentElement!==cashier)cashier.prepend(panel);};
 window.addEventListener('ff-assembly-snapshot-success',()=>{if(cashierRole())window.ffBurgerOnCashierDraw()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authorized())void refresh(true)});
 window.addEventListener('focus',()=>{if(authorized())void refresh(true)});
@@ -270,7 +275,7 @@ setInterval(()=>document.querySelectorAll('[data-ff-burger-start]').forEach(el=>
  el.textContent=clock(((Number.isFinite(end)?end:Date.now())-start)/1000);
 }),1000);
 async function open(initialKind='local',linkedOrder=''){
- if(!cashierRole())return;
+ if(!cashierRole()&&!assemblyRole())return;
  try{if(!profile)profile=await rpc('ff_burger_my_branch');if(!items.length)items=await rpc('ff_burger_menu')}
  catch(e){toast('تعذر جلب أصناف البرجر: '+errorText(e));return}
  if(!items.length){toast('لا توجد أصناف برجر نشطة بالمنيو');return}
@@ -281,7 +286,8 @@ async function open(initialKind='local',linkedOrder=''){
  const order=f('order');
  function refreshOrders(){
   const old=order.value;order.replaceChildren(new Option('اختر طلب التوصيل',''));
-  for(const o of (data?.orders||[]).filter(x=>x.branch_id===branch.value&&
+  const candidates=assemblyRole()?(ffV12AssemblyPayload?.orders||[]):(data?.orders||[]);
+  for(const o of candidates.filter(x=>(assemblyRole()?ffV12AssemblyPayload?.branch?.id:x.branch_id)===branch.value&&
      !['cancelled','canceled','closed','delivered'].includes(x.status)))
    order.add(new Option('طلب #'+o.number+' · '+(o.area||'توصيل'),o.id));
   if([...order.options].some(x=>x.value===old))order.value=old;
@@ -289,7 +295,7 @@ async function open(initialKind='local',linkedOrder=''){
  refreshOrders();
  if(linkedOrder&&[...order.options].some(x=>x.value===linkedOrder)){
   order.value=linkedOrder;
-  f('invoice').value=data.orders.find(x=>x.id===linkedOrder)?.external_invoice_ref||'';
+  f('invoice').value=(assemblyRole()?ffV12AssemblyPayload?.orders:data?.orders)?.find(x=>x.id===linkedOrder)?.external_invoice_ref||'';
  }
  const box=$('ffBurgerMenuFields');box.replaceChildren();
  for(const item of items){
@@ -341,7 +347,7 @@ document.addEventListener('click',e=>{
 },true);
 $('ffBurgerCancel').onclick=()=>{if(!busy)dialog.close()};
 form.addEventListener('submit',async e=>{
- e.preventDefault();if(busy||!cashierRole())return;
+ e.preventDefault();if(busy||(!cashierRole()&&!assemblyRole()))return;
  const selected=[...form.querySelectorAll('[data-burger-item]')]
   .map(x=>({id:x.dataset.burgerItem,qty:Number(x.value)})).filter(x=>x.qty>0);
  if(!selected.length||selected.some(x=>!Number.isInteger(x.qty)||x.qty>99)){
