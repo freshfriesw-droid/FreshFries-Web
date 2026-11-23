@@ -7,7 +7,7 @@ const fmt = value => value === null || value === undefined ? '—' : Number(valu
 const cash = value => value === null || value === undefined ? '—' : fmt(value)+' ر.ي';
 const stamp = date => date ? new Date(date).toLocaleString('ar-YE',{timeZone:'Asia/Aden',dateStyle:'short',timeStyle:'short'}) : '—';
 const headings = {summary:'الملخص اليومي',finance:'الإيرادات',orders:'الطلبات والإلغاءات',branches:'الفروع',drivers:'أداء الموصلين',staff:'موظفو خدمة العملاء',areas:'العملاء والمناطق',items:'الأصناف الأكثر مبيعاً',ratings:'التقييمات',cases:'الشكاوى والتظلمات',attendance:'الدوام والاستراحات',analytics:'التحليلات المتقدمة',comparisons:'المقارنات',approval:'اعتماد المدير'};
-let result=null,identity='',pdf=null,pdfURL=null,fileName='',pending=false,pdfPromise=null,libPromise=null;
+let result=null,identity='',pdf=null,pdfURL=null,fileName='',pending=false,pdfPromise=null,libPromise=null,previewed=false;
 function me(){return typeof user!=='undefined' && user ? user.id : ''}
 const root=document.createElement('section');root.id='ff76Center';root.dir='rtl';root.className='ff76-hidden';
 root.innerHTML=[
@@ -38,7 +38,7 @@ if(anchor)anchor.after(root);else document.querySelector('main')?.append(root);
 const previewDialog=document.createElement('dialog');previewDialog.id='ff76PdfDialog';previewDialog.dir='rtl';
 previewDialog.innerHTML='<header class="r-dialoghead"><b>معاينة PDF الكاملة قبل الإرسال</b><div><button id="ff76DlgDownload">حفظ الملف</button> <button id="ff76DlgShare" class="r-primary">مشاركة الملف</button> <button id="ff76DlgClose">✕ إغلاق</button></div></header><iframe id="ff76PDFFrame" title="معاينة PDF"></iframe>';
 document.body.append(previewDialog);
-function clearPDF(){if(pdfURL){URL.revokeObjectURL(pdfURL);pdfURL=null}pdf=null;fileName='';el('ff76PDFFrame').removeAttribute('src')}
+function clearPDF(){if(pdfURL){URL.revokeObjectURL(pdfURL);pdfURL=null}pdf=null;fileName='';previewed=false;el('ff76PDFFrame').removeAttribute('src')}
 function clear(){result=null;identity='';clearPDF();el('ff76Body').textContent='';el('ff76ApprovalBox').hidden=true;['ff76Preview','ff76Download','ff76Share'].forEach(id=>el(id).disabled=true)}
 function day(){if(typeof ff40TodayYemen==='function')return ff40TodayYemen();const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day}
 function changeDay(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
@@ -85,7 +85,10 @@ if(selectedSet.has('drivers')){
  const top=(r.drivers||[]).slice().sort((a,b)=>Number(b.delivered)-Number(a.delivered))[0];
  const fast=(r.drivers||[]).filter(x=>Number(x.delivered)>=2&&x.average_minutes!=null).sort((a,b)=>Number(a.average_minutes)-Number(b.average_minutes))[0];
  html.push(section('drivers','<p class="r-muted">الأكثر إنجازاً: '+safe(top?.driver_name||'غير متاح')+' | الأسرع بالمتوسط (طلبان على الأقل): '+safe(fast?.driver_name||'بيانات غير كافية')+'. لا يُمنح لقب أفضل التزام شامل دون بيانات حضور وتقييم كافية.</p>'+
- table([['الموصل',x=>x.driver_name],['المسندة',x=>fmt(x.assigned)],['المنجزة',x=>fmt(x.delivered)],['رسوم مستحقة',x=>cash(x.delivery_fees_due)],['قيمة الفواتير',x=>cash(x.invoice_value)],['متوسط التوصيل بالدقائق',x=>fmt(x.average_minutes)],['متوسط تقييم الطلب',x=>fmt(x.average_rating)]],r.drivers)))}
+ table([['الموصل',x=>x.driver_name],['المسندة',x=>fmt(x.assigned)],['المنجزة',x=>fmt(x.delivered)],['رسوم مستحقة',x=>cash(x.delivery_fees_due)],['قيمة الفواتير',x=>cash(x.invoice_value)],['متوسط الفاتورة',x=>cash(x.average_order)],['متوسط التوصيل بالدقائق',x=>fmt(x.average_minutes)],['متوسط تقييم الطلب',x=>fmt(x.average_rating)]],r.drivers)+
+'<h4>تقييمات الموصلين الداخلية</h4>'+table([['الموصل',x=>x.driver_name],['مرات التقييم',x=>fmt(x.ratings)],['متوسط النجوم',x=>fmt(x.average_stars)],['التقييمات المنخفضة',x=>fmt(x.low_ratings)]],r.internal_driver_ratings)+
+'<h4>التسويات والتحصيل الفعلي المسجل</h4>'+table([['الموصل',x=>x.driver_name],['التسويات',x=>fmt(x.statements)],['المبلغ المستحق',x=>cash(x.cash_due)],['المبلغ المسجل مستلماً',x=>cash(x.cash_received)],['التسويات المقفلة',x=>fmt(x.closed_statements)]],r.settlements)+
+'<p class="r-muted">لا يُعد المبلغ المستحق تحصيلاً مؤكداً؛ استند إلى سجلات التسويات المقفلة عند المطابقة المالية.</p>'))}
 if(selectedSet.has('staff'))html.push(section('staff',table([['الموظف',x=>x.staff_name],['الطلبات',x=>fmt(x.orders)]],r.service_staff)));
 if(selectedSet.has('areas'))html.push(section('areas','<h4>مناطق التوصيل</h4>'+table([['المنطقة',x=>x.area_name],['الطلبات',x=>fmt(x.orders)],['منجزة',x=>fmt(x.delivered)],['العملاء الجدد',x=>fmt(x.new_customers)]],r.areas)+
  (r.customers?.length?'<h4>العملاء المتكررون</h4>'+table([['العميل',x=>x.customer_name],['الرقم المخفي',x=>x.phone_masked],['الطلبات',x=>fmt(x.orders)]],r.customers):'')));
@@ -164,9 +167,9 @@ const uid=me(),tag=identity;pdfPromise=(async()=>{
  try{return await pdfPromise}finally{pdfPromise=null}}
 function download(){if(!pdf)return;const url=pdfURL||URL.createObjectURL(pdf),a=document.createElement('a');a.href=url;a.download=fileName;a.click();if(!pdfURL)setTimeout(()=>URL.revokeObjectURL(url),5000)}
 async function preview(){el('ff76Preview').disabled=true;el('ff76Status').textContent='إعداد ملف PDF للمعاينة...';
-try{await producePDF();if(!pdfURL)pdfURL=URL.createObjectURL(pdf);el('ff76PDFFrame').src=pdfURL;previewDialog.showModal();el('ff76Status').textContent='راجع ملف PDF قبل الإرسال.'}
+try{await producePDF();if(!pdfURL)pdfURL=URL.createObjectURL(pdf);el('ff76PDFFrame').src=pdfURL;previewDialog.showModal();previewed=true;el('ff76Status').textContent='راجع ملف PDF قبل الإرسال.'}
 catch(e){el('ff76Status').textContent='تعذر إنشاء PDF: '+e.message}finally{el('ff76Preview').disabled=!result}}
-async function share(){if(!pdf){await preview();return}const file=new File([pdf],fileName,{type:'application/pdf'});
+async function share(){if(!pdf||!previewed){await preview();return}const file=new File([pdf],fileName,{type:'application/pdf'});
 try{if(navigator.canShare?.({files:[file]})&&navigator.share)await navigator.share({title:'تقرير فريش فرايز',files:[file]});
 else{download();el('ff76Status').textContent='بدأ حفظ PDF؛ يمكن مشاركته من مدير ملفات الجهاز.'}}catch(e){if(e.name!=='AbortError')el('ff76Status').textContent='لم تكتمل المشاركة: '+e.message}}
 el('ff76Preview').onclick=preview;el('ff76Download').onclick=async()=>{try{await producePDF();download()}catch(e){el('ff76Status').textContent=e.message}};
