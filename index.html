@@ -281,6 +281,23 @@ body.ff-v12-assembly-mode #ffx-toast{display:none!important}
 #ffV12AssemblyWorkspace>.sectionbar>.actions{display:flex;gap:8px;flex-wrap:wrap}
 @media(max-width:650px){body.ff-v12-assembly-mode #ffV12AssemblyWorkspace{margin:8px 3px;padding:12px}}
 </style>
+<style id="ff-v12-luxe-unified-design">
+body.ff-v12-assembly-mode{background:var(--ffb-bg,#f6f6f6);color:var(--ffb-ink,#242424)}
+body.ff-v12-assembly-mode header.head{display:none!important}
+body.ff-v12-assembly-mode main{max-width:1320px!important}
+body.ff-v12-assembly-mode #ffV12AssemblyWorkspace{border:1px solid var(--ffb-line,#e4e4e4)!important;border-top:5px solid var(--ffb-red,#d51e2c)!important;border-radius:18px;background:var(--ffb-surface,#fff);color:var(--ffb-ink,#111);box-shadow:0 12px 34px #00000012;padding:clamp(12px,2.5vw,24px)}
+body.ff-v12-assembly-mode #ffV12AssemblyWorkspace>.ff-assembly-brand{background:linear-gradient(110deg,#222025,#111114)!important;border-bottom:4px solid var(--ffb-red,#d51e2c);color:white;border-radius:14px;gap:15px}
+body.ff-v12-assembly-mode #ffV12AssemblyWorkspace>.ff-assembly-brand strong{letter-spacing:.4px}
+body.ff-v12-assembly-mode #ffV12AssemblyWorkspace>.sectionbar{border-bottom:1px solid var(--ffb-line,#ddd);padding:6px 0 15px}
+body.ff-v12-assembly-mode #ffV12AssemblyWorkspace>.sectionbar>.actions>button{border-radius:11px}
+body.ff-v12-assembly-mode #ffV12AssemblyStatus{border:1px solid var(--ffb-line,#ddd);background:var(--ffb-soft,#f6f6f6);color:var(--ffb-ink,#222);padding:12px}
+body.ff-v12-assembly-mode .ff-assembly-dashboard-stats>div{background:var(--ffb-surface,#fff);color:var(--ffb-ink,#111);border-color:var(--ffb-line,#ddd)}
+body.ff-v12-assembly-mode .ff-assembly-item-list{background:var(--ffb-soft,#f6f6f6)}
+body.ff-v12-assembly-mode .ff-assembly-order-note{background:#fff3e6}
+body.ff-v12-assembly-mode #ffBurgerCashierPanel{border-color:var(--ffb-red,#d51e2c);background:var(--ffb-surface,#fff);color:var(--ffb-ink,#222);margin-top:16px}
+body.ff-v12-assembly-mode #ffV12BurgerOpen{background:var(--ffb-red,#d51e2c)!important}
+@media(max-width:600px){body.ff-v12-assembly-mode #ffV12AssemblyWorkspace{margin:5px auto!important}body.ff-v12-assembly-mode #ffV12AssemblyWorkspace>.ff-assembly-brand{padding:12px}body.ff-v12-assembly-mode #ffV12AssemblyWorkspace>.sectionbar h2{font-size:18px}}
+</style>
 <style id="ff-v12-assembly-rebuilt-style">
 #ffV12AssemblyWorkspace{--assembly-red:#c51c34;--assembly-dark:#19191d;direction:rtl}
 #ffV12AssemblyWorkspace>.ff-assembly-brand{box-shadow:0 9px 24px #0002}
@@ -1031,6 +1048,16 @@ async function ffV12Start(){
  ffV12Get('logoutBtn').classList.remove('hidden');
  const assemblyLogout=ffV12Get('ffV12Logout');
  if(assemblyLogout)assemblyLogout.onclick=()=>ffV12Get('logoutBtn')?.click();
+ const assemblyBurger=ffV12Get('ffV12BurgerOpen');
+ if(assemblyBurger)assemblyBurger.onclick=()=>{
+  if(!ffV12AssemblyActive)return;
+  if(typeof window.ffBurgerToggleAssembly==='function'){
+   const didOpen=window.ffBurgerToggleAssembly();
+   if(!didOpen)ffV12Get('ffV12AssemblyStatus').textContent='⚠️ واجهة البرجر غير متاحة لهذه الجلسة؛ حدّث الصفحة وأعد الدخول';
+  }else{
+   ffV12Get('ffV12AssemblyStatus').textContent='⚠️ ملف قسم البرجر لم يُحمّل. حدّث الصفحة وحاول مرة أخرى';
+  }
+ };
  ffV12Get('identity').textContent='📦 موظف نقطة التجميع · '+(user?.email||user?.phone||'');
  const generation=ffV12Generation;
  window.ffBurgerOnAssemblyStart?.();
