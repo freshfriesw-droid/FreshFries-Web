@@ -62,12 +62,30 @@
  settle.append(section);
  const a=$('ff42RangeFrom'),b=$('ff42RangeTo'),run=$('ff42RangeApply'),state=$('ff42RangeStatus'),list=$('ff42RangeTable');
  a.value=from.value;b.value=to.value;a.max=b.max=today();
+ const managerId=()=>typeof user!=='undefined'&&user?.id&&typeof data!=='undefined'&&data?.role==='manager'?String(user.id):'';
+ let reportGeneration=0;
+ const resetPrivateReport=()=>{
+  reportGeneration++;
+  list.replaceChildren();
+  state.textContent='';
+  run.disabled=false;
+ };
+ // Logout and account switching must discard even an already dispatched RPC response.
+ window.addEventListener('ff-luxe-session-reset',resetPrivateReport);
+ window.addEventListener('ff-assembly-snapshot-success',()=>{if(!managerId())resetPrivateReport()});
+ $('logoutBtn')?.addEventListener('click',resetPrivateReport);
  run.onclick=async()=>{
-  if(typeof data==='undefined'||data?.role!=='manager')return;
+  const viewer=managerId();
+  if(!viewer)return;
   if(!valid(a.value,b.value)){state.textContent='اختر فترة صحيحة بحد أقصى 366 يومًا';return}
+  const revision=++reportGeneration;
+  const requestedFrom=a.value,requestedTo=b.value,requestedBranch=$('ff42Branch')?.value||null;
+  const stillAuthorized=()=>revision===reportGeneration&&managerId()===viewer&&
+    a.value===requestedFrom&&b.value===requestedTo&&($('ff42Branch')?.value||null)===requestedBranch;
   run.disabled=true;state.textContent='جارٍ إعداد ملخص التسويات...';list.replaceChildren();
   try{
-   const result=await rpc('ff_luxe_settlement_period',{p_from:a.value,p_to:b.value,p_branch:$('ff42Branch')?.value||null});
+   const result=await rpc('ff_luxe_settlement_period',{p_from:requestedFrom,p_to:requestedTo,p_branch:requestedBranch});
+   if(!stillAuthorized())return;
    if(!Array.isArray(result?.rows))throw Error('استجابة الخادم غير صحيحة');
    const totals=result.totals||{};
    state.textContent='الفترة '+result.from+' — '+result.to+' · المسلّمة '+money(totals.delivered_orders)+
@@ -83,7 +101,7 @@
    }
    table.append(body);list.append(table);
    if(!result.rows.length)list.textContent='لا توجد نتائج لهذه الفترة.';
-  }catch(e){state.textContent='تعذر عرض التقرير: '+(e?.message||e)}
-  finally{run.disabled=false}
+  }catch(e){if(stillAuthorized())state.textContent='تعذر عرض التقرير: '+(e?.message||e)}
+  finally{if(revision===reportGeneration)run.disabled=false}
  };
 })();
