@@ -247,6 +247,99 @@ with sync_playwright() as playwright:
                 page.evaluate("""() => {window.dispatchEvent(new Event('ff-luxe-session-reset')); user=null;data=null;}""")
                 assert page.locator("#fflFinishedList").inner_text() == ''
                 page.evaluate("""() => {user={id:'fixture-manager'};data={role:'manager',orders:[],branches:[],drivers:[],offers:[]};}""")
+                # FF51 legacy archive: reject late results after logout, including branch options.
+                page.evaluate("""() => {
+                  window.__ff51ArchiveResolvers=[];
+                  rpc=(name,args)=>{
+                    if(name==='ff51_order_archive')
+                      return new Promise(resolve=>window.__ff51ArchiveResolvers.push(resolve));
+                    return Promise.resolve([]);
+                  };
+                  document.getElementById('ff51ArchiveBtn').click();
+                }""")
+                page.wait_for_function("window.__ff51ArchiveResolvers.length===1")
+                page.evaluate("""() => {
+                  window.dispatchEvent(new Event('ff-luxe-session-reset'));
+                  user=null;data=null;
+                  window.__ff51ArchiveResolvers[0]({rows:[{
+                    number:'PRIVATE-ARCHIVE-OLD-USER',customer_name:'PRIVATE CUSTOMER',
+                    phone:'777888999',status:'delivered',created_at:'2026-11-23T00:00:00Z',
+                    total:1250,items:[],changes:[],additions:[],events:[]
+                  }],total:1});
+                }""")
+                page.wait_for_timeout(100)
+                assert page.locator("#ff51ArchiveList").inner_text() == ""
+                assert page.locator("#ff51ArchiveCount").inner_text() == ""
+                assert page.locator("#ff51ArchiveExport").is_disabled()
+                # Two overlapping archive searches: the latest filter must win.
+                page.evaluate("""() => {
+                  user={id:'fixture-new-manager'};data={role:'manager',branches:[],orders:[],drivers:[],offers:[]};
+                  window.__ff51ArchiveResolvers=[];
+                  document.getElementById('ff51ArchiveBtn').click();
+                }""")
+                page.wait_for_function("window.__ff51ArchiveResolvers.length===1")
+                page.evaluate("""() => {
+                  const select=document.getElementById('ff51ArchiveStatus');
+                  select.value='delivered';select.dispatchEvent(new Event('change',{bubbles:true}));
+                }""")
+                page.wait_for_function("window.__ff51ArchiveResolvers.length===2")
+                page.evaluate("""() => window.__ff51ArchiveResolvers[1]({
+                  rows:[{number:'LATEST-ARCHIVE-RECORD',customer_name:'CURRENT CUSTOMER',
+                         phone:'777000000',status:'delivered',created_at:'2026-11-23T00:00:00Z',
+                         total:2000,items:[],changes:[],additions:[],events:[]}],total:1
+                })""")
+                page.wait_for_function("document.getElementById('ff51ArchiveList').textContent.includes('LATEST-ARCHIVE-RECORD')")
+                page.evaluate("""() => window.__ff51ArchiveResolvers[0]({
+                  rows:[{number:'STALE-ARCHIVE-RECORD',customer_name:'STALE PRIVATE',
+                         phone:'777111222',status:'delivered',created_at:'2026-11-23T00:00:00Z',
+                         total:2000,items:[],changes:[],additions:[],events:[]}],total:1
+                })""")
+                page.wait_for_timeout(100)
+                assert "LATEST-ARCHIVE-RECORD" in page.locator("#ff51ArchiveList").inner_text()
+                assert "STALE-ARCHIVE-RECORD" not in page.locator("#ff51ArchiveList").inner_text()
+                page.locator("#ff51ArchiveClose").evaluate("(el) => el.click()")
+                assert page.locator("#ff51ArchiveList").inner_text() == ""
+                # Customer directory: a delayed response must not repopulate after logout.
+                page.evaluate("""() => {
+                  window.__ff51CustomerResolvers=[];
+                  rpc=name=>name==='ff51_customer_directory'
+                    ?new Promise(resolve=>window.__ff51CustomerResolvers.push(resolve))
+                    :Promise.resolve([]);
+                  document.getElementById('ff51CustomersBtn').click();
+                }""")
+                page.wait_for_function("window.__ff51CustomerResolvers.length===1")
+                page.evaluate("""() => {
+                  window.dispatchEvent(new Event('ff-luxe-session-reset'));user=null;data=null;
+                  window.__ff51CustomerResolvers[0]([{name:'STALE PRIVATE CUSTOMER',phone:'777123456'}]);
+                }""")
+                page.wait_for_timeout(100)
+                assert page.locator("#ff51CustomersList").inner_text() == ""
+                # Customer notes and manager ratings must also reject late responses.
+                page.evaluate("""() => {
+                  user={id:'fixture-new-manager'};data={role:'manager',branches:[],orders:[],drivers:[],offers:[]};
+                  window.__ff51NoteResolve=null;window.__ff51RatingResolve=null;
+                  rpc=name=>{
+                    if(name==='ff51_customer_notes_list')
+                      return new Promise(resolve=>window.__ff51NoteResolve=resolve);
+                    if(name==='ff_luxe_rating_summary_period')
+                      return new Promise(resolve=>window.__ff51RatingResolve=resolve);
+                    return Promise.resolve([]);
+                  };
+                  document.getElementById('ff51CustomersBtn').click();
+                  ff51CustomerNotes('777123456');
+                  document.getElementById('ff51RatingsBtn').click();
+                }""")
+                page.wait_for_function("typeof window.__ff51NoteResolve==='function' && typeof window.__ff51RatingResolve==='function'")
+                page.evaluate("""() => {
+                  window.dispatchEvent(new Event('ff-luxe-session-reset'));user=null;data=null;
+                  window.__ff51NoteResolve([{note:'STALE PRIVATE CUSTOMER NOTE',added_at:'2026-11-23T00:00:00Z'}]);
+                  window.__ff51RatingResolve([{name:'STALE PRIVATE RATING',average:4,count:9}]);
+                }""")
+                page.wait_for_timeout(100)
+                assert page.locator("#ff51CustomerNotesList").inner_text() == ""
+                assert page.locator("#ff51RatingsList").inner_text() == ""
+                assert page.locator("#ff51CustomerNotesSection").is_hidden()
+                page.evaluate("""() => {user={id:'fixture-manager'};data={role:'manager',orders:[],branches:[],drivers:[],offers:[]};}""")
                 page.evaluate("data.role='cashier'")
                 entry.wait_for(state="detached")
                 assert dialog.is_hidden()

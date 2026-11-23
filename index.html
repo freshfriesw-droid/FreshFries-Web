@@ -2790,7 +2790,28 @@ document.addEventListener('click',async e=>{
 <script>
 'use strict';
 let ff51CatalogInfo=null,ff51SelectedPhone=null,ff51ArchiveRows=[],ff51ArchiveOffset=0,ff51ArchiveTotal=0;
+let ff51ArchiveSeq=0,ff51CustomerSeq=0,ff51NotesSeq=0,ff51RatingsSeq=0,ff51CatalogSeq=0,ff51ActorSeen='';
+function ff51Viewer(roles){
+ const role=data?.role;
+ return user?.id&&roles.includes(role)
+  ?String(user.id)+':'+role+':'+String(data?.cashier_desk?.code||''):'';
+}
+function ff51ClearPrivate(){
+ ff51ArchiveSeq++;ff51CustomerSeq++;ff51NotesSeq++;ff51RatingsSeq++;ff51CatalogSeq++;
+ ff51ArchiveRows=[];ff51ArchiveOffset=0;ff51ArchiveTotal=0;ff51CatalogInfo=null;ff51SelectedPhone=null;
+ for(const id of ['ff51CatalogItems','ff51OffersList','ff51CustomersList','ff51CustomerNotesList',
+  'ff51CustomerNotesHeading','ff51ArchiveList','ff51ArchiveCount','ff51RatingsList']){
+  const el=$(id);if(el)el.replaceChildren();
+ }
+ for(const id of ['ff51CustomerNoteText','ff51CustomerSearch'])if($(id))$(id).value='';
+ for(const id of ['ff51ArchivePrev','ff51ArchiveNext','ff51ArchiveExport'])if($(id))$(id).disabled=true;
+ $('ff51CustomerNotesSection')?.classList.add('hidden');
+}
+window.addEventListener('ff-luxe-session-reset',()=>{ff51ClearPrivate();ff51ActorSeen=''});
+
 function ff51RoleNav(){
+ const actor=ff51Viewer(['manager','customer_service','cashier','supervisor','driver']);
+ if(actor!==ff51ActorSeen){ff51ClearPrivate();ff51ActorSeen=actor;for(const id of ['ff51CatalogPanel','ff51CustomersPanel','ff51ArchivePanel','ff51RatingsPanel'])$(id).classList.add('hidden')}
  const role=data?.role;
  $('ff51CatalogBtn').classList.toggle('hidden',role!=='manager');
  $('ff51CustomersBtn').classList.toggle('hidden',!['manager','customer_service'].includes(role));
@@ -2801,12 +2822,18 @@ function ff51RoleNav(){
 }
 const ff51OldDraw=draw;draw=function(){ff51OldDraw();ff51RoleNav();};
 const ff51OldReset=resetUI;
-resetUI=function(){ff51OldReset();ff51SelectedPhone=null;ff51CatalogInfo=null;ff51ArchiveRows=[];for(const id of ['ff51CatalogBtn','ff51CustomersBtn','ff51ArchiveBtn','ff51RatingsBtn','ff51CatalogPanel','ff51CustomersPanel','ff51ArchivePanel','ff51RatingsPanel'])$(id).classList.add('hidden')};
+resetUI=function(){ff51OldReset();ff51ClearPrivate();ff51ActorSeen='';for(const id of ['ff51CatalogBtn','ff51CustomersBtn','ff51ArchiveBtn','ff51RatingsBtn','ff51CatalogPanel','ff51CustomersPanel','ff51ArchivePanel','ff51RatingsPanel'])$(id).classList.add('hidden')};
 function ff51Open(id){$(id).classList.remove('hidden');$(id).scrollIntoView({block:'start'})}
 async function ff51LoadCatalog(){
+ const actor=ff51Viewer(['manager']);if(!actor)return;
+ const sequence=++ff51CatalogSeq;
+ const current=()=>sequence===ff51CatalogSeq&&ff51Viewer(['manager'])===actor&&
+  !$('ff51CatalogPanel').classList.contains('hidden');
  const box=$('ff51CatalogItems');box.textContent='جاري تحميل المنيو...';
  try{
-  ff51CatalogInfo=await rpc('ff51_manager_catalog');
+  const catalog=await rpc('ff51_manager_catalog');
+  if(!current())return;
+  ff51CatalogInfo=catalog;
   const groups=ff51CatalogInfo.categories||[],items=ff51CatalogInfo.items||[];
   box.innerHTML=items.length?items.map(i=>{
    const cat=groups.find(c=>c.id===i.category_id)?.name||'بدون قسم';
@@ -2814,11 +2841,11 @@ async function ff51LoadCatalog(){
   }).join(''):'<div class="empty">لا توجد أصناف في المنيو.</div>';
   $('ff51OffersList').innerHTML=(ff51CatalogInfo.offers||[]).map(o=>`<div class="item"><b>${esc(o.name)}</b> — ${amount(o.price)} ريال <span class="tag ${o.active?'ready':'offline'}">${o.active?'نشط':'موقوف'}</span><div class="actions"><button class="outline" data-ff51-offer-edit="${esc(o.id)}">تعديل</button><button class="outline" data-ff51-offer-toggle="${esc(o.id)}">${o.active?'إيقاف':'تفعيل'}</button></div></div>`).join('')||'<div class="empty">لا توجد عروض بعد.</div>';
   ff49CatalogAt=0;void ff49LoadCatalog();
- }catch(e){box.textContent='تعذر تحميل المنيو: '+e.message;}
+ }catch(e){if(current())box.textContent='تعذر تحميل المنيو: '+e.message;}
 }
-$('ff51CatalogBtn').onclick=()=>{ff51Open('ff51CatalogPanel');void ff51LoadCatalog()};
+$('ff51CatalogBtn').onclick=()=>{if(!ff51Viewer(['manager']))return;ff51Open('ff51CatalogPanel');void ff51LoadCatalog()};
 $('ff51CatalogRefresh').onclick=ff51LoadCatalog;
-$('ff51CatalogClose').onclick=()=>$('ff51CatalogPanel').classList.add('hidden');
+$('ff51CatalogClose').onclick=()=>{ff51CatalogSeq++;$('ff51CatalogPanel').classList.add('hidden');ff51CatalogInfo=null;$('ff51CatalogItems').replaceChildren();$('ff51OffersList').replaceChildren()};
 $('ff51ItemReset').onclick=()=>{for(const id of ['ff51CatName','ff51ItemName','ff51ItemPrice','ff51EditingItem'])$(id).value=''};
 $('ff51ItemSave').onclick=async()=>{
  const b=$('ff51ItemSave');b.disabled=true;try{
@@ -2851,68 +2878,128 @@ document.addEventListener('click',async e=>{
  try{await rpc('ff51_offer_save',{p_id:offer.id,p_name:offer.name,p_price:Number(offer.price),p_active:!offer.active});await ff51LoadCatalog()}catch(err){toast(err.message)}
 });
 async function ff51LoadCustomers(){
+ const actor=ff51Viewer(['manager','customer_service']);if(!actor)return;
+ const sequence=++ff51CustomerSeq,query=$('ff51CustomerSearch').value.trim();
+ const current=()=>sequence===ff51CustomerSeq&&ff51Viewer(['manager','customer_service'])===actor&&
+  $('ff51CustomerSearch').value.trim()===query&&!$('ff51CustomersPanel').classList.contains('hidden');
  const box=$('ff51CustomersList');box.textContent='جاري البحث عن العملاء...';
  try{
-  const list=await rpc('ff51_customer_directory',{p_query:$('ff51CustomerSearch').value.trim(),p_limit:70});
+  const list=await rpc('ff51_customer_directory',{p_query:query,p_limit:70});
+  if(!current())return;
   box.innerHTML=list.length?list.map(c=>`<div class="item"><b>${esc(c.name||'اسم غير محفوظ')}</b> — <span dir="ltr">${esc(c.phone)}</span><p class="muted">${esc(c.address||'')} · آخر طلب ${time(c.last_order_at)} · ${c.notes_count} ملاحظات</p><button class="outline" data-ff51-customer="${esc(c.phone)}">عرض الملاحظات</button></div>`).join(''):'<div class="empty">لا توجد نتائج.</div>';
- }catch(e){box.textContent='تعذر البحث: '+e.message}
+ }catch(e){if(current())box.textContent='تعذر البحث: '+e.message}
 }
-$('ff51CustomersBtn').onclick=()=>{ff51Open('ff51CustomersPanel');void ff51LoadCustomers()};
-$('ff51CustomersClose').onclick=()=>$('ff51CustomersPanel').classList.add('hidden');
+$('ff51CustomersBtn').onclick=()=>{if(!ff51Viewer(['manager','customer_service']))return;ff51Open('ff51CustomersPanel');void ff51LoadCustomers()};
+$('ff51CustomersClose').onclick=()=>{ff51CustomerSeq++;ff51NotesSeq++;$('ff51CustomersPanel').classList.add('hidden');$('ff51CustomersList').replaceChildren();$('ff51CustomerNotesList').replaceChildren();$('ff51CustomerNotesSection').classList.add('hidden');ff51SelectedPhone=null};
 $('ff51CustomerFind').onclick=ff51LoadCustomers;
+$('ff51CustomerSearch').addEventListener('input',()=>{ff51CustomerSeq++;$('ff51CustomersList').replaceChildren()});
 $('ff51CustomerSearch').addEventListener('keydown',e=>{if(e.key==='Enter')void ff51LoadCustomers()});
-async function ff51CustomerNotes(phone){ff51SelectedPhone=phone;
+async function ff51CustomerNotes(phone){
+ const actor=ff51Viewer(['manager','customer_service']);if(!actor||!phone)return;
+ const sequence=++ff51NotesSeq;
+ ff51SelectedPhone=phone;
+ const current=()=>sequence===ff51NotesSeq&&ff51Viewer(['manager','customer_service'])===actor&&
+  ff51SelectedPhone===phone&&!$('ff51CustomersPanel').classList.contains('hidden');
  $('ff51CustomerNotesHeading').textContent='ملاحظات العميل: '+phone;
  $('ff51CustomerNotesSection').classList.remove('hidden');
+ $('ff51CustomerNotesList').textContent='جارٍ تحميل الملاحظات...';
  try{const notes=await rpc('ff51_customer_notes_list',{p_phone:phone});
+  if(!current())return;
   $('ff51CustomerNotesList').innerHTML=notes.map(n=>`<div class="item"><span>${esc(n.note)}</span><p class="muted">${time(n.added_at)}</p></div>`).join('')||'لا توجد ملاحظات.';
- }catch(e){toast(e.message)}
+ }catch(e){if(current())toast(e.message)}
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ff51-customer]');if(b)void ff51CustomerNotes(b.dataset.ff51Customer)});
 $('ff51CustomerNoteSave').onclick=async()=>{
+ const actor=ff51Viewer(['manager','customer_service']),phone=ff51SelectedPhone;
+ if(!actor||!phone)return;
+ const note=$('ff51CustomerNoteText').value.trim(),sequence=ff51NotesSeq;
+ const current=()=>ff51Viewer(['manager','customer_service'])===actor&&
+   ff51SelectedPhone===phone&&sequence===ff51NotesSeq;
  const b=$('ff51CustomerNoteSave');b.disabled=true;try{
-  await rpc('ff51_customer_note_add',{p_phone:ff51SelectedPhone,p_note:$('ff51CustomerNoteText').value.trim()});
-  $('ff51CustomerNoteText').value='';await ff51CustomerNotes(ff51SelectedPhone);toast('تم حفظ ملاحظة العميل');
- }catch(e){toast(e.message)}finally{b.disabled=false}
+  await rpc('ff51_customer_note_add',{p_phone:phone,p_note:note});
+  if(!current())return;
+  $('ff51CustomerNoteText').value='';await ff51CustomerNotes(phone);
+  if(ff51Viewer(['manager','customer_service'])===actor&&ff51SelectedPhone===phone)toast('تم حفظ ملاحظة العميل');
+ }catch(e){if(current())toast(e.message)}finally{b.disabled=false}
 };
 function ff51DefaultArchiveDates(){const t=new Date();const today=new Date(t.toLocaleString('en-US',{timeZone:'Asia/Aden'}));
  const dateString=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
  const period=window.ffLuxeHistoryPeriod;$('ff51ArchiveTo').value=period?.to||dateString(today);$('ff51ArchiveFrom').value=period?.from||dateString(today);
 }
 async function ff51LoadArchive(reset=false){
+ const actor=ff51Viewer(['manager','customer_service','cashier','supervisor']);if(!actor)return;
  if(reset)ff51ArchiveOffset=0;
+ const sequence=++ff51ArchiveSeq,requestedOffset=ff51ArchiveOffset;
+ const from=$('ff51ArchiveFrom').value,to=$('ff51ArchiveTo').value,
+  selectedBranch=$('ff51ArchiveBranch').value||null,selectedStatus=$('ff51ArchiveStatus').value||null;
+ const current=()=>sequence===ff51ArchiveSeq&&
+   ff51Viewer(['manager','customer_service','cashier','supervisor'])===actor&&
+   !$('ff51ArchivePanel').classList.contains('hidden')&&
+   $('ff51ArchiveFrom').value===from&&$('ff51ArchiveTo').value===to&&
+   ($('ff51ArchiveBranch').value||null)===selectedBranch&&
+   ($('ff51ArchiveStatus').value||null)===selectedStatus&&ff51ArchiveOffset===requestedOffset;
+ ff51ArchiveRows=[];ff51ArchiveTotal=0;
+ $('ff51ArchiveCount').textContent='';
+ for(const id of ['ff51ArchivePrev','ff51ArchiveNext','ff51ArchiveExport'])$(id).disabled=true;
  const box=$('ff51ArchiveList');box.textContent='جاري تحميل الأرشيف...';
  try{
-  const r=await rpc('ff51_order_archive',{p_from:$('ff51ArchiveFrom').value,p_to:$('ff51ArchiveTo').value,
-   p_branch:$('ff51ArchiveBranch').value||null,p_status:$('ff51ArchiveStatus').value||null,p_limit:50,p_offset:ff51ArchiveOffset});
-  ff51ArchiveRows=r.rows||[];ff51ArchiveTotal=Number(r.total||0);
-  $('ff51ArchiveCount').textContent=`الطلبات المطابقة: ${ff51ArchiveTotal} | عرض ${ff51ArchiveOffset+1}–${Math.min(ff51ArchiveOffset+ff51ArchiveRows.length,ff51ArchiveTotal)}`;
+  const r=await rpc('ff51_order_archive',{p_from:from,p_to:to,
+   p_branch:selectedBranch,p_status:selectedStatus,p_limit:50,p_offset:requestedOffset});
+  if(!current())return;
+  if(!r||!Array.isArray(r.rows))throw Error('استجابة الأرشيف غير مكتملة');
+  ff51ArchiveRows=r.rows;ff51ArchiveTotal=Number(r.total||0);
+  $('ff51ArchiveCount').textContent=`الطلبات المطابقة: ${ff51ArchiveTotal} | عرض ${ff51ArchiveRows.length?requestedOffset+1:0}–${Math.min(requestedOffset+ff51ArchiveRows.length,ff51ArchiveTotal)}`;
   box.innerHTML=ff51ArchiveRows.length?ff51ArchiveRows.map(o=>`<details class="ff49-reservation"><summary><b>طلب #${esc(o.number)} — ${esc(o.cashier_desk_name||branchName(o.branch_id))}</b> · ${esc(o.status)} · ${time(o.created_at)} — ${amount(o.total)} ريال</summary><p>${esc(o.customer_name)} · ${esc(o.phone)} · ${esc(o.address)} · موصل: ${esc(o.driver_name||'لم يسند')}</p><div class="note">${(o.items||[]).map(i=>`${esc(i.qty)} × ${esc(i.name)} — ${amount(i.price)} ريال`).join('<br>')}</div><p class="muted">الإضافات: ${(o.additions||[]).length} · طلبات التعديل: ${(o.changes||[]).length} · أحداث الطلب: ${(o.events||[]).length}</p>${(o.changes||[]).map(c=>`<div class="note"><b>تعديل ${esc(c.status)}</b> — ${esc(c.reason)}<p>قبل: ${esc(JSON.stringify(c.old_items))}</p><p>بعد: ${esc(JSON.stringify(c.new_items))}</p></div>`).join('')}</details>`).join(''):'<div class="empty">لا توجد طلبات مطابقة.</div>';
-  $('ff51ArchivePrev').disabled=ff51ArchiveOffset<=0;
-  $('ff51ArchiveNext').disabled=ff51ArchiveOffset+ff51ArchiveRows.length>=ff51ArchiveTotal;
- }catch(e){box.textContent='تعذر قراءة الأرشيف: '+e.message;}
+  $('ff51ArchivePrev').disabled=requestedOffset<=0;
+  $('ff51ArchiveNext').disabled=requestedOffset+ff51ArchiveRows.length>=ff51ArchiveTotal;
+  $('ff51ArchiveExport').disabled=!ff51ArchiveRows.length;
+ }catch(e){if(current())box.textContent='تعذر قراءة الأرشيف: '+e.message;}
 }
-$('ff51ArchiveBtn').onclick=()=>{ff51Open('ff51ArchivePanel');ff51DefaultArchiveDates();
+$('ff51ArchiveBtn').onclick=()=>{if(!ff51Viewer(['manager','customer_service','cashier','supervisor']))return;ff51Open('ff51ArchivePanel');ff51DefaultArchiveDates();
  $('ff51ArchiveBranch').innerHTML='<option value="">كل الفروع المصرح بها</option>'+(data?.branches||[]).map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');
  void ff51LoadArchive(true)};
-$('ff51ArchiveClose').onclick=()=>$('ff51ArchivePanel').classList.add('hidden');
+$('ff51ArchiveClose').onclick=()=>{
+ ff51ArchiveSeq++;ff51ArchiveRows=[];ff51ArchiveOffset=0;ff51ArchiveTotal=0;
+ $('ff51ArchivePanel').classList.add('hidden');$('ff51ArchiveList').replaceChildren();
+ $('ff51ArchiveCount').textContent='';
+ for(const id of ['ff51ArchivePrev','ff51ArchiveNext','ff51ArchiveExport'])$(id).disabled=true;
+};
 $('ff51ArchiveRefresh').onclick=()=>ff51LoadArchive(true);
+for(const id of ['ff51ArchiveFrom','ff51ArchiveTo','ff51ArchiveBranch','ff51ArchiveStatus'])
+ $(id).addEventListener('change',()=>{if(!$('ff51ArchivePanel').classList.contains('hidden'))void ff51LoadArchive(true)});
 $('ff51ArchivePrev').onclick=()=>{ff51ArchiveOffset=Math.max(0,ff51ArchiveOffset-50);void ff51LoadArchive()};
 $('ff51ArchiveNext').onclick=()=>{ff51ArchiveOffset+=50;void ff51LoadArchive()};
 $('ff51ArchiveExport').onclick=()=>{
+ if(!ff51Viewer(['manager','customer_service','cashier','supervisor'])||
+    $('ff51ArchivePanel').classList.contains('hidden'))return;
  if(!ff51ArchiveRows.length)return toast('لا توجد سجلات لتصديرها');
  const lines=[['رقم الطلب','الفرع','اسم العميل','الهاتف','الوقت','الحالة','الموصل','القيمة']];
  for(const r of ff51ArchiveRows)lines.push([r.number,branchName(r.branch_id),r.customer_name,r.phone,r.created_at,r.status,r.driver_name,r.total]);
- const csv='\uFEFF'+lines.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
+ const csvCell=v=>{
+  const text=String(v??'');
+  // Prevent spreadsheet formula injection from customer-provided names and addresses.
+  const safe=/^[\s\uFEFF]*[=+@\-]/.test(text)?"'"+text:text;
+  return '"'+safe.replace(/"/g,'""')+'"';
+ };
+ const csv='\uFEFF'+lines.map(row=>row.map(csvCell).join(',')).join('\r\n');
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download='FreshFries_Archive.csv';a.click();URL.revokeObjectURL(url);
 };
 async function ff51LoadRatings(){
+ const actor=ff51Viewer(['manager','supervisor','driver']);if(!actor)return;
+ const sequence=++ff51RatingsSeq,period=window.ffLuxeHistoryPeriod||{from:ff40TodayYemen(),to:ff40TodayYemen()},
+   selectedBranch=$('ff51RatingBranch')?.value||null;
+ const current=()=>sequence===ff51RatingsSeq&&ff51Viewer(['manager','supervisor','driver'])===actor&&
+  !$('ff51RatingsPanel').classList.contains('hidden')&&
+  ($('ff51RatingBranch')?.value||null)===selectedBranch;
  const box=$('ff51RatingsList');box.textContent='جاري تحميل التقييمات...';
- try{const period=window.ffLuxeHistoryPeriod||{from:ff40TodayYemen(),to:ff40TodayYemen()};const list=await rpc('ff_luxe_rating_summary_period',{p_from:period.from,p_to:period.to,p_branch:$('ff51RatingBranch')?.value||null});box.innerHTML=list.length?list.map(x=>`<div class="item"><b>${esc(x.name)}</b> — ⭐ ${esc(x.average)} / 5 <span class="muted">(${esc(x.count)} تقييم)</span></div>`).join(''):'<div class="empty">لا توجد تقييمات حتى الآن.</div>';
- }catch(e){box.textContent='تعذر تحميل التقييمات: '+e.message}
+ try{const list=await rpc('ff_luxe_rating_summary_period',{p_from:period.from,p_to:period.to,p_branch:selectedBranch});
+  if(!current())return;
+  box.innerHTML=list.length?list.map(x=>`<div class="item"><b>${esc(x.name)}</b> — ⭐ ${esc(x.average)} / 5 <span class="muted">(${esc(x.count)} تقييم)</span></div>`).join(''):'<div class="empty">لا توجد تقييمات حتى الآن.</div>';
+ }catch(e){if(current())box.textContent='تعذر تحميل التقييمات: '+e.message}
 }
 $('ff51RatingsBtn').onclick=()=>{
+  if(!ff51Viewer(['manager','supervisor','driver']))return;
   ff51Open('ff51RatingsPanel');
   const selected=$('ff51RatingBranch'),old=selected.value;
   selected.innerHTML='<option value="">كل الفروع</option>'+
@@ -2922,7 +3009,7 @@ $('ff51RatingsBtn').onclick=()=>{
  };
  $('ff51RatingBranch').onchange=()=>void ff51LoadRatings();
 $('ff51RatingsRefresh').onclick=ff51LoadRatings;
-$('ff51RatingsClose').onclick=()=>$('ff51RatingsPanel').classList.add('hidden');
+$('ff51RatingsClose').onclick=()=>{ff51RatingsSeq++;$('ff51RatingsPanel').classList.add('hidden');$('ff51RatingsList').replaceChildren()};
 $('ff51BreakBtn').onclick=async()=>{
  const b=$('ff51BreakBtn');b.disabled=true;try{const x=await rpc('ff51_driver_set_break',{p_on_break:data?.my_presence!=='paused'});toast(x.state==='paused'?'بدأت الاستراحة؛ لا تعرض عليك طلبات':'انتهت الاستراحة؛ عدت جاهزًا');await reload(true)}catch(e){toast(e.message)}finally{b.disabled=false}
 };
