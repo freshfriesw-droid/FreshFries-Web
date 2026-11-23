@@ -2811,7 +2811,7 @@ window.addEventListener('ff-luxe-session-reset',()=>{ff51ClearPrivate();ff51Acto
 
 function ff51RoleNav(){
  const actor=ff51Viewer(['manager','customer_service','cashier','supervisor','driver']);
- if(actor!==ff51ActorSeen){ff51ClearPrivate();ff51ActorSeen=actor}
+ if(actor!==ff51ActorSeen){ff51ClearPrivate();ff51ActorSeen=actor;for(const id of ['ff51CatalogPanel','ff51CustomersPanel','ff51ArchivePanel','ff51RatingsPanel'])$(id).classList.add('hidden')}
  const role=data?.role;
  $('ff51CatalogBtn').classList.toggle('hidden',role!=='manager');
  $('ff51CustomersBtn').classList.toggle('hidden',!['manager','customer_service'].includes(role));
