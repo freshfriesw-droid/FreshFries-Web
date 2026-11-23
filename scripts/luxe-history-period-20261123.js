@@ -2,7 +2,7 @@
 'use strict';
 (()=>{
  const $=id=>document.getElementById(id);
- const today=()=>{const p=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()),g=x=>p.find(v=>v.type===x)?.value||'';return g('year')+'-'+g('month')+'-'+g('day')};
+ const today=()=>window.ffF01BusinessDate?.()||((()=>{const p=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()),g=x=>p.find(v=>v.type===x)?.value||'';return g('year')+'-'+g('month')+'-'+g('day')})());
  const valid=(a,b)=>{if(!a||!b||a>b||b>today()||a<'2020-01-01')return false;const days=(new Date(b+'T12:00:00Z')-new Date(a+'T12:00:00Z'))/86400000;return Number.isFinite(days)&&days<=366};
  const money=n=>Number(n||0).toLocaleString('ar-YE',{maximumFractionDigits:2});
  const style=document.createElement('style');
