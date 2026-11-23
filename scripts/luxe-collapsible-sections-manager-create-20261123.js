@@ -72,7 +72,7 @@
  '<label class="ffl-staff-full">الاسم الثنائي أو أكثر<input name="name" required minlength="3" maxlength="150" placeholder="الاسم الكامل"></label>'+
  '<label>رقم الهاتف<input name="phone" required inputmode="tel" maxlength="20" placeholder="77xxxxxxx"></label>'+
  '<label>البريد الإلكتروني (اختياري)<input name="email" type="email" maxlength="254" placeholder="name@example.com"></label>'+
- '<label>الدور الوظيفي<select name="role" required><option value="cashier">كاشير</option><option value="driver">موصل</option><option value="customer_service">خدمة العملاء</option><option value="supervisor">مشرف</option><option value="assembly">نقطة التجميع</option></select></label>'+
+ '<label>الدور الوظيفي<select name="role" required><option value="cashier">كاشير</option><option value="driver">موصل</option><option value="customer_service">خدمة العملاء</option><option value="supervisor">مشرف</option><option value="assembly">نقطة التجميع</option><option value="burger_kitchen">🍔 قسم البرجر</option></select></label>'+
  '<label id="fflStaffBranchWrap">الفرع<select name="branch"></select></label>'+
  '<label id="fflStaffDeskWrap" hidden>وجهة الكاشير<select name="desk"><option value="cairo_first">القاهرة — الفترة الأولى</option><option value="cairo_second">القاهرة — الفترة الثانية</option><option value="sam_mall">سام مول</option><option value="khamseen">الخمسين</option></select></label>'+
  '<label>المؤهل العلمي<input name="qualification" minlength="2" maxlength="150" required placeholder="المؤهل"></label>'+
@@ -89,7 +89,7 @@
  const branchWrap=id('fflStaffBranchWrap'),deskWrap=id('fflStaffDeskWrap'),status=id('fflStaffStatus'),submit=id('fflStaffSubmit');
  const destinations={cairo_first:'cairo',cairo_second:'cairo',sam_mall:'sam_mall',khamseen:'khamseen'};
  function setRole(){
-  const r=role.value, needsBranch=['cashier','driver','assembly'].includes(r);
+  const r=role.value, needsBranch=['cashier','driver','assembly','burger_kitchen'].includes(r);
   branchWrap.hidden=!needsBranch||r==='cashier';deskWrap.hidden=r!=='cashier';
   branch.required=needsBranch&&r!=='cashier';desk.required=r==='cashier';
  }
@@ -131,7 +131,7 @@
   const r=role.value,code=desk.value;
   const b=(typeof data!=='undefined'?data?.branches:[])?.find(x=>
     r==='cashier'?x.code===destinations[code]:x.id===branch.value);
-  const needsBranch=['cashier','driver','assembly'].includes(r);
+  const needsBranch=['cashier','driver','assembly','burger_kitchen'].includes(r);
   if(needsBranch&&!b){status.textContent='حدد فرعًا صالحًا';return}
   const password=parts('password').value;
   if([...password].length!==8){status.textContent='كلمة المرور يجب أن تكون 8 خانات بالضبط';return}
