@@ -1,0 +1,1861 @@
+Fresh Fries LUXE v38.38.0 | TEXT SOURCE PART 3/5
+Uncompressed plain UTF-8 text. Source code appears verbatim; images are base64.
+Source commit: 57ab198888f259acad0a09d813eceb132a795eec
+To reconstruct original paths, use EXTRACT_FILES.py from the same directory.
+
+<<<FF_LUXE_SOURCE_FILE_BEGIN>>>
+{"path":"scripts/luxe-all-menus-fold-20261123.js","encoding":"utf8","payload_bytes":6355,"original_bytes":6355,"sha256":"e6ef8e7b7dae97366dbef91260831014f0cf647ca8281907463dafaa7e977c06"}
+/* Fresh Fries LUXE — unified collapsible menu controls, preserving role-gated launchers. */
+(()=>{'use strict';
+ const css=document.createElement('style');css.id='ff-all-menu-fold-style';
+ css.textContent=[
+ '.ff-menu-fold{position:relative;overflow:visible!important}',
+ '.ff-menu-fold.ff-menu-closed>:not(.ff-menu-toggle){display:none!important}',
+ '.ff-menu-toggle{display:flex!important;width:100%;justify-content:space-between;align-items:center;gap:12px;min-height:49px;margin:0 0 10px;padding:12px 15px;border:2px solid var(--ffb-red,#d51e2c)!important;border-radius:12px;background:var(--ffb-soft2,#242124)!important;color:var(--ffb-ink,#fff)!important;text-align:right;font-size:clamp(14px,2.5vw,17px);font-weight:900;cursor:pointer}',
+ '.ff-menu-toggle[aria-expanded=true]{background:var(--ffb-red,#d51e2c)!important;color:#fff!important}',
+ '.ff-menu-arrow{font-size:18px;flex:none;transition:transform .2s}',
+ '.ff-menu-toggle[aria-expanded=true] .ff-menu-arrow{transform:rotate(180deg)}',
+ '.ff-menu-inner-close,.ff-menu-details-close{display:block;margin:14px auto 3px 0!important;border:1px solid var(--ffb-red,#d51e2c)!important;border-radius:9px;padding:9px 15px;background:var(--ffb-surface,#fff)!important;color:var(--ffb-ink,#252525)!important;font-weight:800}',
+ 'details.ff-menu-details>summary{cursor:pointer;border:1px solid var(--ffb-red,#d51e2c);border-radius:9px;padding:10px 13px;font-weight:800}',
+ 'details.ff-menu-details[open]>summary{background:var(--ffb-red,#d51e2c);color:#fff}',
+ '.ff-menu-standalone-close{display:block;margin:16px auto 2px 0;padding:10px 15px;border:1px solid var(--ffb-red,#d51e2c);background:var(--ffb-surface,#fff);color:var(--ffb-ink,#222);border-radius:10px}',
+ '@media(max-width:600px){.ff-menu-toggle{min-height:48px;padding:10px 12px}.ff-menu-inner-close,.ff-menu-details-close{width:100%;min-height:44px}}'
+ ].join('\n');document.head.append(css);
+ const roots=['#staffView','#cashierView','#driverView','#serviceOnly','#ffV12AssemblyWorkspace','#ffBurgerKitchenWorkspace'];
+ const reserved=new Set(['ffBurgerCashierPanel','ffV12AssemblyWorkspace','ffBurgerKitchenWorkspace']);
+ const labelFor=el=>{
+  const h=el.querySelector(':scope > h2,:scope > h3,:scope > .sectionbar h2,:scope > .sectionbar h3,:scope > .ff-burger-head h3,:scope > .ff41-header h2');
+  return (h?.textContent||el.getAttribute('aria-label')||'').trim().replace(/\s+/g,' ').slice(0,110);
+ };
+ function fold(el){
+  if(!el||el.dataset.ffMenuFold||reserved.has(el.id)||el.closest('dialog,[role="dialog"],#loginOverlay'))return;
+  if(el.classList.contains('ffl-folded-card'))return;
+  if(el.classList.contains('hidden')&&el.parentElement?.tagName==='MAIN')return;
+  const label=labelFor(el);if(!label)return;
+  el.dataset.ffMenuFold='1';
+  const button=document.createElement('button');button.type='button';button.className='ff-menu-toggle';
+  const title=document.createElement('span');title.textContent=label;
+  const arrow=document.createElement('span');arrow.className='ff-menu-arrow';arrow.textContent='⌄';arrow.setAttribute('aria-hidden','true');button.append(title,arrow);
+  const setState=open=>{
+   el.classList.toggle('ff-menu-closed',!open);button.setAttribute('aria-expanded',String(open));
+   button.setAttribute('aria-label',label+(open?' — طي القائمة':' — فتح القائمة'));
+  };
+  button.addEventListener('click',()=>setState(button.getAttribute('aria-expanded')!=='true'));
+  el.prepend(button);el.classList.add('ff-menu-fold');
+  const close=document.createElement('button');close.type='button';close.className='ff-menu-inner-close';close.textContent='✕ إغلاق القائمة';
+  close.onclick=()=>{setState(false);button.focus({preventScroll:true})};el.append(close);
+  setState(false);
+ }
+ function existingFoldClose(el){
+  if(el.dataset.ffExistingFoldClose)return;
+  const toggle=el.querySelector(':scope > .ffl-fold-toggle');if(!toggle)return;
+  el.dataset.ffExistingFoldClose='1';
+  const close=document.createElement('button');close.type='button';close.className='ff-menu-inner-close';close.textContent='✕ إغلاق القائمة';
+  close.onclick=()=>{if(toggle.getAttribute('aria-expanded')==='true')toggle.click();toggle.focus({preventScroll:true})};
+  el.append(close);
+ }
+ function addDetailsClose(el){
+  if(el.dataset.ffMenuDetails||el.closest('dialog,#loginOverlay'))return;
+  const summary=el.querySelector(':scope > summary');if(!summary)return;
+  el.dataset.ffMenuDetails='1';el.classList.add('ff-menu-details');
+  if(!summary.hasAttribute('role'))summary.setAttribute('role','button');
+  const close=document.createElement('button');close.type='button';close.className='ff-menu-details-close';close.textContent='✕ إغلاق القائمة';
+  close.onclick=()=>{el.open=false;summary.focus({preventScroll:true})};el.append(close);
+ }
+ function addStandaloneClose(el){
+  if(el.dataset.ffMenuStandalone||el.closest('dialog,#loginOverlay'))return;
+  if(!el.classList.contains('card')||!el.id||!el.parentElement||el.parentElement.tagName!=='MAIN')return;
+  // These panels already have guarded navigation launchers. Do not create unauthorized open controls.
+  el.dataset.ffMenuStandalone='1';
+  if(el.querySelector('[id$="Close"],[data-close],.ff-menu-standalone-close'))return;
+  const close=document.createElement('button');close.type='button';close.className='ff-menu-standalone-close';close.textContent='✕ إغلاق '+(labelFor(el)||'القائمة');
+  close.onclick=()=>el.classList.add('hidden');el.append(close);
+ }
+ function scan(){
+  for(const selector of roots){
+   const root=document.querySelector(selector);if(!root)continue;
+   for(const el of root.querySelectorAll('.card')){
+    if(el===root||el.classList.contains('ff-burger-card'))continue;
+    fold(el);existingFoldClose(el);
+   }
+  }
+  document.querySelectorAll('.ffl-folded-card').forEach(existingFoldClose);
+  document.querySelectorAll('details').forEach(addDetailsClose);
+  document.querySelectorAll('main > section.card').forEach(addStandaloneClose);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan,{once:true});else scan();
+ let queued=false;
+ const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;scan()})});
+ observer.observe(document.body,{childList:true,subtree:true});
+})();
+
+<<<FF_LUXE_SOURCE_FILE_END>>>
+
+<<<FF_LUXE_SOURCE_FILE_BEGIN>>>
+{"path":"scripts/luxe-cashier-destinations-20261122.js","encoding":"utf8","payload_bytes":7091,"original_bytes":7091,"sha256":"25fe6e49a2664392aad7c300a09225e24a9239f47037ca5596d5ada1dd5a22d1"}
+/* Fresh Fries LUXE — four logical cashier destinations, three delivery branches.
+   Multiple cashier accounts can be mapped to the same destination.
+   Delivery dispatch and courier branch IDs remain unchanged. */
+'use strict';
+(()=>{
+ const destinations=[
+  {code:'cairo_first',label:'القاهرة — الفترة الأولى',branch:'cairo'},
+  {code:'cairo_second',label:'القاهرة — الفترة الثانية',branch:'cairo'},
+  {code:'sam_mall',label:'سام مول',branch:'sam_mall'},
+  {code:'khamseen',label:'الخمسين',branch:'khamseen'}
+ ];
+ const byId=id=>document.getElementById(id);
+ const readKey=()=>typeof user!=='undefined'&&user?.id?'ff_luxe_cashier_desk_choice:'+user.id:'';
+ const deskCode=()=>{
+  const s=byId('newBranch'),o=s?.selectedOptions?.[0],code=o?.dataset?.ffCashierDesk;
+  if(code)return code;
+  const branch=(typeof data!=='undefined'?data?.branches:[])?.find(b=>b.id===s?.value);
+  return branch?.code==='cairo'?'cairo_first':branch?.code||'';
+ };
+ window.ffLuxeChosenCashierDesk=deskCode;
+ function displayDestinations(selectedCode){
+  if(typeof data==='undefined'||!data||!['manager','customer_service'].includes(data.role))return;
+  const select=byId('newBranch');if(!select||!data.branches?.length)return;
+  const prev=selectedCode||select.selectedOptions?.[0]?.dataset?.ffCashierDesk||'';
+  let stored='';try{stored=localStorage.getItem(readKey())||''}catch{}
+  const allowed=destinations.map(d=>({...d,base:data.branches.find(b=>b.code===d.branch)})).filter(d=>d.base);
+  if(!allowed.length)return;
+  const chosen=allowed.find(d=>d.code===prev)||allowed.find(d=>d.code===stored)
+      ||allowed.find(d=>d.base.id===select.value)||allowed[0];
+  const frag=document.createDocumentFragment();
+  for(const d of allowed){
+   const option=new Option(d.label,d.base.id);
+   option.dataset.ffCashierDesk=d.code;option.selected=d.code===chosen.code;frag.append(option);
+  }
+  select.replaceChildren(frag);
+ }
+ if(typeof fillBranchSelects==='function'){
+  const original=fillBranchSelects;
+  fillBranchSelects=function(){
+   const selected=byId('newBranch')?.selectedOptions?.[0]?.dataset?.ffCashierDesk||'';
+   original();
+   displayDestinations(selected);
+  };
+ }
+ byId('newBranch')?.addEventListener('change',()=>{
+  const k=readKey();if(!k)return;
+  try{localStorage.setItem(k,deskCode())}catch{}
+ });
+ const host=byId('staffAdminCard');
+ if(host){
+  const card=document.createElement('section');card.id='ffLuxeCashierDesksAdmin';
+  card.className='card';card.style.cssText='margin:16px 0;border:2px solid #2563eb;border-radius:14px;padding:15px';
+  const h=document.createElement('h3');h.textContent='🧾 وجهات الكاشير الأربع — عدد غير محدود من الموظفين';
+  const p=document.createElement('p');p.className='muted';
+  p.textContent='القاهرة الفترة الأولى والثانية تتبعان فرع القاهرة للتوصيل. كل الكواشير المرتبطين بوجهة واحدة يستقبلون طلباتها. حدّد وجهة لكل كاشير؛ الحسابات القديمة غير المحددة تظل ترى فرعها حتى تعيين وجهتها.';
+  const button=document.createElement('button');button.className='outline';button.type='button';
+  button.textContent='🔄 تحديث توزيع الكواشير';
+  const status=document.createElement('p');status.className='muted';status.setAttribute('role','status');
+  const list=document.createElement('div');
+  card.append(h,p,button,status,list);
+  const entry=host.querySelector('.ff61-management-entry');
+  if(entry)entry.before(card);else host.append(card);
+  let busy=false,last=0;
+  async function load(force=false){
+   if(typeof data==='undefined'||data?.role!=='manager'||busy||(!force&&Date.now()-last<45000))return;
+   busy=true;status.textContent='جارٍ جلب حسابات الكاشير...';
+   try{
+    const rows=await rpc('ff_luxe_cashier_desks_roster');
+    if(!Array.isArray(rows))throw Error('لم تصل قائمة الكواشير');
+    list.replaceChildren();
+    for(const userRow of rows){
+     const item=document.createElement('div');item.className='item';
+     item.style.cssText='padding:12px;margin:9px 0;border:1px solid #dbe5f8;border-radius:12px';
+     const name=document.createElement('strong');name.textContent=userRow.name||'كاشير';
+     const caption=document.createElement('p');caption.className='muted';
+     caption.textContent=(userRow.active?'نشط':'غير نشط')+' · وجهته: '+(userRow.desk_name||'غير محددة');
+     const select=document.createElement('select');select.setAttribute('aria-label','وجهة '+name.textContent);
+     select.style.cssText='width:100%;min-height:45px;margin:8px 0';
+     const defaultOption=new Option('اختر وجهة الكاشير', '');defaultOption.disabled=true;select.add(defaultOption);
+     const allowed=destinations.filter(d=>(userRow.branches||[]).includes(d.branch));
+     for(const dest of allowed)select.add(new Option(dest.label,dest.code));
+     select.value=userRow.desk||'';
+     const save=document.createElement('button');save.type='button';save.className='primary';
+     save.textContent='💾 حفظ وجهة الكاشير';save.disabled=!userRow.active||!allowed.length;
+     save.onclick=async()=>{
+      if(!select.value)return toast('اختر وجهة للكاشير أولًا');
+      save.disabled=true;
+      try{
+       const r=await rpc('ff_luxe_set_cashier_desk',{p_user:userRow.user_id,p_desk:select.value});
+       if(r?.ok!==true)throw Error('لم يؤكد الخادم حفظ الوجهة');
+       toast('✅ تم ربط '+name.textContent+' بـ'+r.label);
+       last=0;await load(true);
+      }catch(e){toast('تعذر تعيين وجهة الكاشير: '+(e.message||e))}
+      finally{save.disabled=false}
+     };
+     item.append(name,caption,select,save);list.append(item);
+    }
+    if(!rows.length)list.textContent='لا يوجد حساب كاشير بعد.';
+    const counts=new Map(destinations.map(d=>[d.code,0]));
+    for(const row of rows)if(row.active&&counts.has(row.desk))counts.set(row.desk,counts.get(row.desk)+1);
+    status.textContent=destinations.map(d=>d.label+': '+counts.get(d.code)+' كاشير').join(' · ');
+    last=Date.now();
+   }catch(e){status.textContent='تعذر تحميل وجهات الكاشير: '+(e?.message||e)}
+   finally{busy=false}
+  }
+  button.onclick=()=>void load(true);
+  byId('staffAdminRefresh')?.addEventListener('click',()=>{last=0;setTimeout(()=>void load(true),100)});
+  window.addEventListener('ff-assembly-snapshot-success',()=>{if(data?.role==='manager')void load()});
+  window.ffLuxeReloadCashierDesks=()=>load(true);
+ }
+ const title=byId('cashierView')?.querySelector('h2');
+ if(title&&typeof drawCashier==='function'){
+  const render=drawCashier;
+  drawCashier=function(){
+   render();
+   const desk=typeof data!=='undefined'?data?.cashier_desk:null;
+   title.textContent='🧾 شاشة الكاشير — '+(desk?.label||'طلبات التوصيل للفرع المرتبط');
+  };
+ }
+})();
+
+<<<FF_LUXE_SOURCE_FILE_END>>>
+
+<<<FF_LUXE_SOURCE_FILE_BEGIN>>>
+{"path":"scripts/luxe-collapsible-sections-manager-create-20261123.js","encoding":"utf8","payload_bytes":14029,"original_bytes":14029,"sha256":"c3078eaada84a065411af315dd563b4acb5b01b892ce2ca298c4bd6718c8f3e2"}
+/* Fresh Fries LUXE: collapsed operational panels and manager-only employee creation. */
+'use strict';
+(()=>{
+ const id=x=>document.getElementById(x);
+ const style=document.createElement('style');style.id='ffl-fold-manager-add-20261123';
+ style.textContent=[
+ '.ffl-folded-card{position:relative;overflow:visible}',
+ '.ffl-folded-card.ffl-collapsed>:not(.ffl-fold-toggle):not(.ffl-staff-quickactions){display:none!important}',
+ '.ffl-fold-toggle{width:100%;border:2px solid #c8243b!important;background:linear-gradient(125deg,#222025,#161316)!important;color:#fff!important;display:flex!important;justify-content:space-between;align-items:center;text-align:right;font-weight:900!important;font-size:clamp(15px,2.7vw,18px)!important;padding:13px 16px!important;min-height:51px;border-radius:12px;margin:0 0 9px}',
+ '.ffl-fold-toggle:hover,.ffl-fold-toggle[aria-expanded=true]{background:linear-gradient(120deg,#9e1126,#d7223e)!important;border-color:#f1465d!important}',
+ '.ffl-fold-arrow{font-size:17px;font-weight:900;transition:transform .2s}',
+ '.ffl-fold-toggle[aria-expanded=true] .ffl-fold-arrow{transform:rotate(180deg)}',
+ '.ffl-staff-quickactions{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:8px 0 14px}',
+ '.ffl-add-staff-btn{background:linear-gradient(115deg,#c30c28,#e91b42)!important;color:#fff!important;border:2px solid #ff6a77!important;min-height:49px!important;padding:10px 16px!important;font-weight:900!important;box-shadow:0 5px 18px #cc19343a}',
+ '#fflStaffDialog{border:1px solid #d2d2d2;border-radius:19px;width:min(94vw,590px);max-height:88dvh;overflow-y:auto;padding:0;color:var(--ffb-ink,#1c1c1c);background:var(--ffb-surface,#fff);box-shadow:0 18px 70px #0006}',
+ '#fflStaffDialog::backdrop{background:#080609ba}',
+ '#fflStaffDialog .ffl-dialog-inner{padding:clamp(15px,3vw,25px);direction:rtl}',
+ '#fflStaffDialog .ffl-dialog-head{display:flex;justify-content:space-between;align-items:center;gap:10px}',
+ '#fflStaffDialog h2{margin:0 0 10px;font-size:20px}',
+ '#fflStaffDialog .ffl-staff-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
+ '#fflStaffDialog label{font-weight:800;font-size:13px;display:block}',
+ '#fflStaffDialog input:not([type=checkbox]),#fflStaffDialog select{width:100%;min-width:0;min-height:43px;margin-top:5px;margin-bottom:8px;border-radius:9px}',
+ '#fflStaffDialog .ffl-staff-full{grid-column:1/-1}',
+ '#fflStaffDialog .ffl-staff-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}',
+ '#fflStaffDialog .ffl-staff-actions button{min-height:49px;flex:1 1 130px}',
+ '#fflStaffDialog .ffl-check-row{display:flex;align-items:flex-start;gap:8px;font-weight:700;line-height:1.6}',
+ '#fflStaffDialog .ffl-check-row input{flex:none;min-width:20px;min-height:20px;margin:2px 0}',
+ '#fflStaffDialog [hidden]{display:none!important}',
+ '@media(max-width:540px){#fflStaffDialog .ffl-staff-grid{grid-template-columns:1fr}#fflStaffDialog{width:96vw}}'
+ ].join('\n');
+ document.head.append(style);
+
+ const panels=[
+  [id('managerLinks'),'🔗 ربط حسابات الموظفين القديمة'],
+  [id('staffAdminCard'),'👥 إدارة الموظفين والحسابات'],
+  [id('auditCard'),'📚 سجل صلاحيات رفض الموصل'],
+  ...[...document.querySelectorAll('#serviceOnly .split > .card')].map(el=>[el,
+   el.querySelector('h2')?.textContent?.trim()||'قائمة التشغيل']),
+  ...[...document.querySelectorAll('#serviceOnly > .card')].filter(el=>
+   !!el.querySelector('h2')&&/البحث في الطلبات/.test(el.querySelector('h2').textContent)
+  ).map(el=>[el,'🔎 البحث في الطلبات'])
+ ];
+ function fold(el,label){
+  if(!el||el.querySelector(':scope > .ffl-fold-toggle'))return;
+  const btn=document.createElement('button');btn.type='button';btn.className='ffl-fold-toggle';
+  btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label',label+' — إظهار القائمة');
+  const title=document.createElement('span');title.textContent=label;
+  const arrow=document.createElement('span');arrow.className='ffl-fold-arrow';
+  arrow.setAttribute('aria-hidden','true');arrow.textContent='⌄';
+  btn.append(title,arrow);
+  el.prepend(btn);el.classList.add('ffl-folded-card','ffl-collapsed');
+  btn.onclick=()=>{
+   const expanded=btn.getAttribute('aria-expanded')==='true';
+   btn.setAttribute('aria-expanded',String(!expanded));
+   btn.setAttribute('aria-label',label+(!expanded?' — إخفاء القائمة':' — إظهار القائمة'));
+   el.classList.toggle('ffl-collapsed',expanded);
+  };
+ }
+ for(const [el,label] of panels)fold(el,label);
+
+ const admin=id('staffAdminCard');if(!admin)return;
+ const controls=document.createElement('div');controls.className='ffl-staff-quickactions';
+ const add=document.createElement('button');add.type='button';add.id='fflAddStaffBtn';
+ add.className='ffl-add-staff-btn';add.textContent='➕ إضافة موظف جديد';
+ controls.append(add);
+ admin.querySelector(':scope > .ffl-fold-toggle')?.after(controls);
+
+ const dialog=document.createElement('dialog');dialog.id='fflStaffDialog';
+ dialog.innerHTML='<div class="ffl-dialog-inner"><div class="ffl-dialog-head"><h2>➕ إضافة موظف جديد</h2><button type="button" class="outline" id="fflStaffClose">✕ إغلاق</button></div>'+
+ '<p class="muted">للمدير العام فقط. إنشاء حساب دخول مستقل وربط الموظف بدوره وفرعه. كلمة المرور 8 خانات وفق آلية النظام الحالية.</p>'+
+ '<form id="fflStaffForm" autocomplete="off"><div class="ffl-staff-grid">'+
+ '<label class="ffl-staff-full">الاسم الثنائي أو أكثر<input name="name" required minlength="3" maxlength="150" placeholder="الاسم الكامل"></label>'+
+ '<label>رقم الهاتف<input name="phone" required inputmode="tel" maxlength="20" placeholder="77xxxxxxx"></label>'+
+ '<label>البريد الإلكتروني (اختياري)<input name="email" type="email" maxlength="254" placeholder="name@example.com"></label>'+
+ '<label>الدور الوظيفي<select name="role" required><option value="cashier">كاشير</option><option value="driver">موصل</option><option value="customer_service">خدمة العملاء</option><option value="supervisor">مشرف</option><option value="assembly">نقطة التجميع</option><option value="burger_kitchen">🍔 قسم البرجر</option></select></label>'+
+ '<label id="fflStaffBranchWrap">الفرع<select name="branch"></select></label>'+
+ '<label id="fflStaffDeskWrap" hidden>وجهة الكاشير<select name="desk"><option value="cairo_first">القاهرة — الفترة الأولى</option><option value="cairo_second">القاهرة — الفترة الثانية</option><option value="sam_mall">سام مول</option><option value="khamseen">الخمسين</option></select></label>'+
+ '<label>المؤهل العلمي<input name="qualification" minlength="2" maxlength="150" required placeholder="المؤهل"></label>'+
+ '<label class="ffl-staff-full">عنوان الموظف<input name="address" minlength="5" maxlength="240" required placeholder="العنوان التفصيلي"></label>'+
+ '<label>العمر<input name="age" type="number" min="16" max="90" required></label>'+
+ '<label>الحالة الاجتماعية<select name="marital" required><option value="prefer_not_say">لا أرغب في التحديد</option><option value="single">أعزب/عزباء</option><option value="married">متزوج/متزوجة</option><option value="other">أخرى</option></select></label>'+
+ '<label>سنوات الخبرة (اختياري)<input name="experience" type="number" min="0" max="60"></label>'+
+ '<label>كلمة المرور الأولية<input name="password" type="password" required minlength="8" maxlength="8" autocomplete="new-password" placeholder="8 خانات"></label>'+
+ '<label class="ffl-staff-full ffl-check-row"><input name="verified" type="checkbox" required><span>تحققتُ من أن رقم الهاتف يخص الموظف، وسأُسلّم بيانات الدخول له بشكل آمن.</span></label>'+
+ '</div><p id="fflStaffStatus" role="status" aria-live="polite" class="muted"></p>'+
+ '<div class="ffl-staff-actions"><button type="submit" class="primary" id="fflStaffSubmit">✓ إنشاء وحفظ الموظف</button><button type="button" class="outline" id="fflStaffCancel">إلغاء</button></div></form></div>';
+ document.body.append(dialog);
+ const form=id('fflStaffForm'),parts=name=>form.elements.namedItem(name),role=parts('role'),branch=parts('branch'),desk=parts('desk');
+ const branchWrap=id('fflStaffBranchWrap'),deskWrap=id('fflStaffDeskWrap'),status=id('fflStaffStatus'),submit=id('fflStaffSubmit');
+ const destinations={cairo_first:'cairo',cairo_second:'cairo',sam_mall:'sam_mall',khamseen:'khamseen'};
+ function setRole(){
+  const r=role.value, needsBranch=['cashier','driver','assembly','burger_kitchen'].includes(r);
+  branchWrap.hidden=!needsBranch||r==='cashier';deskWrap.hidden=r!=='cashier';
+  branch.required=needsBranch&&r!=='cashier';desk.required=r==='cashier';
+ }
+ function loadBranches(){
+  branch.replaceChildren();
+  for(const b of (typeof data!=='undefined'?data?.branches:[])||[])branch.add(new Option(b.name,b.id));
+ }
+ role.onchange=setRole;
+ let submitting=false;
+ function close(){if(!submitting)dialog.close()}
+ id('fflStaffClose').onclick=close;id('fflStaffCancel').onclick=close;
+ add.onclick=()=>{
+  if(typeof data==='undefined'||data?.role!=='manager')return toast('هذه العملية للمدير العام فقط');
+  loadBranches();form.reset();role.value='cashier';setRole();status.textContent='';
+  dialog.showModal();parts('name').focus();
+ };
+ async function approveApplication(applicationId,employee){
+  const session=await client.auth.getSession();
+  const token=session?.data?.session?.access_token;
+  if(!token)throw Error('انتهت جلسة المدير؛ سجّل الدخول مجددًا');
+  const response=await fetch(CONFIG.url.replace(/\/$/,'')+'/functions/v1/ff61-employees',{
+   method:'POST',headers:{'Content-Type':'application/json','apikey':CONFIG.key,'Authorization':'Bearer '+token},
+   body:JSON.stringify({
+    action:'approve',application_id:applicationId,role:employee.role,
+    branch_id:employee.branch_id,password:employee.password,phone_ownership_verified:true
+   }),cache:'no-store'
+  });
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||result.ok!==true||!result.user_id)
+    throw Error(result.error||'تعذر إنشاء حساب الدخول واعتماد الموظف');
+  return result;
+ }
+ form.onsubmit=async event=>{
+  event.preventDefault();
+  if(submitting||!form.reportValidity())return;
+  if(typeof data==='undefined'||data?.role!=='manager')return toast('إنشاء الموظفين للمدير العام فقط');
+  const fullName=String(parts('name').value||'').trim().replace(/\s+/g,' ');
+  if(fullName.split(' ').length<2){status.textContent='اكتب الاسم الثنائي على الأقل';return}
+  const r=role.value,code=desk.value;
+  const b=(typeof data!=='undefined'?data?.branches:[])?.find(x=>
+    r==='cashier'?x.code===destinations[code]:x.id===branch.value);
+  const needsBranch=['cashier','driver','assembly','burger_kitchen'].includes(r);
+  if(needsBranch&&!b){status.textContent='حدد فرعًا صالحًا';return}
+  const password=parts('password').value;
+  if([...password].length!==8){status.textContent='كلمة المرور يجب أن تكون 8 خانات بالضبط';return}
+  if(!parts('verified').checked){status.textContent='أكد التحقق من ملكية رقم الهاتف';return}
+  if(!confirm('إنشاء حساب جديد للموظف '+fullName+' بدور '+role.selectedOptions[0].textContent+'؟'))return;
+  submitting=true;submit.disabled=true;status.textContent='جاري تجهيز حساب الموظف...';
+  let appId=null;
+  try{
+   const request={
+    p_name:fullName,p_phone:parts('phone').value,p_email:parts('email').value,
+    p_role:r,p_qualification:parts('qualification').value,p_address:parts('address').value,
+    p_age:Number(parts('age').value),p_marital:parts('marital').value,
+    p_experience:parts('experience').value===''?null:Number(parts('experience').value)
+   };
+   const prepared=await rpc('ff_luxe_manager_prepare_staff',request);
+   if(!prepared?.ok||!prepared.application_id)throw Error('تعذر تجهيز ملف الموظف');
+   appId=prepared.application_id;
+   status.textContent='جارٍ إنشاء حساب الدخول وتحديد الصلاحيات...';
+   const created=await approveApplication(appId,{role:r,branch_id:needsBranch?b.id:null,password});
+   // The existing join approval has already created the Auth user and all role-linked data.
+   // Cashier destination assignment uses the existing secure RPC.
+   let warning='';
+   if(r==='cashier'){
+    try{
+     const assigned=await rpc('ff_luxe_set_cashier_desk',{p_user:created.user_id,p_desk:code});
+     if(assigned?.ok!==true)throw Error('لم يؤكد الخادم ربط الوجهة');
+    }catch(error){warning='؛ تنبيه: اربط وجهة الكاشير يدويًا من وجهات الكاشير. '+String(error?.message||error)}
+   }
+   status.textContent='✅ تم إنشاء حساب الموظف وتفعيل دوره'+warning;
+   toast('✅ تم إنشاء حساب '+fullName+(warning?' — تحقق من وجهة الكاشير':''));
+   parts('password').value='';
+   if(typeof window.ffLuxeReloadCashierDesks==='function')void window.ffLuxeReloadCashierDesks();
+   if(typeof loadStaffAdmin==='function')void loadStaffAdmin();
+   if(!warning){form.reset();setRole()}
+  }catch(error){
+   status.textContent='⚠️ '+String(error?.message||error)+
+    (appId?' — إذا تعذّر الاعتماد، راجع «طلبات الانضمام» لاستخدام الطلب الذي جهزته الإدارة.':'');
+  }finally{submitting=false;submit.disabled=false}
+ };
+})();
+<<<FF_LUXE_SOURCE_FILE_END>>>
+
+<<<FF_LUXE_SOURCE_FILE_BEGIN>>>
+{"path":"scripts/luxe-completed-detail-popup-20261123.js","encoding":"utf8","payload_bytes":2413,"original_bytes":2413,"sha256":"755cc3c2112ba43257bce88969e0b82eace0726e12cc1d5ab79c43fed6efa2a7"}
+/* Read-only popup for universal finished/completed orders; preserves all existing follow-up actions. */
+(function(){
+'use strict';
+const dialog=document.createElement('dialog');dialog.id='ffCompletedDetailDialog';
+dialog.style.cssText='direction:rtl;width:min(95vw,720px);max-height:90vh;overflow:auto;background:#fff;color:#111;border:2px solid #1f69c3;border-radius:16px;padding:15px';
+dialog.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>📁 تفاصيل الطلب المنتهي</h2><button type="button" class="outline" id="ffCompletedDetailClose">إغلاق</button></div>'+
+'<p style="color:#666">سجل للقراءة يشمل التوقيت والحالة والأصناف والملاحظات والتقييمات، ولا يعيد فتح الطلب.</p>'+
+'<div id="ffCompletedDetailContent"></div><button id="ffCompletedDetailActions" type="button" class="primary">عرض الإجراءات والمتابعة</button>';
+document.body.append(dialog);
+const box=document.getElementById('ffCompletedDetailContent');let selected=null;
+function open(card){
+ const summary=card.querySelector('summary'),body=card.querySelector('.ffl-finished-details');
+ if(!summary||!body)return;
+ selected=card;box.replaceChildren();
+ const head=summary.cloneNode(true);head.removeAttribute('tabindex');
+ const content=body.cloneNode(true);
+ content.querySelectorAll('form,button,input,select,textarea').forEach(e=>e.remove());
+ const title=document.createElement('div');title.style.cssText='padding:12px;background:#eff6ff;border-radius:12px;margin:10px 0';
+ title.append(...Array.from(head.childNodes));box.append(title,content);
+ if(!dialog.open)dialog.showModal();
+}
+document.addEventListener('click',event=>{
+ const summary=event.target.closest('.ffl-finished-card > summary');
+ if(!summary)return;
+ const card=summary.closest('.ffl-finished-card');
+ if(!card)return;
+ event.preventDefault();event.stopImmediatePropagation();open(card);
+},true);
+document.getElementById('ffCompletedDetailClose').onclick=()=>dialog.close();
+document.getElementById('ffCompletedDetailActions').onclick=()=>{
+ const target=selected;dialog.close();
+ if(target?.isConnected){target.open=true;target.scrollIntoView({block:'center',behavior:'smooth'})}
+};
+window.addEventListener('ff-luxe-session-reset',()=>{selected=null;box.replaceChildren();if(dialog.open)dialog.close()});
+})();
+<<<FF_LUXE_SOURCE_FILE_END>>>
+
+<<<FF_LUXE_SOURCE_FILE_BEGIN>>>
+{"path":"scripts/luxe-completed-universal-20261123.js","encoding":"utf8","payload_bytes":26396,"original_bytes":26396,"sha256":"25a332657c2d2bba5568c7ae278f7e06ca4a46dccb0f21cf90cd7bcbaac91d83"}
+/* Fresh Fries LUXE — cashier finished orders with follow-up actions.
+   Never reopens an operational order or silently changes a customer rating. */
+'use strict';
+(()=>{
+ const $=id=>document.getElementById(id);
+ const role=()=>document.body.classList.contains('ff-v12-assembly-mode')?'assembly':(typeof data!=='undefined'?data?.role:null);
+ const anchor=()=>document.getElementById(({cashier:'cashierOrders',driver:'driverOffers',assembly:'ffV12AssemblyOrders',manager:'staffOrders',supervisor:'staffOrders',customer_service:'staffOrders'})[role()]||'cashierOrders');
+ const eligible=()=>typeof user!=='undefined'&&!!user?.id&&['cashier','driver','assembly','manager','supervisor','customer_service'].includes(role());
+ const yemenDay=()=>window.ffF01BusinessDate?.()||((()=>{const p=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const g=x=>p.find(t=>t.type===x)?.value||'';return g('year')+'-'+g('month')+'-'+g('day')})());
+ function mount(){const a=anchor();if(a&&box.nextElementSibling!==a)a.before(box)}
+ const style=document.createElement('style');style.id='ff-luxe-completed-cashier-styles';
+ style.textContent=[
+ '#fflCashierFinished{margin:12px 0 19px;direction:rtl}',
+ '#fflCashierFinishedToggle{width:100%;min-height:56px;border:2px solid #d82b44!important;border-radius:14px;background:linear-gradient(120deg,#ac1026,#e71f43)!important;color:white!important;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 18px!important;font-weight:950!important;font-size:clamp(16px,2.7vw,20px)!important;box-shadow:0 6px 18px #a1123030}',
+ '#fflCashierFinishedToggle .ffl-arrow{font-size:21px;transition:transform .2s}',
+ '#fflCashierFinishedToggle[aria-expanded=true] .ffl-arrow{transform:rotate(180deg)}',
+ '#fflCashierFinishedPanel{background:var(--ffb-surface,#fff);border:2px solid var(--ffb-line,#ddd);padding:clamp(11px,2.4vw,18px);border-radius:0 0 16px 16px;margin-top:-2px}',
+ '#fflCashierFinishedPanel[hidden],#fflCashierFinished[hidden]{display:none!important}',
+ '.ffl-finished-tools{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:10px 0}',
+ '.ffl-finished-tools input{min-width:170px;flex:1;min-height:43px}',
+ '.ffl-finished-tools button{min-height:43px}',
+ '.ffl-finished-result{color:var(--ffb-muted,#646464);font-weight:750;font-size:12px;margin:10px 0}',
+ '.ffl-finished-card{border:3px solid #2570d0;border-radius:16px;background:var(--ffb-surface,#fff);margin:11px 0;box-shadow:0 4px 17px #255db01c;overflow:hidden}',
+ '.ffl-finished-card>summary{cursor:pointer;padding:15px;list-style:none;display:flex;flex-direction:column;gap:6px;line-height:1.65}',
+ '.ffl-finished-card>summary::-webkit-details-marker{display:none}',
+ '.ffl-finished-card>summary::after{content:"⌄ اضغط لعرض كل التفاصيل والإجراءات";color:#b71d36;font-weight:900;font-size:12px}',
+ '.ffl-finished-card[open]>summary::after{content:"⌃ إخفاء التفاصيل";color:#b71d36}',
+ '.ffl-finished-main{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap}',
+ '.ffl-finished-main b{font-size:17px}',
+ '.ffl-finished-status{border-radius:30px;padding:3px 8px;background:#d5e7ff;color:#124a8f;font-weight:900;font-size:12px}',
+ '.ffl-finished-status.cancelled{background:#ffe1e4;color:#a11229}',
+ '.ffl-finished-tags{display:flex;gap:6px;flex-wrap:wrap}',
+ '.ffl-finished-tags span{border:1px solid #ddd;border-radius:7px;padding:3px 7px;font-size:12px;font-weight:800}',
+ '.ffl-finished-tags .missing{color:#ac122d;border-color:#d34758;background:#fff0f2}',
+ '.ffl-finished-details{padding:0 14px 17px;line-height:1.8;overflow-wrap:anywhere}',
+ '.ffl-finished-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}',
+ '.ffl-finished-meta>div{background:var(--ffb-soft,#f4f5f7);border:1px solid var(--ffb-line,#ddd);border-radius:9px;padding:8px 10px}',
+ '.ffl-finished-products{background:var(--ffb-soft,#f6f6f6);border:1px solid var(--ffb-line,#ddd);padding:10px;border-radius:10px;margin:9px 0}',
+ '.ffl-finished-actions{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}',
+ '.ffl-finished-actions button{min-height:45px;flex:1 1 145px;font-weight:900}',
+ '.ffl-finished-form{margin-top:9px;padding:13px;border:1px solid #d44b59;border-radius:12px;background:var(--ffb-soft,#f7f7f7)}',
+ '.ffl-finished-form[hidden]{display:none!important}',
+ '.ffl-finished-form label{display:block;font-size:13px;font-weight:850;margin:10px 0 4px}',
+ '.ffl-finished-form input,.ffl-finished-form select,.ffl-finished-form textarea{width:100%;max-width:100%;min-height:42px}',
+ '.ffl-finished-form button{min-height:46px;margin-top:10px}',
+ '.ffl-finished-form textarea{min-height:82px}',
+ '.ffl-finished-form .ffl-help{font-size:12px;color:var(--ffb-muted,#666)}',
+ '.ffl-finished-empty{padding:20px;border-radius:12px;background:var(--ffb-soft,#f4f4f4);text-align:center}',
+ '@media(max-width:560px){.ffl-finished-meta{grid-template-columns:1fr}.ffl-finished-main b{font-size:15px}.ffl-finished-card>summary{padding:12px}}'
+ ,'.ffl-range-controls label{display:flex;flex-direction:column;gap:4px;flex:1 1 120px;min-width:112px;font-size:13px;font-weight:850}',
+ '.ffl-range-controls label[hidden]{display:none!important}',
+ '.ffl-range-controls input,.ffl-range-controls select{width:100%;max-width:100%;min-height:44px}'
+ ].join('\n');document.head.append(style);
+
+ const box=document.createElement('section');box.id='fflCashierFinished';box.hidden=true;
+ const button=document.createElement('button');button.type='button';button.id='fflCashierFinishedToggle';
+ button.setAttribute('aria-expanded','false');
+ button.setAttribute('aria-controls','fflCashierFinishedPanel');
+ const text=document.createElement('span');text.textContent='🗂️ الطلبات المنتهية';
+ const arrow=document.createElement('span');arrow.className='ffl-arrow';arrow.setAttribute('aria-hidden','true');arrow.textContent='⌄';
+ button.append(text,arrow);
+ const panel=document.createElement('div');panel.id='fflCashierFinishedPanel';panel.hidden=true;
+ panel.innerHTML='<p class="muted">الطلبات المكتملة أو التي انتهى دور الكاشير فيها. استكمل رقم فاتورة MicroPOS أو تقييم الموصل، أو ارفع بلاغًا مرتبطًا بالطلب. لا تتغير حالة الطلب أثناء الاستكمال.</p>'+
+ '<div class="ffl-finished-tools ffl-range-controls">'+
+ '<label>من تاريخ<input id="fflFinishedFrom" type="date"></label>'+
+ '<label>إلى تاريخ<input id="fflFinishedTo" type="date"></label>'+
+ '<label id="fflFinishedBranchLabel" hidden>الفرع<select id="fflFinishedBranch"><option value="">كل الفروع</option></select></label>'+
+ '<button type="button" class="outline" id="fflFinishedToday">📅 اليوم</button>'+
+ '<button type="button" class="primary" id="fflFinishedApply">عرض الفترة</button></div>'+
+ '<div class="ffl-finished-tools"><input id="fflFinishedSearch" placeholder="🔎 ابحث في الطلبات المحمّلة: رقم الطلب، هاتف العميل، الموصل" aria-label="بحث في الطلبات المنتهية"><button id="fflFinishedRefresh" type="button" class="outline">🔄 تحديث</button></div>'+
+ '<p id="fflFinishedStatus" class="ffl-finished-result" role="status" aria-live="polite"></p>'+
+ '<div id="fflFinishedList"></div>'+
+ '<div class="ffl-finished-tools"><button type="button" class="outline" id="fflFinishedMore" hidden>عرض 30 طلبًا أقدم</button></div>';
+ box.append(button,panel);$('cashierOrders')?.before(box);
+ const status=$('fflFinishedStatus'),list=$('fflFinishedList'),search=$('fflFinishedSearch');
+ const more=$('fflFinishedMore'),refresh=$('fflFinishedRefresh');
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const amount=n=>Number(n||0).toLocaleString('ar-YE',{maximumFractionDigits:2});
+ const dialPhone=value=>{
+   const raw=String(value||''),digits=raw.replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-1632)).replace(/[\s()-]/g,'');
+   return /^\+?[0-9]{7,15}$/.test(digits)?'<a href="tel:'+esc(digits)+'" class="ff-phone-link">📞 '+esc(raw)+'</a>':esc(raw||'—');
+ };
+ 
+ const fmt=t=>{if(!t)return '—';const d=new Date(t);return Number.isNaN(d.getTime())?'—':d.toLocaleString('ar-YE',{timeZone:'Asia/Aden',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})};
+ const finished=o=>!['cancelled','canceled','closed'].includes(String(o.status||'')) ;
+ const seen=new Map();let permittedBranches=[];
+ const rangeFrom=$('fflFinishedFrom'),rangeTo=$('fflFinishedTo'),branch=$('fflFinishedBranch');
+ const d=yemenDay();rangeFrom.value=rangeTo.value=d;rangeFrom.max=rangeTo.max=d;
+ let viewer='',loaded=[],offset=0,hasMore=true,loading=false,open=false,lastUpdated=0,generation=0,requestSequence=0;
+ let openCards=new Set(),activeAction=null;
+ /* all staff roles use eligible() above */
+ function clear(){
+  generation++;requestSequence++;viewer='';loaded=[];offset=0;hasMore=true;loading=false;open=false;lastUpdated=0;openCards.clear();
+  activeAction=null;seen.clear();permittedBranches=[];list.replaceChildren();status.textContent='';more.disabled=false;refresh.disabled=false;
+  search.value='';panel.hidden=true;button.setAttribute('aria-expanded','false');box.hidden=true;branch.replaceChildren(new Option('كل الفروع',''));
+ }
+ function maintainViewer(){
+  const current=eligible()?String(user.id)+':'+role()+':'+String(data?.cashier_desk?.code||'unassigned'):'';
+  if(viewer!==current){clear();viewer=current}
+  box.hidden=!current;if(current)mount();
+  return !!current;
+ }
+ function info(o){
+  const cancellation=!finished(o);
+  const workDone=!cancellation&&o.cashier_stage==='handed_over';
+  const label=cancellation?'🚫 ملغي':o.status==='delivered'?'✅ تم التسليم للعميل':workDone?'✅ انتهى دور الكاشير — التوصيل مستمر':'✅ منتهٍ';
+  const invoice=String(o.invoice_ref||'').trim();
+  const stars=Number((role()==='driver'?o.driver_feedback:o.role_rating)||0);
+  const canInvoice=!cancellation&&!invoice&&(o.status==='delivered'||workDone);
+  const canRate=!cancellation&&!stars&&workDone&&o.driver_id;
+  return {cancellation,label,invoice,stars,canInvoice,canRate};
+ }
+ function makeCard(o){
+  const summary=info(o);
+  const el=document.createElement('details');el.className='ffl-finished-card';el.dataset.fflFinishedOrder=String(o.id);
+  el.open=openCards.has(o.id);
+  const invoices=summary.invoice?'🧾 فاتورة: '+esc(summary.invoice):'⚠️ رقم فاتورة غير مسجل';
+  const rating=summary.stars?'⭐ التقييم من حسابك: '+summary.stars+'/5':'⚠️ تقييمك ناقص';
+  const top=document.createElement('summary');
+  const branchName=permittedBranches.find(b=>b.id===o.branch_id)?.name||'';
+  const meta=(branchName?'📍 '+esc(branchName)+' · ':'')+esc(o.customer_name||'عميل')+' · '+esc(o.driver_name||'—')+' · '+esc(o.area||'—');
+  top.innerHTML='<div class="ffl-finished-main"><b>طلب #'+esc(o.number)+'</b><span class="ffl-finished-status'+(summary.cancellation?' cancelled':'')+'">'+summary.label+'</span></div>'+
+    '<span class="muted">'+meta+' · '+esc(fmt(o.created_at))+'</span>'+
+    '<div class="ffl-finished-tags"><span class="'+(!summary.invoice?'missing':'')+'">'+invoices+'</span>'+
+    (!summary.cancellation?'<span class="'+(!summary.stars?'missing':'')+'">'+rating+'</span>':'')+
+    (Number(o.case_count)>0?'<span>📢 بلاغات مرتبطة: '+esc(o.case_count)+'</span>':'')+'</div>';
+  el.append(top);
+  const body=document.createElement('div');body.className='ffl-finished-details';
+  const products=(Array.isArray(o.items)?o.items:[]).map(it=>
+    '<div>'+esc(it.qty||0)+' × '+esc(it.name||'صنف')+
+    ' — '+amount(it.line_total)+' ريال'+
+    (it.notes?'<div class="muted">📝 ملاحظة الصنف: '+esc(it.notes)+'</div>':'')+'</div>'
+  ).join('')||'<div>لا توجد أصناف مسجلة</div>';
+  body.innerHTML=
+    '<div class="ffl-finished-meta">'+
+    '<div><b>👤 العميل:</b> '+esc(o.customer_name||'عميل')+'</div>'+
+    '<div><b>📞 هاتف العميل:</b> '+dialPhone(o.phone)+'</div>'+
+    '<div><b>📍 العنوان:</b> '+esc(o.full_address||o.area||'—')+'</div>'+
+    '<div><b>🛵 الموصل:</b> '+esc(o.driver_name||'—')+'</div>'+
+    '<div><b>👩‍💼 خدمة العملاء:</b> '+esc(o.customer_service_name||'غير محدد')+'</div>'+
+    '<div><b>🧾 الكاشير:</b> '+esc(o.cashier_employee_name||'بانتظار استلام الكاشير')+'</div>'+
+    '<div><b>🕒 الإسناد:</b> '+esc(fmt(o.assigned_at))+'</div>'+
+    '<div><b>🕒 انتهاء التوصيل:</b> '+esc(fmt(o.delivered_at))+'</div>'+
+    '</div>'+
+    '<b>🍟 تفاصيل الطلب:</b><div class="ffl-finished-products">'+products+'</div>'+
+    '<p><b>الأصناف:</b> '+amount(o.items_total)+' ريال · <b>التوصيل:</b> '+amount(o.delivery_fee)+' ريال · <b>الإجمالي:</b> '+amount(o.total)+' ريال</p>'+
+    (o.notes?'<p><b>ملاحظات الطلب:</b> '+esc(o.notes)+'</p>':'')+
+    (summary.cancellation?'<p style="color:#bb142d"><b>سبب الإلغاء:</b> '+esc(o.cancel_reason||'غير مذكور')+'</p>':'')+
+    '<p><b>رقم الفاتورة:</b> '+(summary.invoice?esc(summary.invoice):'غير موثق')+
+    ' · <b>التقييم من حسابك:</b> '+(summary.stars?summary.stars+'/5':'غير مسجل')+'</p>'+
+    (summary.stars&&o.role_rating_note?'<p class="muted">ملاحظة التقييم: '+esc(o.role_rating_note)+'</p>':'')+
+    '<div class="ffl-finished-actions">'+
+    (summary.canInvoice?'<button type="button" class="primary" data-ffl-show="invoice">🧾 إضافة رقم الفاتورة</button>':'')+
+    (summary.canRate?'<button type="button" class="outline" data-ffl-show="rating">⭐ '+(role()==='driver'?'تقييم الخدمة':'إضافة تقييم الموصل')+'</button>':'')+
+    '<button type="button" class="outline" data-ffl-show="report">📢 بلاغ / شكوى للإدارة</button>'+
+    '</div>'+
+    (summary.cancellation?'<p class="muted">الطلب ملغي؛ لا يمكن إضافة فاتورة جديدة أو تقييم موصل له من الأرشيف.</p>':'')+
+    (summary.canInvoice?'<form class="ffl-finished-form" data-ffl-action="invoice" hidden>'+
+      '<label>رقم فاتورة MicroPOS</label><input name="invoice" required maxlength="80" placeholder="رقم الفاتورة الفعلي">'+
+      '<p class="ffl-help">التوثيق لاحق فقط. لن نعيد فتح الطلب أو نغيّر حالته.</p>'+
+      '<button type="submit" class="primary">حفظ رقم الفاتورة</button></form>':'')+
+    (summary.canRate?'<form class="ffl-finished-form" data-ffl-action="rating" hidden>'+
+      (role()==='driver'?[['cs','خدمة العملاء'],['cashier','الكاشير'],['customer','تعامل العميل'],['overall','التقييم العام']].map(([key,label])=>
+       '<label>'+label+'</label><select name="'+key+'" required><option value="">اختر التقييم</option>'+
+       [1,2,3,4,5].map(n=>'<option value="'+n+'">'+n+' من 5 ⭐</option>').join('')+'</select>').join(''):
+      '<label>تقييم الموصل</label><select name="rating" required><option value="">اختر عدد النجوم</option>'+
+      [1,2,3,4,5].map(n=>'<option value="'+n+'">'+n+' من 5 ⭐</option>').join('')+'</select>')+
+      '<label>ملاحظة التقييم (اختيارية)</label><textarea name="note" maxlength="500" placeholder="ملاحظات التقييم"></textarea>'+
+      '<button type="submit" class="primary">حفظ التقييم</button></form>':'')+
+    '<form class="ffl-finished-form" data-ffl-action="report" hidden>'+
+    '<label>نوع البلاغ</label><select name="category" required>'+
+    '<option value="operational">بلاغ تشغيلي متعلق بالطلب</option><option value="management_complaint">شكوى للإدارة مرتبطة بالطلب</option></select>'+
+    '<label>أولوية البلاغ</label><select name="priority"><option value="normal">عادي</option><option value="high">عاجل</option><option value="low">منخفض</option></select>'+
+    '<label>عنوان البلاغ</label><input name="subject" required minlength="4" maxlength="110" placeholder="اكتب موضوع البلاغ">'+
+    '<label>الشرح والتفاصيل</label><textarea name="description" required minlength="10" maxlength="4000" placeholder="ما المشكلة، وما المطلوب من الإدارة؟"></textarea>'+
+    '<p class="ffl-help">سيُحفظ البلاغ في مركز البلاغات مربوطًا تلقائيًا برقم الطلب، لتتابعه الإدارة.</p>'+
+    '<button type="submit" class="primary">إرسال البلاغ للإدارة</button></form>';
+  el.append(body);
+  el.addEventListener('toggle',()=>{if(el.open)openCards.add(o.id);else openCards.delete(o.id)});
+  return el;
+ }
+ function render(){
+  if(!maintainViewer()||!open)return;
+  const value=search.value.trim().toLowerCase();
+  // Search applies to the securely loaded (paged) cashier-only results.
+  const result=loaded.filter(o=>!value||[o.number,o.customer_name,o.phone,o.driver_name,o.area,o.invoice_ref]
+    .some(v=>String(v??'').toLowerCase().includes(value)));
+  const saved=[...list.querySelectorAll('details[open][data-ffl-finished-order]')].map(n=>n.dataset.fflFinishedOrder);
+  saved.forEach(id=>openCards.add(id));
+  const frag=document.createDocumentFragment();
+  if(!result.length){
+    const empty=document.createElement('p');empty.className='ffl-finished-empty';
+    empty.textContent=value?'لا توجد نتائج في الطلبات المحمّلة. استخدم «عرض 30 طلبًا أقدم» للبحث في طلبات أقدم.':'لا توجد طلبات منتهية ضمن نطاق حسابك.';
+    frag.append(empty);
+  }else for(const o of result)frag.append(makeCard(o));
+  list.replaceChildren(frag);
+  more.hidden=!hasMore;
+  status.textContent='المعروض '+result.length+' من '+loaded.length+' طلبًا تم تحميله'+(hasMore?' · توجد طلبات أقدم':'')+
+    (lastUpdated?' · تحديث '+new Date(lastUpdated).toLocaleTimeString('ar-YE',{timeZone:'Asia/Aden'}):'');
+ }
+ const selectedBranch=()=>['manager','supervisor'].includes(role())?branch.value||null:
+  role()==='customer_service'?$('newBranch')?.value||null:null;
+ async function load(reset=false){
+  if(!maintainViewer()||!open||(loading&&!reset))return;
+  const current=String(user.id),requestViewer=viewer,requestRole=role();
+  const requestGeneration=generation,requestId=++requestSequence;
+  const requestedFrom=rangeFrom.value,requestedTo=rangeTo.value,requestedBranch=selectedBranch();
+  const requestedOffset=reset?0:offset;
+  const stillAuthorized=()=>requestId===requestSequence&&requestGeneration===generation&&
+    maintainViewer()&&viewer===requestViewer&&eligible()&&String(user?.id||'')===current&&
+    role()===requestRole&&open&&rangeFrom.value===requestedFrom&&
+    rangeTo.value===requestedTo&&selectedBranch()===requestedBranch;
+  loading=true;more.disabled=true;refresh.disabled=true;
+  if(reset){loaded=[];offset=0;hasMore=true;lastUpdated=0;openCards.clear();list.replaceChildren()}
+  status.textContent=reset?'جارٍ تحديث الطلبات المنتهية...':'جارٍ تحميل طلبات أقدم...';
+  try{
+   if(!requestedFrom||!requestedTo||requestedFrom>requestedTo||requestedTo>yemenDay())
+      throw Error('حدد نطاقًا صحيحًا: من تاريخ إلى تاريخ');
+   const result=await rpc('ff_luxe_completed_universal',{p_from:requestedFrom,p_to:requestedTo,
+     p_branch:requestedBranch,p_limit:30,p_offset:requestedOffset});
+   // Check authorization and filters before changing branch options or rendered records.
+   if(!stillAuthorized())return;
+   if(!result||!Array.isArray(result.items))throw Error('استجابة قائمة الطلبات المنتهية غير مكتملة');
+   if(['manager','supervisor'].includes(requestRole)){
+     const old=branch.value;branch.replaceChildren(new Option('كل الفروع',''));
+     for(const b of result?.branches||[])branch.add(new Option(b.name,b.id));
+     if([...branch.options].some(x=>x.value===old))branch.value=old;
+     $('fflFinishedBranchLabel').hidden=false;
+   }else $('fflFinishedBranchLabel').hidden=true;
+   permittedBranches=Array.isArray(result.branches)?result.branches:[];
+   loaded=reset?result.items:[...loaded,...result.items.filter(o=>!loaded.some(x=>x.id===o.id))];
+   offset=requestedOffset+result.items.length;
+   hasMore=result.has_more===true;lastUpdated=Date.now();render();
+  }catch(e){
+   if(stillAuthorized())status.textContent='⚠️ تعذر تحميل الطلبات المنتهية: '+String(e?.message||e);
+  }finally{
+   if(requestId===requestSequence){loading=false;more.disabled=false;refresh.disabled=false}
+  }
+ }
+ button.addEventListener('click',()=>{
+  if(!maintainViewer())return;
+  open=!open;panel.hidden=!open;button.setAttribute('aria-expanded',String(open));
+  if(open){if(!loaded.length)void load(true);else render()}
+ });
+ refresh.onclick=()=>void load(true);
+ more.onclick=()=>void load(false);
+ $('fflFinishedToday').onclick=()=>{
+   rangeFrom.value=rangeTo.value=yemenDay();
+   window.dispatchEvent(new CustomEvent('ff-luxe-history-range',{detail:{from:rangeFrom.value,to:rangeTo.value}}));
+ };
+ $('fflFinishedApply').onclick=()=>{
+   window.dispatchEvent(new CustomEvent('ff-luxe-history-range',{detail:{from:rangeFrom.value,to:rangeTo.value}}));
+ };
+ branch.onchange=()=>{if(open)void load(true)};
+ window.addEventListener('ff-luxe-history-range',e=>{
+   const d=e.detail||{};if(d.from&&d.to){rangeFrom.value=d.from;rangeTo.value=d.to;if(open)void load(true)}
+ });
+ search.addEventListener('input',render);
+ list.addEventListener('click',event=>{
+  const b=event.target.closest('[data-ffl-show]');if(!b)return;
+  const card=b.closest('[data-ffl-finished-order]');if(!card)return;
+  const type=b.dataset.fflShow,form=card.querySelector('[data-ffl-action="'+type+'"]');
+  if(!form)return;
+  const show=form.hidden;
+  card.querySelectorAll('.ffl-finished-form').forEach(x=>x.hidden=true);
+  form.hidden=!show;if(show)form.querySelector('input,select,textarea')?.focus({preventScroll:true});
+ });
+ list.addEventListener('submit',async event=>{
+  const form=event.target.closest('form[data-ffl-action]');if(!form)return;
+  event.preventDefault();
+  if(!maintainViewer()||!form.reportValidity())return;
+  const card=form.closest('[data-ffl-finished-order]'),orderId=card?.dataset.fflFinishedOrder;
+  const o=loaded.find(x=>x.id===orderId);if(!o)return;
+  const action=form.dataset.fflAction,infoNow=info(o);
+  if(action==='invoice'&&!infoNow.canInvoice)return toast('رقم الفاتورة مسجل أو الطلب غير قابل للاستكمال');
+  if(action==='rating'&&!infoNow.canRate)return toast('تم تسجيل التقييم مسبقًا أو الطلب غير مؤهل');
+  if(!['invoice','rating','report'].includes(action))return;
+  if(activeAction)return toast('هناك عملية أخرى جارٍ تنفيذها');
+  const current=String(user.id),actionViewer=viewer,actionGeneration=generation;
+  const canShowAction=()=>generation===actionGeneration&&maintainViewer()&&viewer===actionViewer&&
+     eligible()&&String(user?.id||'')===current;
+  const submit=form.querySelector('button[type=submit]'),actionToken={orderId};
+  activeAction=actionToken;submit.disabled=true;
+  const original=submit.textContent;submit.textContent='جارٍ الحفظ...';
+  try{
+   let result;
+   if(action==='invoice'){
+    const invoice=form.elements.namedItem('invoice').value.trim();
+    if(!invoice)throw Error('أدخل رقم الفاتورة أولًا');
+    result=await rpc('ff_luxe_completed_universal_action',{p_order:orderId,p_action:'invoice',p_payload:{invoice}});
+   }else if(action==='rating'){
+    const payload={note:form.elements.namedItem('note').value.trim()};
+     if(role()==='driver')for(const name of ['cs','cashier','customer','overall'])payload[name]=form.elements.namedItem(name).value;
+     else payload.stars=Number(form.elements.namedItem('rating').value);
+     result=await rpc('ff_luxe_completed_universal_action',{p_order:orderId,p_action:'rating',p_payload:payload});
+   }else{
+    const title=form.elements.namedItem('subject').value.trim(),description=form.elements.namedItem('description').value.trim();
+    result=await rpc('ff_luxe_completed_universal_action',{p_order:orderId,p_action:'report',
+       p_payload:{category:form.elements.namedItem('category').value,
+        subject:title,description,priority:form.elements.namedItem('priority').value}});
+   }
+   if(!result?.saved&&!result?.case_id)throw Error('لم يؤكد الخادم حفظ الإجراء');
+   if(!canShowAction())return;
+   const message={invoice:'تم حفظ رقم الفاتورة وتوثيق الاستكمال',rating:'تم إرسال التقييم',report:'تم إرسال البلاغ وربطه بالطلب'};
+   toast('✅ '+message[action]);
+   openCards.add(orderId);
+   await load(true);
+  }catch(e){if(canShowAction())toast('تعذر استكمال الطلب: '+(e?.message||e))}
+  finally{if(activeAction===actionToken)activeAction=null;submit.disabled=false;submit.textContent=original}
+ });
+ window.addEventListener('ff-luxe-session-reset',clear);
+ window.addEventListener('ff-assembly-snapshot-success',()=>{
+  // The role, selected cashier desk and authorized branch may change on snapshot refresh.
+  if(!maintainViewer())return;
+  if(open&&Date.now()-lastUpdated>90000&&!loading)void load(true);
+ });
+ document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden&&open&&eligible()&&Date.now()-lastUpdated>90000)void load(true)
+ });
+ setInterval(()=>{if(document.body.classList.contains('ff-v12-assembly-mode')){if(maintainViewer()&&open&&Date.now()-lastUpdated>120000&&!loading)void load(true)}},12000);
+ const oldReset=resetUI;resetUI=function(){clear();oldReset()};
+ // Keep the active order stream untouched.
+ maintainViewer();
+})();
+<<<FF_LUXE_SOURCE_FILE_END>>>
+
+<<<FF_LUXE_SOURCE_FILE_BEGIN>>>
+{"path":"scripts/luxe-f01-operational-day-20261123.js","encoding":"utf8","payload_bytes":8714,"original_bytes":8714,"sha256":"51415e65049233de2e1d486319122626b09f08546701d9891f1af0e8a5c16417"}
+/* F-01 Fresh Fries LUXE: daily operational window in Asia/Aden.
+   08:00 starts a new business day; 00:00–07:59 belong to the preceding day.
+   Date-only dashboard reset: no deletion or modification of persisted orders.
+   Under no circumstances filter unfinished / live operational orders by this date.
+*/
+(function () {
+  'use strict';
+  const tz='Asia/Aden';
+  const fmt=new Intl.DateTimeFormat('en-US',{
+    timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',
+    hour:'2-digit',hourCycle:'h23'
+  });
+  function parts(when){
+    const date=when instanceof Date?when:new Date(when??Date.now());
+    if(Number.isNaN(date.valueOf()))throw new TypeError('Invalid date');
+    const p=Object.fromEntries(fmt.formatToParts(date).filter(x=>x.type!=='literal')
+      .map(x=>[x.type,x.value]));
+    return {year:+p.year,month:+p.month,day:+p.day,hour:+p.hour};
+  }
+  function businessDate(when){
+    const p=parts(when);
+    const utc=new Date(Date.UTC(p.year,p.month-1,p.day-(p.hour<8?1:0)));
+    return utc.toISOString().slice(0,10);
+  }
+  function closedHours(when){const h=parts(when).hour;return h>=2&&h<8;}
+  window.ffF01BusinessDate=businessDate;
+  window.ffF01IsClosedHours=closedHours;
+  const $=id=>document.getElementById(id);
+  const allowed=new Set(['manager','customer_service','supervisor']);
+  const aria=(tag,txt)=>{const x=document.createElement(tag);if(txt!==undefined)x.textContent=txt;return x;};
+  const meter=$('metrics');
+  if(!meter)return;
+  const panel=aria('section');
+  panel.id='ffF01Panel';panel.hidden=true;panel.setAttribute('aria-label','اليوم التشغيلي');
+  panel.style.cssText='margin:10px 0;padding:14px;border:1px solid #dc5660;border-radius:14px;background:var(--ffb-surface,#fff);direction:rtl;';
+  panel.innerHTML='<h3 style="margin:0 0 9px">📆 اليوم التشغيلي · 8:00 ص – 2:00 ص</h3>'+
+    '<p id="ffF01Window" class="muted">تبدأ عدادات اليوم تلقائياً في الثامنة صباحاً، ولا تُحذف الطلبات السابقة.</p>'+
+    '<div class="row" style="flex-wrap:wrap;align-items:end;gap:9px">'+
+    '<label>اليوم المطلوب<input type="date" id="ffF01Date"></label>'+
+    '<label>مقارنة مع<input type="date" id="ffF01Compare"></label>'+
+    '<label>الفرع<select id="ffF01Branch"><option value="">كل الفروع المسموح بها</option></select></label>'+
+    '<button type="button" class="outline" id="ffF01Today">اليوم</button>'+
+    '<button type="button" class="primary" id="ffF01Refresh">عرض</button></div>'+
+    '<p id="ffF01Message" class="muted" role="status" aria-live="polite"></p>'+
+    '<div id="ffF01Stats" class="ff-f01-stats" style="display:flex;flex-wrap:wrap;gap:12px"></div>';
+  meter.after(panel);
+  const day=$('ffF01Date'),compare=$('ffF01Compare'),branch=$('ffF01Branch');
+  const info=$('ffF01Window'),message=$('ffF01Message'),stats=$('ffF01Stats');
+  let displayedDay=businessDate(),viewer='',sequence=0,busy=false,followToday=true;
+  function prevDay(d,days=1){
+    const x=new Date(d+'T12:00:00Z');x.setUTCDate(x.getUTCDate()-days);
+    return x.toISOString().slice(0,10);
+  }
+  function id(){return (typeof user!=='undefined'&&user?.id)?String(user.id):'';}
+  function role(){return (typeof data!=='undefined'&&data?.role)||'';}
+  function authorized(){return Boolean(id())&&allowed.has(role());}
+  function zero(){stats.replaceChildren();message.textContent='';}
+  function chooseBranch(){
+    const chosen=branch.value;
+    const options=(typeof data!=='undefined'&&Array.isArray(data?.branches))?data.branches:[];
+    const current=new Set(options.map(x=>String(x.id)));
+    branch.replaceChildren(new Option('كل الفروع المسموح بها',''));
+    for(const b of options)branch.add(new Option(b.name||b.code||'فرع',b.id));
+    branch.value=current.has(chosen)?chosen:'';
+  }
+  function clear(){
+    sequence++;viewer='';busy=false;panel.hidden=true;zero();chooseBranch();
+  }
+  window.addEventListener('ff-luxe-session-reset',clear);
+  $('logoutBtn')?.addEventListener('click',clear);
+  function money(n){return Number(n||0).toLocaleString('ar-YE',{maximumFractionDigits:2});}
+  function card(label,value){
+    const c=aria('div');c.style.cssText='flex:1 1 125px;background:var(--ffb-bg,#f8f8f8);border:1px solid #ddd;border-radius:11px;padding:10px;';
+    const name=aria('p',label);name.style.cssText='font-size:12px;margin:0 0 6px;';
+    const val=aria('strong',String(value));val.style.cssText='font-size:18px;';
+    c.append(name,val);return c;
+  }
+  function render(result){
+    const arr=Array.isArray(result?.days)?result.days:[];
+    const a=arr.find(x=>x.day===day.value);
+    const b=arr.find(x=>x.day===compare.value);
+    if(!a||!b)throw new Error('استجابة غير مكتملة من قاعدة البيانات');
+    stats.replaceChildren();
+    const first=aria('div');first.style.cssText='flex:1 1 250px;';
+    first.append(aria('h4','📅 '+day.value));
+    const tiles=aria('div');tiles.style.cssText='display:flex;flex-wrap:wrap;gap:8px;';
+    for(const [label,value] of [['الطلبات',a.orders],['المُسلّمة',a.delivered],
+      ['الملغاة',a.cancelled],['طلبات خارج الدوام',a.anomalies],
+      ['قيمة الطلبات (ليست تحصيلاً)',money(a.value)+' ريال']])tiles.append(card(label,value));
+    first.append(tiles);
+    const second=aria('div');second.style.cssText='flex:1 1 230px;border-inline-start:1px solid #ddd;padding-inline-start:12px;';
+    second.append(aria('h4','📊 مقارنة '+compare.value));
+    const tiles2=aria('div');tiles2.style.cssText='display:flex;flex-wrap:wrap;gap:8px;';
+    for(const [label,value] of [['الطلبات',b.orders],['المُسلّمة',b.delivered],
+      ['الملغاة',b.cancelled],['قيمة الطلبات',money(b.value)+' ريال']])tiles2.append(card(label,value));
+    second.append(tiles2);stats.append(first,second);
+    message.textContent='تاريخ تشغيلي موحد بتوقيت صنعاء. الطلبات الجارية من الأيام السابقة لا تُخفى.';
+  }
+  async function load(){
+    if(!authorized()){clear();return;}
+    if(busy||!day.value||!compare.value)return;
+    const me=id(),asRole=role(),request=++sequence,filter=branch.value;
+    const valid=()=>request===sequence&&id()===me&&role()===asRole&&authorized()
+      &&branch.value===filter;
+    busy=true;$('ffF01Refresh').disabled=true;
+    try{
+      const today=businessDate();
+      if(day.value>today||compare.value>today)throw new Error('لا يجوز اختيار تاريخ تشغيلي مستقبلي');
+      message.textContent='جارٍ جلب الإحصائيات…';stats.replaceChildren();
+      const result=await rpc('ff_f01_daily_summary',{
+        p_date:day.value,p_compare_date:compare.value,p_branch:filter||null
+      });
+      if(!valid())return;
+      render(result);
+    }catch(error){if(valid())message.textContent='تعذر عرض التقرير: '+(error?.message||error);}
+    finally{if(request===sequence){busy=false;$('ffF01Refresh').disabled=false;}}
+  }
+  function sync(withRefresh=false){
+    const today=businessDate(),changed=displayedDay!==today;
+    displayedDay=today;day.max=compare.max=today;
+    const closed=closedHours();
+    info.textContent='الفترة: 8:00 صباحاً – 2:00 صباحاً بتوقيت صنعاء'+
+      (closed?' · ⏸️ المطعم خارج وقت الدوام، والطلبات تُنسب لليوم السابق.':'')+
+      ' · لا توجد عملية حذف أو تصفير لقاعدة البيانات.';
+    if(changed&&followToday){day.value=today;compare.value=prevDay(today);if(busy){sequence++;busy=false;}if(authorized())void load();}
+    if(withRefresh&&authorized())void load();
+  }
+  function show(){
+    if(!authorized()){clear();return;}
+    const me=id();
+    if(me!==viewer){viewer=me;followToday=true;day.value=businessDate();compare.value=prevDay(day.value);chooseBranch();}
+    panel.hidden=false;sync(true);
+  }
+  day.addEventListener('change',()=>{followToday=day.value===businessDate();});
+  compare.addEventListener('change',()=>{});
+  $('ffF01Today').onclick=()=>{followToday=true;day.value=businessDate();compare.value=prevDay(day.value);void load();};
+  $('ffF01Refresh').onclick=()=>{followToday=day.value===businessDate();void load();};
+  branch.addEventListener('change',()=>void load());
+  window.addEventListener('ff-assembly-snapshot-success',show);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync(true);});
+  window.addEventListener('online',()=>sync(true));
+  sync();
+  if(authorized())show();
+  setInterval(()=>sync(),15000);
+})();
+
+<<<FF_LUXE_SOURCE_FILE_END>>>
+
+<<<FF_LUXE_SOURCE_FILE_BEGIN>>>
+{"path":"scripts/luxe-foreground-ring-20261122.js","encoding":"utf8","payload_bytes":5504,"original_bytes":5504,"sha256":"f12b756a298f9011ff2dcc5c07848993e3ff71d0ee3f0a2a16d102759520bbd4"}
+/* Fresh Fries LUXE: foreground ringing until confirmed receipt. */
+'use strict';
+(()=>{
+ const css='@keyframes ffOrderRingPulse{0%,100%{box-shadow:0 0 0 2px #dc262655}50%{box-shadow:0 0 0 6px #dc262633}}'+
+  '#driverOffers .ff-live-ringing,#driverTasks .ff-live-ringing,#cashierOrders .ff-live-ringing{border:4px solid #2563eb!important;outline:2px solid #dc2626;border-radius:18px;animation:ffOrderRingPulse 1.6s ease-in-out infinite}'+
+  '.ff-live-ring-note{display:block;background:#fee2e2;color:#991b1b;border:2px solid #dc2626;border-radius:11px;margin:0 0 12px;padding:10px 12px;font-size:clamp(14px,2.4vw,18px);line-height:1.6;font-weight:900}'+
+  '@media(prefers-reduced-motion:reduce){#driverOffers .ff-live-ringing,#driverTasks .ff-live-ringing,#cashierOrders .ff-live-ringing{animation:none}}';
+ const style=document.createElement('style');style.id='ff-luxe-foreground-ring';style.textContent=css;document.head.append(style);
+ let lastPlay=0,ringing=false,actor='';
+ let suppressFirst=(()=>{try{return new URL(location.href).searchParams.get('ff_push_opened')==='1'}catch{return false}})();
+ const mutedKeys=new Set();
+ if(suppressFirst)try{const url=new URL(location.href);url.searchParams.delete('ff_push_opened');history.replaceState(history.state,'',url.pathname+url.search+url.hash)}catch{}
+ const activeRole=()=>{
+  try{return document.hidden||!user?.id||!data?.role?null:data.role}catch{return null}
+ };
+ function stop(){
+  if(ringing&&typeof window.ffLuxeStopAlertAudio==='function')window.ffLuxeStopAlertAudio();
+  ringing=false;lastPlay=0;
+ }
+ function clearIndicators(){
+  document.querySelectorAll('.ff-live-ring-note').forEach(el=>el.remove());
+  document.querySelectorAll('.ff-live-ringing').forEach(el=>el.classList.remove('ff-live-ringing'));
+ }
+ function pending(){
+  const role=activeRole(),result=[];
+  if(role==='driver')for(const offer of data.offers||[]){
+   const card=[...document.querySelectorAll('#driverOffers .offer[data-ff-ring-offer]')].find(el=>el.dataset.ffRingOffer===String(offer.id));
+   if(card)result.push({key:'offer:'+offer.id,card,tip:'🔔 طلب توصيل جديد — اضغط «قبول الطلب» لإيقاف الرنين'});
+  }
+  if(role==='driver')for(const card of document.querySelectorAll('#driverTasks .ff-luxe-cancelled[data-ff-luxe-driver-cancel]')){
+   result.push({key:'cancel:'+card.dataset.ffLuxeDriverCancel,card,tip:'🚫 طلب ملغي — اضغط «تخطي» بعد الاطلاع عليه لإيقاف التنبيه'});
+  }
+  if(role==='cashier'){
+   for(const o of data.orders||[]){
+    if(!o?.id||!o.phase||o.cashier_stage!=='waiting'||o.cashier_received_at)continue;
+    if(['cancelled','canceled','delivered','closed'].includes(String(o.status||'').toLowerCase()))continue;
+    const card=[...document.querySelectorAll('#cashierOrders .item[data-ff-ring-order]')].find(el=>el.dataset.ffRingOrder===String(o.id));
+    if(card)result.push({key:'cashier:'+o.id,card,tip:'🔔 طلب جديد — اضغط «استلمت الطلب» لإيقاف الرنين'});
+   }
+   for(const card of document.querySelectorAll('#cashierOrders .ff-luxe-cancelled[data-ff-luxe-cancel]'))
+    result.push({key:'cancel:'+card.dataset.ffLuxeCancel,card,tip:'🚫 طلب ملغي — راجع الفاتورة وسجّل الإقرار لإيقاف التنبيه'});
+  }
+  return result;
+ }
+ function reconcile(){
+  const role=activeRole(),who=role?String(user.id)+':'+role:'';
+  if(actor!==who){stop();clearIndicators();actor=who;mutedKeys.clear()}
+  if(!who)return;
+  const all=pending();
+  if(suppressFirst&&who){for(const item of all)mutedKeys.add(item.key);suppressFirst=false}
+  const liveKeys=new Set(all.map(item=>item.key));for(const key of mutedKeys)if(!liveKeys.has(key))mutedKeys.delete(key);
+  const active=all.filter(item=>!mutedKeys.has(item.key)),cards=new Set(active.map(item=>item.card));
+  for(const card of document.querySelectorAll('.ff-live-ringing'))if(!cards.has(card)){
+   card.classList.remove('ff-live-ringing');card.querySelector('.ff-live-ring-note')?.remove();
+  }
+  for(const item of active){
+   const card=item.card;card.classList.add('ff-live-ringing');
+   let note=card.querySelector('.ff-live-ring-note');
+   if(!note){note=document.createElement('div');note.className='ff-live-ring-note';card.prepend(note)}
+   if(note.textContent!==item.tip)note.textContent=item.tip;
+  }
+  if(!active.length){stop();return}
+  ringing=true;
+  if(Date.now()-lastPlay>=3500){
+   lastPlay=Date.now();
+   if(typeof window.ffLuxePlayAlert==='function')
+    window.ffLuxePlayAlert(active.some(item=>item.key.startsWith('cancel:'))?'late':'new');
+  }
+ }
+ window.ffLuxeRefreshForegroundRinging=reconcile;
+ navigator.serviceWorker?.addEventListener('message',event=>{
+  if(event.data?.type!=='FF_LUXE_NOTIFICATION_OPENED')return;
+  const all=pending();
+  if(all.length){for(const item of all)mutedKeys.add(item.key)}else suppressFirst=true;
+  stop();clearIndicators();
+ });
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){stop();clearIndicators()}else reconcile()});
+ window.addEventListener('pagehide',()=>{stop();clearIndicators()});
+ window.addEventListener('focus',reconcile);
+ window.addEventListener('ff-assembly-snapshot-success',()=>requestAnimationFrame(reconcile));
+ document.addEventListener('click',e=>{
+  if(e.target.closest('[data-accept],[data-ff49-receive],[data-ff-luxe-ack],[data-ff-luxe-driver-skip]'))setTimeout(reconcile,1200);
+ });
+ setInterval(reconcile,1200);
+ reconcile();
+})();
+<<<FF_LUXE_SOURCE_FILE_END>>>
+
+<<<FF_LUXE_SOURCE_FILE_BEGIN>>>
+{"path":"scripts/luxe-operational-polish-20261121.js","encoding":"utf8","payload_bytes":10503,"original_bytes":10503,"sha256":"c779d6b2f2ee07b376d25f451f5177819704496ad8fc4aeccd5715b6a54a4e3a"}
+/* Fresh Fries LUXE - finishing touches 2026-11-21.
+   Additive UI layer: no direct writes; all mutations use scoped Supabase RPCs. */
+(function () {
+'use strict';
+const $ = id => document.getElementById(id);
+
+// All drawer-style navigation starts closed on desktop AND mobile.
+// Closed menus must not retain keyboard focus or expose hidden actions.
+const sidebar = $('ffx-sidebar');
+if (sidebar) {
+  const sync = () => {
+    const open = document.body.classList.contains('ffx-menu-open');
+    sidebar.inert = !open;
+    if (open) sidebar.removeAttribute('aria-hidden');
+    else sidebar.setAttribute('aria-hidden', 'true');
+    $('ffx-menu')?.setAttribute('aria-expanded', String(open));
+  };
+  new MutationObserver(sync).observe(document.body, {attributes:true, attributeFilter:['class']});
+  sync();
+}
+
+// Predict the next eligible driver while the customer-service operator edits
+// the branch or area. The result remains an estimate; dispatch is server-side.
+const branchInput = $('newBranch'), areaInput = $('newArea');
+let pendingPreview = 0, lastPreviewKey = '', previewRevision = 0;
+async function updateCandidate() {
+  const box = $('ffLuxeDriverCandidate');
+  if (!box || !branchInput?.value || !data || !['manager','customer_service'].includes(data.role)) return;
+  const key = branchInput.value+'|'+String(areaInput?.value||'').trim();
+  if (key === lastPreviewKey) return;
+  lastPreviewKey = key;
+  const revision = ++previewRevision;
+  box.textContent = '🛵 الموصل التالي المتوقع: جارٍ التحقق...';
+  try {
+    const p = await rpc('ff_luxe_dispatch_preview', {
+      p_branch: branchInput.value,
+      p_area: String(areaInput?.value||'').trim()
+    });
+    if (revision !== previewRevision || !data) return;
+    box.textContent = p?.state === 'candidate'
+      ? '🛵 الموصل التالي المتوقع: '+String(p.driver_name||'غير معروف')+' (توقع وليس إسنادًا نهائيًا)'
+      : p?.state === 'waiting'
+        ? '🛵 الموصل التالي المتوقع: لا يوجد موصل مؤهل الآن؛ سيُوضع الطلب في الانتظار'
+        : '🛵 الموصل التالي المتوقع: لا يمكن تحديده الآن';
+  } catch (_) {
+    if (revision === previewRevision) box.textContent =
+      '🛵 الموصل التالي المتوقع: تعذرت المعاينة؛ سيحسم الخادم الإسناد عند الاعتماد';
+  }
+}
+function scheduleCandidate() {
+  window.clearTimeout(pendingPreview);
+  lastPreviewKey = '';
+  pendingPreview = window.setTimeout(() => { void updateCandidate(); }, 500);
+}
+for (const node of [branchInput,areaInput]) {
+  node?.addEventListener('change', scheduleCandidate);
+  node?.addEventListener('input', scheduleCandidate);
+}
+window.addEventListener('ff:open-order', scheduleCandidate);
+$('ffx-hero-new')?.addEventListener('click', scheduleCandidate);
+
+// Cashiers can evaluate the assigned driver on a 1-5 star popup with an
+// optional note. Managerial cashier preview uses an independent manager role.
+const originalCashierDraw = typeof drawCashier === 'function' ? drawCashier : null;
+function attachCashierRatings() {
+  if (!data || !['cashier','manager'].includes(data.role)) return;
+  const root = $('cashierOrders');
+  if (!root) return;
+  const visibleOrders = (data.orders||[]).filter(o =>
+    o.phase && o.phase !== 'delivered' &&
+    (o.cashier_stage !== 'handed_over' ||
+       (typeof additionsFor === 'function' &&
+        additionsFor(o).some(a => a.status==='pending'||a.late_state==='invoiced')))
+  );
+  for (const card of root.querySelectorAll(':scope > .item')) {
+    const orderNumber = card.querySelector('.item-top strong')?.textContent?.match(/#\s*(\d+)/)?.[1];
+    const order = visibleOrders.find(o => String(o.number)===orderNumber);
+    const actions = card.querySelector('.actions');
+    if (!order?.driver_id || !actions || actions.querySelector('[data-luxe-cashier-rating]')) continue;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'outline';
+    button.dataset.luxeCashierRating = order.id;
+    button.textContent = '⭐ تقييم الموصل (1–5 نجوم)';
+    button.addEventListener('click', async () => {
+      if (!['cashier','manager'].includes(data?.role)) return;
+      const rating = await window.ffLuxeStarPrompt('تقييم الموصل من الكاشير');
+      if (!rating) return;
+      button.disabled = true;
+      try {
+        await rpc('ff_luxe_rate_driver_cashier', {
+          p_order:order.id,p_stars:rating.stars,p_note:rating.note||''
+        });
+        toast('✅ تم حفظ تقييم الموصل وملاحظتك');
+      } catch (err) {
+        toast('تعذر حفظ تقييم الموصل: '+(err?.message||err));
+      } finally { button.disabled = false; }
+    });
+    actions.append(button);
+  }
+}
+if (originalCashierDraw) {
+  drawCashier = function () {
+    originalCashierDraw.apply(this,arguments);
+    attachCashierRatings();
+  };
+}
+
+// Extra-strong visual cancellation warning, kept separate from active orders
+// until cashier acknowledges having checked the matching MicroPOS invoice.
+const style = document.createElement('style');
+style.id = 'ff-luxe-operational-polish-20261121';
+style.textContent = `
+  #ffx-sidebar{visibility:hidden!important;pointer-events:none!important}
+  body.ffx-menu-open #ffx-sidebar{visibility:visible!important;pointer-events:auto!important}
+  #ffx-menu{display:inline-flex!important;min-width:46px;min-height:46px}
+  #ffLuxeDriverCandidate{flex:1 1 220px!important;flex-basis:220px!important;margin:3px 4px!important;min-height:49px;display:flex;align-items:center;line-height:1.45}
+  @media(max-width:570px){#ffLuxeDriverCandidate{flex-basis:100%!important;order:-1}}
+  #cashierOrders>.item:not(.ff-luxe-cancelled){border:4px solid #b70e1c!important;margin-block:0 19px!important;padding:16px!important;border-radius:15px!important;box-shadow:0 5px 18px #3b000025!important}
+  #cashierOrders>.item .ff-cashier-status{font-size:clamp(20px,4vw,27px)!important;font-weight:950!important;color:#a40000!important;background:#fff0f0!important;border:3px solid #bd1220!important;line-height:1.65!important}
+  #ffLuxeCancelledAlerts:not(.hidden){display:grid!important;gap:14px!important;margin:12px 0 22px!important}
+  #ffLuxeCancelledAlerts .ff-luxe-cancelled{background:#ffdfdf!important;color:#7a0000!important;border:5px solid #b10000!important;border-radius:16px!important;padding:20px!important;box-shadow:0 8px 23px #b000003b!important}
+  #ffLuxeCancelledAlerts .ff-luxe-cancel-tag{font-size:clamp(23px,4.5vw,31px)!important;font-weight:950!important;line-height:1.55!important}
+  #ffLuxeCancelledAlerts .ff-luxe-cancelled button{min-height:52px!important;font-weight:900!important;font-size:16px!important}
+  #ffLuxeLeaveView, #ffLuxeAssemblyPreview [data-exit]{min-height:56px!important;font-size:19px!important;font-weight:950!important}
+  @media(min-width:851px){#ffx-sidebar{transition:none!important}#ffx-drawer-close{display:grid!important;place-items:center!important;min-width:44px!important;min-height:44px!important}}
+`;
+document.head.append(style);
+
+
+// Manager interventions are explicitly audited and executed as manager, never
+// by impersonating or borrowing a delivery employee's session.
+function attachManagerDeliveryActions() {
+  if (typeof data === 'undefined' || data?.role !== 'manager' ||
+      !document.body.classList.contains('ff-luxe-preview') ||
+      $('driverView')?.classList.contains('hidden')) return;
+  const orders = data.orders || [];
+  for (const card of $('driverTasks')?.querySelectorAll(':scope > .item') || []) {
+    const number = card.querySelector('.item-top strong')?.textContent?.match(/#\s*(\d+)/)?.[1];
+    const order = orders.find(o => String(o.number) === number);
+    const actions = card.querySelector('.actions');
+    if (!order || !actions || actions.querySelector('[data-manager-progress]')) continue;
+    actions.querySelectorAll('button[data-progress]').forEach(b => b.classList.add('hidden'));
+    const phases = order.phase === 'assigned' && order.cashier_stage === 'handed_over'
+      ? [['on_way','🛵 اعتماد استلام الموصل']]
+      : order.phase === 'on_way'
+      ? [['arrived','📍 اعتماد وصول الموصل'],['delivered','✅ اعتماد تسليم الطلب']]
+      : order.phase === 'arrived'
+      ? [['delivered','✅ اعتماد تسليم الطلب']] : [];
+    for (const [phase,label] of phases) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'outline';
+      b.dataset.managerProgress = phase; b.textContent = '👑 '+label;
+      b.onclick = async () => {
+        if (data?.role !== 'manager' || !document.body.classList.contains('ff-luxe-preview')) return;
+        const reason = prompt('سبب التدخل الإداري في الطلب #'+order.number+' (إلزامي):','متابعة إدارية بعد التحقق من الموصل');
+        if (reason === null) return;
+        if (reason.trim().length < 5 || reason.trim().length > 500) return toast('اكتب سببًا بين 5 و500 حرف');
+        if (!confirm('اعتماد مرحلة «'+label+'» للطلب #'+order.number+'؟ سيُسجل باسم المدير.')) return;
+        b.disabled = true;
+        try {
+          await rpc('ff_luxe_manager_driver_progress',{
+            p_order:order.id,p_phase:phase,p_reason:reason.trim()
+          });
+          toast('تم تحديث مرحلة التوصيل وتوثيق التدخل الإداري');
+          await reload(true);
+        } catch (error) {
+          toast('تعذر اعتماد المرحلة: '+(error.message||error));
+        } finally { b.disabled = false; }
+      };
+      actions.append(b);
+    }
+  }
+}
+const ffLuxeBeforeManagerOpsDraw = draw;
+draw = function (...args) {
+  const value=ffLuxeBeforeManagerOpsDraw.apply(this,args);
+  attachManagerDeliveryActions();
+  return value;
+};
+if (typeof data !== 'undefined' && data?.role === 'manager') attachManagerDeliveryActions();
+
+function closeOperationalMenu() {
+  document.body.classList.remove('ffx-menu-open');
+  $('ffx-menu')?.setAttribute('aria-expanded','false');
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&document.body.classList.contains('ffx-menu-open'))closeOperationalMenu();
+});
+document.querySelector('.ffx-screen-dimmer')?.addEventListener('click',closeOperationalMenu);
+})();
+
+<<<FF_LUXE_SOURCE_FILE_END>>>
+
+<<<FF_LUXE_SOURCE_FILE_BEGIN>>>
+{"path":"scripts/luxe-report-center-20261123.js","encoding":"utf8","payload_bytes":30092,"original_bytes":30092,"sha256":"8e29539917950aabe85bc515733d09707bca474e939f31be21367f0bf795ec5e"}
+/* FF76 — Fresh Fries LUXE unified administrative reports. Database RPC enforces access. */
+(function () {
+'use strict';
+const el = id => document.getElementById(id);
+const safe = value => String(value == null ? '' : value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = value => value === null || value === undefined ? '—' : Number(value).toLocaleString('ar-YE',{maximumFractionDigits:2});
+const cash = value => value === null || value === undefined ? '—' : fmt(value)+' ر.ي';
+const stamp = date => date ? new Date(date).toLocaleString('ar-YE',{timeZone:'Asia/Aden',dateStyle:'short',timeStyle:'short'}) : '—';
+const headings = {summary:'الملخص اليومي',finance:'الإيرادات',orders:'الطلبات والإلغاءات',branches:'الفروع',drivers:'أداء الموصلين',staff:'موظفو خدمة العملاء',areas:'العملاء والمناطق',items:'الأصناف الأكثر مبيعاً',ratings:'التقييمات',cases:'الشكاوى والتظلمات',attendance:'الدوام والاستراحات',analytics:'التحليلات المتقدمة',comparisons:'المقارنات',approval:'اعتماد المدير'};
+let result=null,identity='',pdf=null,pdfURL=null,fileName='',pending=false,pdfPromise=null,libPromise=null,previewed=false;
+function me(){return typeof user!=='undefined' && user ? user.id : ''}
+const root=document.createElement('section');root.id='ff76Center';root.dir='rtl';root.className='ff76-hidden';
+root.innerHTML=[
+'<header class="r-head"><div><h2>📊 مركز التقارير الإدارية الموحد</h2><p>Fresh Fries LUXE — بيانات تشغيلية حسب الصلاحيات والفروع</p></div><button id="ff76Close" type="button" class="r-plain">✕ إغلاق</button></header>',
+'<div class="r-actions"><button id="ff76Today" class="r-plain">اليوم التشغيلي</button><button id="ff76Yesterday" class="r-plain">أمس</button><button id="ff76Seven" class="r-plain">آخر 7 أيام</button><button id="ff76Thirty" class="r-plain">آخر 30 يوماً</button></div>',
+'<div class="r-filters">',
+'<label>من تاريخ<input type="date" id="ff76From"></label><label>إلى تاريخ<input type="date" id="ff76To"></label>',
+'<label>الفرع<select id="ff76Branch"><option value="">كل الفروع المخولة</option></select></label>',
+'<label id="ff76DriverWrap">موصل محدد<select id="ff76Driver"><option value="">جميع الموصلين</option></select></label>',
+'<label>محتوى التقرير<select id="ff76Mode"><option value="full">شامل — جميع الأقسام المسموحة</option><option value="custom">أقسام مخصصة</option></select></label>',
+'<label>تجميع الرسم البياني<select id="ff76Trend"><option value="daily">يومي</option><option value="weekly">أسبوعي</option><option value="monthly">شهري</option></select></label>',
+'</div><div id="ff76Choices" class="r-choices" hidden></div>',
+'<div class="r-actions"><button type="button" id="ff76Run" class="r-primary">إعداد التقرير</button>',
+'<button type="button" id="ff76Preview" class="r-plain" disabled>👁️ معاينة PDF</button>',
+'<button type="button" id="ff76Download" class="r-plain" disabled>⬇️ تصدير PDF</button>',
+'<button type="button" id="ff76Share" class="r-plain" disabled>📤 مشاركة التقرير</button></div>',
+'<p id="ff76Status" class="r-muted" role="status" aria-live="polite">حدد الفترة واضغط إعداد التقرير.</p>',
+'<div id="ff76Body"></div>',
+'<section id="ff76ApprovalBox" class="r-section" hidden><h3>🖋️ ملاحظات المدير واعتماد التقرير</h3>',
+'<p class="r-muted">اعتماد إداري باسم المدير وتاريخه؛ ليس توقيعاً رقمياً مشفراً أو اعتماداً محاسبياً.</p>',
+'<label>اسم المدير<input id="ff76ManagerName" maxlength="120"></label>',
+'<label>ملاحظات الإدارة<textarea id="ff76ManagerNotes" rows="3" maxlength="3000"></textarea></label>',
+'<div class="r-actions"><button type="button" id="ff76SaveApproval" class="r-primary">حفظ واعتماد التقرير</button></div>',
+'<p id="ff76ApprovalStatus" class="r-muted"></p></section>'
+].join('');
+const anchor=el('ff40ReportsPanel');
+if(anchor)anchor.after(root);else document.querySelector('main')?.append(root);
+const previewDialog=document.createElement('dialog');previewDialog.id='ff76PdfDialog';previewDialog.dir='rtl';
+previewDialog.innerHTML='<header class="r-dialoghead"><b>معاينة PDF الكاملة قبل الإرسال</b><div><button id="ff76DlgDownload">حفظ الملف</button> <button id="ff76DlgShare" class="r-primary">مشاركة الملف</button> <button id="ff76DlgClose">✕ إغلاق</button></div></header><iframe id="ff76PDFFrame" title="معاينة PDF"></iframe>';
+document.body.append(previewDialog);
+function clearPDF(){if(pdfURL){URL.revokeObjectURL(pdfURL);pdfURL=null}pdf=null;fileName='';previewed=false;el('ff76PDFFrame').removeAttribute('src')}
+function clear(){result=null;identity='';clearPDF();el('ff76Body').textContent='';el('ff76ApprovalBox').hidden=true;['ff76Preview','ff76Download','ff76Share'].forEach(id=>el(id).disabled=true)}
+function day(){if(typeof ff40TodayYemen==='function')return ff40TodayYemen();const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day}
+function changeDay(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
+function period(days,offset){const end=changeDay(day(),offset);el('ff76To').value=end;el('ff76From').value=changeDay(end,-days+1);invalidate()}
+function invalidate(){if(result){clear();el('ff76Status').textContent='تغيّر فلتر التقرير. اضغط إعداد التقرير من جديد.'}}
+function options(id,rows,text,field,placeholder){const select=el(id),old=select.value;select.replaceChildren(new Option(placeholder,''));(rows||[]).forEach(row=>select.append(new Option(row[text]||'غير محدد',row[field])));if(Array.from(select.options).some(o=>o.value===old))select.value=old}
+function allowed(section){return (result?.available_sections||[]).includes(section)}
+function selected(){if(!result)return[];if(el('ff76Mode').value==='full')return result.available_sections;return Array.from(el('ff76Choices').querySelectorAll('input:checked')).map(c=>c.value).filter(allowed)}
+function choices(){const node=el('ff76Choices');node.hidden=el('ff76Mode').value!=='custom';if(!result)return;
+const former=Array.from(node.querySelectorAll('input:checked')).map(n=>n.value);
+node.innerHTML=result.available_sections.map(key=>'<label><input type="checkbox" value="'+safe(key)+'" '+(!former.length||former.includes(key)?'checked':'')+'>'+safe(headings[key]||key)+'</label>').join('');
+node.querySelectorAll('input').forEach(x=>x.onchange=()=>{clearPDF();draw()})}
+function table(cols,rows){if(!rows?.length)return '<p class="r-muted">لا توجد بيانات موثقة للفترة المختارة.</p>';
+return '<div class="r-scroll"><table><thead><tr>'+cols.map(c=>'<th>'+safe(c[0])+'</th>').join('')+'</tr></thead><tbody>'+
+rows.map(x=>'<tr>'+cols.map(c=>'<td>'+safe(c[1](x)??'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
+function cards(rows){return '<div class="r-kpis">'+rows.map(x=>'<div class="r-kpi"><small>'+safe(x[0])+'</small><b>'+safe(x[1])+'</b></div>').join('')+'</div>'}
+function section(key,html){return '<section class="r-section"><h3>'+safe(headings[key])+'</h3>'+html+'</section>'}
+function weekly(date){const x=new Date(date+'T12:00:00Z');x.setUTCDate(x.getUTCDate()-((x.getUTCDay()+6)%7));return x.toISOString().slice(0,10)}
+function trend(){const groups=new Map();(result.days||[]).forEach(row=>{const name=el('ff76Trend').value==='monthly'?row.work_day.slice(0,7):el('ff76Trend').value==='weekly'?weekly(row.work_day):row.work_day;const x=groups.get(name)||{label:name,orders:0,net:0};x.orders+=Number(row.orders||0);x.net+=Number(row.net||0);groups.set(name,x)});return Array.from(groups.values()).sort((a,b)=>a.label.localeCompare(b.label))}
+function barChart(rows,key){if(!rows.length)return '<p class="r-muted">بيانات الرسم غير متوفرة.</p>';const max=Math.max(1,...rows.map(x=>Number(x[key]||0)));
+return '<div class="r-scroll"><div class="r-bars">'+rows.map(x=>'<div class="r-barcol"><span>'+safe(fmt(x[key]))+'</span><div class="r-bar" style="height:'+Math.max(2,Math.round(105*Number(x[key]||0)/max))+'px"></div><span>'+safe(x.label)+'</span></div>').join('')+'</div></div>'}
+function percentage(a,b){return b==null||Number(b)===0?'لا تتوفر مقارنة':(Number(a)>=Number(b)?'+':'')+fmt((Number(a)-Number(b))/Number(b)*100)+'%'}
+function recommendations(t){const n=[];if(Number(t.cancellation_rate||0)>10)n.push('تحليل أسباب الإلغاء المرتفعة ومعالجة المتكرر منها.');
+if(Number(t.late||0)>0)n.push('مراجعة الطلبات التي تجاوزت 60 دقيقة، خاصة ساعات الذروة.');
+if(Number(t.low_ratings||0)>0)n.push('متابعة التقييمات المنخفضة وتعليقاتها واتخاذ إجراء تصحيحي.');
+if(Number(t.free_delivery||0)>0)n.push('مراجعة حالات التوصيل المجاني مقابل العروض المعتمدة.');
+if(!(result.attendance||[]).length)n.push('تفعيل توثيق فترات الدوام لمعرفة ساعات العمل الصافية.');
+if(!n.length)n.push('لا تظهر مؤشرات استثنائية في القواعد الحالية؛ واصل المتابعة.');
+return n}
+function compose(keys){
+if(!result)return '';const r=result,t=r.totals||{},selectedSet=new Set(keys),html=[];
+if(selectedSet.has('summary'))html.push(section('summary',cards([
+['جميع الطلبات',fmt(t.orders)],['المنجزة',fmt(t.delivered)],['الملغاة',fmt(t.cancelled)],['قيد المتابعة',fmt(t.pending)],['العملاء الجدد لأول مرة',fmt(t.new_customers)],['المناطق الجديدة',fmt(t.new_areas)],['توصيل مجاني',fmt(t.free_delivery)],['متوسط وقت التوصيل',t.avg_delivery_minutes==null?'—':fmt(t.avg_delivery_minutes)+' دقيقة']
+])+'<p class="r-muted">اليوم التشغيلي من 08:00 صباحاً إلى 02:00 صباح اليوم التالي بتوقيت صنعاء، دون تصفير البيانات.</p>'));
+if(selectedSet.has('finance'))html.push(section('finance',cards([
+['مبيعات أصناف الطلبات المسلّمة',cash(t.item_sales)],['رسوم التوصيل المستحقة',cash(t.delivery_fees)],['تقدير الخصومات',cash(t.discounts_estimate)],['الإجمالي النهائي المسجل',cash(t.net)],['متوسط قيمة الطلب المسلّم',cash(t.average_order)]
+])+'<p class="r-muted">قيم الفواتير تشغيلية وليست تحصيلاً نقدياً مؤكداً. تقدير الخصومات من الفرق بين الأصناف + التوصيل والإجمالي المسجل؛ الإضافات المفوترة ضمن المبيعات والصافي.</p>'));
+if(selectedSet.has('orders'))html.push(section('orders',cards([
+['المنجزة',fmt(t.delivered)],['الملغاة',fmt(t.cancelled)],['معدل الإلغاء',t.cancellation_rate==null?'—':fmt(t.cancellation_rate)+'%'],['المتأخرة أكثر من 60 دقيقة',fmt(t.late)],['توصيل مجاني',fmt(t.free_delivery)],['أسرع طلب',t.fastest_minutes==null?'—':fmt(t.fastest_minutes)+' دقيقة']
+])+'<h4>أسرع الطلبات</h4>'+table([['الطلب',x=>x.order_number],['الفرع',x=>x.branch_name],['الموصل',x=>x.driver_name],['دقائق',x=>x.minutes]],r.fastest)+
+'<h4>الطلبات الملغية وأسباب الإلغاء</h4>'+table([['الطلب',x=>x.order_number],['الفرع',x=>x.branch_name],['التاريخ',x=>stamp(x.created_at)],['السبب',x=>x.reason]],r.cancellations)+
+'<h4>تفاصيل الطلبات المتأخرة (أكثر من 60 دقيقة)</h4>'+table([['الطلب',x=>x.order_number],['الفرع',x=>x.branch_name],['الدقائق',x=>fmt(x.delivery_minutes)],['وقت إنشاء الطلب',x=>stamp(x.created_at)]],r.late_orders)+
+'<h4>تفاصيل طلبات التوصيل المجاني</h4>'+table([['الطلب',x=>x.order_number],['الفرع',x=>x.branch_name],['قيمة الفاتورة',x=>cash(x.total_amount)],['تاريخ الإنشاء',x=>stamp(x.created_at)]],r.free_delivery_orders)));
+if(selectedSet.has('branches'))html.push(section('branches',table([['الفرع',x=>x.branch_name],['الكل',x=>fmt(x.orders)],['مسلّمة',x=>fmt(x.delivered)],['ملغاة',x=>fmt(x.cancelled)],['صافي الفواتير',x=>cash(x.net)],['متوسط الفاتورة',x=>cash(x.average_order)]],r.branch_rows)));
+if(selectedSet.has('drivers')){
+ const top=(r.drivers||[]).slice().sort((a,b)=>Number(b.delivered)-Number(a.delivered))[0];
+ // Balanced score is shown ONLY when attendance, internal reviews, and at least 3 completed jobs exist.
+ const candidates=(r.drivers||[]).map(d=>({
+  ...d,internal:(r.internal_driver_ratings||[]).find(x=>x.driver_name===d.driver_name),
+  hours:(r.attendance||[]).filter(x=>x.driver_id===d.driver_id).reduce((a,x)=>a+Number(x.work_hours||0),0)
+ })).filter(d=>d.delivered>=3&&Number(d.internal?.ratings)>=1&&d.hours>0&&d.average_minutes>0);
+ const maxJobs=Math.max(1,...candidates.map(d=>Number(d.delivered)));
+ const maxHours=Math.max(1,...candidates.map(d=>d.hours));
+ const evaluated=candidates.map(d=>({name:d.driver_name,score:Math.round(100*(.25*Number(d.delivered)/maxJobs+.25*Math.min(1,30/Number(d.average_minutes))+.25*Number(d.internal.average_stars)/5+.25*d.hours/maxHours))})).sort((a,b)=>b.score-a.score);
+ const champion=evaluated.length>=2?evaluated[0]:null;
+ const fast=(r.drivers||[]).filter(x=>Number(x.delivered)>=2&&x.average_minutes!=null).sort((a,b)=>Number(a.average_minutes)-Number(b.average_minutes))[0];
+ html.push(section('drivers','<p class="r-muted">الأكثر إنجازاً: '+safe(top?.driver_name||'غير متاح')+' | الأسرع بالمتوسط (طلبان على الأقل): '+safe(fast?.driver_name||'بيانات غير كافية')+'. تصنيف الأداء الشامل: '+safe(champion?champion.name+' — '+champion.score+'/100':'لا توجد بيانات كافية للترتيب العادل')+'. طريقة الترتيب عند توفر البيانات لموصلين اثنين على الأقل: 25% إنجاز، 25% سرعة، 25% تقييم داخلي، 25% ساعات عمل، بحد أدنى 3 طلبات وتقييم موثق ودوام.</p>'+
+ table([['الموصل',x=>x.driver_name],['المسندة',x=>fmt(x.assigned)],['المنجزة',x=>fmt(x.delivered)],['رسوم مستحقة',x=>cash(x.delivery_fees_due)],['قيمة الفواتير',x=>cash(x.invoice_value)],['متوسط الفاتورة',x=>cash(x.average_order)],['متوسط التوصيل بالدقائق',x=>fmt(x.average_minutes)],['متوسط تقييم الطلب',x=>fmt(x.average_rating)]],r.drivers)+
+'<h4>تقييمات الموصلين الداخلية</h4>'+table([['الموصل',x=>x.driver_name],['مرات التقييم',x=>fmt(x.ratings)],['متوسط النجوم',x=>fmt(x.average_stars)],['التقييمات المنخفضة',x=>fmt(x.low_ratings)]],r.internal_driver_ratings)+
+'<h4>التسويات والتحصيل الفعلي المسجل</h4>'+table([['الموصل',x=>x.driver_name],['التسويات',x=>fmt(x.statements)],['المبلغ المستحق',x=>cash(x.cash_due)],['المبلغ المسجل مستلماً',x=>cash(x.cash_received)],['التسويات المقفلة',x=>fmt(x.closed_statements)]],r.settlements)+
+'<p class="r-muted">لا يُعد المبلغ المستحق تحصيلاً مؤكداً؛ استند إلى سجلات التسويات المقفلة عند المطابقة المالية.</p>'))}
+if(selectedSet.has('staff'))html.push(section('staff',table([['الموظف',x=>x.staff_name],['الطلبات',x=>fmt(x.orders)]],r.service_staff)));
+if(selectedSet.has('areas'))html.push(section('areas','<h4>مناطق التوصيل</h4>'+table([['المنطقة',x=>x.area_name],['الطلبات',x=>fmt(x.orders)],['منجزة',x=>fmt(x.delivered)],['العملاء الجدد',x=>fmt(x.new_customers)]],r.areas)+
+ (r.customers?.length?'<h4>العملاء المتكررون</h4>'+table([['العميل',x=>x.customer_name],['الرقم المخفي',x=>x.phone_masked],['الطلبات',x=>fmt(x.orders)]],r.customers):'')));
+if(selectedSet.has('items'))html.push(section('items',table([['الصنف',x=>x.item_name],['الكمية',x=>fmt(x.quantity)],['الإيراد',x=>cash(x.revenue)]],r.items)));
+if(selectedSet.has('ratings'))html.push(section('ratings',cards([['أعلى تقييم للطلب',fmt(t.rating_max)],['أدنى تقييم للطلب',fmt(t.rating_min)],['المتوسط',fmt(t.rating_avg)],['المنخفضة بنجمتين أو أقل',fmt(t.low_ratings)]])+
+ table([['الطلب',x=>x.order_number],['النجوم',x=>x.rating],['الملاحظة',x=>x.rating_note||'دون تعليق'],['الوقت',x=>stamp(x.created_at)]],r.low_ratings)));
+if(selectedSet.has('cases'))html.push(section('cases','<h4>الشكاوى المرتبطة بالطلبات</h4>'+table([['الموضوع',x=>x.subject],['الطلب',x=>x.order_number||'بدون طلب'],['الفرع',x=>x.branch_name],['الحالة',x=>x.status]],r.complaints)+
+ '<h4>تظلمات الموصلين</h4>'+table([['التصنيف',x=>x.category],['التفاصيل',x=>x.details],['الحالة',x=>x.status]],r.grievances)));
+if(selectedSet.has('attendance'))html.push(section('attendance','<p class="r-muted">صافي الحضور = مجموع فترات الحضور في اليوم التشغيلي بعد طرح الاستراحات. البيانات القديمة غير الموثقة لا يمكن استرجاعها.</p>'+
+ table([['اليوم',x=>x.report_day],['الموصل',x=>x.driver_name],['فترات الحضور',x=>fmt(x.sessions)],['الحضور الفعلي',x=>stamp(x.first_checkin)],['آخر خروج',x=>stamp(x.last_checkout)],['صافي الساعات',x=>fmt(x.work_hours)]],r.attendance)));
+if(selectedSet.has('analytics'))html.push(section('analytics','<h4>الطلبات '+safe(el('ff76Trend').selectedOptions[0]?.textContent)+'</h4>'+barChart(trend(),'orders')+'<h4>الفواتير المسلّمة</h4>'+barChart(trend(),'net')+
+'<h4>أوقات الذروة</h4>'+barChart((r.hourly||[]).map(x=>({label:String(x.hour_of_day).padStart(2,'0')+':00',orders:Number(x.orders)})),'orders')+
+'<p class="r-muted">نسبة الطلبات «المؤجلة» لا تُحسب دون حالة تأجيل مستقلة موثقة في قاعدة البيانات.</p>'));
+if(selectedSet.has('comparisons')){
+ const c=r.comparison||{},today=c.today||{},old=c.yesterday||{},week=c.last_week||{},avgWeek=c.previous_week_average||{};
+ html.push(section('comparisons',table([['الفترة',x=>x.label],['الطلبات',x=>fmt(x.orders)],['المسلّمة',x=>fmt(x.delivered)],['القيمة',x=>cash(x.net)]],[{label:'نهاية الفترة',...today},{label:'اليوم السابق',...old},{label:'نفس اليوم الأسبوع الماضي',...week},{label:'متوسط السبعة أيام السابقة',...avgWeek}])+
+ cards([['تغيير الطلبات عن أمس',percentage(today.orders,old.orders)],['تغيير قيمة الفواتير عن أمس',percentage(today.net,old.net)],['الفرق عن الأسبوع الماضي',percentage(today.orders,week.orders)],['الفرق عن متوسط الأسبوع',percentage(today.orders,avgWeek.orders)]])+
+ '<p class="r-muted">المقارنة تخص تاريخ نهاية الفترة المختارة فقط.</p>'))}
+if(selectedSet.has('approval'))html.push(section('approval',r.approval?.approved_at?
+ '<div class="r-stamp"><b>اعتماد إداري: '+safe(r.approval.manager_name||'المدير')+'</b><div>تاريخ الاعتماد '+safe(stamp(r.approval.approved_at))+'</div><p>'+safe(r.approval.manager_notes)+'</p></div>':
+ '<p class="r-muted">لم يعتمد هذا التقرير إدارياً بعد.</p>'));
+if(selectedSet.has('summary')||selectedSet.has('comparisons'))html.push('<section class="r-section"><h3>المؤشر الإداري والخاتمة والتوصيات</h3><p class="r-muted">توصيات تشغيلية للمدير والمشرف وخدمة العملاء بحسب المؤشرات، وتحتاج مراجعة مسؤول معتمد.</p><ul>'+recommendations(t).map(x=>'<li>'+safe(x)+'</li>').join('')+'</ul></section>');
+return html.join('')}
+function draw(){if(!result)return;el('ff76Body').innerHTML=compose(selected())||'<p class="r-muted">حدد قسماً واحداً على الأقل.</p>';
+const allowedApproval=result.role==='manager'&&el('ff76From').value===el('ff76To').value&&!el('ff76Driver').value;
+el('ff76ApprovalBox').hidden=!allowedApproval;
+if(allowedApproval){el('ff76ManagerName').value=result.approval?.manager_name||'';el('ff76ManagerNotes').value=result.approval?.manager_notes||''}
+['ff76Preview','ff76Download','ff76Share'].forEach(id=>el(id).disabled=!selected().length)}
+async function load(){
+ if(!me()||pending)return;
+ const from=el('ff76From').value,to=el('ff76To').value,branch=el('ff76Branch').value||null,driver=el('ff76Driver').value||null;
+ const days=(new Date(to+'T12:00:00Z')-new Date(from+'T12:00:00Z'))/86400000;
+ if(!from||!to||from>to||to>day()||days>89){el('ff76Status').textContent='فترة غير صحيحة؛ يجب ألا تتجاوز 90 يوماً ولا تشمل المستقبل.';return}
+ const viewer=me();pending=true;el('ff76Run').disabled=true;clear();el('ff76Status').textContent='جاري جمع البيانات بحسب صلاحيات المستخدم...';
+ try{
+ const data=await rpc('ff76_reporting_center',{p_from:from,p_to:to,p_branch:branch,p_driver:driver});
+ if(me()!==viewer)throw Error('تغير الحساب');
+ if(!data?.totals||!Array.isArray(data.available_sections))throw Error('استجابة التقرير غير صالحة');
+ result=data;identity=viewer+':'+from+':'+to+':'+String(branch)+':'+String(driver);
+ options('ff76Branch',data.branches,'name','id','جميع الفروع المسموحة');if(branch)el('ff76Branch').value=branch;
+ options('ff76Driver',data.driver_options,'name','id','جميع الموصلين');if(driver)el('ff76Driver').value=driver;
+ el('ff76DriverWrap').hidden=!(data.driver_options||[]).length;
+ choices();draw();
+ el('ff76Status').textContent='تقرير '+from+' إلى '+to+' | '+data.scope+' | '+fmt(data.totals.orders)+' طلب. بيانات تشغيلية وليست إقفالات محاسبية.';
+ }catch(e){clear();el('ff76Status').textContent='تعذر إعداد التقرير: '+(e.message||e)}finally{pending=false;el('ff76Run').disabled=false}
+}
+function open(){if(!me()){typeof toast==='function'&&toast('سجّل الدخول أولاً');return}el('ff40ReportsPanel')?.classList.add('hidden');root.classList.remove('ff76-hidden');
+if(!el('ff76From').value)period(1,0);root.scrollIntoView({behavior:'smooth',block:'start'});if(!result)void load()}
+window.ff76OpenReports=open;
+el('ff76Close').onclick=()=>root.classList.add('ff76-hidden');
+[['ff76Today',1,0],['ff76Yesterday',1,-1],['ff76Seven',7,0],['ff76Thirty',30,0]].forEach(x=>el(x[0]).onclick=()=>{period(x[1],x[2]);void load()});
+el('ff76Run').onclick=load;['ff76From','ff76To','ff76Branch','ff76Driver'].forEach(id=>el(id).addEventListener('change',invalidate));
+el('ff76Mode').onchange=()=>{choices();clearPDF();draw()};el('ff76Trend').onchange=()=>{clearPDF();draw()};
+el('ff76SaveApproval').onclick=async()=>{if(!result||result.role!=='manager'||el('ff76From').value!==el('ff76To').value||el('ff76Driver').value)return;
+const uid=me(),tag=identity;el('ff76SaveApproval').disabled=true;
+try{const res=await rpc('ff76_report_approval_save',{p_day:el('ff76To').value,p_branch:el('ff76Branch').value||null,p_notes:el('ff76ManagerNotes').value,p_manager_name:el('ff76ManagerName').value});
+if(me()!==uid||tag!==identity)throw Error('تغير الحساب أو التقرير');result.approval={...res,manager_notes:res.notes};clearPDF();draw();el('ff76ApprovalStatus').textContent='تم توثيق اعتماد المدير وتاريخ حفظه.'}
+catch(e){el('ff76ApprovalStatus').textContent='فشل الاعتماد: '+e.message}finally{el('ff76SaveApproval').disabled=false}};
+function pdfLibrary(){if(window.html2pdf)return Promise.resolve();if(libPromise)return libPromise;
+libPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js';s.onload=()=>window.html2pdf?resolve():reject(Error('مكتبة PDF غير جاهزة'));s.onerror=()=>reject(Error('مكتبة PDF تحتاج اتصالاً بالإنترنت'));document.head.append(s)}).catch(e=>{libPromise=null;throw e});return libPromise}
+function authorized(uid,tag){if(me()!==uid||identity!==tag)throw Error('تغير الحساب أو التقرير')}
+async function producePDF(){if(pdf)return pdf;if(pdfPromise)return pdfPromise;if(!result||!selected().length)throw Error('أعد التقرير وحدد أقسامه');
+const uid=me(),tag=identity;pdfPromise=(async()=>{
+ await pdfLibrary();authorized(uid,tag);
+ const page=document.createElement('div');page.dir='rtl';page.lang='ar';
+ page.style.cssText='width:720px;background:#fff;color:#181818;padding:25px;font:14px Tahoma,Arial,sans-serif;line-height:1.7;position:absolute;left:-99999px;top:0';
+ page.innerHTML='<div style="border-bottom:4px solid #c51b30;padding:10px 0;margin-bottom:15px"><h1>FRESH FRIES LUXE — مركز التقارير</h1><b>'+safe(result.from)+' إلى '+safe(result.to)+'</b><p>'+safe(result.scope)+'</p></div>'+
+ '<style>.r-section{border:1px solid #ccc;padding:10px;margin:12px 0;break-inside:avoid-page}.r-section h3{border-right:4px solid #c51b30;padding-right:8px}.r-kpis{display:flex;flex-wrap:wrap;gap:7px}.r-kpi{border:1px solid #ddd;padding:8px;min-width:135px}.r-kpi b{display:block;font-size:18px}.r-scroll{overflow:visible}table{border-collapse:collapse;width:100%;font-size:11px}th,td{text-align:right;border:1px solid #ddd;padding:7px;overflow-wrap:anywhere}th{background:#eee}.r-muted{font-size:11px;color:#444}.r-bars{display:flex;align-items:flex-end;height:150px}.r-barcol{height:150px;width:65px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}.r-bar{width:34px;background:#c51b30}.r-barcol span{font-size:10px}.r-stamp{border:2px dashed #c51b30;padding:9px}</style>'+
+ compose(selected())+'<footer style="margin-top:20px;border-top:1px solid #ddd">فريش فرايز — تقرير تشغيلي لا يثبت التحصيل المالي.</footer>';
+ document.body.append(page);
+ try{const blob=await window.html2pdf().set({margin:8,filename:'FreshFries_LUXE_'+result.from+'_'+result.to+'.pdf',
+ html2canvas:{scale:1.25,logging:false,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+ pagebreak:{mode:['css','legacy'],avoid:['tr','.r-kpi']}}).from(page).outputPdf('blob');
+ authorized(uid,tag);if(!(blob instanceof Blob)||blob.size<500)throw Error('ملف PDF غير صالح');
+ pdf=blob;fileName='FreshFries_LUXE_Report_'+result.from+'_'+result.to+'.pdf';return blob}finally{page.remove()}})();
+ try{return await pdfPromise}finally{pdfPromise=null}}
+function download(){if(!pdf)return;const url=pdfURL||URL.createObjectURL(pdf),a=document.createElement('a');a.href=url;a.download=fileName;a.click();if(!pdfURL)setTimeout(()=>URL.revokeObjectURL(url),5000)}
+async function preview(){el('ff76Preview').disabled=true;el('ff76Status').textContent='إعداد ملف PDF للمعاينة...';
+try{await producePDF();if(!pdfURL)pdfURL=URL.createObjectURL(pdf);el('ff76PDFFrame').src=pdfURL;previewDialog.showModal();previewed=true;el('ff76Status').textContent='راجع ملف PDF قبل الإرسال.'}
+catch(e){el('ff76Status').textContent='تعذر إنشاء PDF: '+e.message}finally{el('ff76Preview').disabled=!result}}
+async function share(){if(!pdf||!previewed){await preview();return}const file=new File([pdf],fileName,{type:'application/pdf'});
+try{if(navigator.canShare?.({files:[file]})&&navigator.share)await navigator.share({title:'تقرير فريش فرايز',files:[file]});
+else{download();el('ff76Status').textContent='بدأ حفظ PDF؛ يمكن مشاركته من مدير ملفات الجهاز.'}}catch(e){if(e.name!=='AbortError')el('ff76Status').textContent='لم تكتمل المشاركة: '+e.message}}
+el('ff76Preview').onclick=preview;el('ff76Download').onclick=async()=>{try{await producePDF();download()}catch(e){el('ff76Status').textContent=e.message}};
+el('ff76Share').onclick=share;
+el('ff76DlgDownload').onclick=download;el('ff76DlgShare').onclick=share;el('ff76DlgClose').onclick=()=>previewDialog.close();
+previewDialog.addEventListener('close',()=>el('ff76PDFFrame').removeAttribute('src'));
+document.addEventListener('ff-luxe-session-reset',()=>{if(previewDialog.open)previewDialog.close();clear();root.classList.add('ff76-hidden');options('ff76Branch',[],'name','id','كل الفروع');options('ff76Driver',[],'name','id','كل الموصلين')});
+el('ff40ReportsBtn')?.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();open()},true);
+for(const id of ['ffV12AssemblyWorkspace','ffBurgerKitchenWorkspace']){
+ const host=el(id);if(!host)continue;const b=document.createElement('button');b.type='button';b.className='outline';b.textContent='📊 تقرير التشغيل';b.onclick=open;host.prepend(b)
+}
+})();
+<<<FF_LUXE_SOURCE_FILE_END>>>
+
+<<<FF_LUXE_SOURCE_FILE_BEGIN>>>
+{"path":"scripts/luxe-static-ci.mjs","encoding":"utf8","payload_bytes":21909,"original_bytes":21909,"sha256":"bc00023649415459961009adee97ef280017e6cf8991204060b66ab978cfd347"}
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import zlib from 'node:zlib';
+
+const get = path => fs.readFileSync(path);
+const html = get('index.html').toString('utf8');
+assert.match(html, /<!doctype html>/i, 'Missing HTML doctype');
+assert.match(html, /href="\.\/manifest\.webmanifest"/, 'Missing PWA link');
+assert.match(html, /https:\/\/api\.freshfriesz\.com/, 'Production gateway URL was lost');
+assert.match(html, /ff61-employees/, 'Employee application portal missing');
+assert.match(html, /ff71-customer-phone-otp/, 'Customer OTP portal missing');
+assert.match(html, /ff_v12_assembly_set_stage/, 'Assembly workflow missing');
+
+assert.match(html, /window\.addEventListener\('ff-luxe-session-reset',ff61ClearPrivate\)/,
+  'Employee requests must invalidate private state on every session reset');
+assert.match(html, /const current=\(\)=>token===ff61AccessToken&&ff61SessionEpoch===epoch&&ff61Viewer\(\)===viewer/,
+  'Staff permission responses must be tied to the active account and role');
+assert.match(html, /const current=\(\)=>ff61BadgeToken===token&&ff61SessionEpoch===epoch&&/,
+  'Staff notification badges must never show a previous account response');
+assert.match(html, /if\(!current\(\)\)return;\s*capabilities=permitted/,
+  'Grant/revoke updates must discard stale permission results');
+assert.match(html, /if\(!permitted\.notify\)\{ff61BadgeToken\+\+;/,
+  'Revoked notification capability must invalidate pending counters');
+assert.match(html, /byId\('logoutBtn'\)\.addEventListener\('click',ff61ClearPrivate\)/,
+  'Logout must immediately clear employee-management UI');
+
+
+assert.match(html, /function ff51ClearPrivate\(\)/, 'FF51 must clear all private customer/archive UI on logout');
+assert.match(html, /window\.addEventListener\('ff-luxe-session-reset',\(\)=>\{ff51ClearPrivate\(\)/,
+  'FF51 must listen for logout/session change');
+assert.match(html, /async function ff51LoadArchive\(reset=false\)[\s\S]*?if\(!current\(\)\)return;/,
+  'Archive result must recheck viewer and filter after RPC');
+assert.match(html, /ff51ArchiveSeq\+\+;ff51ArchiveRows=\[\];ff51ArchiveOffset=0;/,
+  'Archive close must erase page records and invalidate outstanding requests');
+assert.match(html, /async function ff51LoadCustomers\(\)[\s\S]*?if\(!current\(\)\)return;/,
+  'Customer directory must reject stale account responses');
+assert.match(html, /async function ff51CustomerNotes\(phone\)[\s\S]*?if\(!current\(\)\)return;/,
+  'Customer notes must reject stale account responses');
+assert.match(html, /async function ff51LoadRatings\(\)[\s\S]*?if\(!current\(\)\)return;/,
+  'Ratings must reject stale account responses');
+assert.match(html, /Prevent spreadsheet formula injection/, 'Archive CSV must protect spreadsheet users from formula injection');
+
+
+const completedFile=get('scripts/luxe-completed-universal-20261123.js').toString('utf8');
+new vm.Script(completedFile, {filename:'scripts/luxe-completed-universal-20261123.js'});
+assert.match(completedFile, /window\.addEventListener\('ff-luxe-session-reset',clear\)/,
+  'Completed order data must be wiped when the session resets');
+assert.match(completedFile, /if\(!stillAuthorized\(\)\)return;/,
+  'Stale completed order records must never update the UI');
+assert.match(completedFile, /if\(stillAuthorized\(\)\)status\.textContent=/,
+  'Async errors must not expose old account state');
+assert.match(completedFile, /requestId===requestSequence/,
+  'Overlapping history responses must not overwrite the latest query');
+assert.match(completedFile, /if\(!canShowAction\(\)\)return;/,
+  'Completed action feedback must use the current authenticated viewer');
+
+
+assert.match(html, /data=null;user=null;window\.dispatchEvent\(new Event\('ff-luxe-session-reset'\)\)/,
+  'Every resetUI must invalidate asynchronous manager-only reports');
+const settlementHistory=get('scripts/luxe-history-period-20261123.js').toString('utf8');
+new vm.Script(settlementHistory, {filename:'scripts/luxe-history-period-20261123.js'});
+assert.match(settlementHistory, /window\.addEventListener\('ff-luxe-session-reset',resetPrivateReport\)/,
+  'Sensitive settlement report must clear on session reset');
+assert.match(settlementHistory, /if\(!stillAuthorized\(\)\)return;/,
+  'Late settlement responses must be discarded after role or date changes');
+assert.match(settlementHistory, /list\.replaceChildren\(\);\s*state\.textContent='';/,
+  'Settlement report data must be erased when the viewer changes');
+
+assert.doesNotMatch(html, /\.head,#toast\{display:none!important\}/, 'Legacy operational feedback must not be globally hidden');
+assert.match(html, /id="toast" class="alert hidden" role="status" aria-live="polite" aria-atomic="true"/,
+  'Legacy toast must expose accessible status semantics');
+assert.match(html, /#toast\{\s*z-index:1245;/, 'Legacy toast must be visible over the shell');
+assert.match(html, /bottom:calc\(118px \+ env\(safe-area-inset-bottom\)\)/,
+  'Mobile status must stay above the bottom navigation');
+assert.doesNotMatch(html, /@media\(min-width:1151px\)\{main,#ffx-topbar\{margin-right:278px\}\}/,
+  'Remove obsolete desktop gutter override');
+
+assert.match(html, /ff28_customer/, 'Customer records must be server-filtered');
+assert.doesNotMatch(html, /sb_secret_[A-Za-z0-9]+/, 'Secret API key must never be embedded in the client');
+assert.match(html, /sidebar\.inert=true;sidebar\.setAttribute\('aria-hidden','true'\)/,
+  'Sidebar must be inaccessible when closed');
+assert.match(html, /sidebar\.inert=false;sidebar\.removeAttribute\('aria-hidden'\)/,
+  'Sidebar must become accessible when opened');
+assert.match(html, /--ffl-drawer-width:278px/, 'Canonical drawer sizing missing');
+assert.match(html, /visibility:hidden;\s*pointer-events:none;/, 'Closed drawer must not accept input');
+assert.doesNotMatch(html, /#ffx-nav-toggle\{display:inline-flex!important\}/, 'Remove dead sidebar toggle rule');
+
+assert.match(html, /#cashierOrders>\.item:not\(\.ff-luxe-cancelled\)/, 'Ordinary cashier cards must exclude cancelled orders');
+assert.match(html, /#driverTasks>\.item:not\(\.ff-luxe-cancelled\)/, 'Ordinary driver cards must exclude cancelled orders');
+assert.doesNotMatch(html, /\.ff60-order,\s*\.ff-luxe-cancelled,/, 'Generic blue cards must not override cancelled orders');
+assert.match(html, /#cashierOrders>\.ff-luxe-cancelled\{[^}]*#b91c1c/, 'Cashier cancellation outline must be red');
+
+const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)];
+let validated = 0;
+for (let i=0; i<scripts.length; i++) {
+  if (/\bsrc\s*=/.test(scripts[i][1])) continue;
+  new vm.Script(scripts[i][2], {filename:`inline-script-${i}.js`});
+  validated++;
+}
+assert.ok(validated >= 20, `Expected at least 20 JavaScript modules; found ${validated}`);
+// Regression: stalled authentication must offer a retry but must never unlock the app.
+const watchdogScript = scripts.find(m => /id="ff-luxe-boot-watchdog"/.test(m[1]))?.[2];
+assert.ok(watchdogScript, 'Boot watchdog script missing');
+assert.match(html, /<noscript>[\s\S]*?JavaScript[\s\S]*?<\/noscript>/, 'Missing no-JavaScript explanation');
+assert.doesNotMatch(watchdogScript, /classList\.remove\(['"]ff-booting/, 'Watchdog may not bypass session checks');
+let fireWatchdog, booting = true;
+const message = {textContent: 'جارِ استعادة جلسة فريش فرايز…'};
+const boot = {links: [], querySelector: () => boot.links[0] || null, appendChild: node => boot.links.push(node)};
+const sandbox = {
+  setTimeout: (fn, ms) => { assert.equal(ms, 20000); fireWatchdog = fn; return 1; },
+  clearTimeout: () => {},
+  document: {
+    body: {classList: {contains: name => name === 'ff-booting' && booting}},
+    getElementById: name => name === 'ff65Boot' ? boot : name === 'ff65BootMessage' ? message : null,
+    createElement: tag => ({tag, style: {}, setAttribute(name, value) {this[name] = value;}})
+  },
+  window: {location: {href: 'https://example.com/index.html'}, addEventListener: () => {}}
+};
+vm.runInNewContext(watchdogScript, sandbox, {timeout: 1000});
+assert.equal(typeof fireWatchdog, 'function');
+fireWatchdog();
+assert.equal(boot.links.length, 1, 'Retry link must be added once');
+assert.equal(boot.links[0].href, 'https://example.com/index.html');
+assert.match(message.textContent, /تأخر تحميل النظام/);
+fireWatchdog();
+assert.equal(boot.links.length, 1, 'Avoid duplicate retry links');
+booting = false;
+fireWatchdog();
+assert.equal(boot.links.length, 1, 'Do not change session state after boot completes');
+const operationalFiles = [
+  'scripts/luxe-operational-fixes-20261121.js',
+  'scripts/luxe-operational-polish-20261121.js',
+  'assets/ff-pinned-cairo-v38-37.js'
+];
+for (const filename of operationalFiles) {
+  new vm.Script(get(filename).toString('utf8'), {filename});
+}
+assert.match(html, /v38\.38\.0/, 'Version not updated');
+assert.match(html, /ff_luxe_cancel_assigned/, 'Assigned-order cancellation missing');
+assert.match(html, /ff_luxe_ack_cashier_cancel/, 'Cashier cancellation acknowledgement missing');
+assert.match(html, /ff_luxe_dispatch_preview/, 'Courier candidate preview missing');
+assert.match(get(operationalFiles[0]).toString('utf8'), /ff_luxe_reset_safe/, 'Protected selective reset missing');
+assert.match(html, /ff_luxe_driver_rate_order/, 'Courier feedback missing');
+assert.match(html, /ff_luxe_driver_grievance/, 'Courier grievance form missing');
+assert.match(get(operationalFiles[1]).toString('utf8'), /ff_luxe_manager_driver_progress/,
+  'Manager driver-phase action missing');
+assert.match(get(operationalFiles[0]).toString('utf8'), /ff_luxe_reset_preview/,
+  'Pre-reset data preview missing');
+const resetBlock=html.match(/<script id="ff-luxe-reset-ui-20261121">([\s\S]*?)<\/script>/)?.[1];
+assert.ok(resetBlock, 'Manager reset panel creation missing');
+assert.match(resetBlock, /run\.disabled=true/, 'Reset must be disabled until safe controller loads');
+assert.doesNotMatch(resetBlock, /run\.onclick\s*=/, 'Legacy direct reset action must not be wired');
+assert.doesNotMatch(html, /rpc\(['"]ff_luxe_reset_scoped/, 'Privileged internal reset function must never be invoked by browser');
+const guardedReset=get(operationalFiles[0]).toString('utf8');
+assert.match(guardedReset, /rpc\(['"]ff_luxe_reset_safe/, 'Guarded reset entry point missing');
+assert.match(guardedReset, /ff_luxe_reset_preview/, 'Preview must be available before the reset');
+assert.match(guardedReset, /if\(!backupCheck\.checked\)/, 'Backup confirmation required');
+assert.match(guardedReset, /run\.dataset\.ffResetMode='guarded'/, 'Safe controller must enable reset only after wiring');
+
+const manifest=JSON.parse(get('manifest.webmanifest').toString('utf8'));
+assert.equal(manifest.start_url, './index.html');
+assert.equal(manifest.display, 'standalone');
+assert.equal(manifest.dir, 'rtl');
+assert.ok(manifest.icons.length>=2);
+const signature=Buffer.from([137,80,78,71,13,10,26,10]);
+for (const icon of manifest.icons) {
+  assert.match(icon.src, /^\.\/assets\/ff-icon-(192|512)\.png$/, 'Unexpected manifest icon');
+  const png=get(icon.src.replace(/^\.\//,''));
+  assert.ok(png.subarray(0,8).equals(signature), `PNG signature invalid: ${icon.src}`);
+  const width=png.readUInt32BE(16),height=png.readUInt32BE(20),name=Number(icon.sizes.split('x')[0]);
+  assert.equal(width,name); assert.equal(height,name);
+  assert.equal(png[24],8, 'PNG icons must use 8-bit indexed palette');
+  assert.equal(png[25],3, 'PNG icons must use indexed color');
+  const parts=[];
+  for (let pos=8;pos<png.length;) {
+    const size=png.readUInt32BE(pos),type=png.toString('ascii',pos+4,pos+8);
+    assert.ok(pos+size+12<=png.length, 'Bad PNG chunk length');
+    if(type==='IDAT')parts.push(png.subarray(pos+8,pos+8+size));
+    pos+=size+12;
+  }
+  const decompressed=zlib.inflateSync(Buffer.concat(parts));
+  assert.equal(decompressed.length,name*(1+name), `Invalid image raster length: ${icon.src}`);
+}
+const sw=get('sw.js').toString('utf8');
+assert.match(sw, /req\.mode === 'navigate'/, 'Navigation must not be served from a user-data cache');
+assert.match(sw, /fetch\(req, \{ cache: 'no-store' \}\)/, 'Navigation must be fetched network-only');
+assert.ok(fs.existsSync('offline.html'), 'Missing offline fallback');
+console.log(`PASS: ${validated} inline JS syntax checks; PWA manifests/icons/zlib verified; secure offline rules; required portals present`);
+
+// F-01: deterministic Asia/Aden boundary checks (no database access).
+const f01Source=get('scripts/luxe-f01-operational-day-20261123.js').toString('utf8');
+new vm.Script(f01Source, {filename:'scripts/luxe-f01-operational-day-20261123.js'});
+const f01Context={
+  window:{}, document:{getElementById:()=>null}, Date, Intl, console, TypeError,
+};
+vm.runInNewContext(f01Source,f01Context);
+assert.match(html,/luxe-f01-operational-day-20261123\.js/,'F01 module must load');
+assert.match(html,/if\(window\.ffF01BusinessDate\)return window\.ffF01BusinessDate\(\)/,
+  'Manager reporting must default to 8am business day');
+assert.match(get('scripts/luxe-history-period-20261123.js').toString('utf8'),
+  /window\.ffF01BusinessDate/,'Historic period defaults must use the business day');
+assert.match(get('scripts/luxe-completed-universal-20261123.js').toString('utf8'),
+  /window\.ffF01BusinessDate/,'Completed archive must use business-day date selector');
+const timeCases=[
+ ['2026-11-23T05:30:00Z','2026-11-23',false], // 08:30 Sana'a
+ ['2026-11-23T11:00:00Z','2026-11-23',false],
+ ['2026-11-23T20:59:59Z','2026-11-23',false],
+ ['2026-11-23T21:30:00Z','2026-11-23',false], // 00:30 Nov 24
+ ['2026-11-23T22:59:59Z','2026-11-23',false], // 01:59 Nov 24
+ ['2026-11-23T23:00:00Z','2026-11-23',true],  // 02:00 Nov 24
+ ['2026-11-24T04:59:59Z','2026-11-23',true],  // 07:59 Nov 24
+ ['2026-11-24T05:00:00Z','2026-11-24',false], // 08:00 Nov 24
+];
+for(const [stamp,expectedDay,expectedFlag] of timeCases){
+  assert.equal(f01Context.window.ffF01BusinessDate(new Date(stamp)),expectedDay,
+    'F01 business day: '+stamp);
+  assert.equal(f01Context.window.ffF01IsClosedHours(new Date(stamp)),expectedFlag,
+    'F01 closed-hours detection: '+stamp);
+}
+const schemaSQL=get('supabase/migrations/20261123_f01_operational_day.sql').toString('utf8');
+const reportSQL=get('supabase/migrations/20261123_f01_business_reports.sql').toString('utf8');
+const testSQL=get('supabase/tests/f01_business_date.sql').toString('utf8');
+assert.match(schemaSQL,/ADD COLUMN IF NOT EXISTS business_date date/);
+assert.match(schemaSQL,/ff_f01_stamp_order/);
+assert.match(schemaSQL,/ff_f01_anomaly_notice/);
+assert.match(schemaSQL,/ff_f01_daily_summary/);
+assert.match(reportSQL,/ff40_operations_report/);
+assert.match(reportSQL,/ff51_order_archive/);
+assert.match(testSQL,/2026-11-24 08:00:00\+03/);
+
+
+// Burger station: login isolation, durable server-side transitions, audit and live alerts.
+const burgerScript=get('scripts/luxe-burger-kitchen-20261123.js').toString('utf8');
+new vm.Script(burgerScript,{filename:'scripts/luxe-burger-kitchen-20261123.js'});
+assert.match(html,/luxe-burger-kitchen-20261123\.js/, 'Burger station module missing');
+assert.match(html,/window\.ffBurgerStart\(\)/, 'Kitchen account must route to its dedicated interface');
+assert.match(html,/window\.ffBurgerActive\?\.\(\)/, 'Kitchen role must not poll staff snapshot');
+assert.match(html,/data-ff-burger-notify/, 'Cashier order burger shortcut missing');
+assert.match(html,/window\.ffBurgerReset\?\.\(\)/, 'Kitchen session logout cleanup missing');
+assert.match(burgerScript,/ff_burger_send/, 'Cashier order submission RPC missing');
+assert.match(burgerScript,/ff_burger_transition/, 'Accept-ready-skip RPC missing');
+assert.match(burgerScript,/data-ff-burger-start/, 'Prep timer missing');
+assert.match(burgerScript,/postgres_changes/, 'Realtime hint missing');
+assert.match(burgerScript,/ffBurgerCashierReady/, 'Ready alert list missing');
+
+assert.match(burgerScript,/ff-burger-product/, 'Tap-to-add burger buttons are missing');
+assert.match(burgerScript,/product\.addEventListener\('click',\(\)=>shift\(1\)\)/,'Tap burger should increment quantity by 1');
+assert.match(burgerScript,/plus\.addEventListener\('click',\(\)=>shift\(1\)\)/,'Burger plus should increment by 1');
+assert.match(burgerScript,/minus\.addEventListener\('click',\(\)=>shift\(-1\)\)/,'Burger minus should decrement by 1');
+assert.match(burgerScript,/qty\.dataset\.burgerItem=item\.id/,'Order payload must retain official menu ID');
+assert.match(burgerScript,/Math\.max\(0,Math\.min\(99,value\)\)/,'Quantity buttons must enforce 0–99 bounds');
+assert.match(burgerScript,/product\.setAttribute\('aria-pressed'/,'Selected product must be accessible');
+assert.match(burgerScript,/رقم فاتورة الكاشير \(اختياري\)/,'Burger invoice input must be visibly optional');
+assert.doesNotMatch(burgerScript,/name="invoice" required/,'Burger invoice cannot be required in HTML');
+assert.doesNotMatch(burgerScript,/if\(!f\('invoice'\)\.value\.trim\(\)\)/,'Burger invoice cannot be required before saving');
+const burgerInvoiceSQL=get('supabase/migrations/20261123_burger_optional_invoice.sql').toString('utf8');
+assert.match(burgerInvoiceSQL,/length\(btrim\(invoice_ref\)\) <= 80/,'DB must permit empty invoice references');
+assert.match(burgerInvoiceSQL,/length\(btrim\(coalesce\(p_invoice,''\)\)\) > 80/,'Server must retain invoice length validation');
+
+assert.match(burgerScript,/id="ffBurgerKitchenLogout"/,'Burger kitchen must show a dedicated visible logout button');
+assert.match(burgerScript,/ffBurgerDrawerLogout/,'Burger kitchen must show logout in mobile drawer');
+assert.match(burgerScript,/button\.click\(\)/,'Kitchen logout must invoke existing authenticated sign-out');
+assert.match(burgerScript,/attachKitchenDrawer\(\); \/\/ Logout must remain available even if a network\/RPC request fails/,'Logout must be visible before any kitchen RPC calls');
+assert.match(burgerScript,/\$\(kitchenNavId\)\?\.remove\(\)/,'Burger drawer logout must be removed when leaving kitchen mode');
+
+const burgerSQL=get('supabase/migrations/20261123_burger_kitchen_workflow.sql').toString('utf8');
+const burgerRoles=get('supabase/migrations/20261123_burger_kitchen_staff_roles.sql').toString('utf8');
+assert.match(burgerSQL,/ENABLE ROW LEVEL SECURITY/,'Burger ticket RLS missing');
+assert.match(burgerSQL,/ff_burger_ticket_branch_read/,'Kitchen branch access policy missing');
+assert.match(burgerSQL,/ff_burger_event_and_notify/,'Burger notification trigger missing');
+assert.match(burgerSQL,/ON CONFLICT\(client_token\) DO NOTHING/,'Duplicate send guard missing');
+assert.match(burgerSQL,/t\.kitchen_id/, 'Kitchen receiver not present in list');
+assert.match(burgerRoles,/ff28_my_role/,'Kitchen login role not installed');
+assert.match(burgerRoles,/burger_kitchen/,'Kitchen staff role not supported');
+const edgeBurger=get('supabase/functions/ff61-employees/index.ts').toString('utf8');
+assert.match(edgeBurger, /"burger_kitchen"/,'Employee approval endpoint missing kitchen role');
+
+
+// Operational follow-ups: syntax, shared parser and security regression guards.
+for(const file of [
+ 'scripts/luxe-burger-kitchen-20261123.js',
+ 'scripts/luxe-case-alerts-20261123.js',
+ 'scripts/luxe-unified-order-inputs-20261123.js',
+ 'scripts/luxe-order-customer-edit-20261123.js',
+ 'scripts/luxe-one-time-rewards-20261123.js',
+ 'scripts/luxe-completed-detail-popup-20261123.js'
+]){
+ const src=get(file).toString('utf8');
+ new vm.Script(src,{filename:file});
+ assert.ok(html.includes(file),'Missing deferred script '+file);
+}
+const burgerNotes=get('scripts/luxe-burger-kitchen-20261123.js').toString('utf8');
+assert.match(burgerNotes,/ffBurgerViewFinished/, 'Kitchen finished orders button missing');
+assert.match(burgerNotes,/ff_burger_confirm_notes/, 'Kitchen must confirm special notes');
+assert.match(burgerNotes,/ff_burger_online_status/, 'Cashier cannot see kitchen presence');
+assert.match(burgerNotes,/Never wait for network to sign out/, 'Kitchen logout must never wait for network');
+const burgerPatch=get('supabase/migrations/20261123_burger_notes_presence.sql').toString('utf8');
+assert.match(burgerPatch,/ff_burger_ready_notes_guard/,'Mandatory kitchen notes guard missing');
+const complaintPatch=get('supabase/migrations/20261123_order_case_notifications.sql').toString('utf8');
+assert.match(complaintPatch,/ff_case_order_push/,'Complaint push missing');
+assert.match(complaintPatch,/ff_case_alert_receipts/,'Complaint read receipts missing');
+const customerPatch=get('supabase/migrations/20261123_customer_live_correction.sql').toString('utf8');
+assert.match(customerPatch,/customer_contact_corrected/, 'Customer contact audit missing');
+assert.match(customerPatch,/ff_order_customer_read/, 'Secure customer order prefill missing');
+assert.match(html,/data-ff-customer-edit/, 'Customer edit buttons missing');
+assert.match(html,/o\.customer_update/, 'Driver inline customer-change warning missing');
+const reservationPatch=get('supabase/migrations/20261123_reservations_unscheduled.sql').toString('utf8');
+assert.match(reservationPatch,/pickup_unspecified/, 'Unscheduled reservation indicator missing');
+assert.doesNotMatch(html,/id="ff49ReserveWhen"/,'Pickup appointment must be removed');
+assert.match(html,/id="ffx-hero-reserve"/,'Reservation next to new order missing');
+assert.match(html,/id="ffReserveBottom"/,'Lower reservation button missing');
+const voucherPatch=get('supabase/migrations/20261123_one_time_customer_rewards.sql').toString('utf8');
+assert.match(voucherPatch,/FOR UPDATE/,'Voucher must lock row for single use');
+assert.match(voucherPatch,/redeem_token/,'Voucher idempotency token missing');
+assert.match(voucherPatch,/ff_reward_issue/,'Manager issue function missing');
+assert.match(voucherPatch,/ff_reward_redeem/,'Voucher redemption function missing');
+assert.match(get('scripts/luxe-unified-order-inputs-20261123.js').toString('utf8'),/ff49ParseItemsAndNotes/, 'Approved FF75 parser must be shared');
+
+<<<FF_LUXE_SOURCE_FILE_END>>>
+
+<<<FF_LUXE_SOURCE_FILE_BEGIN>>>
+{"path":"scripts/luxe-unified-order-inputs-20261123.js","encoding":"utf8","payload_bytes":8303,"original_bytes":8303,"sha256":"7327bb5d708d641c0f8f52ef2628135723d84c68332612cfbabe47d53b89d854"}
+/* Unified menu + FF75 parser preview for every manual order-items input. */
+(function(){
+'use strict';
+const targets=[
+ {id:'ffbQuickInput',label:'الطلب الجديد'},
+ {id:'newItems',label:'أصناف الطلب الجديد'},
+ {id:'ff49ReserveItems',label:'حجز الاستلام',save:'ff49ReserveSave'},
+ {id:'ff50RequestItems',label:'طلب تعديل الأصناف',save:'ff50RequestSave'},
+ {id:'ff52LateItems',label:'إضافة بعد خروج الموصل'},
+ {id:'additionItemsInput',label:'إضافة أصناف الطلب'}
+];
+const $=id=>document.getElementById(id);
+const make=(tag,value)=>{const x=document.createElement(tag);if(value!=null)x.textContent=String(value);return x;};
+const mod=document.createElement('dialog');mod.id='ffUnifiedMenuDialog';mod.style.cssText='width:min(95vw,670px);max-height:90vh;overflow:auto;border:2px solid #c72439;border-radius:16px;padding:16px;direction:rtl;background:#fff;color:#111';
+mod.innerHTML='<h2>🍟 المنيو التفاعلي · فريش فرايز</h2><p>اضغط الصنف لإضافة قطعة، وعدّل العدد من + و−. تُضاف الأصناف إلى نفس محلل الطلب المعتمد.</p>'+
+'<input id="ffUnifiedMenuSearch" type="search" placeholder="ابحث عن صنف أو عرض" style="width:100%;padding:10px;margin:5px 0 10px">'+
+'<div id="ffUnifiedMenuStatus" role="status"></div><div id="ffUnifiedMenuList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px"></div>'+
+'<div class="actions"><button type="button" id="ffUnifiedMenuReview" class="primary">🔎 تحليل الأصناف ومعاينتها</button><button type="button" id="ffUnifiedMenuClose" class="outline">إغلاق</button></div>';
+document.body.append(mod);
+const categoryBar=make('div');categoryBar.id='ffUnifiedMenuCategories';categoryBar.className='ffl-picker-categories';
+const menuList=$('ffUnifiedMenuList');menuList.removeAttribute('style');menuList.className='ffl-picker-grid';
+menuList.before(categoryBar);
+
+let catalog=[],active=null,request=0,activeCategory='الكل';
+const drafts=new WeakMap();
+function appendText(area,name,delta){
+ if(!area?.isConnected)return;
+ const lines=area.value.split(/\r?\n/);
+ const nameLower=name.trim().toLowerCase();
+ let found=-1;
+ for(let i=lines.length-1;i>=0;i--){
+  const match=lines[i].match(/^(\d+)\s+(.+?)\s*$/);
+  if(match&&match[2].trim().toLowerCase()===nameLower){found=i;break}
+ }
+ if(delta>0){
+  if(found>=0){const current=Number(lines[found].match(/^\d+/)[0]);if(current>=99)return;lines[found]=(current+1)+' '+name;}
+  else lines.push('1 '+name);
+ }else if(found>=0){
+  const current=Number(lines[found].match(/^\d+/)[0]);
+  if(current<=1)lines.splice(found,1);else lines[found]=(current-1)+' '+name;
+ }else return;
+ area.value=lines.join('\n').replace(/^\n+/,'').trimEnd();
+ area.dispatchEvent(new Event('input',{bubbles:true}));
+ return;
+}
+async function loadMenu(){
+ if(catalog.length)return catalog;
+ const rows=await rpc('ff49_catalog');
+ if(!Array.isArray(rows))throw Error('تعذر قراءة أصناف المنيو');
+ catalog=rows.filter(x=>x?.name&&x?.id);
+ return catalog;
+}
+function count(area,name){
+ const regex=/^(\d+)\s+(.+?)\s*$/;
+ return area.value.split(/\r?\n/).reduce((n,line)=>{
+  const match=line.match(regex);return match&&match[2].trim()===name?n+Number(match[1]):n;
+ },0);
+}
+function render(){
+ const box=$('ffUnifiedMenuList');box.replaceChildren();
+ if(!active?.isConnected){if(mod.open)mod.close();return}
+ const ui=window.ffLuxePhotoMenu;
+ if(!ui){$('ffUnifiedMenuStatus').textContent='تعذر تحميل المنيو المصور؛ حدث الصفحة';return}
+ const tabs=$('ffUnifiedMenuCategories'),oldScroll=tabs.scrollLeft;
+ ui.categories(tabs,catalog,activeCategory,value=>{activeCategory=value;render()});tabs.scrollLeft=oldScroll;
+ const term=ui.normalize($('ffUnifiedMenuSearch').value);
+ const filtered=catalog.filter(i=>(activeCategory==='الكل'||ui.category(i)===activeCategory)&&(!term||ui.normalize(i.name+' '+(i.category||'')).includes(term)));
+ const total=catalog.reduce((sum,item)=>sum+count(active,item.name),0);
+ $('ffUnifiedMenuStatus').textContent=filtered.length+' صنف/عرض · المختار '+total+' قطعة · '+(active.dataset.ffUnifiedLabel||'');
+ if(!filtered.length){box.append(make('p','لا توجد أصناف مطابقة للبحث أو القسم'));return}
+ for(const item of filtered){
+  const quantity=count(active,item.name);
+  const change=delta=>{appendText(active,item.name,delta);render()};
+  const picker=ui.createTile(item,{quantity,onAdd:()=>change(1),onRemove:()=>change(-1)});
+  box.append(picker.element);
+ }
+}
+async function show(area){
+ if(!area?.isConnected)return;
+ active=area;activeCategory='الكل';$('ffUnifiedMenuSearch').value='';$('ffUnifiedMenuStatus').textContent='جارٍ تحميل المنيو...';mod.showModal();
+ try{await loadMenu();if(active===area)render()}catch(e){$('ffUnifiedMenuStatus').textContent='تعذر جلب المنيو: '+String(e.message||e)}
+}
+async function preview(area){
+ if(!area?.isConnected)return false;
+ const block=area.closest('.ff-unified-wrapper')?.querySelector('.ff-unified-review');
+ if(!block)return false;
+ block.hidden=false;block.textContent='جاري التحليل والمعاينة...';
+ try{
+  await loadMenu();
+  if(typeof ff49LoadCatalog==='function')await ff49LoadCatalog();
+  if(typeof ff49ParseItemsAndNotes!=='function'||typeof window.ff75RenderReview!=='function')throw Error('محلل FF75 غير متاح');
+  const content=area.value;
+  const parsed=ff49ParseItemsAndNotes(content,{allowPartial:true});
+  if(area.value!==content)return false;
+  block.innerHTML=window.ff75RenderReview(parsed,area.dataset.ffUnifiedLabel||'الطلب');
+  const valid=parsed.errors.length===0&&parsed.items.length>0;
+  drafts.set(area,{text:content,valid});
+  if(!valid){const message=make('strong','صحح السطور الغامضة أو غير الصالحة قبل الإرسال.');block.append(message)}
+  return valid;
+ }catch(e){block.textContent='تعذر التحليل: '+String(e.message||e);return false}
+}
+function attach(area,info){
+ if(!area||area.dataset.ffUnified==='1')return;
+ area.dataset.ffUnified='1';area.dataset.ffUnifiedLabel=info.label;
+ const wrapper=make('div');wrapper.className='ff-unified-wrapper';wrapper.style.cssText='margin:8px 0;padding:10px;border:1px solid #d52a3a;border-radius:11px';
+ const actions=make('div');actions.className='actions';actions.style.cssText='margin:5px 0;display:flex;flex-wrap:wrap;gap:7px';
+ const menu=make('button','🍟 المنيو التفاعلي');menu.type='button';menu.className='outline';
+ const analyze=make('button','🔎 تحليل ومعاينة موحدة');analyze.type='button';analyze.className='outline';
+ menu.onclick=()=>void show(area);analyze.onclick=()=>void preview(area);
+ actions.append(menu,analyze);
+ const review=make('div');review.className='ff-unified-review';review.setAttribute('role','status');review.hidden=true;
+ wrapper.append(actions,review);
+ area.insertAdjacentElement('afterend',wrapper);
+ area.addEventListener('input',()=>{drafts.delete(area);review.hidden=true;review.replaceChildren()});
+}
+function scan(){for(const info of targets)attach($(info.id),info)}
+const watcher=new MutationObserver(()=>{if(!document.hidden)scan()});
+watcher.observe(document.body,{childList:true,subtree:true});
+scan();
+$('ffUnifiedMenuSearch').addEventListener('input',render);
+$('ffUnifiedMenuClose').onclick=()=>mod.close();
+$('ffUnifiedMenuReview').onclick=async()=>{const area=active;mod.close();await preview(area)};
+document.addEventListener('click',event=>{
+ const id=event.target?.id;
+ if(id!=='ff49ReserveSave'&&id!=='ff50RequestSave')return;
+ const area=$(id==='ff49ReserveSave'?'ff49ReserveItems':'ff50RequestItems');
+ if(!area)return;
+ const prev=drafts.get(area);
+ if(!prev||prev.text!==area.value||!prev.valid){
+  event.preventDefault();event.stopImmediatePropagation();
+  void preview(area).then(ok=>{
+   if(ok&&typeof toast==='function')toast('تم تحليل الأصناف؛ راجع المعاينة ثم اضغط حفظ مرة أخرى');
+  });
+ }
+},true);
+window.addEventListener('ff-luxe-session-reset',()=>{active=null;catalog=[];if(mod.open)mod.close()});
+})();
+<<<FF_LUXE_SOURCE_FILE_END>>>

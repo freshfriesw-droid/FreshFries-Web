@@ -1,0 +1,101 @@
+{
+  "version": "v38.38.0",
+  "commit": "57ab198888f259acad0a09d813eceb132a795eec",
+  "date_utc": "2026-11-23T18:27:36Z",
+  "count": 53,
+  "parts": [
+    {
+      "filename": "FreshFries_LUXE_v38.38.0_SOURCE_01_OF_05.txt",
+      "bytes": 602461,
+      "sha256": "2b2bc8560bc5d0792584db64e9fa2caa478c598fe60a476242e9742dc3ce29ec",
+      "source_files": 5,
+      "paths": [
+        "CNAME",
+        "index.html",
+        "manifest.webmanifest",
+        "offline.html",
+        "sw.js"
+      ]
+    },
+    {
+      "filename": "FreshFries_LUXE_v38.38.0_SOURCE_02_OF_05.txt",
+      "bytes": 141763,
+      "sha256": "9caa28e9780ee318c5532f26c4125a3a9899ca6b102cf5551720a30b9dbc8ca6",
+      "source_files": 10,
+      "paths": [
+        "scripts/luxe-burger-kitchen-20261123.js",
+        "scripts/luxe-case-alerts-20261123.js",
+        "scripts/luxe-cashier-finished-20261123.js",
+        "scripts/luxe-driver-cancel-20261122.js",
+        "scripts/luxe-history-period-20261123.js",
+        "scripts/luxe-one-time-rewards-20261123.js",
+        "scripts/luxe-operational-fixes-20261121.js",
+        "scripts/luxe-order-customer-edit-20261123.js",
+        "scripts/luxe-shared-photo-menu-20261123.js",
+        "scripts/mobile-layout.py"
+      ]
+    },
+    {
+      "filename": "FreshFries_LUXE_v38.38.0_SOURCE_03_OF_05.txt",
+      "bytes": 144395,
+      "sha256": "48657894f85ebb8ab618c084f13237cdbf46c4b5eb6d626e48189e682f8f8d99",
+      "source_files": 11,
+      "paths": [
+        "scripts/luxe-all-menus-fold-20261123.js",
+        "scripts/luxe-cashier-destinations-20261122.js",
+        "scripts/luxe-collapsible-sections-manager-create-20261123.js",
+        "scripts/luxe-completed-detail-popup-20261123.js",
+        "scripts/luxe-completed-universal-20261123.js",
+        "scripts/luxe-f01-operational-day-20261123.js",
+        "scripts/luxe-foreground-ring-20261122.js",
+        "scripts/luxe-operational-polish-20261121.js",
+        "scripts/luxe-report-center-20261123.js",
+        "scripts/luxe-static-ci.mjs",
+        "scripts/luxe-unified-order-inputs-20261123.js"
+      ]
+    },
+    {
+      "filename": "FreshFries_LUXE_v38.38.0_SOURCE_04_OF_05.txt",
+      "bytes": 224029,
+      "sha256": "a9f1f1c4fefd4a9859b975f230767ea4c67c1e0ff65a87c9954984b2a43f21ed",
+      "source_files": 15,
+      "paths": [
+        "supabase/ff76-report-foundation.sql",
+        "supabase/ff76-unified-reports-center.sql",
+        "supabase/functions/ff-push/index.ts",
+        "supabase/functions/ff61-employees/index.ts",
+        "supabase/migrations/20261123_burger_kitchen_staff_roles.sql",
+        "supabase/migrations/20261123_burger_kitchen_workflow.sql",
+        "supabase/migrations/20261123_burger_notes_presence.sql",
+        "supabase/migrations/20261123_burger_optional_invoice.sql",
+        "supabase/migrations/20261123_customer_live_correction.sql",
+        "supabase/migrations/20261123_f01_business_reports.sql",
+        "supabase/migrations/20261123_f01_operational_day.sql",
+        "supabase/migrations/20261123_one_time_customer_rewards.sql",
+        "supabase/migrations/20261123_order_case_notifications.sql",
+        "supabase/migrations/20261123_reservations_unscheduled.sql",
+        "supabase/tests/f01_business_date.sql"
+      ]
+    },
+    {
+      "filename": "FreshFries_LUXE_v38.38.0_SOURCE_05_OF_05.txt",
+      "bytes": 2168882,
+      "sha256": "77586ca6c4de7e5a14f9231420d48658e9d25eee217cb9d84ebbbf74baf9a4e6",
+      "source_files": 12,
+      "paths": [
+        ".github/workflows/brand-icon-sync.yml",
+        ".github/workflows/ff-optional-email-once.yml",
+        ".github/workflows/luxe-static-qa.yml",
+        "README.md",
+        "apple-touch-icon.png",
+        "assets/ff-icon-192.png",
+        "assets/ff-icon-512.png",
+        "assets/ff-official-logo.png",
+        "assets/ff-pinned-cairo-v38-37.js",
+        "assets/luxe-report-center-20261123.css",
+        "docs/ALERT_RING_BEHAVIOR_2026-11-22.md",
+        "favicon.ico"
+      ]
+    }
+  ]
+}
