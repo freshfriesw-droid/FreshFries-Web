@@ -1216,7 +1216,7 @@ async function setSession(session){
  resetUI();if(!session?.user)return;
  ff28AccountId=session.user.id;const seq=ff28Epoch;
  const secureRole=await rpc('ff_security_my_role');
- const role=secureRole||await ff28ReadRole();
+ const role=['manager','customer_service'].includes(secureRole)?secureRole:await ff28ReadRole();
  if(['manager','customer_service'].includes(role)){
   if(!window.ffSec)throw Error('تعذر تهيئة حماية الحساب');
   await window.ffSec.ensureMfa(client,role);
