@@ -1550,6 +1550,7 @@ function ff40SetBranches(){
  }
 }
 function ff40TodayYemen(){
+ if(window.ffF01BusinessDate)return window.ffF01BusinessDate();
  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));
  return `${parts.year}-${parts.month}-${parts.day}`;
 }
@@ -5022,4 +5023,4 @@ run.title='يجب تحميل المعاينة والتحقق من النسخة �
 status.textContent='جارٍ تهيئة أدوات المعاينة الآمنة…';
 center.append(box);
 })();
-</script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script></body></html>
+</script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script></body></html>
