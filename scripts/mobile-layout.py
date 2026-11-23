@@ -65,6 +65,14 @@ with sync_playwright() as playwright:
         check_order_status_colors(page)
         for selector in ("main", "#ffx-topbar", "#ff61ManageShortcut", "#ff63NotificationsShortcut", "#ffx-options"):
             check_width(page, width, selector)
+        assert page.locator("#ffx-sidebar").get_attribute("aria-hidden") == "true"
+        assert page.evaluate("document.querySelector('#ffx-sidebar').inert") is True
+        assert page.evaluate("getComputedStyle(document.querySelector('#ffx-sidebar')).visibility") == "hidden"
+        assert page.evaluate("""() => {
+          document.querySelector('#ffx-drawer-close').focus();
+          return document.activeElement.id !== 'ffx-drawer-close';
+        }""")
+        assert page.locator("#ffx-menu").get_attribute("aria-expanded") == "false"
         if width <= 850:
             assert page.evaluate("document.documentElement.scrollWidth") == width, width
             assert page.locator("#ffx-sidebar").is_hidden()
@@ -72,11 +80,16 @@ with sync_playwright() as playwright:
             for trigger, close in (("#ffx-menu", "#ffx-drawer-close"), ("button[data-key=more]", None)):
                 page.locator(trigger).click()
                 check_width(page, width, "#ffx-sidebar")
+                assert page.locator("#ffx-sidebar").get_attribute("aria-hidden") is None
+                assert page.evaluate("document.querySelector('#ffx-sidebar').inert") is False
+                assert page.locator("#ffx-menu").get_attribute("aria-expanded") == "true"
                 if close:
                     page.locator(close).click()
                 else:
                     page.keyboard.press("Escape")
                 assert page.locator("#ffx-sidebar").is_hidden()
+                assert page.locator("#ffx-sidebar").get_attribute("aria-hidden") == "true"
+                assert page.evaluate("document.querySelector('#ffx-sidebar').inert") is True
             page.locator("#ffx-options").click()
             check_width(page, width, "#ffx-preferences")
             page.locator("#ffx-pref-close").click()
@@ -110,8 +123,12 @@ with sync_playwright() as playwright:
             assert page.locator("#ffx-sidebar").is_hidden()
             page.locator("#ffx-menu").click()
             check_width(page, width, "#ffx-sidebar")
+            assert page.locator("#ffx-sidebar").get_attribute("aria-hidden") is None
+            assert page.evaluate("document.querySelector('#ffx-sidebar').inert") is False
             page.locator("#ffx-drawer-close").click()
             assert page.locator("#ffx-sidebar").is_hidden()
+            assert page.locator("#ffx-sidebar").get_attribute("aria-hidden") == "true"
+            assert page.locator("#ffx-menu").get_attribute("aria-expanded") == "false"
         print(f"PASS {width}px", flush=True)
         context.close()
     browser.close()
