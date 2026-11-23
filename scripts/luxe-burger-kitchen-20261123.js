@@ -17,7 +17,7 @@ css.textContent='#ffBurgerCashierPanel,#ffBurgerKitchenWorkspace{border:2px soli
 document.head.append(css);
 const main=document.querySelector('main');if(!main)return;
 const kitchen=make('section');kitchen.id='ffBurgerKitchenWorkspace';kitchen.className='card hidden';
-kitchen.innerHTML='<div class="ff-burger-head"><h2>🍔 المطبخ · قسم البرجر</h2><button type="button" class="outline" id="ffBurgerKitchenNotifications">🔔 تفعيل الإشعارات</button><button type="button" class="outline" id="ffBurgerKitchenRefresh">تحديث</button></div>'+
+kitchen.innerHTML='<div class="ff-burger-head"><h2>🍔 المطبخ · قسم البرجر</h2><button type="button" class="outline" id="ffBurgerKitchenNotifications">🔔 تفعيل الإشعارات</button><button type="button" class="outline" id="ffBurgerKitchenRefresh">تحديث</button><button type="button" class="outline" id="ffBurgerKitchenLogout">🚪 تسجيل الخروج</button></div>'+
 '<p id="ffBurgerKitchenBranch" class="muted"></p><p id="ffBurgerKitchenStatus" role="status"></p>'+
 '<h3>الطلبات الواردة والجاري تحضيرها</h3><div id="ffBurgerKitchenActive" class="ff-burger-list"></div>'+
 '<details><summary>✅ الطلبات المنتهية · قسم البرجر</summary><div id="ffBurgerKitchenFinished" class="ff-burger-list"></div></details>';
@@ -47,10 +47,34 @@ const cashierRole=()=>typeof data!=='undefined'&&data?.role==='cashier'&&typeof 
 const kitchenRole=()=>isKitchenMode&&profile?.role==='burger_kitchen'&&typeof user!=='undefined'&&!!user?.id;
 const authorized=()=>cashierRole()||kitchenRole();
 const identity=()=>String(typeof user!=='undefined'&&user?.id||'');
+// The regular navigation relies on data.role; kitchen sessions use data=null.
+ // Render the account controls independently instead of displaying "not logged in".
+ const kitchenNavId='ffBurgerDrawerLogout';
+ function kitchenLogout(){
+   if(!isKitchenMode||!identity())return;
+   const button=$('logoutBtn');
+   if(!button){$('ffBurgerKitchenStatus').textContent='تعذر العثور على زر تسجيل الخروج؛ حدّث الصفحة';return}
+   button.click(); // Same existing local sign-out + resetUI as every other staff role.
+ }
+ function attachKitchenDrawer(){
+   const nav=$('ffx-nav');
+   if(nav&&!$(kitchenNavId)){
+     const button=make('button','🚪 تسجيل الخروج');
+     button.id=kitchenNavId;button.type='button';button.className='ffx-side-link';
+     button.style.cssText='color:#fff!important;border:1px solid #b92b3a;background:#b21e2a2c;min-height:50px';
+     button.addEventListener('click',kitchenLogout);
+     nav.append(button);
+   }
+   const name=$('ffx-profile-name'),role=$('ffx-profile-role');
+   if(name)name.textContent=user?.email||user?.phone||'موظف قسم البرجر';
+   if(role)role.textContent='🍔 قسم البرجر · '+(profile?.branches?.[0]?.name||'الفرع');
+ }
+
 const errorText=e=>String(e?.message||e);
 function reset(){
   seq++;loading=false;fetchAt=0;owner='';isKitchenMode=false;profile=null;items=[];rows=[];initial=true;lastNew.clear();lastReady.clear();busy=false;token=null;
   panel.classList.add('hidden');kitchen.classList.add('hidden');document.body.classList.remove('ff-burger-kitchen-mode');
+  $(kitchenNavId)?.remove();
   if(dialog.open)dialog.close();
   if(channel){try{client?.removeChannel(channel)}catch(_){}channel=null}
   if(interval){clearInterval(interval);interval=null}
@@ -163,7 +187,7 @@ window.ffBurgerStart=async()=>{
  $('identity').textContent='🍔 موظف قسم البرجر · '+(user?.email||'');
  profile=await rpc('ff_burger_my_branch');
  if(profile?.role!=='burger_kitchen'||profile.branches?.length!==1)throw Error('لا يوجد فرع محدد لموظف قسم البرجر');
- items=await rpc('ff_burger_menu');subscribe();heartbeat();await refresh(true);
+ items=await rpc('ff_burger_menu');attachKitchenDrawer();subscribe();heartbeat();await refresh(true);
 };
 window.ffBurgerOnCashierDraw=()=>{
  if(!cashierRole())return;
@@ -236,5 +260,6 @@ form.addEventListener('submit',async e=>{
  finally{busy=false;$('ffBurgerSubmit').disabled=false}
 });
 $('ffBurgerKitchenRefresh').onclick=()=>void refresh(true);
+$('ffBurgerKitchenLogout').onclick=kitchenLogout;
 $('ffBurgerKitchenNotifications').onclick=()=>void window.ffLuxeSubscribePush?.();
 })();
