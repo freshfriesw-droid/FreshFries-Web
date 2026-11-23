@@ -138,9 +138,17 @@ body.ffx-compact .card{padding:12px;margin-bottom:8px}body.ffx-compact .ffx-kpi{
 body.ffx-reduced-motion *,body.ffx-reduced-motion *:before,body.ffx-reduced-motion *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 .head{display:none!important}
 /* Keep the legacy operation feedback visible; the LUXE toast is a separate status layer. */
-#toast{z-index:1245;border-inline-start:4px solid var(--ffb-red,#d51e2c);overflow-wrap:anywhere;line-height:1.7}
+#toast{
+  z-index:1245;
+  left:auto;right:18px;width:min(380px,calc(100vw - 36px));max-width:380px;margin:0;
+  border-inline-start:4px solid var(--ffb-red,#d51e2c);
+  overflow-wrap:anywhere;line-height:1.7
+}
 @media(max-width:850px){
-  #toast{bottom:calc(84px + env(safe-area-inset-bottom));max-width:calc(100vw - 24px);right:12px;left:12px}
+  #toast{
+    bottom:calc(118px + env(safe-area-inset-bottom));
+    left:12px;right:12px;width:auto;max-width:calc(100vw - 24px)
+  }
 }
 
 /* ---- Buttons: one system, taken from the drawer links ---- */
