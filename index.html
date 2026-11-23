@@ -971,6 +971,7 @@ function ffV12Reset(){
  document.body.classList.remove('ff-v12-assembly-mode');
  ffV12Get('ffV12AssemblyWorkspace')?.classList.add('hidden');
  ffV12Get('ffV12AssemblyOrders')?.replaceChildren();
+ window.ffBurgerOnAssemblyStop?.();
 }
 async function ffV12Start(){
  ffV12Reset();ffV12AssemblyActive=true;data=null;
@@ -980,6 +981,7 @@ async function ffV12Start(){
  ffV12Get('identity').textContent='📦 موظف نقطة التجميع · '+(user?.email||user?.phone||'');
  const generation=ffV12Generation;await ffV12Refresh(true);
  if(generation!==ffV12Generation)return;
+ window.ffBurgerOnAssemblyStart?.();
  ffV12AssemblyTimer=setInterval(()=>{if(!document.hidden&&!ffV12AssemblyBusy)void ffV12Refresh(false);},12000);
 }
 function ffV12Render(){
