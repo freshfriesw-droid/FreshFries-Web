@@ -340,6 +340,58 @@ with sync_playwright() as playwright:
                 assert page.locator("#ff51RatingsList").inner_text() == ""
                 assert page.locator("#ff51CustomerNotesSection").is_hidden()
                 page.evaluate("""() => {user={id:'fixture-manager'};data={role:'manager',orders:[],branches:[],drivers:[],offers:[]};}""")
+                # FF61 delegated permissions must not survive logout or late capability/notification RPCs.
+                page.evaluate("""() => {
+                  window.dispatchEvent(new Event('ff-luxe-session-reset'));
+                  user={id:'fixture-ff61-admin-a'};
+                  data={role:'manager',branches:[],orders:[],drivers:[],offers:[]};
+                  client={auth:{getSession:async()=>({data:{session:{access_token:'fixture-only'}},error:null})}};
+                  window.__ff61CapRequests=[];window.__ff61NotificationRequests=[];
+                  const originalFetch=window.fetch;
+                  window.__ff61FetchRestored=originalFetch;
+                  window.fetch=(url,opts)=>{
+                    if(!String(url).includes('/functions/v1/ff61-employees'))return originalFetch(url,opts);
+                    const action=JSON.parse(opts.body).action;
+                    if(action==='capabilities')return new Promise(resolve=>window.__ff61CapRequests.push(resolve));
+                    if(action==='notifications_count')return new Promise(resolve=>window.__ff61NotificationRequests.push(resolve));
+                    return Promise.resolve({ok:true,status:200,json:async()=>({ok:true,pending_count:0,ids:[]})});
+                  };
+                  window.__ff61Respond=(resolve,value)=>resolve({ok:true,status:200,json:async()=>({ok:true,...value})});
+                  window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
+                }""")
+                page.wait_for_function("window.__ff61CapRequests?.length===1")
+                page.evaluate("""() => {
+                  window.dispatchEvent(new Event('ff-luxe-session-reset'));user=null;data=null;
+                  window.__ff61Respond(window.__ff61CapRequests[0],{view:true,approve:true,reject:true,notify:true});
+                }""")
+                page.wait_for_timeout(100)
+                assert page.locator("#ff61ManageShortcut").is_hidden()
+                assert page.locator("#ff63NotificationsShortcut").is_hidden()
+                assert page.locator("#ff61AdminDialog").is_hidden()
+                page.evaluate("""() => {
+                  user={id:'fixture-ff61-admin-b'};
+                  data={role:'manager',branches:[],orders:[],drivers:[],offers:[]};
+                  window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
+                }""")
+                page.wait_for_function("window.__ff61CapRequests.length===2")
+                page.evaluate("""() => window.__ff61Respond(window.__ff61CapRequests[1],
+                  {view:true,approve:true,reject:true,notify:true})""")
+                page.wait_for_function("!document.getElementById('ff61ManageShortcut').hidden")
+                page.wait_for_function("window.__ff61NotificationRequests.length===1")
+                page.evaluate("""() => {
+                  window.dispatchEvent(new Event('ff-luxe-session-reset'));user=null;data=null;
+                  window.__ff61Respond(window.__ff61NotificationRequests[0],{unread_count:99});
+                }""")
+                page.wait_for_timeout(100)
+                assert page.locator("#ff61ManageShortcut").is_hidden()
+                assert page.locator("#ff63NotificationsShortcut").is_hidden()
+                assert page.locator("#ff63UnreadBadge").inner_text() == "0"
+                assert page.locator("#ff61PendingBadge").inner_text() == "0"
+                page.evaluate("""() => {
+                  window.fetch=window.__ff61FetchRestored||window.fetch;
+                  user={id:'fixture-manager'};
+                  data={role:'manager',orders:[],branches:[],drivers:[],offers:[]};
+                }""")
                 page.evaluate("data.role='cashier'")
                 entry.wait_for(state="detached")
                 assert dialog.is_hidden()

@@ -12,6 +12,20 @@ assert.match(html, /ff61-employees/, 'Employee application portal missing');
 assert.match(html, /ff71-customer-phone-otp/, 'Customer OTP portal missing');
 assert.match(html, /ff_v12_assembly_set_stage/, 'Assembly workflow missing');
 
+assert.match(html, /window\.addEventListener\('ff-luxe-session-reset',ff61ClearPrivate\)/,
+  'Employee requests must invalidate private state on every session reset');
+assert.match(html, /const current=\(\)=>token===ff61AccessToken&&ff61SessionEpoch===epoch&&ff61Viewer\(\)===viewer/,
+  'Staff permission responses must be tied to the active account and role');
+assert.match(html, /const current=\(\)=>ff61BadgeToken===token&&ff61SessionEpoch===epoch&&/,
+  'Staff notification badges must never show a previous account response');
+assert.match(html, /if\(!current\(\)\)return;\s*capabilities=permitted/,
+  'Grant/revoke updates must discard stale permission results');
+assert.match(html, /if\(!permitted\.notify\)\{ff61BadgeToken\+\+;/,
+  'Revoked notification capability must invalidate pending counters');
+assert.match(html, /byId\('logoutBtn'\)\.addEventListener\('click',ff61ClearPrivate\)/,
+  'Logout must immediately clear employee-management UI');
+
+
 assert.match(html, /function ff51ClearPrivate\(\)/, 'FF51 must clear all private customer/archive UI on logout');
 assert.match(html, /window\.addEventListener\('ff-luxe-session-reset',\(\)=>\{ff51ClearPrivate\(\)/,
   'FF51 must listen for logout/session change');
