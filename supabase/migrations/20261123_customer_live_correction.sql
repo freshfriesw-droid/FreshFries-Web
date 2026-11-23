@@ -100,3 +100,35 @@ BEGIN
 END $patch$;
 REVOKE ALL ON FUNCTION public.ff_order_customer_edit(uuid,text,text,text,text,text) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.ff_order_customer_edit(uuid,text,text,text,text,text) TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.ff_order_customer_read(p_order uuid)
+RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path=''
+AS $body$
+DECLARE v_role text;v_result jsonb;
+BEGIN
+ SELECT role INTO v_role FROM public.ff_profiles WHERE user_id=auth.uid() AND active;
+ IF v_role NOT IN ('manager','customer_service','cashier') OR NOT public.ff38_permission_allowed(auth.uid(),'edit_order') THEN
+  RAISE EXCEPTION 'لا تملك صلاحية تعديل بيانات العميل' USING ERRCODE='42501';END IF;
+ SELECT jsonb_build_object('id',o.id,'number',o.order_number,'status',o.status,
+ 'phone',o.phone_snapshot,'area',o.area_snapshot,
+ 'name',coalesce(d.customer_name,c.name,'عميل'),
+ 'address',coalesce(d.full_address,o.area_snapshot),
+ 'last_edit', (SELECT e.created_at FROM public.ff_order_customer_edits e
+              WHERE e.order_id=o.id ORDER BY e.created_at DESC LIMIT 1)) INTO v_result
+ FROM public.ff_orders o
+ LEFT JOIN public.ff49_order_details d ON d.order_id=o.id
+ LEFT JOIN public.ff_customers c ON c.id=o.customer_id
+ WHERE o.id=p_order
+ AND (v_role IN ('manager','customer_service')
+   OR (EXISTS(SELECT 1 FROM public.ff_user_branches ub
+      WHERE ub.user_id=auth.uid() AND ub.branch_id=o.branch_id)
+    AND (NOT EXISTS(SELECT 1 FROM public.ff_luxe_cashier_staff_desks sd WHERE sd.user_id=auth.uid())
+    OR NOT EXISTS(SELECT 1 FROM public.ff_luxe_cashier_order_desks od WHERE od.order_id=o.id)
+    OR EXISTS(SELECT 1 FROM public.ff_luxe_cashier_staff_desks sd
+       JOIN public.ff_luxe_cashier_order_desks od ON od.desk_code=sd.desk_code
+       WHERE sd.user_id=auth.uid() AND od.order_id=o.id))));
+ IF v_result IS NULL THEN RAISE EXCEPTION 'الطلب غير متاح' USING ERRCODE='42501';END IF;
+ RETURN v_result;
+END $body$;
+REVOKE ALL ON FUNCTION public.ff_order_customer_read(uuid) FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.ff_order_customer_read(uuid) TO authenticated;
