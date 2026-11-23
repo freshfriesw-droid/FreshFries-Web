@@ -26,6 +26,7 @@ css.textContent +=
  '.ff-burger-stepper button:disabled{opacity:.35;cursor:not-allowed}'+
  '.ff-burger-stepper .ff-burger-minus{background:#fff;color:#ad2133}'+
  '@media(max-width:360px){.ff-burger-item{grid-template-columns:minmax(0,1fr) 110px;gap:6px}.ff-burger-product{padding:8px}}';
+css.textContent += '#ffBurgerCashierPanel.ff-burger-panel-collapsed>:not(.ff-burger-head){display:none!important}#ffBurgerCashierPanel.ff-burger-panel-collapsed #ffBurgerNew,#ffBurgerCashierPanel.ff-burger-panel-collapsed #ffBurgerCollapse{display:none!important}#ffBurgerCashierPanel.ff-burger-panel-collapsed{padding-bottom:4px}';
 css.textContent += '.ff-burger-ticket-products{margin:13px 0;padding:11px;border:1px solid #d9d9d9;border-radius:12px;background:var(--ffb-soft,#f8f8f8)}.ff-burger-ticket-products h5{font-size:15px;margin:0 0 9px;font-weight:800}.ff-burger-ticket-product-list{display:flex;flex-direction:column;gap:7px}.ff-burger-ticket-product-row{display:flex;align-items:flex-start;gap:10px;padding:10px 9px;border:1px solid #e0e0e0;border-radius:9px;background:var(--ffb-surface,#fff);font-size:16px;font-weight:700;line-height:1.5}.ff-burger-ticket-product-qty{display:inline-flex;flex:0 0 auto;min-width:55px;justify-content:center;background:#b91c30;color:#fff;border-radius:7px;padding:3px 8px;font-weight:900;font-variant-numeric:tabular-nums}.ff-burger-ticket-product-name{flex:1;overflow-wrap:anywhere}';
 css.textContent += '.ff-burger-urgent-note{border:3px solid #e0203c;background:#fff1e7;color:#76132b;padding:13px;border-radius:12px;margin:11px 0;font-size:clamp(17px,3.5vw,21px);font-weight:950;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}'+
 '.ff-burger-note-confirm{display:flex;align-items:start;gap:10px;border:2px solid #c12e48;border-radius:9px;padding:12px;background:#fff8ee;font-size:15px;font-weight:800;color:#832034}'+
@@ -42,7 +43,7 @@ kitchen.innerHTML='<div class="ff-burger-head"><h2>🍔 المطبخ · قسم �
 '<details id="ffBurgerFinishedDetails"><summary>✅ الطلبات المنتهية · قسم البرجر</summary><div id="ffBurgerKitchenFinished" class="ff-burger-list"></div></details>';
 main.prepend(kitchen);
 const cashier=$('cashierView');const panel=make('section');panel.id='ffBurgerCashierPanel';panel.className='card hidden';
-panel.innerHTML='<div class="ff-burger-head"><h3>🍔 أوامر قسم البرجر</h3><div class="actions"><button id="ffBurgerNew" type="button" class="primary">🍔 إعلام قسم البرجر</button><button id="ffBurgerCollapse" type="button" class="outline" hidden>✕ إغلاق القائمة</button></div></div>'+
+panel.innerHTML='<div class="ff-burger-head"><h3>🍔 أوامر قسم البرجر</h3><div class="actions"><button id="ffBurgerPanelToggle" type="button" class="outline" aria-expanded="false">🍔 أوامر قسم البرجر</button><button id="ffBurgerNew" type="button" class="primary">🍔 إعلام قسم البرجر</button><button id="ffBurgerCollapse" type="button" class="outline" hidden>✕ إغلاق القائمة</button></div></div>'+
 '<p class="muted">اختر البرجر والكمية والفرع، ثم اكتب رقم فاتورة الكاشير والملاحظات. هذا لا يغير فاتورة MicroPOS أو حالة التوصيل.</p>'+
 '<p id="ffBurgerKitchenOnline" class="ff-burger-online offline" role="status">🔴 قسم البرجر غير متصل حاليًا</p><p id="ffBurgerCashierStatus" role="status"></p>'+
 '<h3>🔔 جاهز للاستلام · اضغط تخطي بعد الإشعار</h3><div id="ffBurgerCashierReady" class="ff-burger-list"></div>'+
@@ -93,7 +94,7 @@ const identity=()=>String(typeof user!=='undefined'&&user?.id||'');
 const errorText=e=>String(e?.message||e);
 function reset(){
   seq++;loading=false;fetchAt=0;presenceAt=0;owner='';isKitchenMode=false;profile=null;items=[];rows=[];initial=true;lastNew.clear();lastReady.clear();busy=false;token=null;
-  panel.classList.add('hidden');kitchen.classList.add('hidden');document.body.classList.remove('ff-burger-kitchen-mode');
+  panel.classList.add('hidden');panel.classList.remove('ff-burger-panel-collapsed');delete panel.dataset.ffBurgerCashierCollapsed;kitchen.classList.add('hidden');document.body.classList.remove('ff-burger-kitchen-mode');
   $(kitchenNavId)?.remove();
   if(dialog.open)dialog.close();
   if(channel){try{client?.removeChannel(channel)}catch(_){}channel=null}
@@ -178,6 +179,10 @@ function render(){
    const host=assemblyRole()?$('ffV12AssemblyWorkspace'):cashier;
    if(host&&panel.parentElement!==host)host.prepend(panel);
    if(!assemblyRole()||$('ffV12BurgerOpen')?.getAttribute('aria-expanded')==='true')panel.classList.remove('hidden');
+   if(cashierRole()){
+    $('ffBurgerPanelToggle').hidden=false;
+    if(!panel.dataset.ffBurgerCashierCollapsed){panel.dataset.ffBurgerCashierCollapsed='1';cashierBurgerCollapse(false);}
+   }else $('ffBurgerPanelToggle').hidden=true;
    kitchen.classList.add('hidden');
    const ready=rows.filter(t=>t.status==='ready'),active=rows.filter(t=>t.status==='sent'||t.status==='preparing');
    $('ffBurgerCashierStatus').textContent='جاهز للاستلام: '+ready.length+' · تحت التحضير: '+active.length;
@@ -265,11 +270,20 @@ window.ffBurgerOnCashierDraw=()=>{
  if(owner!==identity()){owner=identity();profile=null;initial=true;}
  panel.classList.remove('hidden');subscribe();heartbeat();void refresh();
 };
+function cashierBurgerCollapse(open){
+ if(!cashierRole()||assemblyRole())return;
+ panel.classList.toggle('ff-burger-panel-collapsed',!open);
+ $('ffBurgerPanelToggle').setAttribute('aria-expanded',String(open));
+ $('ffBurgerPanelToggle').textContent=open?'🍔 طي أوامر قسم البرجر':'🍔 أوامر قسم البرجر';
+ $('ffBurgerCollapse').hidden=!open;
+}
+$('ffBurgerPanelToggle').onclick=()=>cashierBurgerCollapse($('ffBurgerPanelToggle').getAttribute('aria-expanded')!=='true');
 function assemblyBurgerPanel(open){
  const launcher=$('ffV12BurgerOpen');
  if(!launcher||!assemblyRole())return;
  const host=$('ffV12AssemblyWorkspace');
  if(host&&panel.parentElement!==host)host.append(panel);
+ panel.classList.remove('ff-burger-panel-collapsed');$('ffBurgerPanelToggle').hidden=true;
  panel.classList.toggle('hidden',!open);
  launcher.setAttribute('aria-expanded',String(open));
  launcher.textContent=open?'🍔 طي أوامر قسم البرجر':'🍔 أوامر قسم البرجر';
@@ -278,7 +292,7 @@ function assemblyBurgerPanel(open){
 
 }
 window.ffBurgerToggleAssembly=()=>{const b=$('ffV12BurgerOpen');if(!b||!assemblyRole())return false;assemblyBurgerPanel(b.getAttribute('aria-expanded')!=='true');return true;};
-$('ffBurgerCollapse').addEventListener('click',()=>{if(assemblyRole())assemblyBurgerPanel(false);else panel.classList.add('hidden')});
+$('ffBurgerCollapse').addEventListener('click',()=>{if(assemblyRole())assemblyBurgerPanel(false);else cashierBurgerCollapse(false)});
 window.ffBurgerOnAssemblyStart=()=>{
  if(!assemblyRole())return;
  const host=$('ffV12AssemblyWorkspace');
