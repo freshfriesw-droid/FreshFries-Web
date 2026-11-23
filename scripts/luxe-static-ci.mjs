@@ -70,17 +70,16 @@ assert.match(get(operationalFiles[1]).toString('utf8'), /ff_luxe_manager_driver_
   'Manager driver-phase action missing');
 assert.match(get(operationalFiles[0]).toString('utf8'), /ff_luxe_reset_preview/,
   'Pre-reset data preview missing');
-const resetBlock=html.match(/<script id="ff-luxe-reset-ui-20261121">([\\s\\S]*?)<\\/script>/)?.[1];
+const resetBlock=html.match(/<script id="ff-luxe-reset-ui-20261121">([\s\S]*?)<\/script>/)?.[1];
 assert.ok(resetBlock, 'Manager reset panel creation missing');
-assert.match(resetBlock, /run\\.disabled=true/, 'Reset must be disabled until safe controller loads');
-assert.doesNotMatch(resetBlock, /run\\.onclick\\s*=/, 'Legacy direct reset action must not be wired');
-assert.doesNotMatch(html, /rpc\\(['"]ff_luxe_reset_scoped/, 'Privileged internal reset function must never be invoked by browser');
+assert.match(resetBlock, /run\.disabled=true/, 'Reset must be disabled until safe controller loads');
+assert.doesNotMatch(resetBlock, /run\.onclick\s*=/, 'Legacy direct reset action must not be wired');
+assert.doesNotMatch(html, /rpc\(['"]ff_luxe_reset_scoped/, 'Privileged internal reset function must never be invoked by browser');
 const guardedReset=get(operationalFiles[0]).toString('utf8');
-assert.match(guardedReset, /rpc\\(['"]ff_luxe_reset_safe/, 'Guarded reset entry point missing');
+assert.match(guardedReset, /rpc\(['"]ff_luxe_reset_safe/, 'Guarded reset entry point missing');
 assert.match(guardedReset, /ff_luxe_reset_preview/, 'Preview must be available before the reset');
-assert.match(guardedReset, /if\\(!backupCheck\\.checked\\)/, 'Backup confirmation required');
-assert.match(guardedReset, /run\\.dataset\\.ffResetMode='guarded'/, 'Safe controller must enable reset only after wiring');
-
+assert.match(guardedReset, /if\(!backupCheck\.checked\)/, 'Backup confirmation required');
+assert.match(guardedReset, /run\.dataset\.ffResetMode='guarded'/, 'Safe controller must enable reset only after wiring');
 
 const manifest=JSON.parse(get('manifest.webmanifest').toString('utf8'));
 assert.equal(manifest.start_url, './index.html');
