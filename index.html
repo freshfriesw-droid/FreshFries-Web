@@ -4409,7 +4409,7 @@ function renderList(section,records){
      };rebuildBranch();
     const passLabel=create('label','كلمة مرور أولية (8 خانات بالضبط)');const pass=create('input');
     pass.type='password';pass.autocomplete='new-password';pass.minLength=8;pass.maxLength=8;
-    const sync=()=>{branchLabel.hidden=!['driver','cashier','assembly'].includes(role.value);branch.disabled=branchLabel.hidden;rebuildBranch()};role.onchange=sync;
+    const sync=()=>{branchLabel.hidden=!['driver','cashier','assembly','supervisor'].includes(role.value);branch.disabled=branchLabel.hidden;rebuildBranch()};role.onchange=sync;
     roleLabel.append(role);branchLabel.append(branch);passLabel.append(pass);sync();
     options.append(roleLabel,branchLabel,passLabel);
     const phoneCheck=create('label',undefined,'ff61-check ff67-verify-phone');
