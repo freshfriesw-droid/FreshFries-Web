@@ -1,0 +1,102 @@
+{
+  "project": "Fresh Fries LUXE",
+  "version": "v38.38.0",
+  "source_commit": "57ab198888f259acad0a09d813eceb132a795eec",
+  "source_date_utc": "2026-11-23T18:27:36Z",
+  "how_to_use": "Extract each of five standalone ZIP files to the SAME empty folder. Each archive is a valid, independently extractable ZIP. No .001 joining is required.",
+  "packages": [
+    {
+      "number": 1,
+      "name": "FreshFries_LUXE_v38.38.0_Part_1_of_5.zip",
+      "size_bytes": 159665,
+      "sha256": "58ffe3da802fb870cff05bcf1834580d04cfc62c8c96b1d9a460c8316b96b399",
+      "paths": [
+        "CNAME",
+        "index.html",
+        "manifest.webmanifest",
+        "offline.html",
+        "sw.js"
+      ]
+    },
+    {
+      "number": 2,
+      "name": "FreshFries_LUXE_v38.38.0_Part_2_of_5.zip",
+      "size_bytes": 46481,
+      "sha256": "a0b2aa8fb29263f3fcd088eeecdb628def34984e9ca8611965d8a48c7bec3236",
+      "paths": [
+        "scripts/luxe-burger-kitchen-20261123.js",
+        "scripts/luxe-case-alerts-20261123.js",
+        "scripts/luxe-cashier-finished-20261123.js",
+        "scripts/luxe-driver-cancel-20261122.js",
+        "scripts/luxe-history-period-20261123.js",
+        "scripts/luxe-one-time-rewards-20261123.js",
+        "scripts/luxe-operational-fixes-20261121.js",
+        "scripts/luxe-order-customer-edit-20261123.js",
+        "scripts/luxe-shared-photo-menu-20261123.js",
+        "scripts/mobile-layout.py"
+      ]
+    },
+    {
+      "number": 3,
+      "name": "FreshFries_LUXE_v38.38.0_Part_3_of_5.zip",
+      "size_bytes": 51836,
+      "sha256": "919e78a525dbc08e34e2e540d02fd6cac6b6f332d8045f7faad39cd531afc8ce",
+      "paths": [
+        "scripts/luxe-all-menus-fold-20261123.js",
+        "scripts/luxe-cashier-destinations-20261122.js",
+        "scripts/luxe-collapsible-sections-manager-create-20261123.js",
+        "scripts/luxe-completed-detail-popup-20261123.js",
+        "scripts/luxe-completed-universal-20261123.js",
+        "scripts/luxe-f01-operational-day-20261123.js",
+        "scripts/luxe-foreground-ring-20261122.js",
+        "scripts/luxe-operational-polish-20261121.js",
+        "scripts/luxe-report-center-20261123.js",
+        "scripts/luxe-static-ci.mjs",
+        "scripts/luxe-unified-order-inputs-20261123.js"
+      ]
+    },
+    {
+      "number": 4,
+      "name": "FreshFries_LUXE_v38.38.0_Part_4_of_5.zip",
+      "size_bytes": 52427,
+      "sha256": "7b5d11107b8a37a15ed890a512e4daed946384a6487dfb4846ea3ed6d8ae5a86",
+      "paths": [
+        "supabase/ff76-report-foundation.sql",
+        "supabase/ff76-unified-reports-center.sql",
+        "supabase/functions/ff-push/index.ts",
+        "supabase/functions/ff61-employees/index.ts",
+        "supabase/migrations/20261123_burger_kitchen_staff_roles.sql",
+        "supabase/migrations/20261123_burger_kitchen_workflow.sql",
+        "supabase/migrations/20261123_burger_notes_presence.sql",
+        "supabase/migrations/20261123_burger_optional_invoice.sql",
+        "supabase/migrations/20261123_customer_live_correction.sql",
+        "supabase/migrations/20261123_f01_business_reports.sql",
+        "supabase/migrations/20261123_f01_operational_day.sql",
+        "supabase/migrations/20261123_one_time_customer_rewards.sql",
+        "supabase/migrations/20261123_order_case_notifications.sql",
+        "supabase/migrations/20261123_reservations_unscheduled.sql",
+        "supabase/tests/f01_business_date.sql"
+      ]
+    },
+    {
+      "number": 5,
+      "name": "FreshFries_LUXE_v38.38.0_Part_5_of_5.zip",
+      "size_bytes": 1572364,
+      "sha256": "aaec2665f8d32c5d2162608a101d7fc2e4add777bc62d32aaae3d58dc2cbcd2d",
+      "paths": [
+        ".github/workflows/brand-icon-sync.yml",
+        ".github/workflows/ff-optional-email-once.yml",
+        ".github/workflows/luxe-static-qa.yml",
+        "README.md",
+        "apple-touch-icon.png",
+        "assets/ff-icon-192.png",
+        "assets/ff-icon-512.png",
+        "assets/ff-official-logo.png",
+        "assets/ff-pinned-cairo-v38-37.js",
+        "assets/luxe-report-center-20261123.css",
+        "docs/ALERT_RING_BEHAVIOR_2026-11-22.md",
+        "favicon.ico"
+      ]
+    }
+  ]
+}
