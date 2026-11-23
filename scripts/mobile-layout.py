@@ -56,6 +56,19 @@ def check_legacy_status_feedback(page, width):
         assert mobile_nav and status_box["y"] + status_box["height"] <= mobile_nav["y"] + 2, (
             width, status_box, mobile_nav
         )
+    # The legacy message must not cover LUXE's separate modern toast surface.
+    modern = page.locator("#ffx-toast")
+    modern.evaluate("""el => { el.textContent = 'إشعار النظام'; el.classList.add('show'); }""")
+    toast.evaluate("""el => { el.textContent = 'تعذر التحديث: تحقق من الاتصال'; el.classList.remove('hidden'); }""")
+    bounds = (toast.bounding_box(), modern.bounding_box())
+    assert all(bounds), (width, bounds)
+    legacy, current = bounds
+    intersects = (legacy["x"] < current["x"] + current["width"] and
+                  current["x"] < legacy["x"] + legacy["width"] and
+                  legacy["y"] < current["y"] + current["height"] and
+                  current["y"] < legacy["y"] + legacy["height"])
+    assert not intersects, ("Overlapping notifications", width, bounds)
+    modern.evaluate("""el => { el.textContent = ''; el.classList.remove('show'); }""")
     toast.evaluate("""el => { el.classList.add('hidden'); el.textContent = ''; }""")
     assert toast.is_hidden()
 
