@@ -241,8 +241,8 @@ BEGIN
     COALESCE(sum(s.delivery_fee) FILTER(WHERE s.status='delivered'),0) delivery_fees
    FROM scoped s JOIN public.ff_branches b ON b.id=s.branch_id GROUP BY s.branch_id,b.name
   ) q),'[]'::jsonb),
-  'hours',COALESCE((SELECT jsonb_agg(to_jsonb(x) ORDER BY x.hour) FROM(
-   SELECT extract(hour FROM created_at AT TIME ZONE 'Asia/Aden')::integer hour,
+  'hours',COALESCE((SELECT jsonb_agg(to_jsonb(x) ORDER BY x.hour_of_day) FROM(
+   SELECT extract(hour FROM created_at AT TIME ZONE 'Asia/Aden')::integer AS hour_of_day,
     count(*)::integer orders,count(*) FILTER(WHERE status='delivered')::integer delivered
    FROM scoped GROUP BY 1) x),'[]'::jsonb),
   'areas',CASE WHEN v_role IN('manager','supervisor','customer_service')
