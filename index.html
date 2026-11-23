@@ -394,12 +394,30 @@ window.FF_CONFIG={url:'https://api.freshfriesz.com',key:'sb_publishable_CJ8mR24m
 .ff-luxe-cancelled{background:#ffe1e1!important;border:4px solid #bd0b0b!important;color:#760000!important}
 .ff-luxe-cancelled .ff-luxe-cancel-tag{font-size:24px;font-weight:950;color:#b00000}
 </style><style id="ff-luxe-collapse-all-menus">
-/* The sidebar stays fully hidden on every screen until the dedicated menu button is pressed. */
-#ffx-sidebar{transform:translateX(110%)!important;transition:transform .22s ease!important}
-body.ffx-menu-open #ffx-sidebar{transform:translateX(0)!important}
+/* Single RTL drawer contract: closed by default, no permanent sidebar gutter. */
+:root{--ffl-drawer-width:278px}
 #ffx-topbar,main{margin-right:0!important}
+#ffx-sidebar{
+  width:var(--ffl-drawer-width);
+  transform:translateX(calc(100% + 8px))!important;
+  visibility:hidden;
+  pointer-events:none;
+  transition:transform .22s ease,visibility 0s linear .22s!important;
+}
+body.ffx-menu-open #ffx-sidebar{
+  transform:translateX(0)!important;
+  visibility:visible;
+  pointer-events:auto;
+  transition:transform .22s ease,visibility 0s!important;
+}
 body.ffx-menu-open .ffx-screen-dimmer{display:block!important}
-#ffx-nav-toggle{display:inline-flex!important}
+@media(max-width:1150px){:root{--ffl-drawer-width:252px}}
+@media(max-width:850px){
+  :root{--ffl-drawer-width:min(310px,86vw)}
+  #ffx-sidebar{display:none}
+  body.ffx-menu-open #ffx-sidebar{display:flex}
+}
+@media(prefers-reduced-motion:reduce){#ffx-sidebar{transition:none!important}}
 </style><style id="ff-luxe-cashier-20261122">
 body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{max-width:1480px}
 #cashierView>.card{width:100%;padding:clamp(14px,2.8vw,28px)}
@@ -2992,7 +3010,7 @@ const targets={catalog:'ff51CatalogBtn',customers:'ff51CustomersBtn',archive:'ff
 const roleAllowed=(key)=>{const role=typeof data!=='undefined'&&data?.role||'';if(!role)return false;if(['home','settings'].includes(key))return true;if(key==='new')return ['manager','customer_service'].includes(role)&&(typeof canAction==='function'?canAction('create_order'):true);if(['orders','drivers'].includes(key))return ['manager','customer_service','supervisor'].includes(role);if(key==='driver')return role==='driver';if(key==='cashier')return role==='cashier';if(key==='team'||key==='assembly_admin'||key==='data_center')return role==='manager';if(key==='late')return !!($x('ff40AlertsBtn')&&!$x('ff40AlertsBtn').classList.contains('hidden'));
  const target=$x(targets[key]);return !!(target&&!target.classList.contains('hidden')&&!target.hidden)};
 const oldHeader=doc.querySelector('.head');
-const sidebar=S('aside',{id:'ffx-sidebar','aria-label':'القائمة الرئيسية'});
+const sidebar=S('aside',{id:'ffx-sidebar','aria-label':'القائمة الرئيسية'});sidebar.inert=true;sidebar.setAttribute('aria-hidden','true');
 sidebar.innerHTML=`<div class="ffx-logo"><div class="ffx-mark ffx-logo-image"><img src="${FF_OFFICIAL_LOGO}" alt="الشعار الرسمي لمطعم فريش فرايز"></div><div><strong><span>FRESH</span> FRIES</strong><small>SMART OPERATIONS</small></div><button type="button" id="ffx-drawer-close" aria-label="إغلاق القائمة">${icon('close')}</button></div><div class="ffx-sidebar-scroll" id="ffx-nav"></div><div class="ffx-profile"><div class="ffx-avatar">${icon('user')}</div><div><b id="ffx-profile-name">نظام فريش فرايز</b><small id="ffx-profile-role">لوحة تحكم v38.28</small></div></div>`;
 const dimmer=S('div',{class:'ffx-screen-dimmer',id:'ffx-dimmer'});
 const topbar=S('div',{id:'ffx-topbar'});
@@ -3048,6 +3066,7 @@ let navOpener;
 function openNav(event) {
   if (doc.body.classList.contains('ffx-menu-open')) { closeNav();return; }
   navOpener = event?.currentTarget || doc.activeElement;
+  sidebar.inert=false;sidebar.removeAttribute('aria-hidden');
   doc.body.classList.add('ffx-menu-open');
   navToggle.setAttribute('aria-expanded','true');
   drawerClose.focus({preventScroll:true});
@@ -3055,6 +3074,7 @@ function openNav(event) {
 function closeNav() {
   if (!doc.body.classList.contains('ffx-menu-open')) return;
   doc.body.classList.remove('ffx-menu-open');
+  sidebar.inert=true;sidebar.setAttribute('aria-hidden','true');
   navToggle.setAttribute('aria-expanded','false');
   if (navOpener?.isConnected) navOpener.focus({preventScroll:true});
 }
