@@ -316,3 +316,35 @@ assert.match(voucherPatch,/redeem_token/,'Voucher idempotency token missing');
 assert.match(voucherPatch,/ff_reward_issue/,'Manager issue function missing');
 assert.match(voucherPatch,/ff_reward_redeem/,'Voucher redemption function missing');
 assert.match(get('scripts/luxe-unified-order-inputs-20261123.js').toString('utf8'),/ff49ParseItemsAndNotes/, 'Approved FF75 parser must be shared');
+
+
+// Unified analytics center — all roles, controlled server scopes and PDF preview.
+const reportModule=get('scripts/luxe-unified-reports-center-20261123.js').toString('utf8');
+new vm.Script(reportModule,{filename:'luxe-unified-reports-center-20261123.js'});
+assert.ok(html.includes('scripts/luxe-unified-reports-center-20261123.js'),'Unified reports script must load');
+assert.match(reportModule,/window\.ffReportsCenterOpen=open/,'All roles need report entry point');
+for(const role of ['manager','supervisor','customer_service','cashier','driver','assembly','burger_kitchen'])
+  assert.match(reportModule,new RegExp(role),'Missing role in unified reports');
+for(const endpoint of ['ff_reports_center','ff_report_note_save'])
+  assert.match(reportModule,new RegExp(endpoint),'Missing secure reporting endpoint');
+for(const phrase of ['ffr-preview','ffr-print','ffr-share','ffr-csv','ffr-custom','ffr-driver'])
+  assert.match(reportModule,new RegExp(phrase),'Report preview/export/driver selector missing');
+assert.match(reportModule,/window\.addEventListener\('ff-luxe-session-reset',reset\)/,'Private reports must clear on logout');
+assert.match(reportModule,/uid\(\)!==who\|\|role\(\)!==whichRole/,'Stale reports must be blocked across accounts');
+assert.match(reportModule,/timeZone:'Asia\/Aden'/,'Operational report locale must be Sana’a');
+const reportSql=get('supabase/migrations/20261123_unified_reports_center.sql').toString('utf8');
+const reportFoundation=get('supabase/migrations/20261123_unified_reports_foundations.sql').toString('utf8');
+const reportScope=get('supabase/migrations/20261123_unified_reports_fix_supervisor_scope.sql').toString('utf8');
+const reportCron=get('supabase/migrations/20261123_unified_reports_scheduled_digests.sql').toString('utf8');
+assert.match(reportSql,/ff_reports_center/,'Consolidated reports function required');
+assert.match(reportSql,/ff38_permission_allowed\(v_uid,'view_reports'\)/,'Management reporting permission must be enforced');
+assert.match(reportSql,/v_role='supervisor' AND EXISTS/,'Supervisor needs branch authorization');
+assert.match(reportSql,/v_role='driver' AND t\.driver_id=v_driver/,'Driver must not see other couriers');
+assert.match(reportSql,/v_role='cashier' AND EXISTS/,'Cashier must not see other cashiers’ invoices');
+assert.match(reportSql,/v_role='burger_kitchen' OR t\.kitchen_id=v_uid/,'Burger kitchen must use own records');
+assert.match(reportFoundation,/ff_report_driver_sessions/,'Driver shifts history missing');
+assert.match(reportFoundation,/ff51_driver_breaks/,'Breaks must subtract from work hours');
+assert.match(reportFoundation,/ff_report_note_save/,'Manager signature and expense notes missing');
+assert.match(reportScope,/ff_luxe_rating_summary_period/,'Legacy ratings branch leak must be fixed');
+assert.match(reportCron,/ff_luxe_manager_daily_report/,'Daily report push schedule missing');
+assert.match(reportCron,/ff_luxe_manager_weekly_report/,'Weekly report push schedule missing');
