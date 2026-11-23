@@ -110,6 +110,10 @@ if(center&&box){
  };
  const hint=center.querySelector('.muted');
  if(hint)hint.textContent='مراجعة وعدادات آمنة ثم تصفير انتقائي أو شامل لبيانات التشغيل فقط، مع حماية سجلات التدقيق وحسابات الإدارة. لا تنفذ أي عملية تلقائيًا.';
+ // Explicitly enable the action only after all guarded checks are wired.
+ run.dataset.ffResetMode='guarded';
+ run.disabled=false;
+ status.textContent='اختر فئات البيانات ثم اضغط معاينة. يلزم تأكيد النسخة الاحتياطية قبل التنفيذ.';
  center.addEventListener('close',()=>{last=null;backupCheck.checked=false;confirmBox.value=''});
 }
 
