@@ -275,3 +275,44 @@ assert.match(burgerRoles,/ff28_my_role/,'Kitchen login role not installed');
 assert.match(burgerRoles,/burger_kitchen/,'Kitchen staff role not supported');
 const edgeBurger=get('supabase/functions/ff61-employees/index.ts').toString('utf8');
 assert.match(edgeBurger, /"burger_kitchen"/,'Employee approval endpoint missing kitchen role');
+
+
+// Operational follow-ups: syntax, shared parser and security regression guards.
+for(const file of [
+ 'scripts/luxe-burger-kitchen-20261123.js',
+ 'scripts/luxe-case-alerts-20261123.js',
+ 'scripts/luxe-unified-order-inputs-20261123.js',
+ 'scripts/luxe-order-customer-edit-20261123.js',
+ 'scripts/luxe-one-time-rewards-20261123.js',
+ 'scripts/luxe-completed-detail-popup-20261123.js'
+]){
+ const src=get(file).toString('utf8');
+ new vm.Script(src,{filename:file});
+ assert.ok(html.includes(file),'Missing deferred script '+file);
+}
+const burgerNotes=get('scripts/luxe-burger-kitchen-20261123.js').toString('utf8');
+assert.match(burgerNotes,/ffBurgerViewFinished/, 'Kitchen finished orders button missing');
+assert.match(burgerNotes,/ff_burger_confirm_notes/, 'Kitchen must confirm special notes');
+assert.match(burgerNotes,/ff_burger_online_status/, 'Cashier cannot see kitchen presence');
+assert.match(burgerNotes,/Never wait for network to sign out/, 'Kitchen logout must never wait for network');
+const burgerPatch=get('supabase/migrations/20261123_burger_notes_presence.sql').toString('utf8');
+assert.match(burgerPatch,/ff_burger_ready_notes_guard/,'Mandatory kitchen notes guard missing');
+const complaintPatch=get('supabase/migrations/20261123_order_case_notifications.sql').toString('utf8');
+assert.match(complaintPatch,/ff_case_order_push/,'Complaint push missing');
+assert.match(complaintPatch,/ff_case_alert_receipts/,'Complaint read receipts missing');
+const customerPatch=get('supabase/migrations/20261123_customer_live_correction.sql').toString('utf8');
+assert.match(customerPatch,/customer_contact_corrected/, 'Customer contact audit missing');
+assert.match(customerPatch,/ff_order_customer_read/, 'Secure customer order prefill missing');
+assert.match(html,/data-ff-customer-edit/, 'Customer edit buttons missing');
+assert.match(html,/o\.customer_update/, 'Driver inline customer-change warning missing');
+const reservationPatch=get('supabase/migrations/20261123_reservations_unscheduled.sql').toString('utf8');
+assert.match(reservationPatch,/pickup_unspecified/, 'Unscheduled reservation indicator missing');
+assert.doesNotMatch(html,/id="ff49ReserveWhen"/,'Pickup appointment must be removed');
+assert.match(html,/id="ffx-hero-reserve"/,'Reservation next to new order missing');
+assert.match(html,/id="ffReserveBottom"/,'Lower reservation button missing');
+const voucherPatch=get('supabase/migrations/20261123_one_time_customer_rewards.sql').toString('utf8');
+assert.match(voucherPatch,/FOR UPDATE/,'Voucher must lock row for single use');
+assert.match(voucherPatch,/redeem_token/,'Voucher idempotency token missing');
+assert.match(voucherPatch,/ff_reward_issue/,'Manager issue function missing');
+assert.match(voucherPatch,/ff_reward_redeem/,'Voucher redemption function missing');
+assert.match(get('scripts/luxe-unified-order-inputs-20261123.js').toString('utf8'),/ff49ParseItemsAndNotes/, 'Approved FF75 parser must be shared');
