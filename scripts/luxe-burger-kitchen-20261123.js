@@ -26,18 +26,24 @@ css.textContent +=
  '.ff-burger-stepper button:disabled{opacity:.35;cursor:not-allowed}'+
  '.ff-burger-stepper .ff-burger-minus{background:#fff;color:#ad2133}'+
  '@media(max-width:360px){.ff-burger-item{grid-template-columns:minmax(0,1fr) 110px;gap:6px}.ff-burger-product{padding:8px}}';
+css.textContent += '.ff-burger-urgent-note{border:3px solid #e0203c;background:#fff1e7;color:#76132b;padding:13px;border-radius:12px;margin:11px 0;font-size:clamp(17px,3.5vw,21px);font-weight:950;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}'+
+'.ff-burger-note-confirm{display:flex;align-items:start;gap:10px;border:2px solid #c12e48;border-radius:9px;padding:12px;background:#fff8ee;font-size:15px;font-weight:800;color:#832034}'+
+'.ff-burger-note-confirm input{width:24px;height:24px;flex-shrink:0;accent-color:#c12e48}'+
+'.ff-burger-online{display:inline-block;border:1px solid #999;border-radius:9px;padding:8px;font-weight:900;margin:7px 0}'+
+'.ff-burger-online.live{border-color:#128157;color:#128157;background:#e7fff1}'+
+'.ff-burger-online.offline{border-color:#b91c1c;color:#b91c1c;background:#fff2f2}';
 document.head.append(css);
 const main=document.querySelector('main');if(!main)return;
 const kitchen=make('section');kitchen.id='ffBurgerKitchenWorkspace';kitchen.className='card hidden';
-kitchen.innerHTML='<div class="ff-burger-head"><h2>🍔 المطبخ · قسم البرجر</h2><button type="button" class="outline" id="ffBurgerKitchenNotifications">🔔 تفعيل الإشعارات</button><button type="button" class="outline" id="ffBurgerKitchenRefresh">تحديث</button><button type="button" class="outline" id="ffBurgerKitchenLogout">🚪 تسجيل الخروج</button></div>'+
+kitchen.innerHTML='<div class="ff-burger-head"><h2>🍔 المطبخ · قسم البرجر</h2><button type="button" class="outline" id="ffBurgerKitchenNotifications">🔔 تفعيل الإشعارات</button><button type="button" class="primary" id="ffBurgerViewFinished">✅ الطلبات المنتهية <span id="ffBurgerDoneCount">0</span></button><button type="button" class="outline" id="ffBurgerKitchenRefresh">تحديث</button><button type="button" class="outline" id="ffBurgerKitchenLogout">🚪 تسجيل الخروج</button></div>'+
 '<p id="ffBurgerKitchenBranch" class="muted"></p><p id="ffBurgerKitchenStatus" role="status"></p>'+
 '<h3>الطلبات الواردة والجاري تحضيرها</h3><div id="ffBurgerKitchenActive" class="ff-burger-list"></div>'+
-'<details><summary>✅ الطلبات المنتهية · قسم البرجر</summary><div id="ffBurgerKitchenFinished" class="ff-burger-list"></div></details>';
+'<details id="ffBurgerFinishedDetails"><summary>✅ الطلبات المنتهية · قسم البرجر</summary><div id="ffBurgerKitchenFinished" class="ff-burger-list"></div></details>';
 main.prepend(kitchen);
 const cashier=$('cashierView');const panel=make('section');panel.id='ffBurgerCashierPanel';panel.className='card hidden';
 panel.innerHTML='<div class="ff-burger-head"><h3>🍔 أوامر قسم البرجر</h3><button id="ffBurgerNew" type="button" class="primary">🍔 إعلام قسم البرجر</button></div>'+
 '<p class="muted">اختر البرجر والكمية والفرع، ثم اكتب رقم فاتورة الكاشير والملاحظات. هذا لا يغير فاتورة MicroPOS أو حالة التوصيل.</p>'+
-'<p id="ffBurgerCashierStatus" role="status"></p>'+
+'<p id="ffBurgerKitchenOnline" class="ff-burger-online offline" role="status">🔴 قسم البرجر غير متصل حاليًا</p><p id="ffBurgerCashierStatus" role="status"></p>'+
 '<h3>🔔 جاهز للاستلام · اضغط تخطي بعد الإشعار</h3><div id="ffBurgerCashierReady" class="ff-burger-list"></div>'+
 '<details><summary>🕓 الطلبات الجارية</summary><div id="ffBurgerCashierActive" class="ff-burger-list"></div></details>'+
 '<details><summary>✅ الطلبات المنتهية · قسم البرجر</summary><div id="ffBurgerCashierFinished" class="ff-burger-list"></div></details>';
@@ -54,7 +60,7 @@ dialog.innerHTML='<h2>🍔 إعلام قسم البرجر</h2><form id="ffBurger
 '<button id="ffBurgerSubmit" class="primary" type="submit">✅ اعتماد وإرسال الطلب</button><button id="ffBurgerCancel" class="outline" type="button">إلغاء</button></div></form>';
 document.body.append(dialog);
 const form=$('ffBurgerForm'),f=name=>form.elements.namedItem(name);
-let isKitchenMode=false,profile=null,items=[],rows=[],channel=null,interval=null,loading=false,fetchAt=0,seq=0,owner='',initial=true,lastNew=new Set(),lastReady=new Set(),busy=false,token=null;
+let isKitchenMode=false,profile=null,items=[],rows=[],channel=null,interval=null,loading=false,fetchAt=0,seq=0,owner='',initial=true,lastNew=new Set(),lastReady=new Set(),busy=false,token=null,presenceAt=0;
 const cashierRole=()=>typeof data!=='undefined'&&data?.role==='cashier'&&typeof user!=='undefined'&&!!user?.id;
 const kitchenRole=()=>isKitchenMode&&profile?.role==='burger_kitchen'&&typeof user!=='undefined'&&!!user?.id;
 const authorized=()=>cashierRole()||kitchenRole();
@@ -66,7 +72,7 @@ const identity=()=>String(typeof user!=='undefined'&&user?.id||'');
    if(!isKitchenMode||!identity())return;
    const button=$('logoutBtn');
    if(!button){$('ffBurgerKitchenStatus').textContent='تعذر العثور على زر تسجيل الخروج؛ حدّث الصفحة';return}
-   button.click(); // Same existing local sign-out + resetUI as every other staff role.
+   void rpc('ff_burger_presence_ping',{p_online:false}).catch(()=>{}).finally(()=>button.click()); // Use original session logout even if heartbeat fails.
  }
  function attachKitchenDrawer(){
    const nav=$('ffx-nav');
@@ -84,7 +90,7 @@ const identity=()=>String(typeof user!=='undefined'&&user?.id||'');
 
 const errorText=e=>String(e?.message||e);
 function reset(){
-  seq++;loading=false;fetchAt=0;owner='';isKitchenMode=false;profile=null;items=[];rows=[];initial=true;lastNew.clear();lastReady.clear();busy=false;token=null;
+  seq++;loading=false;fetchAt=0;presenceAt=0;owner='';isKitchenMode=false;profile=null;items=[];rows=[];initial=true;lastNew.clear();lastReady.clear();busy=false;token=null;
   panel.classList.add('hidden');kitchen.classList.add('hidden');document.body.classList.remove('ff-burger-kitchen-mode');
   $(kitchenNavId)?.remove();
   if(dialog.open)dialog.close();
@@ -107,7 +113,11 @@ function createTicket(t,view){
  line('👤 الكاشير المرسل: '+t.cashier_name);
  line('👨‍🍳 موظف البرجر المستلم: '+(t.kitchen_name||'بانتظار الاستلام'));
  line('🍔 '+(t.items||[]).map(v=>v.qty+' × '+v.name).join('، '));
- if(t.notes)line('📝 '+t.notes);
+ if(t.notes?.trim()){
+   const notice=make('div','🚨 تعليمات خاصة يجب تنفيذها قبل التسليم:\n'+t.notes.trim(),'ff-burger-urgent-note');
+   notice.setAttribute('role','alert');card.append(notice);
+   if(t.notes_confirmed_at)line('✅ تأكيد تنفيذ الملاحظات: '+time(t.notes_confirmed_at));
+ }
  const meter=make('p','⏱️ زمن التحضير: ');
  const duration=make('strong',seconds(t),'ff-burger-clock');
  duration.dataset.ffBurgerStart=t.accepted_at||'';duration.dataset.ffBurgerEnd=t.ready_at||'';
@@ -117,7 +127,22 @@ function createTicket(t,view){
  else if(view==='kitchen'&&t.status==='preparing'&&String(t.kitchen_id||'')===identity()){action='ready';label='✅ الطلب جاهز للاستلام'}
  else if(view==='cashier'&&t.status==='ready'){action='skip';label='⏭ تخطي'}
  if(action){
-   const b=make('button',label,'primary');b.type='button';b.onclick=()=>transition(t.id,action,b);card.append(b);
+   const b=make('button',label,'primary');b.type='button';
+   if(action==='ready' && t.notes?.trim() && !t.notes_confirmed_at){
+     const wrap=make('label',undefined,'ff-burger-note-confirm');
+     const checked=make('input');checked.type='checkbox';
+     checked.setAttribute('aria-label','أؤكد تنفيذ جميع الملاحظات');
+     wrap.append(checked,make('span','أؤكد أنني قرأت جميع الملاحظات ونفذتها قبل إنهاء التحضير'));
+     card.append(wrap);b.disabled=true;
+     checked.addEventListener('change',()=>{b.disabled=!checked.checked});
+     b.onclick=async()=>{
+       if(!checked.checked)return toast('يجب تأكيد تنفيذ الملاحظات');
+       b.disabled=true;
+       try{await rpc('ff_burger_confirm_notes',{p_ticket:t.id});await transition(t.id,action,b,true)}
+       catch(error){toast('تعذر اعتماد الملاحظة: '+errorText(error));b.disabled=false}
+     };
+   }else b.onclick=()=>transition(t.id,action,b);
+   card.append(b);
  }else if(view==='kitchen'&&t.status==='preparing')line('قيد التحضير لدى الموظف المستلم');
  return card;
 }
@@ -134,7 +159,9 @@ function render(){
    const ongoing=rows.filter(t=>t.status==='sent'||t.status==='preparing');
    $('ffBurgerKitchenStatus').textContent='الوارد: '+ongoing.filter(t=>t.status==='sent').length+' · تحضير: '+ongoing.filter(t=>t.status==='preparing').length;
    fill('ffBurgerKitchenActive',ongoing,'kitchen');
-   fill('ffBurgerKitchenFinished',rows.filter(t=>t.status==='ready'||t.status==='acknowledged'),'kitchen');
+   const finished=rows.filter(t=>t.status==='ready'||t.status==='acknowledged');
+   $('ffBurgerDoneCount').textContent=String(finished.length);
+   fill('ffBurgerKitchenFinished',finished,'kitchen');
  }else if(cashierRole()){
    panel.classList.remove('hidden');kitchen.classList.add('hidden');
    const ready=rows.filter(t=>t.status==='ready'),active=rows.filter(t=>t.status==='sent'||t.status==='preparing');
@@ -144,8 +171,8 @@ function render(){
    fill('ffBurgerCashierFinished',rows.filter(t=>t.status==='acknowledged'),'cashier');
  }
 }
-async function transition(id,action,b){
- if(!authorized()||b.disabled)return;
+async function transition(id,action,b,confirmed=false){
+ if(!authorized()||(!confirmed&&b.disabled))return;
  b.disabled=true;
  try{
    const r=await rpc('ff_burger_transition',{p_ticket:id,p_action:action});
@@ -159,6 +186,21 @@ function notify(title,body){
  try{toast(title+' — '+body)}catch(_){}
  if('Notification'in window&&Notification.permission==='granted')
  try{new Notification(title,{body,tag:'ff-burger-'+title})}catch(_){}
+}
+async function updateOnline(force=false){
+ if(!authorized()||!identity()||(!force&&Date.now()-presenceAt<15000))return;
+ presenceAt=Date.now();
+ try{
+  if(kitchenRole())await rpc('ff_burger_presence_ping',{p_online:true});
+  if(cashierRole()){
+   const status=await rpc('ff_burger_online_status');
+   const on=(Array.isArray(status)?status:[]).filter(x=>Number(x.online_count)>0);
+   const badge=$('ffBurgerKitchenOnline');const live=on.length>0;
+   badge.textContent=live?'🟢 قسم البرجر متصل ويستقبل الطلبات — '+on.map(x=>x.branch_name).join('، '):
+    '🔴 قسم البرجر غير متصل الآن؛ يمكنك إرسال الطلب وسيظهر عند اتصال الموظف';
+   badge.classList.toggle('live',live);badge.classList.toggle('offline',!live);
+  }
+ }catch(e){if(cashierRole())$('ffBurgerKitchenOnline').textContent='⚠️ تعذر التحقق من اتصال قسم البرجر'}
 }
 async function refresh(force=false){
  if(!authorized()||!identity()||loading||(!force&&Date.now()-fetchAt<5000))return;
@@ -175,6 +217,7 @@ async function refresh(force=false){
     if(cashierRole())for(const t of list.filter(t=>t.status==='ready'&&!lastReady.has(t.id)))notify('✅ البرجر جاهز',t.invoice_ref?.trim()?'فاتورة '+t.invoice_ref:'طلب بدون رقم فاتورة');
    }
    lastNew=newer;lastReady=ready;initial=false;owner=identity();rows=list;render();
+   void updateOnline(force);
  }catch(e){
    const element=$(kitchenRole()?'ffBurgerKitchenStatus':'ffBurgerCashierStatus');
    if(element)element.textContent='تعذر تحديث قسم البرجر: '+errorText(e);
@@ -182,7 +225,7 @@ async function refresh(force=false){
 }
 function heartbeat(){
  if(interval)return;
- interval=setInterval(()=>{if(authorized()&&!document.hidden)void refresh()},6000);
+ interval=setInterval(()=>{if(authorized()&&!document.hidden){void refresh();void updateOnline()}},6000);
 }
 function subscribe(){
  if(channel||!client)return;
@@ -200,7 +243,7 @@ window.ffBurgerStart=async()=>{
  attachKitchenDrawer(); // Logout must remain available even if a network/RPC request fails.
  profile=await rpc('ff_burger_my_branch');
  if(profile?.role!=='burger_kitchen'||profile.branches?.length!==1)throw Error('لا يوجد فرع محدد لموظف قسم البرجر');
- items=await rpc('ff_burger_menu');attachKitchenDrawer();subscribe();heartbeat();await refresh(true);
+ items=await rpc('ff_burger_menu');attachKitchenDrawer();subscribe();heartbeat();await updateOnline(true);await refresh(true);
 };
 window.ffBurgerOnCashierDraw=()=>{
  if(!cashierRole())return;
@@ -305,6 +348,7 @@ form.addEventListener('submit',async e=>{
  }catch(err){$('ffBurgerDialogStatus').textContent='تعذر الإرسال: '+errorText(err)}
  finally{busy=false;$('ffBurgerSubmit').disabled=false}
 });
+$('ffBurgerViewFinished').onclick=()=>{const details=$('ffBurgerFinishedDetails');details.open=true;details.scrollIntoView({block:'start',behavior:'smooth'})};
 $('ffBurgerKitchenRefresh').onclick=()=>void refresh(true);
 $('ffBurgerKitchenLogout').onclick=kitchenLogout;
 $('ffBurgerKitchenNotifications').onclick=()=>void window.ffLuxeSubscribePush?.();
