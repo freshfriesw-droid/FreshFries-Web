@@ -136,8 +136,20 @@ body.ffx-dark{--ffb-bg:#0e0e10;--ffb-surface:#1a1a1d;--ffb-soft:#222226;--ffb-so
 body.ffx-contrast{--ffb-bg:#fff;--ffb-surface:#fff;--ffb-soft:#fff;--ffb-soft2:#ececec;--ffb-line:#000;--ffb-ink:#000;--ffb-muted:#222;--ffb-redwash:#fff;--ffb-redink:#a00010}
 body.ffx-compact .card{padding:12px;margin-bottom:8px}body.ffx-compact .ffx-kpi{padding:12px}body.ffx-compact main{padding-top:12px}
 body.ffx-reduced-motion *,body.ffx-reduced-motion *:before,body.ffx-reduced-motion *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-.head,#toast{display:none!important}
-@media(min-width:1151px){main,#ffx-topbar{margin-right:278px}}
+.head{display:none!important}
+/* Keep the legacy operation feedback visible; the LUXE toast is a separate status layer. */
+#toast{
+  z-index:1245;
+  left:auto;right:18px;width:min(380px,calc(100vw - 36px));max-width:380px;margin:0;
+  border-inline-start:4px solid var(--ffb-red,#d51e2c);
+  overflow-wrap:anywhere;line-height:1.7
+}
+@media(max-width:850px){
+  #toast{
+    bottom:calc(118px + env(safe-area-inset-bottom));
+    left:12px;right:12px;width:auto;max-width:calc(100vw - 24px)
+  }
+}
 
 /* ---- Buttons: one system, taken from the drawer links ---- */
 button:not([class*="ffx-"]),.ffx-smallbtn{min-height:44px;border-radius:12px;border:1px solid var(--ffb-line);background:var(--ffb-soft2);color:var(--ffb-ink);font-weight:800;font-size:12.5px;padding:10px 16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1.35;box-shadow:none}
@@ -918,7 +930,7 @@ body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{
   <form id="ff61StatusForm"><label>رمز المتابعة<input id="ff61TrackCode" type="text" placeholder="الرمز السري الجديد (أو رقم المتابعة القديم)" minlength="36" maxlength="64" autocapitalize="off" spellcheck="false" autocomplete="off" required></label><button id="ff61TrackSend" type="submit" class="primary">عرض الحالة</button></form><div id="ff61TrackInfo" class="ff61-feedback" role="status"></div>
  </div>
  </div></div>
-<div id="toast" class="alert hidden"></div>
+<div id="toast" class="alert hidden" role="status" aria-live="polite" aria-atomic="true"></div>
 <script id="ff-fee-safety">
 /* Prevent blank delivery fees from silently becoming zero; zero is explicit. */
 window.ffRequiredDeliveryFee=function(value){

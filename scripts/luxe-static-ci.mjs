@@ -11,6 +11,15 @@ assert.match(html, /https:\/\/api\.freshfriesz\.com/, 'Production gateway URL wa
 assert.match(html, /ff61-employees/, 'Employee application portal missing');
 assert.match(html, /ff71-customer-phone-otp/, 'Customer OTP portal missing');
 assert.match(html, /ff_v12_assembly_set_stage/, 'Assembly workflow missing');
+assert.doesNotMatch(html, /\.head,#toast\{display:none!important\}/, 'Legacy operational feedback must not be globally hidden');
+assert.match(html, /id="toast" class="alert hidden" role="status" aria-live="polite" aria-atomic="true"/,
+  'Legacy toast must expose accessible status semantics');
+assert.match(html, /#toast\{\s*z-index:1245;/, 'Legacy toast must be visible over the shell');
+assert.match(html, /bottom:calc\(118px \+ env\(safe-area-inset-bottom\)\)/,
+  'Mobile status must stay above the bottom navigation');
+assert.doesNotMatch(html, /@media\(min-width:1151px\)\{main,#ffx-topbar\{margin-right:278px\}\}/,
+  'Remove obsolete desktop gutter override');
+
 assert.match(html, /ff28_customer/, 'Customer records must be server-filtered');
 assert.doesNotMatch(html, /sb_secret_[A-Za-z0-9]+/, 'Secret API key must never be embedded in the client');
 assert.match(html, /sidebar\.inert=true;sidebar\.setAttribute\('aria-hidden','true'\)/,
