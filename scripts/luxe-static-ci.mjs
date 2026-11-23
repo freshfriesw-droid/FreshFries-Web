@@ -341,9 +341,9 @@ assert.match(reportSql,/ff38_permission_allowed\(v_uid,'view_reports'\)/,'Manage
 assert.match(reportSql,/v_role='supervisor' AND EXISTS/,'Supervisor needs branch authorization');
 assert.match(reportSql,/v_role='driver' AND t\.driver_id=v_driver/,'Driver must not see other couriers');
 assert.match(reportSql,/v_role='cashier' AND EXISTS/,'Cashier must not see other cashiers’ invoices');
-assert.match(reportSql,/v_role='burger_kitchen' OR t\.kitchen_id=v_uid/,'Burger kitchen must use own records');
+assert.match(reportSql,/v_role<>'burger_kitchen' OR t\.kitchen_id=v_uid/,'Burger kitchen must use own records');
 assert.match(reportFoundation,/ff_report_driver_sessions/,'Driver shifts history missing');
-assert.match(reportFoundation,/ff51_driver_breaks/,'Breaks must subtract from work hours');
+assert.match(reportSql,/ff51_driver_breaks/,'Breaks must subtract from work hours');
 assert.match(reportFoundation,/ff_report_note_save/,'Manager signature and expense notes missing');
 assert.match(reportScope,/ff_luxe_rating_summary_period/,'Legacy ratings branch leak must be fixed');
 assert.match(reportCron,/ff_luxe_manager_daily_report/,'Daily report push schedule missing');
