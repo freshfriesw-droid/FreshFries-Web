@@ -45,6 +45,16 @@ def check_width(page, width, selector):
     assert box and box["x"] >= -1 and box["x"] + box["width"] <= width + 1, (width, selector, box)
 
 
+def wait_for_open_drawer(page, width):
+    # Measure after the slide animation, including the 851px desktop breakpoint.
+    page.wait_for_function("""w => {
+      const el = document.querySelector('#ffx-sidebar');
+      const box = el?.getBoundingClientRect();
+      return box && getComputedStyle(el).visibility === 'visible'
+             && box.x >= -1 && box.right <= w + 1;
+    }""", arg=width)
+
+
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(channel="chrome")
     for width in (320, 344, 360, 390, 430, 768, 850, 851, 1280):
@@ -79,6 +89,7 @@ with sync_playwright() as playwright:
             check_width(page, width, "#ffx-mobile-nav")
             for trigger, close in (("#ffx-menu", "#ffx-drawer-close"), ("button[data-key=more]", None)):
                 page.locator(trigger).click()
+                wait_for_open_drawer(page, width)
                 check_width(page, width, "#ffx-sidebar")
                 assert page.locator("#ffx-sidebar").get_attribute("aria-hidden") is None
                 assert page.evaluate("document.querySelector('#ffx-sidebar').inert") is False
@@ -122,6 +133,7 @@ with sync_playwright() as playwright:
             # User-facing requirement: the sidebar is collapsed on desktop too.
             assert page.locator("#ffx-sidebar").is_hidden()
             page.locator("#ffx-menu").click()
+            wait_for_open_drawer(page, width)
             check_width(page, width, "#ffx-sidebar")
             assert page.locator("#ffx-sidebar").get_attribute("aria-hidden") is None
             assert page.evaluate("document.querySelector('#ffx-sidebar').inert") is False
