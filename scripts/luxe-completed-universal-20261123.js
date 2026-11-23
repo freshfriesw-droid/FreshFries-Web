@@ -81,12 +81,12 @@
  const seen=new Map();let permittedBranches=[];
  const rangeFrom=$('fflFinishedFrom'),rangeTo=$('fflFinishedTo'),branch=$('fflFinishedBranch');
  const d=yemenDay();rangeFrom.value=rangeTo.value=d;rangeFrom.max=rangeTo.max=d;
- let viewer='',loaded=[],offset=0,hasMore=true,loading=false,open=false,lastUpdated=0,generation=0;
+ let viewer='',loaded=[],offset=0,hasMore=true,loading=false,open=false,lastUpdated=0,generation=0,requestSequence=0;
  let openCards=new Set(),activeAction=null;
  /* all staff roles use eligible() above */
  function clear(){
-  generation++;viewer='';loaded=[];offset=0;hasMore=true;loading=false;open=false;lastUpdated=0;openCards.clear();
-  activeAction=null;seen.clear();permittedBranches=[];list.replaceChildren();status.textContent='';
+  generation++;requestSequence++;viewer='';loaded=[];offset=0;hasMore=true;loading=false;open=false;lastUpdated=0;openCards.clear();
+  activeAction=null;seen.clear();permittedBranches=[];list.replaceChildren();status.textContent='';more.disabled=false;refresh.disabled=false;
   search.value='';panel.hidden=true;button.setAttribute('aria-expanded','false');box.hidden=true;branch.replaceChildren(new Option('كل الفروع',''));
  }
  function maintainViewer(){
@@ -193,35 +193,44 @@
   status.textContent='المعروض '+result.length+' من '+loaded.length+' طلبًا تم تحميله'+(hasMore?' · توجد طلبات أقدم':'')+
     (lastUpdated?' · تحديث '+new Date(lastUpdated).toLocaleTimeString('ar-YE',{timeZone:'Asia/Aden'}):'');
  }
+ const selectedBranch=()=>['manager','supervisor'].includes(role())?branch.value||null:
+  role()==='customer_service'?$('newBranch')?.value||null:null;
  async function load(reset=false){
-  if(!maintainViewer()||!open||loading)return;
-  const current=String(user.id),requestGeneration=generation;loading=true;
-  more.disabled=true;refresh.disabled=true;
+  if(!maintainViewer()||!open||(loading&&!reset))return;
+  const current=String(user.id),requestViewer=viewer,requestRole=role();
+  const requestGeneration=generation,requestId=++requestSequence;
+  const requestedFrom=rangeFrom.value,requestedTo=rangeTo.value,requestedBranch=selectedBranch();
+  const requestedOffset=reset?0:offset;
+  const stillAuthorized=()=>requestId===requestSequence&&requestGeneration===generation&&
+    maintainViewer()&&viewer===requestViewer&&eligible()&&String(user?.id||'')===current&&
+    role()===requestRole&&open&&rangeFrom.value===requestedFrom&&
+    rangeTo.value===requestedTo&&selectedBranch()===requestedBranch;
+  loading=true;more.disabled=true;refresh.disabled=true;
+  if(reset){loaded=[];offset=0;hasMore=true;lastUpdated=0;openCards.clear();list.replaceChildren()}
   status.textContent=reset?'جارٍ تحديث الطلبات المنتهية...':'جارٍ تحميل طلبات أقدم...';
   try{
-   if(!rangeFrom.value||!rangeTo.value||rangeFrom.value>rangeTo.value||rangeTo.value>yemenDay())
+   if(!requestedFrom||!requestedTo||requestedFrom>requestedTo||requestedTo>yemenDay())
       throw Error('حدد نطاقًا صحيحًا: من تاريخ إلى تاريخ');
-    const selectedBranch=['manager','supervisor'].includes(role())?branch.value||null:
-     role()==='customer_service'?$('newBranch')?.value||null:null;
-    const result=await rpc('ff_luxe_completed_universal',{p_from:rangeFrom.value,p_to:rangeTo.value,
-      p_branch:selectedBranch,p_limit:30,p_offset:reset?0:offset});
-    if(['manager','supervisor'].includes(role())){
-      const old=branch.value;branch.replaceChildren(new Option('كل الفروع',''));
-      for(const b of result?.branches||[])branch.add(new Option(b.name,b.id));
-      if([...branch.options].some(x=>x.value===old))branch.value=old;
-      $('fflFinishedBranchLabel').hidden=false;
-    }else $('fflFinishedBranchLabel').hidden=true;
-   if(requestGeneration!==generation||!eligible()||String(user.id)!==current||!open)return;
+   const result=await rpc('ff_luxe_completed_universal',{p_from:requestedFrom,p_to:requestedTo,
+     p_branch:requestedBranch,p_limit:30,p_offset:requestedOffset});
+   // Check authorization and filters before changing branch options or rendered records.
+   if(!stillAuthorized())return;
    if(!result||!Array.isArray(result.items))throw Error('استجابة قائمة الطلبات المنتهية غير مكتملة');
+   if(['manager','supervisor'].includes(requestRole)){
+     const old=branch.value;branch.replaceChildren(new Option('كل الفروع',''));
+     for(const b of result?.branches||[])branch.add(new Option(b.name,b.id));
+     if([...branch.options].some(x=>x.value===old))branch.value=old;
+     $('fflFinishedBranchLabel').hidden=false;
+   }else $('fflFinishedBranchLabel').hidden=true;
    permittedBranches=Array.isArray(result.branches)?result.branches:[];
    loaded=reset?result.items:[...loaded,...result.items.filter(o=>!loaded.some(x=>x.id===o.id))];
-   offset=(reset?0:offset)+result.items.length;
-   hasMore=result.has_more===true;
-   lastUpdated=Date.now();
-   render();
+   offset=requestedOffset+result.items.length;
+   hasMore=result.has_more===true;lastUpdated=Date.now();render();
   }catch(e){
-   status.textContent='⚠️ تعذر تحميل الطلبات المنتهية: '+String(e?.message||e);
-  }finally{loading=false;more.disabled=false;refresh.disabled=false}
+   if(stillAuthorized())status.textContent='⚠️ تعذر تحميل الطلبات المنتهية: '+String(e?.message||e);
+  }finally{
+   if(requestId===requestSequence){loading=false;more.disabled=false;refresh.disabled=false}
+  }
  }
  button.addEventListener('click',()=>{
   if(!maintainViewer())return;
@@ -233,15 +242,13 @@
  $('fflFinishedToday').onclick=()=>{
    rangeFrom.value=rangeTo.value=yemenDay();
    window.dispatchEvent(new CustomEvent('ff-luxe-history-range',{detail:{from:rangeFrom.value,to:rangeTo.value}}));
-   if(open)void load(true);
  };
  $('fflFinishedApply').onclick=()=>{
    window.dispatchEvent(new CustomEvent('ff-luxe-history-range',{detail:{from:rangeFrom.value,to:rangeTo.value}}));
-   if(open)void load(true);
  };
- branch.onchange=()=>{loaded=[];offset=0;if(open)void load(true)};
+ branch.onchange=()=>{if(open)void load(true)};
  window.addEventListener('ff-luxe-history-range',e=>{
-   const d=e.detail||{};if(d.from&&d.to){rangeFrom.value=d.from;rangeTo.value=d.to;if(open&&!loading)void load(true)}
+   const d=e.detail||{};if(d.from&&d.to){rangeFrom.value=d.from;rangeTo.value=d.to;if(open)void load(true)}
  });
  search.addEventListener('input',render);
  list.addEventListener('click',event=>{
@@ -264,8 +271,11 @@
   if(action==='rating'&&!infoNow.canRate)return toast('تم تسجيل التقييم مسبقًا أو الطلب غير مؤهل');
   if(!['invoice','rating','report'].includes(action))return;
   if(activeAction)return toast('هناك عملية أخرى جارٍ تنفيذها');
-  const current=String(user.id),submit=form.querySelector('button[type=submit]');
-  activeAction=orderId;submit.disabled=true;
+  const current=String(user.id),actionViewer=viewer,actionGeneration=generation;
+  const canShowAction=()=>generation===actionGeneration&&maintainViewer()&&viewer===actionViewer&&
+     eligible()&&String(user?.id||'')===current;
+  const submit=form.querySelector('button[type=submit]'),actionToken={orderId};
+  activeAction=actionToken;submit.disabled=true;
   const original=submit.textContent;submit.textContent='جارٍ الحفظ...';
   try{
    let result;
@@ -285,14 +295,15 @@
         subject:title,description,priority:form.elements.namedItem('priority').value}});
    }
    if(!result?.saved&&!result?.case_id)throw Error('لم يؤكد الخادم حفظ الإجراء');
-   if(current!==String(user?.id||''))return;
+   if(!canShowAction())return;
    const message={invoice:'تم حفظ رقم الفاتورة وتوثيق الاستكمال',rating:'تم إرسال التقييم',report:'تم إرسال البلاغ وربطه بالطلب'};
    toast('✅ '+message[action]);
    openCards.add(orderId);
    await load(true);
-  }catch(e){if(current===String(user?.id||''))toast('تعذر استكمال الطلب: '+(e?.message||e))}
-  finally{activeAction=null;submit.disabled=false;submit.textContent=original}
+  }catch(e){if(canShowAction())toast('تعذر استكمال الطلب: '+(e?.message||e))}
+  finally{if(activeAction===actionToken)activeAction=null;submit.disabled=false;submit.textContent=original}
  });
+ window.addEventListener('ff-luxe-session-reset',clear);
  window.addEventListener('ff-assembly-snapshot-success',()=>{
   // The role, selected cashier desk and authorized branch may change on snapshot refresh.
   if(!maintainViewer())return;
