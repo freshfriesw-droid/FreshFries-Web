@@ -11,6 +11,18 @@ assert.match(html, /https:\/\/api\.freshfriesz\.com/, 'Production gateway URL wa
 assert.match(html, /ff61-employees/, 'Employee application portal missing');
 assert.match(html, /ff71-customer-phone-otp/, 'Customer OTP portal missing');
 assert.match(html, /ff_v12_assembly_set_stage/, 'Assembly workflow missing');
+
+assert.match(html, /data=null;user=null;window\.dispatchEvent\(new Event\('ff-luxe-session-reset'\)\)/,
+  'Every resetUI must invalidate asynchronous manager-only reports');
+const settlementHistory=get('scripts/luxe-history-period-20261123.js').toString('utf8');
+new vm.Script(settlementHistory, {filename:'scripts/luxe-history-period-20261123.js'});
+assert.match(settlementHistory, /window\.addEventListener\('ff-luxe-session-reset',resetPrivateReport\)/,
+  'Sensitive settlement report must clear on session reset');
+assert.match(settlementHistory, /if\(!stillAuthorized\(\)\)return;/,
+  'Late settlement responses must be discarded after role or date changes');
+assert.match(settlementHistory, /list\.replaceChildren\(\);\s*state\.textContent='';/,
+  'Settlement report data must be erased when the viewer changes');
+
 assert.doesNotMatch(html, /\.head,#toast\{display:none!important\}/, 'Legacy operational feedback must not be globally hidden');
 assert.match(html, /id="toast" class="alert hidden" role="status" aria-live="polite" aria-atomic="true"/,
   'Legacy toast must expose accessible status semantics');
