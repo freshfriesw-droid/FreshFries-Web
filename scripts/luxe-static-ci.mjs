@@ -245,12 +245,30 @@ assert.match(burgerScript,/postgres_changes/, 'Realtime hint missing');
 assert.match(burgerScript,/ffBurgerCashierReady/, 'Ready alert list missing');
 
 assert.match(burgerScript,/ff-burger-product/, 'Tap-to-add burger buttons are missing');
-assert.match(burgerScript,/product\.addEventListener\('click',\(\)=>shift\(1\)\)/,'Tap burger should increment quantity by 1');
-assert.match(burgerScript,/plus\.addEventListener\('click',\(\)=>shift\(1\)\)/,'Burger plus should increment by 1');
-assert.match(burgerScript,/minus\.addEventListener\('click',\(\)=>shift\(-1\)\)/,'Burger minus should decrement by 1');
+// The unified photo picker owns the DOM click listeners; the burger station injects
+// quantity callbacks. Check both sides of this actual contract, not the retired
+// product.addEventListener() implementation (FIX-02).
+const photoMenuScript=get('scripts/luxe-shared-photo-menu-20261123.js').toString('utf8');
+new vm.Script(photoMenuScript,{filename:'scripts/luxe-shared-photo-menu-20261123.js'});
+assert.match(html,/luxe-shared-photo-menu-20261123\.js/, 'Shared photo menu must be loaded');
+assert.match(burgerScript,/ui\.createTile\(item,\{quantity:0,quantityInput:qty,showPrice:true,onAdd:\(\)=>shift\(1\),onRemove:\(\)=>shift\(-1\)\}\)/,
+  'Burger picker must wire tap/plus/minus to the quantity stepper');
+assert.match(photoMenuScript,/product\.addEventListener\('click',\(\)=>opts\.onAdd\?\.\(\)\)/,
+  'Tap product must dispatch the increment callback');
+assert.match(photoMenuScript,/plus\.addEventListener\('click',\(\)=>opts\.onAdd\?\.\(\)\)/,
+  'Photo picker plus must dispatch the increment callback');
+assert.match(photoMenuScript,/less\.addEventListener\('click',\(\)=>opts\.onRemove\?\.\(\)\)/,
+  'Photo picker minus must dispatch the decrement callback');
+assert.match(burgerScript,/product\.onclick=\(\)=>shift\(1\)/,'Fallback burger tap must increment');
+assert.match(burgerScript,/less\.onclick=\(\)=>shift\(-1\);more\.onclick=\(\)=>shift\(1\)/,
+  'Fallback burger plus/minus must adjust quantity');
 assert.match(burgerScript,/qty\.dataset\.burgerItem=item\.id/,'Order payload must retain official menu ID');
-assert.match(burgerScript,/Math\.max\(0,Math\.min\(99,value\)\)/,'Quantity buttons must enforce 0–99 bounds');
-assert.match(burgerScript,/product\.setAttribute\('aria-pressed'/,'Selected product must be accessible');
+assert.match(burgerScript,/Math\.max\(0,Math\.min\(99,Number\(value\)\|\|0\)\)/,
+  'Quantity buttons must enforce 0–99 bounds and normalize nonnumeric input');
+assert.match(burgerScript,/picker\.element\.querySelector\('\.ffl-picker-product'\)\?\.setAttribute\('aria-pressed'/,
+  'Shared picker must expose the selected product state');
+assert.match(photoMenuScript,/product\.setAttribute\('aria-label','إضافة '/,
+  'Product picker must expose accessible product names');
 assert.match(burgerScript,/رقم فاتورة الكاشير \(اختياري\)/,'Burger invoice input must be visibly optional');
 assert.doesNotMatch(burgerScript,/name="invoice" required/,'Burger invoice cannot be required in HTML');
 assert.doesNotMatch(burgerScript,/if\(!f\('invoice'\)\.value\.trim\(\)\)/,'Burger invoice cannot be required before saving');
