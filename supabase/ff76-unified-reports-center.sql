@@ -15,6 +15,8 @@ DECLARE
  v_grievances jsonb;
  v_comparison jsonb;
  v_approval jsonb;
+ v_internal_ratings jsonb;
+ v_settlements jsonb;
 BEGIN
  SELECT p.role INTO v_role FROM public.ff_profiles AS p WHERE p.user_id=v_uid AND p.active;
  IF v_role IS NULL OR v_role NOT IN('manager','supervisor','customer_service','cashier','driver','assembly','burger_kitchen')
@@ -31,6 +33,9 @@ BEGIN
  IF v_role<>'manager' THEN
    SELECT array_agg(DISTINCT b.branch_id) INTO v_branches FROM public.ff_user_branches AS b WHERE b.user_id=v_uid;
    IF v_role='driver' THEN SELECT array_agg(d.branch_id) INTO v_branches FROM public.ff_drivers AS d WHERE d.id=v_driver; END IF;
+   IF v_role='customer_service' AND coalesce(cardinality(v_branches),0)=0 THEN
+     SELECT array_agg(DISTINCT o.branch_id) INTO v_branches FROM public.ff_orders AS o WHERE o.created_by=v_uid;
+   END IF;
    IF coalesce(cardinality(v_branches),0)=0 THEN RAISE EXCEPTION 'لم يحدد فرع للحساب' USING ERRCODE='42501'; END IF;
  END IF;
  IF p_branch IS NOT NULL AND NOT EXISTS(
@@ -159,6 +164,7 @@ BEGIN
         coalesce(sum(s.fee_amount) FILTER(WHERE s.status='delivered'),0) AS delivery_fees_due,
         coalesce(sum(s.invoice_amount+s.invoiced_addons) FILTER(WHERE s.status='delivered'),0) AS invoice_value,
         round(avg(s.invoice_amount+s.invoiced_addons) FILTER(WHERE s.status='delivered'),1) AS average_order,
+        round(avg(s.invoice_amount+s.invoiced_addons) FILTER(WHERE s.status='delivered'),1) AS average_order,
         round(avg(extract(epoch from(s.delivery_at-s.created_at))/60)
           FILTER(WHERE s.status='delivered' AND s.delivery_at>=s.created_at),1) AS average_minutes,
         round(avg(s.rating),2) AS average_rating
@@ -284,8 +290,41 @@ BEGIN
    'yesterday',coalesce((SELECT to_jsonb(x) FROM comparison AS x WHERE x.work_day=v_end-1),'{}'::jsonb),
    'last_week',coalesce((SELECT to_jsonb(x) FROM comparison AS x WHERE x.work_day=v_end-7),'{}'::jsonb)
  ) INTO v_comparison;
+ 
+ SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY x.driver_name),'[]'::jsonb)
+ INTO v_internal_ratings FROM (
+   SELECT d.name AS driver_name,count(*) AS ratings,
+    round(avg(r.stars),2) AS average_stars,
+    count(*) FILTER(WHERE r.stars<=2) AS low_ratings
+   FROM public.ff51_driver_ratings AS r
+   JOIN public.ff_drivers AS d ON d.id=r.driver_id
+   WHERE v_role IN('manager','supervisor','driver')
+     AND public.ff_business_date(r.rated_at) BETWEEN v_start AND v_end
+     AND (p_branch IS NULL OR d.branch_id=p_branch)
+     AND (v_role='manager' OR d.branch_id=ANY(v_branches))
+     AND (v_role<>'driver' OR r.driver_id=v_driver)
+     AND (p_driver IS NULL OR r.driver_id=p_driver)
+   GROUP BY d.name
+ ) AS x;
+ SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY x.driver_name),'[]'::jsonb)
+ INTO v_settlements FROM (
+   SELECT d.name AS driver_name,count(*) AS statements,
+      coalesce(sum(s.cash_due),0) AS cash_due,
+      coalesce(sum(s.cash_received),0) AS cash_received,
+      count(*) FILTER(WHERE s.status='closed') AS closed_statements
+   FROM public.ff42_driver_settlements AS s
+   JOIN public.ff_drivers AS d ON d.id=s.driver_id
+   WHERE v_role IN('manager','supervisor','driver')
+     AND s.settlement_date BETWEEN v_start AND v_end
+     AND (p_branch IS NULL OR s.branch_id=p_branch)
+     AND (v_role='manager' OR s.branch_id=ANY(v_branches))
+     AND (v_role<>'driver' OR s.driver_id=v_driver)
+     AND (p_driver IS NULL OR s.driver_id=p_driver)
+   GROUP BY d.name
+ ) AS x;
  RETURN v_core||jsonb_build_object(
    'attendance',v_attendance,'complaints',v_complaints,'grievances',v_grievances,
+   'internal_driver_ratings',v_internal_ratings,'settlements',v_settlements,
    'comparison',v_comparison,'approval',coalesce(v_approval,'{}'::jsonb),
    'data_warnings',jsonb_build_array(
      'الخصومات تقديرية من فرق مبالغ الأصناف والتوصيل والفاتورة، وليست قيوداً محاسبية.',
