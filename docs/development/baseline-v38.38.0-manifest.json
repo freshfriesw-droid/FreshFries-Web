@@ -1,0 +1,279 @@
+{
+  "project": "Fresh Fries LUXE",
+  "phase": "FIX-01",
+  "scope": "baseline source files (source only, no production data)",
+  "source_ref": "main",
+  "source_commit": "57ab198888f259acad0a09d813eceb132a795eec",
+  "snapshot_date": "2026-11-24",
+  "git_tree_sha": "57ab198888f259acad0a09d813eceb132a795eec",
+  "file_count": 53,
+  "total_bytes": 2732847,
+  "instructions": "Git blob SHA fingerprints are the exact repository source blobs at this immutable commit. Use git checkout <source_commit> to reconstruct; database rows are not included.",
+  "files": [
+    {
+      "path": ".github/workflows/brand-icon-sync.yml",
+      "bytes": 2522,
+      "blob_sha": "f3f4812a733e3e8785c8c995bf892fb416b34e74"
+    },
+    {
+      "path": ".github/workflows/ff-optional-email-once.yml",
+      "bytes": 2431,
+      "blob_sha": "42151ab0bfd5ef8ffc6f908090c6c8f03d8eccde"
+    },
+    {
+      "path": ".github/workflows/luxe-static-qa.yml",
+      "bytes": 690,
+      "blob_sha": "62ae42b51e099ec058b570ff26a045950848c322"
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "bytes": 9784,
+      "blob_sha": "9111c11a453e1d777fcafd8769dfba2acf162077"
+    },
+    {
+      "path": "assets/ff-icon-192.png",
+      "bytes": 10864,
+      "blob_sha": "71cd0734349817ccc3be4dc08555589584ba42f1"
+    },
+    {
+      "path": "assets/ff-icon-512.png",
+      "bytes": 40685,
+      "blob_sha": "566f3bb425ca6e4240ad42aaba70660b696e0aac"
+    },
+    {
+      "path": "assets/ff-official-logo.png",
+      "bytes": 1512844,
+      "blob_sha": "dc36c9fc7e89f65ac5340b9fa9d487b6b9a5bec3"
+    },
+    {
+      "path": "assets/ff-pinned-cairo-v38-37.js",
+      "bytes": 7326,
+      "blob_sha": "a1a9b268361f62ccd366e228d3c724c0b4b67967"
+    },
+    {
+      "path": "assets/luxe-report-center-20261123.css",
+      "bytes": 4305,
+      "blob_sha": "34eebe027b41eb5db89f284eea135121d2085a0d"
+    },
+    {
+      "path": "CNAME",
+      "bytes": 24,
+      "blob_sha": "389baa3cfcb84a0278c96430b0357dc70e689e89"
+    },
+    {
+      "path": "docs/ALERT_RING_BEHAVIOR_2026-11-22.md",
+      "bytes": 3435,
+      "blob_sha": "7e358fb0a35427ea45e4530edbbfcf4da78f8a9b"
+    },
+    {
+      "path": "favicon.ico",
+      "bytes": 27916,
+      "blob_sha": "759809aad5cf4762a9a76d2f7a68cdbc964b4d2c"
+    },
+    {
+      "path": "index.html",
+      "bytes": 595333,
+      "blob_sha": "c8646d0ffecaa5039173ccb7126afd29ee3d26a9"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "bytes": 631,
+      "blob_sha": "6b091c19a3edbd184a66f413a8a2cb438e36ab83"
+    },
+    {
+      "path": "offline.html",
+      "bytes": 851,
+      "blob_sha": "806777fd6bb508f1d73ec78f41502f9b99f3f067"
+    },
+    {
+      "path": "README.md",
+      "bytes": 8862,
+      "blob_sha": "a47e059920ef6fa2d6214376360173275c7fd06f"
+    },
+    {
+      "path": "scripts/luxe-all-menus-fold-20261123.js",
+      "bytes": 6355,
+      "blob_sha": "3d546eb6e64fbfdab54eebaa7b370682de72c163"
+    },
+    {
+      "path": "scripts/luxe-burger-kitchen-20261123.js",
+      "bytes": 31255,
+      "blob_sha": "42bd978706844810574cd76b328b2380af3ae502"
+    },
+    {
+      "path": "scripts/luxe-case-alerts-20261123.js",
+      "bytes": 5747,
+      "blob_sha": "5cefd99f5699d16411dd698bba71eb8375af8646"
+    },
+    {
+      "path": "scripts/luxe-cashier-destinations-20261122.js",
+      "bytes": 7091,
+      "blob_sha": "7c15673f0e16bb9496d95cf050d4090ab286ba89"
+    },
+    {
+      "path": "scripts/luxe-cashier-finished-20261123.js",
+      "bytes": 20465,
+      "blob_sha": "2b786e563ca9878477d0f5143ccd6a872bbd045e"
+    },
+    {
+      "path": "scripts/luxe-collapsible-sections-manager-create-20261123.js",
+      "bytes": 14029,
+      "blob_sha": "f29914c9628ff02841e64befb125c8d219f28335"
+    },
+    {
+      "path": "scripts/luxe-completed-detail-popup-20261123.js",
+      "bytes": 2413,
+      "blob_sha": "c7a91649f4e2b274e7c33875c9843b395a612d9d"
+    },
+    {
+      "path": "scripts/luxe-completed-universal-20261123.js",
+      "bytes": 26396,
+      "blob_sha": "81e52a3fd7750906df3b251533c5632e4110e97d"
+    },
+    {
+      "path": "scripts/luxe-driver-cancel-20261122.js",
+      "bytes": 6430,
+      "blob_sha": "7c346dc840ef08eb13609a9ef7bdf2d71ee8f4d3"
+    },
+    {
+      "path": "scripts/luxe-f01-operational-day-20261123.js",
+      "bytes": 8714,
+      "blob_sha": "9d968dcdadd66ac0949b1d7e91ce135dd2b8d347"
+    },
+    {
+      "path": "scripts/luxe-foreground-ring-20261122.js",
+      "bytes": 5504,
+      "blob_sha": "94824963cb0384d1aef0963e1d5d85da61e160e6"
+    },
+    {
+      "path": "scripts/luxe-history-period-20261123.js",
+      "bytes": 7961,
+      "blob_sha": "e3a0242261d97fd55c0b2d1d9fdca303f02ad0e2"
+    },
+    {
+      "path": "scripts/luxe-one-time-rewards-20261123.js",
+      "bytes": 14202,
+      "blob_sha": "60495629a951e18193c297579519f93e23351235"
+    },
+    {
+      "path": "scripts/luxe-operational-fixes-20261121.js",
+      "bytes": 13044,
+      "blob_sha": "bcd842951ca887851cdc296d024a263aca4ba40d"
+    },
+    {
+      "path": "scripts/luxe-operational-polish-20261121.js",
+      "bytes": 10503,
+      "blob_sha": "43e5eefa393a1141fd46e04c770381938d007888"
+    },
+    {
+      "path": "scripts/luxe-order-customer-edit-20261123.js",
+      "bytes": 5696,
+      "blob_sha": "6a7756c5d26f6ecdc3457f81506397112cf7436b"
+    },
+    {
+      "path": "scripts/luxe-report-center-20261123.js",
+      "bytes": 30092,
+      "blob_sha": "1afd1d7910038d6b0cf6baf4dbe4ea359dd8c2be"
+    },
+    {
+      "path": "scripts/luxe-shared-photo-menu-20261123.js",
+      "bytes": 8467,
+      "blob_sha": "4d33a7f032b4f13a020ad218dc81f2b2a42379a0"
+    },
+    {
+      "path": "scripts/luxe-static-ci.mjs",
+      "bytes": 21909,
+      "blob_sha": "5db6d64cdd7e8c55df8d2b0e4190677d1d520d48"
+    },
+    {
+      "path": "scripts/luxe-unified-order-inputs-20261123.js",
+      "bytes": 8303,
+      "blob_sha": "c562c504ef12077dd5ac28a7fc94c5a8dfc86912"
+    },
+    {
+      "path": "scripts/mobile-layout.py",
+      "bytes": 25708,
+      "blob_sha": "e84fc5e72390677d100824a943a6ddd449210c94"
+    },
+    {
+      "path": "supabase/ff76-report-foundation.sql",
+      "bytes": 4984,
+      "blob_sha": "09b9e7be6f3423a56a207c0e2a6a90cdbe51c01f"
+    },
+    {
+      "path": "supabase/ff76-unified-reports-center.sql",
+      "bytes": 22757,
+      "blob_sha": "bbd251c57f02aad0304b5af31761b6fd8dd6fd81"
+    },
+    {
+      "path": "supabase/functions/ff-push/index.ts",
+      "bytes": 7380,
+      "blob_sha": "7e75c12bb2a699069f4d4ddba31df857e8acc11c"
+    },
+    {
+      "path": "supabase/functions/ff61-employees/index.ts",
+      "bytes": 22350,
+      "blob_sha": "d218d12e75f5f5361290ba3ea6c4a9a74c5e617f"
+    },
+    {
+      "path": "supabase/migrations/20261123_burger_kitchen_staff_roles.sql",
+      "bytes": 61028,
+      "blob_sha": "77a099194383215b96449944e63d63c8e7a7cbe4"
+    },
+    {
+      "path": "supabase/migrations/20261123_burger_kitchen_workflow.sql",
+      "bytes": 15787,
+      "blob_sha": "3ce58865b17f7932122be62de52239b27fd49c5b"
+    },
+    {
+      "path": "supabase/migrations/20261123_burger_notes_presence.sql",
+      "bytes": 6301,
+      "blob_sha": "c977507b4e8da38b922da5c50eb9cfd64489db03"
+    },
+    {
+      "path": "supabase/migrations/20261123_burger_optional_invoice.sql",
+      "bytes": 2401,
+      "blob_sha": "e7f67419852686f077afaad61128eefba0634aa9"
+    },
+    {
+      "path": "supabase/migrations/20261123_customer_live_correction.sql",
+      "bytes": 8584,
+      "blob_sha": "c2be6a4c980f59381b8b952c1999e80d45684ffd"
+    },
+    {
+      "path": "supabase/migrations/20261123_f01_business_reports.sql",
+      "bytes": 37922,
+      "blob_sha": "57e81d2f8329cd76f7e0b981080b52aaf947438c"
+    },
+    {
+      "path": "supabase/migrations/20261123_f01_operational_day.sql",
+      "bytes": 7828,
+      "blob_sha": "8401e6fb2eb618dcc4c0f3686b8eb0f650b58684"
+    },
+    {
+      "path": "supabase/migrations/20261123_one_time_customer_rewards.sql",
+      "bytes": 13200,
+      "blob_sha": "4b1e7d35559e829ece885e984a709e3a08d5e2d9"
+    },
+    {
+      "path": "supabase/migrations/20261123_order_case_notifications.sql",
+      "bytes": 4787,
+      "blob_sha": "693c1ffba20c9bd7538d81a5b34ff31b440a0f4d"
+    },
+    {
+      "path": "supabase/migrations/20261123_reservations_unscheduled.sql",
+      "bytes": 2293,
+      "blob_sha": "0a89774e54aafd742842e4685d548933f73374e8"
+    },
+    {
+      "path": "supabase/tests/f01_business_date.sql",
+      "bytes": 2211,
+      "blob_sha": "af14f47b5874bda03263071d3182203a9d7eed49"
+    },
+    {
+      "path": "sw.js",
+      "bytes": 4247,
+      "blob_sha": "6317c7491947be2072d998d6222cd3237c5271f5"
+    }
+  ]
+}
