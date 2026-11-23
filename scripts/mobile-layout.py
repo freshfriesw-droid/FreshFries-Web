@@ -348,6 +348,7 @@ with sync_playwright() as playwright:
                   client={auth:{getSession:async()=>({data:{session:{access_token:'fixture-only'}},error:null})}};
                   window.__ff61CapRequests=[];window.__ff61NotificationRequests=[];
                   const originalFetch=window.fetch;
+                  window.__ff61FetchRestored=originalFetch;
                   window.fetch=(url,opts)=>{
                     if(!String(url).includes('/functions/v1/ff61-employees'))return originalFetch(url,opts);
                     const action=JSON.parse(opts.body).action;
