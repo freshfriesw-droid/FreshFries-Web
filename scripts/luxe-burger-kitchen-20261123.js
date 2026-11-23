@@ -26,7 +26,7 @@ css.textContent +=
  '.ff-burger-stepper button:disabled{opacity:.35;cursor:not-allowed}'+
  '.ff-burger-stepper .ff-burger-minus{background:#fff;color:#ad2133}'+
  '@media(max-width:360px){.ff-burger-item{grid-template-columns:minmax(0,1fr) 110px;gap:6px}.ff-burger-product{padding:8px}}';
-css.textContent += '.ff-burger-urgent-note{border:3px solid #e0203c;background:#fff1e7;color:#76132b;padding:13px;border-radius:12px;margin:11px 0;font-size:clamp(17px,3.5vw,21px);font-weight:950;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}'+
+css.textContent += '.ff-burger-ticket-products{margin:13px 0;padding:11px;border:1px solid #d9d9d9;border-radius:12px;background:var(--ffb-soft,#f8f8f8)}.ff-burger-ticket-products h5{font-size:15px;margin:0 0 9px;font-weight:800}.ff-burger-ticket-product-list{display:flex;flex-direction:column;gap:7px}.ff-burger-ticket-product-row{display:flex;align-items:flex-start;gap:10px;padding:10px 9px;border:1px solid #e0e0e0;border-radius:9px;background:var(--ffb-surface,#fff);font-size:16px;font-weight:700;line-height:1.5}.ff-burger-ticket-product-qty{display:inline-flex;flex:0 0 auto;min-width:55px;justify-content:center;background:#b91c30;color:#fff;border-radius:7px;padding:3px 8px;font-weight:900;font-variant-numeric:tabular-nums}.ff-burger-ticket-product-name{flex:1;overflow-wrap:anywhere}';\ncss.textContent += '.ff-burger-urgent-note{border:3px solid #e0203c;background:#fff1e7;color:#76132b;padding:13px;border-radius:12px;margin:11px 0;font-size:clamp(17px,3.5vw,21px);font-weight:950;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}'+
 '.ff-burger-note-confirm{display:flex;align-items:start;gap:10px;border:2px solid #c12e48;border-radius:9px;padding:12px;background:#fff8ee;font-size:15px;font-weight:800;color:#832034}'+
 '.ff-burger-note-confirm input{width:24px;height:24px;flex-shrink:0;accent-color:#c12e48}'+
 '.ff-burger-online{display:inline-block;border:1px solid #999;border-radius:9px;padding:8px;font-weight:900;margin:7px 0}'+
@@ -112,7 +112,17 @@ function createTicket(t,view){
  line('📍 '+t.branch_name+' · أُرسل '+time(t.sent_at));
  line('👤 الكاشير المرسل: '+t.cashier_name);
  line('👨‍🍳 موظف البرجر المستلم: '+(t.kitchen_name||'بانتظار الاستلام'));
- line('🍔 '+(t.items||[]).map(v=>v.qty+' × '+v.name).join('، '));
+ const products=make('section',undefined,'ff-burger-ticket-products');
+ products.append(make('h5','🍔 أصناف الطلب'));
+ const productList=make('div',undefined,'ff-burger-ticket-product-list');
+ for(const item of t.items||[]){
+   const row=make('div',undefined,'ff-burger-ticket-product-row');
+   row.append(make('span',String(item.qty)+' ×','ff-burger-ticket-product-qty'));
+   row.append(make('span',item.name||'صنف غير محدد','ff-burger-ticket-product-name'));
+   productList.append(row);
+ }
+ if(!productList.children.length)productList.append(make('p','لا توجد أصناف مسجلة','muted'));
+ products.append(productList);card.append(products);
  if(t.notes?.trim()){
    const notice=make('div','🚨 تعليمات خاصة يجب تنفيذها قبل التسليم:\n'+t.notes.trim(),'ff-burger-urgent-note');
    notice.setAttribute('role','alert');card.append(notice);
