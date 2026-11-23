@@ -1,0 +1,138 @@
+name: Generate 5 readable TXT consultant source files
+on:
+  push:
+    branches: [consultant-export-v38-38-20261123]
+    paths:
+      - '.github/workflows/ff-consultant-readable-txt.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  export-readable-text:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Produce lossless readable code in five TXT files
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64, hashlib, json, subprocess
+          commit='57ab198888f259acad0a09d813eceb132a795eec'
+          out=Path('consultant-handoff/text-source')
+          out.mkdir(parents=True,exist_ok=True)
+          paths=subprocess.check_output(['git','ls-tree','-r','--name-only',commit],text=True).splitlines()
+          grouped={i:[] for i in range(1,6)}
+          script_paths=[]
+          sizes={}
+          for p in paths:
+              data=subprocess.check_output(['git','show',f'{commit}:{p}'])
+              sizes[p]=len(data)
+              if p=='index.html' or p in ('CNAME','manifest.webmanifest','offline.html','sw.js'):
+                  grouped[1].append(p)
+              elif p.startswith('scripts/'):
+                  script_paths.append(p)
+              elif p.startswith('supabase/'):
+                  grouped[4].append(p)
+              else:
+                  grouped[5].append(p)
+          for p in sorted(script_paths,key=lambda p:sizes[p],reverse=True):
+              choice=min((2,3),key=lambda k:sum(sizes[x] for x in grouped[k]))
+              grouped[choice].append(p)
+          assert sorted(paths)==sorted(sum(grouped.values(),[])), 'Source-file inventory mismatch'
+
+          begin=b'\n<<<FF_LUXE_SOURCE_FILE_BEGIN>>>\n'
+          end=b'\n<<<FF_LUXE_SOURCE_FILE_END>>>\n'
+          manifest={'version':'v38.38.0','commit':commit,'date_utc':'2026-11-23T18:27:36Z','count':len(paths),'parts':[]}
+          for n in range(1,6):
+              name=f'FreshFries_LUXE_v38.38.0_SOURCE_{n:02d}_OF_05.txt'
+              path=out/name
+              with path.open('wb') as f:
+                  f.write(('Fresh Fries LUXE v38.38.0 | TEXT SOURCE PART '+str(n)+'/5\n'
+                           'Uncompressed plain UTF-8 text. Source code appears verbatim; images are base64.\n'
+                           'Source commit: '+commit+'\n'
+                           'To reconstruct original paths, use EXTRACT_FILES.py from the same directory.\n').encode('utf-8'))
+                  for p in sorted(grouped[n]):
+                      original=subprocess.check_output(['git','show',f'{commit}:{p}'])
+                      try:
+                          original.decode('utf-8')
+                          payload=original
+                          encoding='utf8'
+                      except UnicodeDecodeError:
+                          payload=base64.b64encode(original)
+                          encoding='base64'
+                      metadata={'path':p,'encoding':encoding,'payload_bytes':len(payload),
+                                'original_bytes':len(original),
+                                'sha256':hashlib.sha256(original).hexdigest()}
+                      f.write(begin)
+                      f.write(json.dumps(metadata,ensure_ascii=False,separators=(',',':')).encode('utf-8')+b'\n')
+                      f.write(payload)
+                      f.write(end)
+              assert path.read_bytes().decode('utf-8'), 'TXT must be valid UTF-8'
+              manifest['parts'].append({'filename':name,'bytes':path.stat().st_size,
+                    'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
+                    'source_files':len(grouped[n]),'paths':sorted(grouped[n])})
+          (out/'MANIFEST.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          (out/'EXTRACT_FILES.py').write_text(r'''from pathlib import Path
+          import base64, hashlib, json, sys
+          src=Path(__file__).resolve().parent
+          dest=Path(sys.argv[1]).resolve() if len(sys.argv)>1 else src/'RESTORED_SYSTEM'
+          begin=b'\n<<<FF_LUXE_SOURCE_FILE_BEGIN>>>\n'
+          end=b'\n<<<FF_LUXE_SOURCE_FILE_END>>>\n'
+          manifest=json.loads((src/'MANIFEST.json').read_text(encoding='utf-8'))
+          count=0
+          for part in manifest['parts']:
+              source=src/part['filename']
+              raw=source.read_bytes()
+              if hashlib.sha256(raw).hexdigest()!=part['sha256']:
+                  raise ValueError('Part corrupted: '+str(source))
+              pos=0
+              while True:
+                  index=raw.find(begin,pos)
+                  if index<0: break
+                  header_start=index+len(begin)
+                  header_end=raw.index(b'\n',header_start)
+                  meta=json.loads(raw[header_start:header_end].decode('utf-8'))
+                  payload_start=header_end+1
+                  payload_end=payload_start+meta['payload_bytes']
+                  payload=raw[payload_start:payload_end]
+                  if raw[payload_end:payload_end+len(end)]!=end:
+                      raise ValueError('Malformed file boundary: '+meta['path'])
+                  original=base64.b64decode(payload,validate=True) if meta['encoding']=='base64' else payload
+                  if len(original)!=meta['original_bytes'] or hashlib.sha256(original).hexdigest()!=meta['sha256']:
+                      raise ValueError('Checksum mismatch for '+meta['path'])
+                  target=dest/meta['path']
+                  if not target.resolve().is_relative_to(dest.resolve()):
+                      raise ValueError('Unsafe output path')
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  target.write_bytes(original)
+                  count+=1
+                  pos=payload_end+len(end)
+          assert count==manifest['count'],f'Expected {manifest["count"]} source files, got {count}'
+          print('SUCCESS: Restored',count,'original source files to',dest)
+          ''',encoding='utf-8')
+          (out/'README.txt').write_text(
+             'Five plain TXT files. Download all five and put them beside MANIFEST.json and EXTRACT_FILES.py.\n'
+             'Python 3: python EXTRACT_FILES.py\n'
+             'The original 53 files will appear in RESTORED_SYSTEM/. All names and exact bytes preserved.\n'
+             'Text source files are readable in Notepad or VS Code. Binary assets are base64 inside TXT.\n'
+             'No live production DB rows, Supabase service-role tokens, or passwords are exported.\n'
+             'The source version is pinned to '+commit+'.\n',encoding='utf-8')
+          # Test losslessness using the same extractor.
+          subprocess.run(['python',str(out/'EXTRACT_FILES.py'),'/tmp/ff_verified_restore'],check=True)
+          restored=Path('/tmp/ff_verified_restore')
+          for p in paths:
+              assert (restored/p).read_bytes()==subprocess.check_output(['git','show',f'{commit}:{p}']),p
+          print('Integrity verified:',len(paths),'files across 5 UTF-8 text sources')
+          PY
+      - name: Save text handoff files to independent export branch
+        shell: bash
+        run: |
+          git config user.name "Fresh Fries Source Export"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add consultant-handoff/text-source/
+          git commit -m "Export all production source as five readable TXT files, verified lossless"
+          git push origin HEAD:refs/heads/consultant-export-v38-38-20261123
