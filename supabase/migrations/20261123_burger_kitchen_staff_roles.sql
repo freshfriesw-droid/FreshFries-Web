@@ -1,3 +1,8 @@
+-- Extend employee application role check without altering existing applications.
+ALTER TABLE public.ff61_employee_applications DROP CONSTRAINT IF EXISTS ff61_employee_applications_requested_role_check;
+ALTER TABLE public.ff61_employee_applications ADD CONSTRAINT ff61_employee_applications_requested_role_check
+ CHECK (requested_role = ANY (ARRAY['driver','cashier','customer_service','supervisor','assembly','burger_kitchen']));
+
 CREATE OR REPLACE FUNCTION public.ff28_my_role()
  RETURNS text
  LANGUAGE plpgsql
