@@ -114,9 +114,9 @@ if(selectedSet.has('analytics'))html.push(section('analytics','<h4>الطلبا�
 '<h4>أوقات الذروة</h4>'+barChart((r.hourly||[]).map(x=>({label:String(x.hour_of_day).padStart(2,'0')+':00',orders:Number(x.orders)})),'orders')+
 '<p class="r-muted">نسبة الطلبات «المؤجلة» لا تُحسب دون حالة تأجيل مستقلة موثقة في قاعدة البيانات.</p>'));
 if(selectedSet.has('comparisons')){
- const c=r.comparison||{},today=c.today||{},old=c.yesterday||{},week=c.last_week||{};
- html.push(section('comparisons',table([['الفترة',x=>x.label],['الطلبات',x=>fmt(x.orders)],['المسلّمة',x=>fmt(x.delivered)],['القيمة',x=>cash(x.net)]],[{label:'نهاية الفترة',...today},{label:'اليوم السابق',...old},{label:'نفس اليوم الأسبوع الماضي',...week}])+
- cards([['تغيير الطلبات عن أمس',percentage(today.orders,old.orders)],['تغيير قيمة الفواتير عن أمس',percentage(today.net,old.net)],['الفرق عن الأسبوع الماضي',percentage(today.orders,week.orders)]])+
+ const c=r.comparison||{},today=c.today||{},old=c.yesterday||{},week=c.last_week||{},avgWeek=c.previous_week_average||{};
+ html.push(section('comparisons',table([['الفترة',x=>x.label],['الطلبات',x=>fmt(x.orders)],['المسلّمة',x=>fmt(x.delivered)],['القيمة',x=>cash(x.net)]],[{label:'نهاية الفترة',...today},{label:'اليوم السابق',...old},{label:'نفس اليوم الأسبوع الماضي',...week},{label:'متوسط السبعة أيام السابقة',...avgWeek}])+
+ cards([['تغيير الطلبات عن أمس',percentage(today.orders,old.orders)],['تغيير قيمة الفواتير عن أمس',percentage(today.net,old.net)],['الفرق عن الأسبوع الماضي',percentage(today.orders,week.orders)],['الفرق عن متوسط الأسبوع',percentage(today.orders,avgWeek.orders)]])+
  '<p class="r-muted">المقارنة تخص تاريخ نهاية الفترة المختارة فقط.</p>'))}
 if(selectedSet.has('approval'))html.push(section('approval',r.approval?.approved_at?
  '<div class="r-stamp"><b>اعتماد إداري: '+safe(r.approval.manager_name||'المدير')+'</b><div>تاريخ الاعتماد '+safe(stamp(r.approval.approved_at))+'</div><p>'+safe(r.approval.manager_notes)+'</p></div>':
