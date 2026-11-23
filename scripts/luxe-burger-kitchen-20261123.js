@@ -176,7 +176,8 @@ function render(){
  }else if(cashierRole()||assemblyRole()){
    const host=assemblyRole()?$('ffV12AssemblyWorkspace'):cashier;
    if(host&&panel.parentElement!==host)host.prepend(panel);
-   panel.classList.remove('hidden');kitchen.classList.add('hidden');
+   if(!assemblyRole()||$('ffV12BurgerOpen')?.getAttribute('aria-expanded')==='true')panel.classList.remove('hidden');
+   kitchen.classList.add('hidden');
    const ready=rows.filter(t=>t.status==='ready'),active=rows.filter(t=>t.status==='sent'||t.status==='preparing');
    $('ffBurgerCashierStatus').textContent='جاهز للاستلام: '+ready.length+' · تحت التحضير: '+active.length;
    fill('ffBurgerCashierReady',ready,'cashier');
@@ -263,8 +264,28 @@ window.ffBurgerOnCashierDraw=()=>{
  if(owner!==identity()){owner=identity();profile=null;initial=true;}
  panel.classList.remove('hidden');subscribe();heartbeat();void refresh();
 };
-window.ffBurgerOnAssemblyStart=()=>{if(!assemblyRole())return;window.ffBurgerOnCashierDraw();};
-window.ffBurgerOnAssemblyStop=()=>{reset();if(cashier&&panel.parentElement!==cashier)cashier.prepend(panel);};
+function assemblyBurgerPanel(open){
+ const launcher=$('ffV12BurgerOpen');
+ if(!launcher||!assemblyRole())return;
+ const host=$('ffV12AssemblyWorkspace');
+ if(host&&panel.parentElement!==host)host.append(panel);
+ panel.classList.toggle('hidden',!open);
+ launcher.setAttribute('aria-expanded',String(open));
+ launcher.textContent=open?'🍔 طي أوامر قسم البرجر':'🍔 أوامر قسم البرجر';
+ if(open){window.ffBurgerOnCashierDraw();panel.classList.remove('hidden');}
+}
+$('ffV12BurgerOpen')?.addEventListener('click',()=>assemblyBurgerPanel($('ffV12BurgerOpen').getAttribute('aria-expanded')!=='true'));
+window.ffBurgerOnAssemblyStart=()=>{
+ if(!assemblyRole())return;
+ const host=$('ffV12AssemblyWorkspace');
+ if(host&&panel.parentElement!==host)host.append(panel);
+ panel.classList.add('hidden');
+ const launcher=$('ffV12BurgerOpen');
+ if(launcher){launcher.setAttribute('aria-expanded','false');launcher.textContent='🍔 أوامر قسم البرجر';}
+ if(owner!==identity()){owner=identity();profile=null;initial=true;}
+ subscribe();heartbeat();void refresh();
+};
+window.ffBurgerOnAssemblyStop=()=>{reset();const launcher=$('ffV12BurgerOpen');if(launcher){launcher.setAttribute('aria-expanded','false');launcher.textContent='🍔 أوامر قسم البرجر';}if(cashier&&panel.parentElement!==cashier)cashier.prepend(panel);};
 window.addEventListener('ff-assembly-snapshot-success',()=>{if(cashierRole())window.ffBurgerOnCashierDraw()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authorized())void refresh(true)});
 window.addEventListener('focus',()=>{if(authorized())void refresh(true)});
