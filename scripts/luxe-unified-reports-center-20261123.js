@@ -108,7 +108,9 @@ function section(key,r){
   bars(R(r.hours),'orders',x=>x.hour_of_day+':00','أوقات الذروة حسب الساعة');
  if(key==='branches')return bars(R(r.branches),'delivered','branch_name','مقارنة الطلبات المسلّمة')+
   table(R(r.branches),[['الفرع','branch_name'],['الطلبات','orders'],['المسلّمة','delivered'],['الملغاة','cancelled'],
-  ['قيمة الفواتير',x=>money(x.invoice_value)],['متوسط الطلب',x=>money(x.avg_order_value)],['التوصيل',x=>money(x.delivery_fees)]]);
+  ['قيمة الفواتير',x=>money(x.invoice_value)],['متوسط الطلب',x=>money(x.avg_order_value)],['التوصيل',x=>money(x.delivery_fees)]])+
+  '<h4>مقارنة كل فرع بآخر يوم وأمس ونفس يوم الأسبوع الماضي</h4>'+
+  table(R(r.branch_comparison),[['الفرع','branch_name'],['تاريخ اليومية','day'],['الطلبات','orders'],['المسلّمة','delivered'],['قيمة المسلّمة',x=>money(x.value)]]);
  if(key==='orders')return stats([['الطلبات',n(t.orders)],['المنجزة',n(t.delivered)],['الملغاة',n(t.cancelled)],
   ['تأخر في الرحلة (> 40 دقيقة)',n(t.delayed_delivered)],['متأخر حاليًا',n(t.currently_late)],
   ['توصيل مجاني',n(t.free_delivery)],['خارج الدوام',n(t.out_of_hours)],['الطلبات المؤجلة',t.deferred_orders==null?'غير مصنفة':n(t.deferred_orders)],
@@ -120,7 +122,17 @@ function section(key,r){
   const rows=R(r.drivers),fast=[...rows].filter(x=>x.avg_trip_minutes!=null&&x.delivered>0).sort((a,b)=>a.avg_trip_minutes-b.avg_trip_minutes)[0],
    top=[...rows].filter(x=>x.average_rating!=null).sort((a,b)=>b.average_rating-a.average_rating)[0],
    most=[...rows].sort((a,b)=>b.delivered-a.delivered)[0];
-  return stats([['أسرع متوسط رحلة',fast?fast.name+' · '+n(fast.avg_trip_minutes)+' دقيقة':'—'],
+  const mostDeliveries=Math.max(1,...rows.map(x=>Number(x.delivered||0)));
+  const mostHours=Math.max(1,...rows.map(x=>Number(x.work_hours||0)));
+  const ranked=rows.filter(x=>Number(x.trip_sample)>=3&&Number(x.rating_count)>=3&&
+    Number(x.sessions)>=1&&x.work_hours!=null&&!x.partial_attendance).map(x=>({
+    ...x,score:35*(Number(x.on_time)/Number(x.trip_sample))+
+    30*(Number(x.average_rating)/5)+20*(Number(x.delivered)/mostDeliveries)+
+    15*(Number(x.work_hours)/mostHours)
+  })).sort((a,b)=>b.score-a.score);
+  const best=ranked[0];
+  return stats([['أفضل أداء مركب',best?best.name+' — '+n(best.score)+'/100':'بانتظار بيانات كافية'],
+   ['أسرع متوسط رحلة',fast?fast.name+' · '+n(fast.avg_trip_minutes)+' دقيقة':'—'],
    ['أعلى تقييم',top?top.name+' ⭐ '+n(top.average_rating):'—'],['أكثر طلبات مسلّمة',most?most.name+' · '+n(most.delivered):'—']])+
    table(rows,[['الموصل','name'],['الفرع','branch_name'],['المسندة','assigned'],['المنجزة','delivered'],
     ['قيمة الفواتير',x=>money(x.invoice_value)],['رسوم التوصيل',x=>money(x.delivery_fees)],
@@ -130,6 +142,7 @@ function section(key,r){
     ['ساعات الدوام الصافية',x=>x.work_hours==null?'غير مسجلة':n(x.work_hours)+' س'],
     ['ساعات الاستراحة',x=>x.break_hours==null?'—':n(x.break_hours)+' س'],
     ['جلسات الحضور','sessions'],['أول حضور',x=>dt(x.first_attendance)],['آخر نشاط',x=>dt(x.last_attendance)]])+
+   '<p class="ffr-help">مؤشر الأداء المركب استرشادي: 35% التزام زمن الرحلة، 30% التقييم، 20% عدد التوصيلات، 15% ساعات الدوام الصافية. يتطلب 3 رحلات، و3 تقييمات وجلسة دوام موثقة كاملة.</p>'+
    '<p class="ffr-warn">يتوقف احتساب الدوام أثناء الاستراحة، وتُجمع مرات الحضور بنفس اليومية، لكن جلسات ما قبل تفعيل هذا السجل لا يمكن استرجاع بدايتها بدقة. ترتيب أفضل موصل استرشادي حتى تتوفر عينات كافية من التقييمات والحضور.</p>';
  }
  if(key==='staff')return '<h4>عمل موظفي خدمة العملاء</h4>'+
@@ -155,7 +168,8 @@ function section(key,r){
    table(low,[['الموصل','driver_name'],['رقم الطلب','order_number'],['التقييم','stars'],['الملاحظات',x=>x.note||'بدون ملاحظات'],['الوقت',x=>dt(x.rated_at)]])+
    '<h4>تقييمات العملاء للطلبات</h4>'+
    table(R(r.order_ratings),[['الطلب','order_number'],['الفرع',x=>branchName(x.branch_id)],['التقييم','rating'],['ملاحظة العميل',x=>x.rating_note||'—']])+
-   '<h4>أعلى تقييمات الموصلين</h4>'+table(hi,[['الموصل','driver_name'],['النجوم','stars'],['الملاحظة',x=>x.note||'—']]);
+   '<h4>أعلى تقييمات الموصلين</h4>'+table(hi,[['الموصل','driver_name'],['النجوم','stars'],['الملاحظة',x=>x.note||'—']])+
+   (r.quality_detail?'<h4>الجودة والفوترة — للمدير</h4>'+stats([['الفواتير الموثقة',n(r.quality_detail.documented)],['الفواتير دون رقم',n(r.quality_detail.undocumented)],['التقييمات المنخفضة',n(r.quality_detail.low)],['متوسط تقييم العميل',n(r.quality_detail.average)],['النقد في تسويات مقفلة',money(r.quality_detail.confirmed_cash)]]):'');
  }
  if(key==='cases'){
   const cs=R(r.cases),cols=[['الطلب',x=>x.order_number||'غير مرتبط'],['الفرع',x=>branchName(x.branch_id)],['الموضوع','subject'],
@@ -172,13 +186,16 @@ function section(key,r){
    ['ملاحظات مؤكد تنفيذها',n(R(r.kitchen).reduce((a,x)=>a+Number(x.confirmed_notes),0))]])+
   table(R(r.kitchen),[['الفرع','branch_name'],['مرسلة','sent'],['منتهية','finished'],['ذات ملاحظات','with_notes'],
    ['ملاحظات منفّذة','confirmed_notes'],['متوسط التحضير',x=>x.avg_prep_minutes==null?'—':n(x.avg_prep_minutes)+' دقيقة'],
-   ['أسرع تحضير',x=>x.fastest_prep_minutes==null?'—':n(x.fastest_prep_minutes)+' دقيقة']]);
+   ['أسرع تحضير',x=>x.fastest_prep_minutes==null?'—':n(x.fastest_prep_minutes)+' دقيقة']])+
+  '<h4>أداء موظفي قسم البرجر</h4>'+table(R(r.kitchen_staff),[['الموظف','employee'],['الفرع',x=>branchName(x.branch_id)],['المستلمة','received'],['المنتهية','finished'],['ملاحظات مؤكد تنفيذها','confirmed_notes'],['متوسط التحضير',x=>x.avg_prep_minutes==null?'—':n(x.avg_prep_minutes)+' دقيقة']]);
  if(key==='rewards')return stats([['الأكواد الصادرة خلال الفترة',n(R(r.rewards).length)],
    ['المستهلكة',n(R(r.rewards).filter(x=>x.status==='redeemed').length)]])+
   table(R(r.rewards),[['الكود','code'],['النوع','kind'],['العميل','recipient_name'],['آخر الهاتف','phone_suffix'],
    ['الأصناف',x=>R(x.items).map(y=>y.qty+' × '+y.name).join('، ')],['الحالة','status'],
    ['تاريخ الإصدار',x=>dt(x.issued_at)],['الاستهلاك',x=>dt(x.redeemed_at)]]);
- if(key==='settlements')return '<p class="ffr-help">للمدير العام فقط: افتح «تسويات الموصلين» لمراجعة عدد الطلبات وقيمة الفواتير والنقد المطلوب والمستلم والفرق وسجل الإقفال. التقرير الدوري متاح هناك ضمن نافذة التاريخ، وهو منفصل عن الإيراد المحاسبي.</p>'+
+ if(key==='settlements')return stats([['عدد التسويات',n(r.settlement_detail?.totals?.settlements)],['عدد الطلبات المسلّمة',n(r.settlement_detail?.totals?.delivered_orders)],['النقد المطلوب',money(r.settlement_detail?.totals?.cash_due)],['النقد المستلم',money(r.settlement_detail?.totals?.cash_received)]])+
+  '<h4>التسويات المقفلة والمسودات خلال الفترة</h4>'+table(R(r.settlement_detail?.rows),[['اليوم','day'],['الفرع','branch'],['المسلّمة','delivered_orders'],['قيمة الفواتير',x=>money(x.delivered_value)],['التسويات','settlements'],['المطلوب',x=>money(x.cash_due)],['المستلم',x=>money(x.cash_received)],['الفرق',x=>money(x.difference)]])+
+  '<p class="ffr-help">الملخص للقراءة فقط؛ التعديل والإقفال من شاشة تسويات الموصلين للمدير.</p>'+
   '<p class="ffr-warn">يظل التقرير التشغيلي هنا قائمًا على تاريخ إنشاء الطلب، بينما التسوية النقدية اليومية تعتمد تاريخ التسليم الفعلي. لا تُجمع المبالغ بينهما دون مطابقة.</p>';
  if(key==='notes'){
   return '<div class="ffr-help">الملاحظات ومبلغ المصاريف اليدوي للتوثيق الإداري فقط. اعتماد التقرير يحفظ اسم المدير ووقت الاعتماد في سجل التدقيق، وليس توقيعًا رقميًا قانونيًا مشفّرًا.</div>'+
@@ -280,6 +297,15 @@ async function load(){
   const response=await rpc('ff_reports_center',{p_from:from.value,p_to:to.value,p_branch:branch.value||null,p_driver:driver.value||null});
   if(serial!==revision||uid()!==who||role()!==whichRole)return;
   if(!response?.meta||!response?.totals)throw Error('بيانات التقرير غير مكتملة');
+  if(whichRole==='manager'){
+    const [settlements,quality]=await Promise.allSettled([
+      rpc('ff_luxe_settlement_period',{p_from:from.value,p_to:to.value,p_branch:branch.value||null}),
+      rpc('ff27_quality',{p_from:from.value,p_to:to.value,p_branch:branch.value||null})
+    ]);
+    if(serial!==revision||uid()!==who||role()!==whichRole)return;
+    response.settlement_detail=settlements.status==='fulfilled'?settlements.value:null;
+    response.quality_detail=quality.status==='fulfilled'?quality.value:null;
+  }
   report=response;reportAt=new Date().toISOString();$('ffr-status').textContent='✅ تم إعداد تقرير '+response.meta.from+' — '+response.meta.to+
    ' · '+response.meta.scope_note+' · '+dt(reportAt);
   draw();
