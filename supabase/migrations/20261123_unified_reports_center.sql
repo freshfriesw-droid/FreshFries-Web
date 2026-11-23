@@ -232,6 +232,16 @@ BEGIN
      SELECT date_trunc('month',day::timestamp)::date AS month,
        sum(orders)::integer orders,sum(delivered)::integer delivered,sum(delivered_value) value
        FROM daily GROUP BY 1) w),'[]'::jsonb),
+  'branch_comparison',CASE WHEN v_role IN ('manager','supervisor','customer_service')
+    THEN COALESCE((SELECT jsonb_agg(to_jsonb(c) ORDER BY c.branch_name,c.day DESC) FROM(
+      SELECT b.id branch_id,b.name branch_name,a.day,
+        count(*)::integer orders,
+        count(*) FILTER(WHERE a.status='delivered')::integer delivered,
+        COALESCE(sum(a.total) FILTER(WHERE a.status='delivered'),0) value
+      FROM all_scoped a JOIN public.ff_branches b ON b.id=a.branch_id
+      WHERE a.day IN(v_to,v_to-1,v_to-7)
+      GROUP BY b.id,b.name,a.day
+     ) c),'[]'::jsonb) ELSE '[]'::jsonb END,
   'branches',COALESCE((SELECT jsonb_agg(to_jsonb(q) ORDER BY q.orders DESC) FROM (
    SELECT s.branch_id,b.name branch_name,count(*)::integer orders,
     count(*) FILTER(WHERE s.status='delivered')::integer delivered,
@@ -377,6 +387,23 @@ BEGIN
        SELECT 1 FROM public.ff_user_branches ub WHERE ub.user_id=v_uid AND ub.branch_id=b.id))
       AND (v_role<>'burger_kitchen' OR t.kitchen_id=v_uid OR t.kitchen_id IS NULL)
      GROUP BY b.id,b.name) x),'[]'::jsonb) ELSE '[]'::jsonb END,
+  'kitchen_staff',CASE WHEN v_role IN ('manager','supervisor','customer_service','burger_kitchen')
+    THEN COALESCE((SELECT jsonb_agg(to_jsonb(x) ORDER BY x.finished DESC) FROM(
+      SELECT t.kitchen_id,coalesce(max(t.kitchen_name),max(p.display_name),'لم يتم استلامه') AS employee,
+       t.branch_id, count(*)::integer received,
+       count(*) FILTER(WHERE t.status IN('ready','acknowledged'))::integer finished,
+       count(*) FILTER(WHERE t.notes_confirmed_at IS NOT NULL)::integer confirmed_notes,
+       round(avg(extract(epoch FROM(t.ready_at-t.accepted_at))/60)
+         FILTER(WHERE t.ready_at IS NOT NULL AND t.accepted_at IS NOT NULL),1) avg_prep_minutes
+      FROM public.ff_burger_tickets t
+      LEFT JOIN public.ff_profiles p ON p.user_id=t.kitchen_id
+      WHERE t.kitchen_id IS NOT NULL AND public.ff_business_date(t.sent_at) BETWEEN v_from AND v_to
+       AND (p_branch IS NULL OR t.branch_id=p_branch)
+       AND (v_role IN ('manager','customer_service') OR EXISTS(
+          SELECT 1 FROM public.ff_user_branches ub WHERE ub.user_id=v_uid AND ub.branch_id=t.branch_id))
+       AND (v_role<>'burger_kitchen' OR t.kitchen_id=v_uid)
+      GROUP BY t.kitchen_id,t.branch_id ORDER BY finished DESC LIMIT 100
+     ) x),'[]'::jsonb) ELSE '[]'::jsonb END,
   'manager_notes',CASE WHEN v_role='manager'
     THEN COALESCE((SELECT jsonb_agg(to_jsonb(n) ORDER BY n.business_date DESC) FROM(
       SELECT business_date,branch_id,note_text,manual_expenses,approver_name,approved_at,updated_at
