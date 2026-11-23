@@ -13,6 +13,14 @@ assert.match(html, /ff71-customer-phone-otp/, 'Customer OTP portal missing');
 assert.match(html, /ff_v12_assembly_set_stage/, 'Assembly workflow missing');
 assert.match(html, /ff28_customer/, 'Customer records must be server-filtered');
 assert.doesNotMatch(html, /sb_secret_[A-Za-z0-9]+/, 'Secret API key must never be embedded in the client');
+assert.match(html, /sidebar\.inert=true;sidebar\.setAttribute\('aria-hidden','true'\)/,
+  'Sidebar must be inaccessible when closed');
+assert.match(html, /sidebar\.inert=false;sidebar\.removeAttribute\('aria-hidden'\)/,
+  'Sidebar must become accessible when opened');
+assert.match(html, /--ffl-drawer-width:278px/, 'Canonical drawer sizing missing');
+assert.match(html, /visibility:hidden;\s*pointer-events:none;/, 'Closed drawer must not accept input');
+assert.doesNotMatch(html, /#ffx-nav-toggle\{display:inline-flex!important\}/, 'Remove dead sidebar toggle rule');
+
 assert.match(html, /#cashierOrders>\.item:not\(\.ff-luxe-cancelled\)/, 'Ordinary cashier cards must exclude cancelled orders');
 assert.match(html, /#driverTasks>\.item:not\(\.ff-luxe-cancelled\)/, 'Ordinary driver cards must exclude cancelled orders');
 assert.doesNotMatch(html, /\.ff60-order,\s*\.ff-luxe-cancelled,/, 'Generic blue cards must not override cancelled orders');
