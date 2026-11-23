@@ -74,7 +74,7 @@ CREATE OR REPLACE FUNCTION ff_private.ff_burger_ready_notes_guard()
 RETURNS trigger LANGUAGE plpgsql SET search_path=''
 AS $body$
 BEGIN
- IF NEW.status IN ('ready','acknowledged') AND NEW.status IS DISTINCT FROM OLD.status
+ IF NEW.status='ready' AND OLD.status='preparing'
    AND length(btrim(NEW.notes))>0 AND NEW.notes_confirmed_at IS NULL THEN
   RAISE EXCEPTION 'لا يمكن إنهاء البرجر قبل تأكيد تنفيذ الملاحظات' USING ERRCODE='23514';
  END IF;
