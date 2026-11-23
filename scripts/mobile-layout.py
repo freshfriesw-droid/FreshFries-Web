@@ -40,6 +40,26 @@ def check_order_status_colors(page):
         assert result[id]['cancelledWidth'] == '4px', (id, result)
 
 
+def check_legacy_status_feedback(page, width):
+    # Simulate ordinary operational success/error feedback without touching Supabase.
+    toast = page.locator("#toast")
+    assert toast.get_attribute("role") == "status"
+    assert toast.get_attribute("aria-live") == "polite"
+    assert toast.is_hidden()
+    toast.evaluate("""el => { el.textContent = 'تعذر التحديث: تحقق من الاتصال'; el.classList.remove('hidden'); }""")
+    assert toast.is_visible(), f"Legacy status feedback hidden at {width}px"
+    check_width(page, width, "#toast")
+    status_box = toast.bounding_box()
+    assert status_box and status_box["y"] >= -1, (width, status_box)
+    if width <= 850:
+        mobile_nav = page.locator("#ffx-mobile-nav").bounding_box()
+        assert mobile_nav and status_box["y"] + status_box["height"] <= mobile_nav["y"] + 2, (
+            width, status_box, mobile_nav
+        )
+    toast.evaluate("""el => { el.classList.add('hidden'); el.textContent = ''; }""")
+    assert toast.is_hidden()
+
+
 def check_width(page, width, selector):
     box = page.locator(selector).first.bounding_box()
     assert box and box["x"] >= -1 and box["x"] + box["width"] <= width + 1, (width, selector, box)
@@ -73,6 +93,7 @@ with sync_playwright() as playwright:
             document.getElementById(id).hidden=false;
         }""")
         check_order_status_colors(page)
+        check_legacy_status_feedback(page, width)
         for selector in ("main", "#ffx-topbar", "#ff61ManageShortcut", "#ff63NotificationsShortcut", "#ffx-options"):
             check_width(page, width, selector)
         assert page.locator("#ffx-sidebar").get_attribute("aria-hidden") == "true"
