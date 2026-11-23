@@ -14,6 +14,18 @@ css.textContent='#ffBurgerCashierPanel,#ffBurgerKitchenWorkspace{border:2px soli
 '#ffBurgerDialog::backdrop{background:#000b}.ff-burger-item{display:grid;grid-template-columns:1fr 95px;gap:10px;padding:8px;border:1px solid #ddd;border-radius:9px;align-items:center;margin:6px 0}.ff-burger-item input{text-align:center;direction:ltr}'+
 'body.ff-burger-kitchen-mode main>:not(#ffBurgerKitchenWorkspace){display:none!important}body.ff-burger-kitchen-mode #ffBurgerKitchenWorkspace{display:block!important}'+
 '@media(max-width:600px){.ff-burger-list{display:block}.ff-burger-card{margin-bottom:10px}#ffBurgerDialog{padding:12px}}';
+css.textContent +=
+ '.ff-burger-item{grid-template-columns:minmax(0,1fr) 124px;align-items:stretch;background:var(--ffb-surface,#fff);transition:border-color .18s,background-color .18s;gap:9px}'+
+ '.ff-burger-item.selected{border-color:#d72e42;background:rgba(209,33,53,.07)}'+
+ '.ff-burger-product{width:100%;height:100%;min-height:85px;text-align:right;white-space:normal;padding:12px;border-radius:10px;font-weight:800;line-height:1.5;overflow-wrap:anywhere;border:1px solid #bdc0c4;background:#f7f7f7;color:#171717;box-shadow:none!important}'+
+ '.ff-burger-item.selected .ff-burger-product{border-color:#ca2036;background:#fbe6e9;color:#9e132a}'+
+ '.ff-burger-qty{display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;min-width:0}'+
+ '.ff-burger-qty input{width:100%;max-width:115px;min-height:42px;text-align:center;direction:ltr;font-size:20px;font-weight:800;border-radius:9px}'+
+ '.ff-burger-stepper{display:grid;grid-template-columns:1fr 1fr;gap:5px;width:100%;direction:ltr}'+
+ '.ff-burger-stepper button{min-height:40px;padding:4px;border:1px solid #be263b;border-radius:9px;font-size:23px;font-weight:900;box-shadow:none!important;background:#ca2137;color:white;touch-action:manipulation}'+
+ '.ff-burger-stepper button:disabled{opacity:.35;cursor:not-allowed}'+
+ '.ff-burger-stepper .ff-burger-minus{background:#fff;color:#ad2133}'+
+ '@media(max-width:360px){.ff-burger-item{grid-template-columns:minmax(0,1fr) 110px;gap:6px}.ff-burger-product{padding:8px}}';
 document.head.append(css);
 const main=document.querySelector('main');if(!main)return;
 const kitchen=make('section');kitchen.id='ffBurgerKitchenWorkspace';kitchen.className='card hidden';
@@ -35,7 +47,7 @@ dialog.innerHTML='<h2>🍔 إعلام قسم البرجر</h2><form id="ffBurger
 '<label>الفرع<select name="branch" required></select></label>'+
 '<label>نوع الطلب<select name="kind" required><option value="local">محلي</option><option value="delivery">توصيل</option></select></label>'+
 '<label id="ffBurgerOrderLabel">طلب التوصيل المرتبط<select name="order"></select></label>'+
-'<label>رقم فاتورة الكاشير<input name="invoice" required maxlength="80" placeholder="اكتب رقم الفاتورة المرتبطة بالطلب"></label>'+
+'<label>رقم فاتورة الكاشير (اختياري)<input name="invoice" maxlength="80" placeholder="يمكن تركه فارغًا إذا لم توجد فاتورة"></label>'+
 '<h3>أصناف البرجر</h3><div id="ffBurgerMenuFields"></div>'+
 '<label>الملاحظات (إن وجدت)<textarea name="notes" rows="3" maxlength="1000"></textarea></label>'+
 '<p id="ffBurgerDialogStatus" role="status"></p><div class="actions">'+
@@ -88,7 +100,7 @@ function seconds(ticket){
 }
 function createTicket(t,view){
  const card=make('article',undefined,'ff-burger-card'+(t.status==='ready'?' ready':''));
- card.append(make('h4','🧾 فاتورة '+t.invoice_ref+' · '+(t.order_kind==='local'?'محلي':'توصيل')));
+ card.append(make('h4',(t.invoice_ref?.trim()?'🧾 فاتورة '+t.invoice_ref:'🍔 طلب برجر بدون رقم فاتورة')+' · '+(t.order_kind==='local'?'محلي':'توصيل')));
  card.append(make('span',({sent:'🆕 وارد',preparing:'⏳ تحت التحضير',ready:'✅ جاهز للاستلام',acknowledged:'✅ تم التخطي'})[t.status]||t.status,'ff-burger-chip'));
  const line=v=>card.append(make('p',v));
  line('📍 '+t.branch_name+' · أُرسل '+time(t.sent_at));
@@ -159,8 +171,8 @@ async function refresh(force=false){
    const newer=new Set(list.filter(t=>t.status==='sent').map(t=>t.id));
    const ready=new Set(list.filter(t=>t.status==='ready').map(t=>t.id));
    if(!initial){
-    if(kitchenRole())for(const t of list.filter(t=>t.status==='sent'&&!lastNew.has(t.id)))notify('🍔 طلب برجر جديد','فاتورة '+t.invoice_ref);
-    if(cashierRole())for(const t of list.filter(t=>t.status==='ready'&&!lastReady.has(t.id)))notify('✅ البرجر جاهز','فاتورة '+t.invoice_ref);
+    if(kitchenRole())for(const t of list.filter(t=>t.status==='sent'&&!lastNew.has(t.id)))notify('🍔 طلب برجر جديد',t.invoice_ref?.trim()?'فاتورة '+t.invoice_ref:'طلب بدون رقم فاتورة');
+    if(cashierRole())for(const t of list.filter(t=>t.status==='ready'&&!lastReady.has(t.id)))notify('✅ البرجر جاهز',t.invoice_ref?.trim()?'فاتورة '+t.invoice_ref:'طلب بدون رقم فاتورة');
    }
    lastNew=newer;lastReady=ready;initial=false;owner=identity();rows=list;render();
  }catch(e){
@@ -228,9 +240,43 @@ async function open(initialKind='local',linkedOrder=''){
  }
  const box=$('ffBurgerMenuFields');box.replaceChildren();
  for(const item of items){
-  const line=make('label',undefined,'ff-burger-item'),qty=make('input');
-  line.append(make('span',item.name));qty.type='number';qty.min='0';qty.max='99';qty.step='1';qty.value='0';qty.inputMode='numeric';
-  qty.dataset.burgerItem=item.id;qty.setAttribute('aria-label','كمية '+item.name);line.append(qty);box.append(line);
+  const line=make('div',undefined,'ff-burger-item');
+  const product=make('button',item.name,'ff-burger-product');product.type='button';
+  product.setAttribute('aria-label','إضافة قطعة واحدة من '+item.name);product.setAttribute('aria-pressed','false');
+  const count=make('div',undefined,'ff-burger-qty');
+  const qty=make('input');
+  qty.type='number';qty.min='0';qty.max='99';qty.step='1';qty.value='0';qty.inputMode='numeric';
+  qty.dataset.burgerItem=item.id;qty.setAttribute('aria-label','كمية '+item.name);
+  const controls=make('div',undefined,'ff-burger-stepper');
+  const minus=make('button','−','ff-burger-minus'),plus=make('button','+','ff-burger-plus');
+  minus.type=plus.type='button';
+  minus.setAttribute('aria-label','إنقاص '+item.name+' بواحد');
+  plus.setAttribute('aria-label','زيادة '+item.name+' بواحد');
+  function sync(){
+    const value=Number(qty.value);
+    const valid=Number.isInteger(value)&&value>=0&&value<=99;
+    line.classList.toggle('selected',valid&&value>0);
+    product.setAttribute('aria-pressed',String(valid&&value>0));
+    minus.disabled=!valid||value===0;plus.disabled=!valid||value===99;
+  }
+  function setQuantity(value){
+    qty.value=String(Math.max(0,Math.min(99,value)));
+    sync();
+  }
+  function shift(delta){
+    const value=Number(qty.value);
+    setQuantity((Number.isInteger(value)&&value>=0&&value<=99?value:0)+delta);
+  }
+  product.addEventListener('click',()=>shift(1));
+  plus.addEventListener('click',()=>shift(1));
+  minus.addEventListener('click',()=>shift(-1));
+  qty.addEventListener('input',sync);
+  qty.addEventListener('change',()=>{
+    const raw=qty.value.trim(),value=Number(raw);
+    setQuantity(raw!==''&&Number.isFinite(value)?Math.trunc(value):0);
+  });
+  controls.append(minus,plus);count.append(qty,controls);line.append(product,count);box.append(line);
+  sync();
  }
  function toggle(){const delivery=f('kind').value==='delivery';$('ffBurgerOrderLabel').hidden=!delivery;order.required=delivery}
  f('kind').onchange=toggle;branch.onchange=refreshOrders;toggle();dialog.showModal();
@@ -249,7 +295,6 @@ form.addEventListener('submit',async e=>{
    $('ffBurgerDialogStatus').textContent='حدد صنف برجر واحدًا على الأقل بكمية صحيحة';return
  }
  if(f('kind').value==='delivery'&&!f('order').value){$('ffBurgerDialogStatus').textContent='حدد طلب التوصيل المرتبط';return}
- if(!f('invoice').value.trim()){$('ffBurgerDialogStatus').textContent='أدخل رقم الفاتورة';return}
  busy=true;$('ffBurgerSubmit').disabled=true;$('ffBurgerDialogStatus').textContent='جارٍ إرسال أمر البرجر...';
  try{
   const saved=await rpc('ff_burger_send',{p_branch:f('branch').value,p_order_kind:f('kind').value,
