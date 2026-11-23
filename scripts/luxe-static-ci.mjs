@@ -12,6 +12,20 @@ assert.match(html, /ff61-employees/, 'Employee application portal missing');
 assert.match(html, /ff71-customer-phone-otp/, 'Customer OTP portal missing');
 assert.match(html, /ff_v12_assembly_set_stage/, 'Assembly workflow missing');
 
+const completedFile=get('scripts/luxe-completed-universal-20261123.js').toString('utf8');
+new vm.Script(completedFile, {filename:'scripts/luxe-completed-universal-20261123.js'});
+assert.match(completedFile, /window\.addEventListener\('ff-luxe-session-reset',clear\)/,
+  'Completed order data must be wiped when the session resets');
+assert.match(completedFile, /if\(!stillAuthorized\(\)\)return;/,
+  'Stale completed order records must never update the UI');
+assert.match(completedFile, /if\(stillAuthorized\(\)\)status\.textContent=/,
+  'Async errors must not expose old account state');
+assert.match(completedFile, /requestId===requestSequence/,
+  'Overlapping history responses must not overwrite the latest query');
+assert.match(completedFile, /if\(!canShowAction\(\)\)return;/,
+  'Completed action feedback must use the current authenticated viewer');
+
+
 assert.match(html, /data=null;user=null;window\.dispatchEvent\(new Event\('ff-luxe-session-reset'\)\)/,
   'Every resetUI must invalidate asynchronous manager-only reports');
 const settlementHistory=get('scripts/luxe-history-period-20261123.js').toString('utf8');
