@@ -14,8 +14,8 @@ assert.match(html, /ff_v12_assembly_set_stage/, 'Assembly workflow missing');
 assert.doesNotMatch(html, /\.head,#toast\{display:none!important\}/, 'Legacy operational feedback must not be globally hidden');
 assert.match(html, /id="toast" class="alert hidden" role="status" aria-live="polite" aria-atomic="true"/,
   'Legacy toast must expose accessible status semantics');
-assert.match(html, /#toast\{z-index:1245;/, 'Legacy toast must be visible over the shell');
-assert.match(html, /#toast\{bottom:calc\(84px \+ env\(safe-area-inset-bottom\)\)/,
+assert.match(html, /#toast\{\s*z-index:1245;/, 'Legacy toast must be visible over the shell');
+assert.match(html, /bottom:calc\(118px \+ env\(safe-area-inset-bottom\)\)/,
   'Mobile status must stay above the bottom navigation');
 assert.doesNotMatch(html, /@media\(min-width:1151px\)\{main,#ffx-topbar\{margin-right:278px\}\}/,
   'Remove obsolete desktop gutter override');
