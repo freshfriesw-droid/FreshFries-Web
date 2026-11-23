@@ -77,14 +77,25 @@ if(selectedSet.has('finance'))html.push(section('finance',cards([
 ['مبيعات أصناف الطلبات المسلّمة',cash(t.item_sales)],['رسوم التوصيل المستحقة',cash(t.delivery_fees)],['تقدير الخصومات',cash(t.discounts_estimate)],['الإجمالي النهائي المسجل',cash(t.net)],['متوسط قيمة الطلب المسلّم',cash(t.average_order)]
 ])+'<p class="r-muted">قيم الفواتير تشغيلية وليست تحصيلاً نقدياً مؤكداً. تقدير الخصومات من الفرق بين الأصناف + التوصيل والإجمالي المسجل؛ الإضافات المفوترة ضمن المبيعات والصافي.</p>'));
 if(selectedSet.has('orders'))html.push(section('orders',cards([
-['المنجزة',fmt(t.delivered)],['الملغاة',fmt(t.cancelled)],['معدل الإلغاء',t.cancellation_rate==null?'—':fmt(t.cancellation_rate)+'%'],['المتأخرة أكثر من 60 دقيقة',fmt(t.late)],['أسرع طلب',t.fastest_minutes==null?'—':fmt(t.fastest_minutes)+' دقيقة']
+['المنجزة',fmt(t.delivered)],['الملغاة',fmt(t.cancelled)],['معدل الإلغاء',t.cancellation_rate==null?'—':fmt(t.cancellation_rate)+'%'],['المتأخرة أكثر من 60 دقيقة',fmt(t.late)],['توصيل مجاني',fmt(t.free_delivery)],['أسرع طلب',t.fastest_minutes==null?'—':fmt(t.fastest_minutes)+' دقيقة']
 ])+'<h4>أسرع الطلبات</h4>'+table([['الطلب',x=>x.order_number],['الفرع',x=>x.branch_name],['الموصل',x=>x.driver_name],['دقائق',x=>x.minutes]],r.fastest)+
-'<h4>الطلبات الملغية وأسباب الإلغاء</h4>'+table([['الطلب',x=>x.order_number],['الفرع',x=>x.branch_name],['التاريخ',x=>stamp(x.created_at)],['السبب',x=>x.reason]],r.cancellations)));
+'<h4>الطلبات الملغية وأسباب الإلغاء</h4>'+table([['الطلب',x=>x.order_number],['الفرع',x=>x.branch_name],['التاريخ',x=>stamp(x.created_at)],['السبب',x=>x.reason]],r.cancellations)+
+'<h4>تفاصيل الطلبات المتأخرة (أكثر من 60 دقيقة)</h4>'+table([['الطلب',x=>x.order_number],['الفرع',x=>x.branch_name],['الدقائق',x=>fmt(x.delivery_minutes)],['وقت إنشاء الطلب',x=>stamp(x.created_at)]],r.late_orders)+
+'<h4>تفاصيل طلبات التوصيل المجاني</h4>'+table([['الطلب',x=>x.order_number],['الفرع',x=>x.branch_name],['قيمة الفاتورة',x=>cash(x.total_amount)],['تاريخ الإنشاء',x=>stamp(x.created_at)]],r.free_delivery_orders)));
 if(selectedSet.has('branches'))html.push(section('branches',table([['الفرع',x=>x.branch_name],['الكل',x=>fmt(x.orders)],['مسلّمة',x=>fmt(x.delivered)],['ملغاة',x=>fmt(x.cancelled)],['صافي الفواتير',x=>cash(x.net)],['متوسط الفاتورة',x=>cash(x.average_order)]],r.branch_rows)));
 if(selectedSet.has('drivers')){
  const top=(r.drivers||[]).slice().sort((a,b)=>Number(b.delivered)-Number(a.delivered))[0];
+ // Balanced score is shown ONLY when attendance, internal reviews, and at least 3 completed jobs exist.
+ const candidates=(r.drivers||[]).map(d=>({
+  ...d,internal:(r.internal_driver_ratings||[]).find(x=>x.driver_name===d.driver_name),
+  hours:(r.attendance||[]).filter(x=>x.driver_id===d.driver_id).reduce((a,x)=>a+Number(x.work_hours||0),0)
+ })).filter(d=>d.delivered>=3&&Number(d.internal?.ratings)>=1&&d.hours>0&&d.average_minutes>0);
+ const maxJobs=Math.max(1,...candidates.map(d=>Number(d.delivered)));
+ const maxHours=Math.max(1,...candidates.map(d=>d.hours));
+ const evaluated=candidates.map(d=>({name:d.driver_name,score:Math.round(100*(.25*Number(d.delivered)/maxJobs+.25*Math.min(1,30/Number(d.average_minutes))+.25*Number(d.internal.average_stars)/5+.25*d.hours/maxHours))})).sort((a,b)=>b.score-a.score);
+ const champion=evaluated.length>=2?evaluated[0]:null;
  const fast=(r.drivers||[]).filter(x=>Number(x.delivered)>=2&&x.average_minutes!=null).sort((a,b)=>Number(a.average_minutes)-Number(b.average_minutes))[0];
- html.push(section('drivers','<p class="r-muted">الأكثر إنجازاً: '+safe(top?.driver_name||'غير متاح')+' | الأسرع بالمتوسط (طلبان على الأقل): '+safe(fast?.driver_name||'بيانات غير كافية')+'. لا يُمنح لقب أفضل التزام شامل دون بيانات حضور وتقييم كافية.</p>'+
+ html.push(section('drivers','<p class="r-muted">الأكثر إنجازاً: '+safe(top?.driver_name||'غير متاح')+' | الأسرع بالمتوسط (طلبان على الأقل): '+safe(fast?.driver_name||'بيانات غير كافية')+'. تصنيف الأداء الشامل: '+safe(champion?champion.name+' — '+champion.score+'/100':'لا توجد بيانات كافية للترتيب العادل')+'. طريقة الترتيب عند توفر البيانات لموصلين اثنين على الأقل: 25% إنجاز، 25% سرعة، 25% تقييم داخلي، 25% ساعات عمل، بحد أدنى 3 طلبات وتقييم موثق ودوام.</p>'+
  table([['الموصل',x=>x.driver_name],['المسندة',x=>fmt(x.assigned)],['المنجزة',x=>fmt(x.delivered)],['رسوم مستحقة',x=>cash(x.delivery_fees_due)],['قيمة الفواتير',x=>cash(x.invoice_value)],['متوسط الفاتورة',x=>cash(x.average_order)],['متوسط التوصيل بالدقائق',x=>fmt(x.average_minutes)],['متوسط تقييم الطلب',x=>fmt(x.average_rating)]],r.drivers)+
 '<h4>تقييمات الموصلين الداخلية</h4>'+table([['الموصل',x=>x.driver_name],['مرات التقييم',x=>fmt(x.ratings)],['متوسط النجوم',x=>fmt(x.average_stars)],['التقييمات المنخفضة',x=>fmt(x.low_ratings)]],r.internal_driver_ratings)+
 '<h4>التسويات والتحصيل الفعلي المسجل</h4>'+table([['الموصل',x=>x.driver_name],['التسويات',x=>fmt(x.statements)],['المبلغ المستحق',x=>cash(x.cash_due)],['المبلغ المسجل مستلماً',x=>cash(x.cash_received)],['التسويات المقفلة',x=>fmt(x.closed_statements)]],r.settlements)+
