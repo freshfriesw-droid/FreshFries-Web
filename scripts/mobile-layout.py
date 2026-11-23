@@ -149,6 +149,17 @@ with sync_playwright() as playwright:
                   };
                 }""")
                 page.locator("#ffx-menu").click()
+                # FIX-03: administrative links live in a six-group, keyboard-accessible
+                # accordion. Verify opening, not just existence of a hidden DOM node.
+                nav_groups = page.locator("#ffx-nav [data-ffx-group-toggle]")
+                nav_groups.first.wait_for(state="attached", timeout=20000)
+                assert nav_groups.count() == 6, nav_groups.count()
+                system_group = page.locator("#ffx-nav [data-ffx-group-toggle=system]")
+                assert system_group.get_attribute("aria-expanded") == "false"
+                system_group.focus()
+                page.keyboard.press("Enter")
+                assert system_group.get_attribute("aria-expanded") == "true"
+                assert page.locator("#ffx-group-links-system").is_visible()
                 entry = page.locator("#ffx-nav [data-key=data_center]")
                 entry.click()
                 dialog = page.locator("#ff62DataCenter")

@@ -1,0 +1,23 @@
+/* FIX-03 / DEC-05 — scoped six-group RTL accordion; navigation behavior remains permission-driven. */
+#ffx-nav .ffx-nav-group{margin:2px 0 8px;min-width:0}
+#ffx-nav .ffx-section-toggle{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ width:100%;min-height:44px;margin:0;padding:10px 12px;
+ border:1px solid transparent;border-radius:12px;
+ background:transparent;color:#e6e6e9;cursor:pointer;
+ text-align:right;font:800 13px/1.6 'Cairo',Tahoma,Arial,sans-serif;
+}
+#ffx-nav .ffx-section-toggle:hover{background:#ffffff12;border-color:#ffffff18}
+#ffx-nav .ffx-section-toggle:focus-visible{outline:3px solid #ffc862;outline-offset:2px}
+#ffx-nav .ffx-section-toggle[aria-expanded="true"]{color:#fff;background:#d51e2c22}
+#ffx-nav .ffx-section-toggle-label{min-width:0;flex:1;overflow-wrap:anywhere}
+#ffx-nav .ffx-accordion-arrow{display:inline-flex;align-items:center;justify-content:center;
+ width:23px;height:23px;border-radius:7px;background:#ffffff13;flex:0 0 auto;
+ transition:transform .16s ease}
+#ffx-nav .ffx-section-toggle[aria-expanded="false"] .ffx-accordion-arrow{transform:rotate(90deg)}
+#ffx-nav .ffx-nav-group-links{padding:4px 8px 6px 0;border-right:2px solid #ffffff1c;margin-right:10px}
+#ffx-nav .ffx-nav-group-links[hidden]{display:none!important}
+#ffx-nav .ffx-nav-group-links .ffx-side-link{min-height:44px}
+@media(prefers-reduced-motion:reduce){
+ #ffx-nav .ffx-accordion-arrow{transition:none}
+}

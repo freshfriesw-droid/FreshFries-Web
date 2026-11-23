@@ -640,7 +640,8 @@ body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{
  .ff-luxe-employee-meta{flex-direction:column;gap:5px}
 }
 </style>
-<link rel="stylesheet" href="./assets/luxe-report-center-20261123.css"></head>
+<link rel="stylesheet" href="./assets/luxe-report-center-20261123.css"><link rel="stylesheet" href="./styles/ffx-nav-groups.css">
+</head>
 <body class="ff-booting" data-access="locked"><div id="ff65Boot" role="status" aria-live="polite" style="text-align:center;padding:20px"><div id="ff65BootMessage">جارِ استعادة جلسة فريش فرايز…</div><noscript><p style="font-size:14px">يلزم تفعيل JavaScript في المتصفح لاستخدام نظام فريش فرايز.</p></noscript></div>
 <script id="ff-luxe-boot-watchdog">
 (()=>{
@@ -3242,9 +3243,12 @@ const S=(tag,attrs={})=>{const n=doc.createElement(tag);Object.entries(attrs).fo
 const icons={menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',home:'<path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',plus:'<path d="M12 5v14M5 12h14"/>',orders:'<rect x="4" y="3" width="16" height="19" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',bike:'<circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="m5.5 17.5 4-8 5 8 4-8H13M9.5 9.5H7.5"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/>',alert:'<path d="m11 3-9 16a2 2 0 0 0 2 3h16a2 2 0 0 0 2-3L13 3a1 1 0 0 0-2 0Z"/><path d="M12 9v5M12 18h.01"/>',bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M10 2h4l.6 2.3 1.7 1 2.3-.6 2 3.5-1.7 1.7v2l1.7 1.7-2 3.5-2.3-.6-1.7 1L14 21h-4l-.6-2.5-1.7-1-2.3.6-2-3.5L5 12.9v-2L3.4 9.2l2-3.5 2.3.6 1.7-1z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',moon:'<path d="M20.2 15.8A8.7 8.7 0 0 1 8.2 3.8 9 9 0 1 0 20.2 15.8z"/>',arrow:'<path d="m15 18-6-6 6-6"/>',logout:'<path d="M10 17l5-5-5-5M15 12H3M13 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/>',refresh:'<path d="M20 11a8 8 0 0 0-14-5L4 8M4 4v4h4M4 13a8 8 0 0 0 14 5l2-2m0 4v-4h-4"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',report:'<path d="M4 20V10M10 20V4M16 20v-9M22 20V7"/>',wallet:'<rect x="3" y="6" width="18" height="15" rx="2"/><path d="M3 10h18M7 6V3h11"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/>',folder:'<path d="M3 7h7l2 2h9v11H3z"/>',message:'<path d="M4 5h16v12H9l-5 4z"/>',star:'<path d="m12 2 3.1 6.3 7 .9-5.1 5 1.3 7-6.3-3.3-6.3 3.3 1.3-7-5.1-5 7-.9z"/>',users:'<circle cx="9" cy="8" r="4"/><path d="M2 20a7 7 0 0 1 14 0M17 4a4 4 0 0 1 0 8m1 3a6 6 0 0 1 4 5"/>',check:'<path d="m4 12 5 5L20 6"/>',search:'<circle cx="10" cy="10" r="7"/><path d="m15 15 6 6"/>',volume:'<path d="M4 9h4l5-5v16l-5-5H4zM17 9a5 5 0 0 1 0 6M19 6a9 9 0 0 1 0 12"/>',filter:'<path d="M3 4h18l-7 8v7l-4 2v-9z"/>',chevron:'<path d="m9 18 6-6-6-6"/>',shield:'<path d="M12 2 4 5v6c0 5 3.4 8.7 8 11 4.6-2.3 8-6 8-11V5z"/>',close:'<path d="M5 5l14 14M19 5 5 19"/>',phone:'<path d="M6 2h4l1 5-3 2a16 16 0 0 0 7 7l2-3 5 1v4c0 2-1 3-3 3A17 17 0 0 1 3 5c0-2 1-3 3-3z"/>'};
 function icon(name,cls=''){return `<svg class="ffx-icon ${cls}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${icons[name]||icons.grid}</svg>`}
 const groups=[
- {title:'الرئيسية',items:[['لوحة التحكم','home','home'],['طلب جديد','plus','new'],['الطلبات والمتابعة','orders','orders'],['الطلبات المتأخرة','alert','late']]},
- {title:'تشغيل الفروع',items:[['الموصلون','bike','drivers'],['بوابة الموصل','bike','driver'],['شاشة الكاشير','wallet','cashier'],['المنيو والعروض','grid','catalog'],['العملاء','users','customers'],['الأرشيف','folder','archive'],['التقييمات','star','ratings'],['تعديل الطلبات','orders','changes'],['الحجوزات','calendar','reservations'],['نقل الموصل','refresh','transfer'],['توجيه مناطق الجامعات','filter','routes']]},
- {title:'التقارير والإدارة',items:[['مركز التقارير الإداري','report','reports'],['تسويات الموصلين','wallet','settlements'],['الرسائل','message','messages'],['الشكاوى والتظلمات','message','cases'],['الموظفون والصلاحيات','shield','team'],['🎟️ أكواد التعويض والجوائز','star','rewards'],['إدارة البيانات والتصفير','folder','data_center'],['أمان النظام','shield','security'],['تدقيق سلامة البيانات','check','integrity'],['عزل الفروع','shield','access'],['جاهزية الإطلاق','check','readiness'],['الاختبار الشامل','check','qa'],['تشخيص النسخة','settings','diagnostics']]}
+ {key:'home',title:'الرئيسية',items:[['لوحة التحكم','home','home'],['طلب جديد','plus','new'],['الطلبات والمتابعة','orders','orders'],['الطلبات المتأخرة','alert','late']]},
+ {key:'operations',title:'التشغيل',items:[['الموصلون','bike','drivers'],['بوابة الموصل','bike','driver'],['شاشة الكاشير','wallet','cashier'],['الحجوزات','calendar','reservations'],['نقل الموصل','refresh','transfer'],['توجيه مناطق الجامعات','filter','routes'],['الرسائل','message','messages'],['الشكاوى والتظلمات','message','cases']]},
+ {key:'reports',title:'التقارير',items:[['مركز التقارير الإداري','report','reports'],['الأرشيف','folder','archive'],['التقييمات','star','ratings']]},
+ {key:'finance',title:'المالية',items:[['تسويات الموصلين','wallet','settlements'],['🎟️ أكواد التعويض والجوائز','star','rewards']]},
+ {key:'management',title:'الإدارة',items:[['المنيو والعروض','grid','catalog'],['العملاء','users','customers'],['تعديل الطلبات','orders','changes'],['الموظفون والصلاحيات','shield','team'],['إدارة نقطة التجميع','grid','assembly_admin']]},
+ {key:'system',title:'النظام',items:[['إدارة البيانات والتصفير','folder','data_center'],['أمان النظام','shield','security'],['تدقيق سلامة البيانات','check','integrity'],['عزل الفروع','shield','access'],['جاهزية الإطلاق','check','readiness'],['الاختبار الشامل','check','qa'],['تشخيص النسخة','settings','diagnostics']]}
 ];
 const targets={catalog:'ff51CatalogBtn',customers:'ff51CustomersBtn',archive:'ff51ArchiveBtn',ratings:'ff51RatingsBtn',changes:'ff50ChangesBtn',reservations:'ff49ReservationsBtn',transfer:'ff49TransferBtn',routes:'ff52RoutesBtn',reports:'ff40ReportsBtn',settlements:'ff42SettlementsBtn',messages:'ff39InboxBtn',cases:'ff41CasesBtn',security:'ff43SecurityBtn',integrity:'ff44IntegrityBtn',access:'ff45AccessBtn',readiness:'ff46ReadinessBtn',qa:'ff47QABtn',diagnostics:'ff48DiagnosticsBtn'};
 const roleAllowed=(key)=>{const role=typeof data!=='undefined'&&data?.role||'';if(!role)return false;if(['home','settings'].includes(key))return true;if(key==='reports')return true;if(key==='new')return ['manager','customer_service'].includes(role)&&(typeof canAction==='function'?canAction('create_order'):true);if(['orders','drivers'].includes(key))return ['manager','customer_service','supervisor'].includes(role);if(key==='driver')return role==='driver';if(key==='cashier')return role==='cashier';if(key==='team'||key==='assembly_admin'||key==='data_center'||key==='rewards')return role==='manager';if(key==='late')return !!($x('ff40AlertsBtn')&&!$x('ff40AlertsBtn').classList.contains('hidden'));
@@ -3537,7 +3541,64 @@ if(origDing)ding=function(){sound(prefs.sound)};
 toast=function(s){showToast(String(s??''),null,true)};/* ffb: one unified toast */
 if(origNotify)notify=function(title,body){showToast(`${title} — ${body}`);if(prefs.visual&&typeof window.ffLuxeDeviceNotify==='function')window.ffLuxeDeviceNotify(title,body,'ff-luxe-notice')};
 let navSig='',activeKey='home';function markActive(){doc.querySelectorAll('#ffx-nav .ffx-side-link[data-key],#ffx-mobile-nav button[data-key]').forEach(b=>b.classList.toggle('active',b.dataset.key===activeKey))}
-function setSidebarNav(){const sig=[userLogged()?data.role:'',groups.map(g=>g.items.filter(i=>roleAllowed(i[2])).map(i=>i[2]).join(',')).join(';'),$x('ffx-alert-num').textContent].join('|');if(sig===navSig)return;navSig=sig;const root=$x('ffx-nav');root.innerHTML='';groups.forEach(group=>{const shown=group.items.filter(item=>roleAllowed(item[2]));if(!shown.length)return;const title=S('div',{class:'ffx-section-label'});title.textContent=group.title;root.append(title);for(const [label,ic,key]of shown){const b=S('button',{type:'button',class:'ffx-side-link'+(key==='home'?' active':'')});b.innerHTML=`${icon(ic)}<span>${h(label)}</span><span class="ffx-badge" data-ffx-badge="${h(key)}" style="display:none"></span>`;b.dataset.key=key;b.addEventListener('click',()=>navigate(key));root.append(b)}});const footer=S('div',{class:'ffx-section-label'});footer.textContent='التفضيلات والحساب';root.append(footer);[['تخصيص المظهر والأصوات','settings','settings'],['تحديث البيانات','refresh','refresh'],['تسجيل الخروج','logout','logout']].forEach(([txt,ic,key])=>{if(key==='logout'&&!userLogged())return;const b=S('button',{class:'ffx-side-link',type:'button'});b.innerHTML=`${icon(ic)}<span>${txt}</span>`;b.onclick=()=>navigate(key);root.append(b)});const count=$x('ffx-alert-num').textContent;const bb=root.querySelector('[data-ffx-badge="late"]');if(bb&&count&&Number(count)>0){bb.textContent=count;bb.style.display='inline-block'}markActive()
+// FIX-03 / DEC-05: six discoverable accordion groups; full navigation keys are preserved.
+// The default state is local to the signed-in account and role, never shared as private data.
+function navStorageKey(){
+ const uid=typeof user!=='undefined'&&user?.id?String(user.id):'guest';
+ const role=typeof data!=='undefined'&&data?.role?String(data.role):'anonymous';
+ return 'ffx-nav-expanded-v1:'+uid+':'+role;
+}
+function getNavExpansion(){
+ try{const v=JSON.parse(localStorage.getItem(navStorageKey())||'{}');
+  return v&&typeof v==='object'&&!Array.isArray(v)?v:{};}catch(_){return {}}
+}
+function setSidebarNav(){
+ const actor=typeof user!=='undefined'&&user?.id?String(user.id):'';
+ const role=userLogged()?data.role:'';
+ const sig=[actor,role,groups.map(g=>g.items.filter(i=>roleAllowed(i[2])).map(i=>i[2]).join(',')).join(';'),$x('ffx-alert-num').textContent].join('|');
+ if(sig===navSig)return;
+ navSig=sig;
+ const root=$x('ffx-nav');root.replaceChildren();
+ const saved=getNavExpansion();
+ const write=()=>{try{localStorage.setItem(navStorageKey(),JSON.stringify(saved))}catch(_){}};
+ groups.forEach(group=>{
+  const shown=group.items.filter(item=>roleAllowed(item[2]));
+  if(!shown.length)return;
+  const expanded=Object.prototype.hasOwnProperty.call(saved,group.key)?saved[group.key]===true:['home','operations'].includes(group.key);
+  const section=S('section',{class:'ffx-nav-group','data-ffx-group':group.key});
+  const title=S('button',{class:'ffx-section-toggle',type:'button','data-ffx-group-toggle':group.key,'aria-expanded':String(expanded),'aria-controls':'ffx-group-links-'+group.key});
+  title.append(S('span',{class:'ffx-section-toggle-label'}),S('span',{class:'ffx-accordion-arrow','aria-hidden':'true'}));
+  title.firstChild.textContent=group.title;
+  title.lastChild.textContent='▾';
+  const links=S('div',{class:'ffx-nav-group-links',id:'ffx-group-links-'+group.key});
+  links.hidden=!expanded;
+  title.addEventListener('click',()=>{
+    const next=title.getAttribute('aria-expanded')!=='true';
+    title.setAttribute('aria-expanded',String(next));
+    links.hidden=!next;
+    saved[group.key]=next;write();
+  });
+  for(const [label,ic,key]of shown){
+    const b=S('button',{type:'button',class:'ffx-side-link'+(key===activeKey?' active':'')});
+    b.innerHTML=`${icon(ic)}<span>${h(label)}</span><span class="ffx-badge" data-ffx-badge="${h(key)}" style="display:none"></span>`;
+    b.dataset.key=key;
+    b.addEventListener('click',()=>navigate(key));
+    links.append(b);
+  }
+  section.append(title,links);
+  root.append(section);
+ });
+ const footer=S('div',{class:'ffx-section-label'});footer.textContent='التفضيلات والحساب';root.append(footer);
+ [['تخصيص المظهر والأصوات','settings','settings'],['تحديث البيانات','refresh','refresh'],['تسجيل الخروج','logout','logout']].forEach(([txt,ic,key])=>{
+  if(key==='logout'&&!userLogged())return;
+  const b=S('button',{class:'ffx-side-link',type:'button'});
+  b.innerHTML=`${icon(ic)}<span>${txt}</span>`;
+  b.onclick=()=>navigate(key);root.append(b);
+ });
+ const count=$x('ffx-alert-num').textContent;
+ const badge=root.querySelector('[data-ffx-badge="late"]');
+ if(badge&&count&&Number(count)>0){badge.textContent=count;badge.style.display='inline-block'}
+ markActive();
 }
 function userLogged(){return typeof user!=='undefined'&&!!user&&typeof data!=='undefined'&&!!data}
 function originalButton(key){const el=$x(targets[key]);return el&&roleAllowed(key)?el:null}
