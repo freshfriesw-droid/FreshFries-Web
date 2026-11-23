@@ -17,7 +17,7 @@ css.textContent='#ffBurgerCashierPanel,#ffBurgerKitchenWorkspace{border:2px soli
 document.head.append(css);
 const main=document.querySelector('main');if(!main)return;
 const kitchen=make('section');kitchen.id='ffBurgerKitchenWorkspace';kitchen.className='card hidden';
-kitchen.innerHTML='<div class="ff-burger-head"><h2>🍔 المطبخ · قسم البرجر</h2><button type="button" class="outline" id="ffBurgerKitchenRefresh">تحديث</button></div>'+
+kitchen.innerHTML='<div class="ff-burger-head"><h2>🍔 المطبخ · قسم البرجر</h2><button type="button" class="outline" id="ffBurgerKitchenNotifications">🔔 تفعيل الإشعارات</button><button type="button" class="outline" id="ffBurgerKitchenRefresh">تحديث</button></div>'+
 '<p id="ffBurgerKitchenBranch" class="muted"></p><p id="ffBurgerKitchenStatus" role="status"></p>'+
 '<h3>الطلبات الواردة والجاري تحضيرها</h3><div id="ffBurgerKitchenActive" class="ff-burger-list"></div>'+
 '<details><summary>✅ الطلبات المنتهية · قسم البرجر</summary><div id="ffBurgerKitchenFinished" class="ff-burger-list"></div></details>';
@@ -155,6 +155,7 @@ function subscribe(){
   .subscribe();
 }
 window.ffBurgerActive=()=>isKitchenMode;
+window.ffBurgerRefresh=()=>refresh(true);
 window.ffBurgerStart=async()=>{
  reset();isKitchenMode=true;owner=identity();
  document.body.classList.add('ff-burger-kitchen-mode');
@@ -235,4 +236,5 @@ form.addEventListener('submit',async e=>{
  finally{busy=false;$('ffBurgerSubmit').disabled=false}
 });
 $('ffBurgerKitchenRefresh').onclick=()=>void refresh(true);
+$('ffBurgerKitchenNotifications').onclick=()=>void window.ffLuxeSubscribePush?.();
 })();
