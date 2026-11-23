@@ -1,0 +1,88 @@
+name: Build five independently extractable consultant ZIPs
+on:
+  push:
+    branches: [consultant-export-v38-38-20261123]
+    paths:
+      - '.github/workflows/ff-consultant-readable-packs.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  create-zips:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Create 5 standalone, independently unzip-able source packages
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+          import subprocess, hashlib, json
+          commit = '57ab198888f259acad0a09d813eceb132a795eec'
+          root=Path('consultant-handoff/standalone-zips')
+          root.mkdir(parents=True,exist_ok=True)
+          paths=subprocess.check_output(['git','ls-tree','-r','--name-only',commit],text=True).splitlines()
+          categories={1:[],2:[],3:[],4:[],5:[]}
+          scripts=[p for p in paths if p.startswith('scripts/')]
+          weights={2:0,3:0}
+          for path in paths:
+              if path == 'index.html' or path in ['CNAME','manifest.webmanifest','offline.html','sw.js']:
+                  categories[1].append(path)
+              elif path.startswith('scripts/'):
+                  pass
+              elif path.startswith('supabase/'):
+                  categories[4].append(path)
+              else:
+                  categories[5].append(path)
+          for path in sorted(scripts,key=lambda p:int(subprocess.check_output(['git','cat-file','-s',f'{commit}:{p}']).strip()),reverse=True):
+              bucket=min((2,3),key=lambda n:weights[n])
+              categories[bucket].append(path)
+              weights[bucket]+=int(subprocess.check_output(['git','cat-file','-s',f'{commit}:{path}']).strip())
+          assert sorted(p for v in categories.values() for p in v) == sorted(paths), "Missing/duplicate paths"
+          manifest={
+            'project':'Fresh Fries LUXE',
+            'version':'v38.38.0',
+            'source_commit':commit,
+            'source_date_utc':'2026-11-23T18:27:36Z',
+            'how_to_use':'Extract each of five standalone ZIP files to the SAME empty folder. Each archive is a valid, independently extractable ZIP. No .001 joining is required.',
+            'packages':[],
+          }
+          for number in range(1,6):
+              target=root / f'FreshFries_LUXE_v38.38.0_Part_{number}_of_5.zip'
+              with ZipFile(target,'w',ZIP_DEFLATED,compresslevel=6) as z:
+                  for path in sorted(categories[number]):
+                      content=subprocess.check_output(['git','show',f'{commit}:{path}'])
+                      z.writestr(path,content)
+              with ZipFile(target) as z:
+                  assert z.testzip() is None
+                  assert sorted(z.namelist())==sorted(categories[number])
+                  for path in categories[number]:
+                      assert z.read(path)==subprocess.check_output(['git','show',f'{commit}:{path}'])
+              manifest['packages'].append({
+                  'number':number,'name':target.name,'size_bytes':target.stat().st_size,
+                  'sha256':hashlib.sha256(target.read_bytes()).hexdigest(),
+                  'paths':sorted(categories[number])})
+          (root/'MANIFEST.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          (root/'README.txt').write_text(
+            'Fresh Fries LUXE v38.38.0 -- five independent ZIP packages\n'
+            '1. Download Part_1_of_5.zip through Part_5_of_5.zip.\n'
+            '2. Extract EACH ZIP into the SAME EMPTY folder, preserving internal paths.\n'
+            '3. The combined folder contains the original 53 code and asset files from production commit '+commit+'.\n'
+            '4. MANIFEST.json lists every file and SHA-256 for each package.\n'
+            '5. This is source code only, without live database records or private environment secrets.\n'
+            '6. Before any changes, review CI warnings and apply SQL migrations ONLY with backup and authorization.\n'
+            '7. Original main / production branch is NOT changed by this export.\n',
+            encoding='utf-8')
+          print('Created five stand-alone ZIPs:',[(p['name'],p['size_bytes']) for p in manifest['packages']])
+          PY
+      - name: Publish export-only files without touching production
+        run: |
+          git config user.name "Fresh Fries Source Export"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add consultant-handoff/standalone-zips/
+          git commit -m "Provide 5 individually extractable ZIP packages for development consultant"
+          git push origin "HEAD:refs/heads/consultant-export-v38-38-20261123"
