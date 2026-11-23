@@ -11,6 +11,7 @@ style.textContent=[
 '.ffl-picker-product .ffb-v2-name{font-size:12px;font-weight:900;line-height:1.4;overflow-wrap:anywhere}',
 '.ffl-picker-product .ffb-v2-price{font-size:11px}',
 '.ffl-picker-product .ffb-v2-count{position:absolute;top:3px;left:3px}',
+'.ffl-picker-product .ffb-v2-count[hidden]{display:none!important}',
 '.ffl-picker-controls{display:flex;align-items:center;justify-content:space-between;gap:6px;direction:ltr}',
 '.ffl-picker-controls button{flex:1;min-width:37px;min-height:40px!important;border-radius:9px;padding:4px 9px;font-size:19px;font-weight:900;background:var(--ffb-red,#d51e2c);color:white}',
 '.ffl-picker-controls button.ffl-picker-minus{background:var(--ffb-soft2,#eee);color:var(--ffb-ink,#222);border:1px solid var(--ffb-line,#ddd)}',
@@ -29,13 +30,25 @@ const norm=s=>String(s||'').toLocaleLowerCase('ar').replace(/[أإآ]/g,'ا').re
 const fallbackCategory=n=>{const s=norm(n);if(/عرض|باقة/.test(s))return 'العروض';if(/برجر|برغر/.test(s))return 'البرجر';if(/سمبوس|هالبينو|هلبينو|ذره/.test(s))return 'السمبوسة';if(/اكسترا|اضاف|شريحه|كاتشب|صوص|خبز/.test(s))return 'الإضافات';if(/مشروب|كولا|مياه|مويه|عصير/.test(s))return 'المشروبات';return 'الأصناف الرئيسية'};
 const category=item=>{const c=norm(item?.category);if(item?.kind==='offer'||item?.type==='offer'||/عروض/.test(c))return 'العروض';if(/برجر|برغر/.test(c))return 'البرجر';if(/سمبوس/.test(c))return 'السمبوسة';if(/اضاف/.test(c))return 'الإضافات';if(/مشروب/.test(c))return 'المشروبات';if(/رئيس|وجبات|مقبلات/.test(c))return 'الأصناف الرئيسية';return fallbackCategory(item?.name)};
 function imageUrl(item){const path=String(item?.image_path||'');if(!/^(menu|offer)\/[0-9a-f-]{36}\.(png|jpg|jpeg|webp)$/i.test(path))return '';try{if(typeof client==='undefined'||!client?.storage)return '';const uri=client.storage.from('ff_menu_media').getPublicUrl(path)?.data?.publicUrl;return uri+(item?.image_version?'?v='+encodeURIComponent(item.image_version):'')}catch{return ''}}
-function placeholder(){const s=document.createElement('span');s.className='ffb-placeholder';s.textContent='🍟';s.setAttribute('aria-hidden','true');return s}
+function iconFor(item){
+ const cat=category(item),name=norm(item?.name);
+ if(/خبز/.test(name))return '🍞';
+ if(/جبن|شيدر/.test(name))return '🧀';
+ if(/رايس|ارز|رز/.test(name))return '🍚';
+ if(/مشروب|مياه|كولا|عصير/.test(name)||cat==='المشروبات')return '🥤';
+ if(cat==='البرجر'||/برجر/.test(name))return '🍔';
+ if(cat==='السمبوسة')return '🥟';
+ if(/تشكن|استربس|دجاج/.test(name))return '🍗';
+ if(/بطاط|فرايز/.test(name))return '🍟';
+ return '🍟';
+}
+function placeholder(item){const s=document.createElement('span');s.className='ffb-placeholder';s.textContent=iconFor(item);s.setAttribute('aria-hidden','true');return s}
 function createTile(item,opts={}){
  const root=document.createElement('div');root.className='ffl-picker-tile';
  const product=document.createElement('button');product.type='button';product.className='ffl-picker-product';product.setAttribute('aria-label','إضافة '+String(item.name||'صنف'));
  const pic=imageUrl(item);let media;
- if(pic){media=document.createElement('img');media.src=pic;media.loading='lazy';media.alt='صورة '+String(item.name||'صنف');media.onerror=()=>media.replaceWith(placeholder())}
- else media=placeholder();
+ if(pic){media=document.createElement('img');media.src=pic;media.loading='lazy';media.alt='صورة '+String(item.name||'صنف');media.onerror=()=>media.replaceWith(placeholder(item))}
+ else media=placeholder(item);
  const name=document.createElement('span');name.className='ffb-v2-name';name.textContent=String(item.name||'صنف');
  const price=document.createElement('span');price.className='ffb-v2-price';
  if(opts.showPrice!==false&&item.price!==undefined&&item.price!==null&&Number.isFinite(Number(item.price)))price.textContent=Number(item.price).toLocaleString('ar-YE')+' ريال';
@@ -57,5 +70,5 @@ function categories(box,items,selected,change){
  const button=document.createElement('button');button.type='button';button.textContent=value;button.className=value===selected?'selected':'';button.setAttribute('aria-pressed',String(value===selected));button.onclick=()=>change(value);box.append(button);
  }
 }
-window.ffLuxePhotoMenu=Object.freeze({normalize:norm,category,imageUrl,createTile,categories});
+window.ffLuxePhotoMenu=Object.freeze({normalize:norm,category,imageUrl,iconFor,createTile,categories});
 })();
