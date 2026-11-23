@@ -20,5 +20,7 @@ jobs:
         run: node scripts/luxe-static-ci.mjs
       - name: Install browser test driver
         run: python -m pip install playwright==1.51.0
+      - name: Verify burger picker interactions in real Chrome (FIX-02)
+        run: python scripts/luxe-burger-picker-qa.py
       - name: Verify mobile and desktop RTL navigation in Chrome
         run: python scripts/mobile-layout.py
