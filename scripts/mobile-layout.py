@@ -183,6 +183,70 @@ with sync_playwright() as playwright:
                 assert page.locator("#ff42RangeTable").inner_text() == ''
                 assert page.locator("#ff42RangeStatus").inner_text() == ''
                 assert "SENSITIVE-OLD-MANAGER-REPORT" not in page.locator("body").inner_text()
+                # Finished orders: an in-flight response must not survive logout or account switch.
+                page.evaluate("""() => {
+                  user={id:'fixture-manager'};
+                  data={role:'manager',orders:[],branches:[],drivers:[],offers:[]};
+                  rpc=(name,args)=>{
+                    if(name==='ff_luxe_completed_universal')return new Promise(resolve=>{
+                      window.__finishedDeferred=resolve;
+                    });
+                    return Promise.resolve({});
+                  };
+                  window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
+                }""")
+                page.locator("#fflCashierFinishedToggle").click()
+                page.wait_for_function("typeof window.__finishedDeferred==='function'")
+                assert page.locator("#fflFinishedRefresh").is_disabled()
+                page.evaluate("""() => {
+                  window.dispatchEvent(new Event('ff-luxe-session-reset'));
+                  user=null;data=null;
+                  window.__finishedDeferred({items:[
+                    {id:'old-secret',number:'SENSITIVE-OLD-ORDER',customer_name:'PRIVATE-OLD-CUSTOMER',
+                     phone:'777777777',status:'delivered'}
+                  ],branches:[{id:'old-branch',name:'PRIVATE-OLD-BRANCH'}],has_more:false});
+                }""")
+                page.wait_for_timeout(120)
+                assert page.locator("#fflFinishedList").inner_text() == ''
+                assert page.locator("#fflFinishedStatus").inner_text() == ''
+                assert page.locator("#fflFinishedBranch").locator("option").count() == 1
+                assert page.locator("#fflCashierFinished").is_hidden()
+                # A newer filter request must take precedence over a slower prior request.
+                page.evaluate("""() => {
+                  user={id:'fixture-manager'};
+                  data={role:'manager',orders:[],branches:[],drivers:[],offers:[]};
+                  window.__finishedResolvers=[];
+                  rpc=(name,args)=>{
+                    if(name==='ff_luxe_completed_universal')
+                      return new Promise(resolve=>window.__finishedResolvers.push(resolve));
+                    return Promise.resolve({});
+                  };
+                  window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
+                }""")
+                page.locator("#fflCashierFinishedToggle").click()
+                page.wait_for_function("window.__finishedResolvers.length===1")
+                page.evaluate("""() => {
+                  window.dispatchEvent(new CustomEvent('ff-luxe-history-range',{
+                    detail:{from:'2026-11-20',to:'2026-11-21'}
+                  }));
+                }""")
+                page.wait_for_function("window.__finishedResolvers.length===2")
+                page.evaluate("""() => window.__finishedResolvers[1]({
+                  items:[{id:'new-record',number:'LATEST-FINISHED-ORDER',status:'delivered'}],
+                  branches:[],has_more:false
+                })""")
+                page.get_by_text("LATEST-FINISHED-ORDER").wait_for()
+                page.evaluate("""() => window.__finishedResolvers[0]({
+                  items:[{id:'old-record',number:'STALE-FINISHED-ORDER',status:'delivered'}],
+                  branches:[{id:'obsolete',name:'STALE-PRIVATE-BRANCH'}],has_more:false
+                })""")
+                page.wait_for_timeout(100)
+                assert "LATEST-FINISHED-ORDER" in page.locator("#fflFinishedList").inner_text()
+                assert "STALE-FINISHED-ORDER" not in page.locator("#fflFinishedList").inner_text()
+                assert "STALE-PRIVATE-BRANCH" not in page.locator("#fflFinishedBranch").inner_text()
+                page.evaluate("""() => {window.dispatchEvent(new Event('ff-luxe-session-reset')); user=null;data=null;}""")
+                assert page.locator("#fflFinishedList").inner_text() == ''
+                page.evaluate("""() => {user={id:'fixture-manager'};data={role:'manager',orders:[],branches:[],drivers:[],offers:[]};}""")
                 page.evaluate("data.role='cashier'")
                 entry.wait_for(state="detached")
                 assert dialog.is_hidden()
