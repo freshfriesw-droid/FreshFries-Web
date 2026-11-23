@@ -1,0 +1,278 @@
+{
+  "project": "Fresh Fries LUXE",
+  "version": "v38.38.0",
+  "approved_spec": "FreshFries_LUXE_Final_Approval_v2_2026-11-24.pdf",
+  "baseline_commit": "57ab198888f259acad0a09d813eceb132a795eec",
+  "source_branch": "main",
+  "baseline_snapshot_date_utc": "2026-11-23T18:27:36Z",
+  "purpose": "FIX-01 P0 immutable Git commit tree inventory. git_blob_sha1 is the Git object SHA-1 and must be verified with git hash-object, not raw-file SHA-1.",
+  "source_file_count": 53,
+  "total_file_bytes": 2732847,
+  "files": [
+    {
+      "path": ".github/workflows/brand-icon-sync.yml",
+      "git_blob_sha1": "f3f4812a733e3e8785c8c995bf892fb416b34e74",
+      "bytes": 2522
+    },
+    {
+      "path": ".github/workflows/ff-optional-email-once.yml",
+      "git_blob_sha1": "42151ab0bfd5ef8ffc6f908090c6c8f03d8eccde",
+      "bytes": 2431
+    },
+    {
+      "path": ".github/workflows/luxe-static-qa.yml",
+      "git_blob_sha1": "62ae42b51e099ec058b570ff26a045950848c322",
+      "bytes": 690
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "git_blob_sha1": "9111c11a453e1d777fcafd8769dfba2acf162077",
+      "bytes": 9784
+    },
+    {
+      "path": "assets/ff-icon-192.png",
+      "git_blob_sha1": "71cd0734349817ccc3be4dc08555589584ba42f1",
+      "bytes": 10864
+    },
+    {
+      "path": "assets/ff-icon-512.png",
+      "git_blob_sha1": "566f3bb425ca6e4240ad42aaba70660b696e0aac",
+      "bytes": 40685
+    },
+    {
+      "path": "assets/ff-official-logo.png",
+      "git_blob_sha1": "dc36c9fc7e89f65ac5340b9fa9d487b6b9a5bec3",
+      "bytes": 1512844
+    },
+    {
+      "path": "assets/ff-pinned-cairo-v38-37.js",
+      "git_blob_sha1": "a1a9b268361f62ccd366e228d3c724c0b4b67967",
+      "bytes": 7326
+    },
+    {
+      "path": "assets/luxe-report-center-20261123.css",
+      "git_blob_sha1": "34eebe027b41eb5db89f284eea135121d2085a0d",
+      "bytes": 4305
+    },
+    {
+      "path": "CNAME",
+      "git_blob_sha1": "389baa3cfcb84a0278c96430b0357dc70e689e89",
+      "bytes": 24
+    },
+    {
+      "path": "docs/ALERT_RING_BEHAVIOR_2026-11-22.md",
+      "git_blob_sha1": "7e358fb0a35427ea45e4530edbbfcf4da78f8a9b",
+      "bytes": 3435
+    },
+    {
+      "path": "favicon.ico",
+      "git_blob_sha1": "759809aad5cf4762a9a76d2f7a68cdbc964b4d2c",
+      "bytes": 27916
+    },
+    {
+      "path": "index.html",
+      "git_blob_sha1": "c8646d0ffecaa5039173ccb7126afd29ee3d26a9",
+      "bytes": 595333
+    },
+    {
+      "path": "manifest.webmanifest",
+      "git_blob_sha1": "6b091c19a3edbd184a66f413a8a2cb438e36ab83",
+      "bytes": 631
+    },
+    {
+      "path": "offline.html",
+      "git_blob_sha1": "806777fd6bb508f1d73ec78f41502f9b99f3f067",
+      "bytes": 851
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha1": "a47e059920ef6fa2d6214376360173275c7fd06f",
+      "bytes": 8862
+    },
+    {
+      "path": "scripts/luxe-all-menus-fold-20261123.js",
+      "git_blob_sha1": "3d546eb6e64fbfdab54eebaa7b370682de72c163",
+      "bytes": 6355
+    },
+    {
+      "path": "scripts/luxe-burger-kitchen-20261123.js",
+      "git_blob_sha1": "42bd978706844810574cd76b328b2380af3ae502",
+      "bytes": 31255
+    },
+    {
+      "path": "scripts/luxe-case-alerts-20261123.js",
+      "git_blob_sha1": "5cefd99f5699d16411dd698bba71eb8375af8646",
+      "bytes": 5747
+    },
+    {
+      "path": "scripts/luxe-cashier-destinations-20261122.js",
+      "git_blob_sha1": "7c15673f0e16bb9496d95cf050d4090ab286ba89",
+      "bytes": 7091
+    },
+    {
+      "path": "scripts/luxe-cashier-finished-20261123.js",
+      "git_blob_sha1": "2b786e563ca9878477d0f5143ccd6a872bbd045e",
+      "bytes": 20465
+    },
+    {
+      "path": "scripts/luxe-collapsible-sections-manager-create-20261123.js",
+      "git_blob_sha1": "f29914c9628ff02841e64befb125c8d219f28335",
+      "bytes": 14029
+    },
+    {
+      "path": "scripts/luxe-completed-detail-popup-20261123.js",
+      "git_blob_sha1": "c7a91649f4e2b274e7c33875c9843b395a612d9d",
+      "bytes": 2413
+    },
+    {
+      "path": "scripts/luxe-completed-universal-20261123.js",
+      "git_blob_sha1": "81e52a3fd7750906df3b251533c5632e4110e97d",
+      "bytes": 26396
+    },
+    {
+      "path": "scripts/luxe-driver-cancel-20261122.js",
+      "git_blob_sha1": "7c346dc840ef08eb13609a9ef7bdf2d71ee8f4d3",
+      "bytes": 6430
+    },
+    {
+      "path": "scripts/luxe-f01-operational-day-20261123.js",
+      "git_blob_sha1": "9d968dcdadd66ac0949b1d7e91ce135dd2b8d347",
+      "bytes": 8714
+    },
+    {
+      "path": "scripts/luxe-foreground-ring-20261122.js",
+      "git_blob_sha1": "94824963cb0384d1aef0963e1d5d85da61e160e6",
+      "bytes": 5504
+    },
+    {
+      "path": "scripts/luxe-history-period-20261123.js",
+      "git_blob_sha1": "e3a0242261d97fd55c0b2d1d9fdca303f02ad0e2",
+      "bytes": 7961
+    },
+    {
+      "path": "scripts/luxe-one-time-rewards-20261123.js",
+      "git_blob_sha1": "60495629a951e18193c297579519f93e23351235",
+      "bytes": 14202
+    },
+    {
+      "path": "scripts/luxe-operational-fixes-20261121.js",
+      "git_blob_sha1": "bcd842951ca887851cdc296d024a263aca4ba40d",
+      "bytes": 13044
+    },
+    {
+      "path": "scripts/luxe-operational-polish-20261121.js",
+      "git_blob_sha1": "43e5eefa393a1141fd46e04c770381938d007888",
+      "bytes": 10503
+    },
+    {
+      "path": "scripts/luxe-order-customer-edit-20261123.js",
+      "git_blob_sha1": "6a7756c5d26f6ecdc3457f81506397112cf7436b",
+      "bytes": 5696
+    },
+    {
+      "path": "scripts/luxe-report-center-20261123.js",
+      "git_blob_sha1": "1afd1d7910038d6b0cf6baf4dbe4ea359dd8c2be",
+      "bytes": 30092
+    },
+    {
+      "path": "scripts/luxe-shared-photo-menu-20261123.js",
+      "git_blob_sha1": "4d33a7f032b4f13a020ad218dc81f2b2a42379a0",
+      "bytes": 8467
+    },
+    {
+      "path": "scripts/luxe-static-ci.mjs",
+      "git_blob_sha1": "5db6d64cdd7e8c55df8d2b0e4190677d1d520d48",
+      "bytes": 21909
+    },
+    {
+      "path": "scripts/luxe-unified-order-inputs-20261123.js",
+      "git_blob_sha1": "c562c504ef12077dd5ac28a7fc94c5a8dfc86912",
+      "bytes": 8303
+    },
+    {
+      "path": "scripts/mobile-layout.py",
+      "git_blob_sha1": "e84fc5e72390677d100824a943a6ddd449210c94",
+      "bytes": 25708
+    },
+    {
+      "path": "supabase/ff76-report-foundation.sql",
+      "git_blob_sha1": "09b9e7be6f3423a56a207c0e2a6a90cdbe51c01f",
+      "bytes": 4984
+    },
+    {
+      "path": "supabase/ff76-unified-reports-center.sql",
+      "git_blob_sha1": "bbd251c57f02aad0304b5af31761b6fd8dd6fd81",
+      "bytes": 22757
+    },
+    {
+      "path": "supabase/functions/ff-push/index.ts",
+      "git_blob_sha1": "7e75c12bb2a699069f4d4ddba31df857e8acc11c",
+      "bytes": 7380
+    },
+    {
+      "path": "supabase/functions/ff61-employees/index.ts",
+      "git_blob_sha1": "d218d12e75f5f5361290ba3ea6c4a9a74c5e617f",
+      "bytes": 22350
+    },
+    {
+      "path": "supabase/migrations/20261123_burger_kitchen_staff_roles.sql",
+      "git_blob_sha1": "77a099194383215b96449944e63d63c8e7a7cbe4",
+      "bytes": 61028
+    },
+    {
+      "path": "supabase/migrations/20261123_burger_kitchen_workflow.sql",
+      "git_blob_sha1": "3ce58865b17f7932122be62de52239b27fd49c5b",
+      "bytes": 15787
+    },
+    {
+      "path": "supabase/migrations/20261123_burger_notes_presence.sql",
+      "git_blob_sha1": "c977507b4e8da38b922da5c50eb9cfd64489db03",
+      "bytes": 6301
+    },
+    {
+      "path": "supabase/migrations/20261123_burger_optional_invoice.sql",
+      "git_blob_sha1": "e7f67419852686f077afaad61128eefba0634aa9",
+      "bytes": 2401
+    },
+    {
+      "path": "supabase/migrations/20261123_customer_live_correction.sql",
+      "git_blob_sha1": "c2be6a4c980f59381b8b952c1999e80d45684ffd",
+      "bytes": 8584
+    },
+    {
+      "path": "supabase/migrations/20261123_f01_business_reports.sql",
+      "git_blob_sha1": "57e81d2f8329cd76f7e0b981080b52aaf947438c",
+      "bytes": 37922
+    },
+    {
+      "path": "supabase/migrations/20261123_f01_operational_day.sql",
+      "git_blob_sha1": "8401e6fb2eb618dcc4c0f3686b8eb0f650b58684",
+      "bytes": 7828
+    },
+    {
+      "path": "supabase/migrations/20261123_one_time_customer_rewards.sql",
+      "git_blob_sha1": "4b1e7d35559e829ece885e984a709e3a08d5e2d9",
+      "bytes": 13200
+    },
+    {
+      "path": "supabase/migrations/20261123_order_case_notifications.sql",
+      "git_blob_sha1": "693c1ffba20c9bd7538d81a5b34ff31b440a0f4d",
+      "bytes": 4787
+    },
+    {
+      "path": "supabase/migrations/20261123_reservations_unscheduled.sql",
+      "git_blob_sha1": "0a89774e54aafd742842e4685d548933f73374e8",
+      "bytes": 2293
+    },
+    {
+      "path": "supabase/tests/f01_business_date.sql",
+      "git_blob_sha1": "af14f47b5874bda03263071d3182203a9d7eed49",
+      "bytes": 2211
+    },
+    {
+      "path": "sw.js",
+      "git_blob_sha1": "6317c7491947be2072d998d6222cd3237c5271f5",
+      "bytes": 4247
+    }
+  ]
+}
