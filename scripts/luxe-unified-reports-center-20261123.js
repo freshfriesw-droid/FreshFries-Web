@@ -260,6 +260,8 @@ function open(){
  if(!dialog.open)dialog.showModal();if(!report)void load();else draw();
 }
 window.ffReportsCenterOpen=open;
+$('ff40ReportsBtn')?.addEventListener('click',e=>{if(auth()){e.preventDefault();e.stopImmediatePropagation();open()}},true);
+$('ffr-close')?.addEventListener('click',()=>{if(preview.open)preview.close()});
 $('ffr-close').onclick=()=>dialog.close();$('ffr-preview-close').onclick=()=>preview.close();
 $('ffr-today').onclick=()=>{from.value=to.value=date();void load()};
 $('ffr-week').onclick=()=>{to.value=date();from.value=previous(to.value,6);void load()};
