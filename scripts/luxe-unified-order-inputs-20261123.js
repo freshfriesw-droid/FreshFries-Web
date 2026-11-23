@@ -17,7 +17,11 @@ mod.innerHTML='<h2>🍟 المنيو التفاعلي · فريش فرايز</h2
 '<div id="ffUnifiedMenuStatus" role="status"></div><div id="ffUnifiedMenuList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px"></div>'+
 '<div class="actions"><button type="button" id="ffUnifiedMenuReview" class="primary">🔎 تحليل الأصناف ومعاينتها</button><button type="button" id="ffUnifiedMenuClose" class="outline">إغلاق</button></div>';
 document.body.append(mod);
-let catalog=[],active=null,request=0;
+const categoryBar=make('div');categoryBar.id='ffUnifiedMenuCategories';categoryBar.className='ffl-picker-categories';
+const menuList=$('ffUnifiedMenuList');menuList.removeAttribute('style');menuList.className='ffl-picker-grid';
+menuList.before(categoryBar);
+
+let catalog=[],active=null,request=0,activeCategory='الكل';
 const drafts=new WeakMap();
 function appendText(area,name,delta){
  if(!area?.isConnected)return;
@@ -54,27 +58,26 @@ function count(area,name){
 }
 function render(){
  const box=$('ffUnifiedMenuList');box.replaceChildren();
- if(!active?.isConnected){mod.close();return}
- const term=$('ffUnifiedMenuSearch').value.trim().toLocaleLowerCase('ar');
- const filtered=catalog.filter(x=>!term||(x.name+' '+x.category).toLocaleLowerCase('ar').includes(term));
- if(!filtered.length){$('ffUnifiedMenuStatus').textContent='لا توجد أصناف مطابقة';return}
- $('ffUnifiedMenuStatus').textContent=filtered.length+' صنف/عرض · اختر لإضافته لمحلل '+(active.dataset.ffUnifiedLabel||'');
+ if(!active?.isConnected){if(mod.open)mod.close();return}
+ const ui=window.ffLuxePhotoMenu;
+ if(!ui){$('ffUnifiedMenuStatus').textContent='تعذر تحميل المنيو المصور؛ حدث الصفحة';return}
+ const tabs=$('ffUnifiedMenuCategories'),oldScroll=tabs.scrollLeft;
+ ui.categories(tabs,catalog,activeCategory,value=>{activeCategory=value;render()});tabs.scrollLeft=oldScroll;
+ const term=ui.normalize($('ffUnifiedMenuSearch').value);
+ const filtered=catalog.filter(i=>(activeCategory==='الكل'||ui.category(i)===activeCategory)&&(!term||ui.normalize(i.name+' '+(i.category||'')).includes(term)));
+ const total=catalog.reduce((sum,item)=>sum+count(active,item.name),0);
+ $('ffUnifiedMenuStatus').textContent=filtered.length+' صنف/عرض · المختار '+total+' قطعة · '+(active.dataset.ffUnifiedLabel||'');
+ if(!filtered.length){box.append(make('p','لا توجد أصناف مطابقة للبحث أو القسم'));return}
  for(const item of filtered){
-  const card=make('div');card.style.cssText='border:1px solid #c6c6c6;border-radius:11px;padding:8px;display:grid;gap:6px';
-  const label=make('button',item.name);label.type='button';label.className='outline';label.style.cssText='min-height:58px;text-align:right;font-weight:900';
-  const qty=make('strong');qty.style.cssText='font-size:20px;text-align:center';qty.textContent=count(active,item.name)+' قطعة';
-  const c=make('div');c.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px';
-  const plus=make('button','＋'),minus=make('button','−');plus.type=minus.type='button';plus.className='primary';minus.className='outline';
-  plus.setAttribute('aria-label','زيادة '+item.name);
-  minus.setAttribute('aria-label','إنقاص '+item.name);
-  function shift(delta){appendText(active,item.name,delta);qty.textContent=count(active,item.name)+' قطعة';}
-  label.onclick=()=>shift(1);plus.onclick=()=>shift(1);minus.onclick=()=>shift(-1);
-  c.append(minus,plus);card.append(label,qty,c);box.append(card);
+  const quantity=count(active,item.name);
+  const change=delta=>{appendText(active,item.name,delta);render()};
+  const picker=ui.createTile(item,{quantity,onAdd:()=>change(1),onRemove:()=>change(-1)});
+  box.append(picker.element);
  }
 }
 async function show(area){
  if(!area?.isConnected)return;
- active=area;$('ffUnifiedMenuSearch').value='';$('ffUnifiedMenuStatus').textContent='جارٍ تحميل المنيو...';mod.showModal();
+ active=area;activeCategory='الكل';$('ffUnifiedMenuSearch').value='';$('ffUnifiedMenuStatus').textContent='جارٍ تحميل المنيو...';mod.showModal();
  try{await loadMenu();if(active===area)render()}catch(e){$('ffUnifiedMenuStatus').textContent='تعذر جلب المنيو: '+String(e.message||e)}
 }
 async function preview(area){
