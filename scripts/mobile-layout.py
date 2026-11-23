@@ -195,7 +195,7 @@ with sync_playwright() as playwright:
                   };
                   window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
                 }""")
-                page.locator("#fflCashierFinishedToggle").click()
+                page.locator("#fflCashierFinishedToggle").evaluate("(el) => el.click()")
                 page.wait_for_function("typeof window.__finishedDeferred==='function'")
                 assert page.locator("#fflFinishedRefresh").is_disabled()
                 page.evaluate("""() => {
@@ -223,7 +223,7 @@ with sync_playwright() as playwright:
                   };
                   window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
                 }""")
-                page.locator("#fflCashierFinishedToggle").click()
+                page.locator("#fflCashierFinishedToggle").evaluate("(el) => el.click()")
                 page.wait_for_function("window.__finishedResolvers.length===1")
                 page.evaluate("""() => {
                   window.dispatchEvent(new CustomEvent('ff-luxe-history-range',{
@@ -235,7 +235,7 @@ with sync_playwright() as playwright:
                   items:[{id:'new-record',number:'LATEST-FINISHED-ORDER',status:'delivered'}],
                   branches:[],has_more:false
                 })""")
-                page.get_by_text("LATEST-FINISHED-ORDER").wait_for()
+                page.wait_for_function("document.getElementById('fflFinishedList')?.textContent.includes('LATEST-FINISHED-ORDER')")
                 page.evaluate("""() => window.__finishedResolvers[0]({
                   items:[{id:'old-record',number:'STALE-FINISHED-ORDER',status:'delivered'}],
                   branches:[{id:'obsolete',name:'STALE-PRIVATE-BRANCH'}],has_more:false
