@@ -204,3 +204,11 @@ assert.match(securitySource, /ff_security_login_event/, 'Login event audit missi
 assert.match(securitySource, /ff_customer_views_manager/, 'Manager customer-view oversight missing');
 assert.match(securitySource, /ff_log_customer_view/, 'CSV export audit missing');
 assert.match(html, /function ff49ParseItemsAndNotes\(/, 'Approved order parser was lost');
+
+assert.match(html, /\['driver','cashier','assembly','supervisor'\]\.includes\(box\.value\)/,
+ 'Supervisor role switch must show assigned branch controls');
+assert.match(html, /\['driver','cashier','assembly','supervisor'\]\.includes\(role\)\?branches:\[\]/,
+ 'Supervisor access update must submit assigned branches');
+const managerCreate=get('scripts/luxe-collapsible-sections-manager-create-20261123.js').toString('utf8');
+assert.match(managerCreate, /\['cashier','driver','assembly','supervisor'\]\.includes\(r\)/,
+ 'Supervisor manager-create flow must require a branch');
