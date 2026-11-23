@@ -42,7 +42,7 @@ kitchen.innerHTML='<div class="ff-burger-head"><h2>🍔 المطبخ · قسم �
 '<details id="ffBurgerFinishedDetails"><summary>✅ الطلبات المنتهية · قسم البرجر</summary><div id="ffBurgerKitchenFinished" class="ff-burger-list"></div></details>';
 main.prepend(kitchen);
 const cashier=$('cashierView');const panel=make('section');panel.id='ffBurgerCashierPanel';panel.className='card hidden';
-panel.innerHTML='<div class="ff-burger-head"><h3>🍔 أوامر قسم البرجر</h3><button id="ffBurgerNew" type="button" class="primary">🍔 إعلام قسم البرجر</button></div>'+
+panel.innerHTML='<div class="ff-burger-head"><h3>🍔 أوامر قسم البرجر</h3><div class="actions"><button id="ffBurgerNew" type="button" class="primary">🍔 إعلام قسم البرجر</button><button id="ffBurgerCollapse" type="button" class="outline" hidden>✕ إغلاق القائمة</button></div></div>'+
 '<p class="muted">اختر البرجر والكمية والفرع، ثم اكتب رقم فاتورة الكاشير والملاحظات. هذا لا يغير فاتورة MicroPOS أو حالة التوصيل.</p>'+
 '<p id="ffBurgerKitchenOnline" class="ff-burger-online offline" role="status">🔴 قسم البرجر غير متصل حاليًا</p><p id="ffBurgerCashierStatus" role="status"></p>'+
 '<h3>🔔 جاهز للاستلام · اضغط تخطي بعد الإشعار</h3><div id="ffBurgerCashierReady" class="ff-burger-list"></div>'+
@@ -235,7 +235,7 @@ async function refresh(force=false){
    void updateOnline(force);
  }catch(e){
    const element=$(kitchenRole()?'ffBurgerKitchenStatus':'ffBurgerCashierStatus');
-   if(element)element.textContent='تعذر تحديث قسم البرجر: '+errorText(e);
+   if(element)element.textContent='⚠️ تعذر تحديث قسم البرجر: '+errorText(e)+' — استخدم زر تحديث الأوامر بعد التحقق من الاتصال';
  }finally{loading=false}
 }
 function heartbeat(){
@@ -273,9 +273,12 @@ function assemblyBurgerPanel(open){
  panel.classList.toggle('hidden',!open);
  launcher.setAttribute('aria-expanded',String(open));
  launcher.textContent=open?'🍔 طي أوامر قسم البرجر':'🍔 أوامر قسم البرجر';
- if(open){window.ffBurgerOnCashierDraw();panel.classList.remove('hidden');}
+ $('ffBurgerCollapse').hidden=!assemblyRole();
+ if(open){window.ffBurgerOnCashierDraw();panel.classList.remove('hidden');$('ffBurgerCashierStatus').textContent='جارٍ تحديث أوامر قسم البرجر...';void refresh(true);}
+
 }
-$('ffV12BurgerOpen')?.addEventListener('click',()=>assemblyBurgerPanel($('ffV12BurgerOpen').getAttribute('aria-expanded')!=='true'));
+window.ffBurgerToggleAssembly=()=>{const b=$('ffV12BurgerOpen');if(!b||!assemblyRole())return false;assemblyBurgerPanel(b.getAttribute('aria-expanded')!=='true');return true;};
+$('ffBurgerCollapse').addEventListener('click',()=>{if(assemblyRole())assemblyBurgerPanel(false);else panel.classList.add('hidden')});
 window.ffBurgerOnAssemblyStart=()=>{
  if(!assemblyRole())return;
  const host=$('ffV12AssemblyWorkspace');
@@ -320,43 +323,30 @@ async function open(initialKind='local',linkedOrder=''){
   f('invoice').value=(assemblyRole()?ffV12AssemblyPayload?.orders:data?.orders)?.find(x=>x.id===linkedOrder)?.external_invoice_ref||'';
  }
  const box=$('ffBurgerMenuFields');box.replaceChildren();
+ const ui=window.ffLuxePhotoMenu;
  for(const item of items){
-  const line=make('div',undefined,'ff-burger-item');
-  const product=make('button',item.name,'ff-burger-product');product.type='button';
-  product.setAttribute('aria-label','إضافة قطعة واحدة من '+item.name);product.setAttribute('aria-pressed','false');
-  const count=make('div',undefined,'ff-burger-qty');
-  const qty=make('input');
-  qty.type='number';qty.min='0';qty.max='99';qty.step='1';qty.value='0';qty.inputMode='numeric';
+  const qty=make('input');qty.type='number';qty.min='0';qty.max='99';qty.step='1';qty.value='0';qty.inputMode='numeric';
   qty.dataset.burgerItem=item.id;qty.setAttribute('aria-label','كمية '+item.name);
-  const controls=make('div',undefined,'ff-burger-stepper');
-  const minus=make('button','−','ff-burger-minus'),plus=make('button','+','ff-burger-plus');
-  minus.type=plus.type='button';
-  minus.setAttribute('aria-label','إنقاص '+item.name+' بواحد');
-  plus.setAttribute('aria-label','زيادة '+item.name+' بواحد');
+  let picker,legacy;
   function sync(){
-    const value=Number(qty.value);
-    const valid=Number.isInteger(value)&&value>=0&&value<=99;
-    line.classList.toggle('selected',valid&&value>0);
-    product.setAttribute('aria-pressed',String(valid&&value>0));
-    minus.disabled=!valid||value===0;plus.disabled=!valid||value===99;
+   const value=Number(qty.value),valid=Number.isInteger(value)&&value>=0&&value<=99;
+   if(picker){picker.refresh(valid?value:0);picker.element.querySelector('.ffl-picker-product')?.setAttribute('aria-pressed',String(valid&&value>0));}
+   if(legacy)legacy.classList.toggle('selected',valid&&value>0);
   }
-  function setQuantity(value){
-    qty.value=String(Math.max(0,Math.min(99,value)));
-    sync();
+  function setQuantity(value){qty.value=String(Math.max(0,Math.min(99,Number(value)||0)));sync()}
+  function shift(delta){const n=Number(qty.value);setQuantity((Number.isInteger(n)&&n>=0&&n<=99?n:0)+delta)}
+  if(ui){
+   picker=ui.createTile(item,{quantity:0,quantityInput:qty,showPrice:true,onAdd:()=>shift(1),onRemove:()=>shift(-1)});
+   box.append(picker.element);
+  }else{
+   legacy=make('div',undefined,'ff-burger-item');
+   const product=make('button',item.name,'ff-burger-product');product.type='button';product.onclick=()=>shift(1);
+   const less=make('button','−','ff-burger-minus'),more=make('button','+','ff-burger-plus');less.type=more.type='button';
+   less.onclick=()=>shift(-1);more.onclick=()=>shift(1);
+   legacy.append(product,less,qty,more);box.append(legacy);
   }
-  function shift(delta){
-    const value=Number(qty.value);
-    setQuantity((Number.isInteger(value)&&value>=0&&value<=99?value:0)+delta);
-  }
-  product.addEventListener('click',()=>shift(1));
-  plus.addEventListener('click',()=>shift(1));
-  minus.addEventListener('click',()=>shift(-1));
   qty.addEventListener('input',sync);
-  qty.addEventListener('change',()=>{
-    const raw=qty.value.trim(),value=Number(raw);
-    setQuantity(raw!==''&&Number.isFinite(value)?Math.trunc(value):0);
-  });
-  controls.append(minus,plus);count.append(qty,controls);line.append(product,count);box.append(line);
+  qty.addEventListener('change',()=>{const raw=qty.value.trim(),n=Number(raw);setQuantity(raw!==''&&Number.isFinite(n)?Math.trunc(n):0)});
   sync();
  }
  function toggle(){const delivery=f('kind').value==='delivery';$('ffBurgerOrderLabel').hidden=!delivery;order.required=delivery}
