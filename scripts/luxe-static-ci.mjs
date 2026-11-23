@@ -187,3 +187,44 @@ assert.match(sw, /req\.mode === 'navigate'/, 'Navigation must not be served from
 assert.match(sw, /fetch\(req, \{ cache: 'no-store' \}\)/, 'Navigation must be fetched network-only');
 assert.ok(fs.existsSync('offline.html'), 'Missing offline fallback');
 console.log(`PASS: ${validated} inline JS syntax checks; PWA manifests/icons/zlib verified; secure offline rules; required portals present`);
+
+// F-01: deterministic Asia/Aden boundary checks (no database access).
+const f01Source=get('scripts/luxe-f01-operational-day-20261123.js').toString('utf8');
+new vm.Script(f01Source, {filename:'scripts/luxe-f01-operational-day-20261123.js'});
+const f01Context={
+  window:{}, document:{getElementById:()=>null}, Date, Intl, console, TypeError,
+};
+vm.runInNewContext(f01Source,f01Context);
+assert.match(html,/luxe-f01-operational-day-20261123\.js/,'F01 module must load');
+assert.match(html,/if\(window\.ffF01BusinessDate\)return window\.ffF01BusinessDate\(\)/,
+  'Manager reporting must default to 8am business day');
+assert.match(get('scripts/luxe-history-period-20261123.js').toString('utf8'),
+  /window\.ffF01BusinessDate/,'Historic period defaults must use the business day');
+assert.match(get('scripts/luxe-completed-universal-20261123.js').toString('utf8'),
+  /window\.ffF01BusinessDate/,'Completed archive must use business-day date selector');
+const timeCases=[
+ ['2026-11-23T05:30:00Z','2026-11-23',false], // 08:30 Sana'a
+ ['2026-11-23T11:00:00Z','2026-11-23',false],
+ ['2026-11-23T20:59:59Z','2026-11-23',false],
+ ['2026-11-23T21:30:00Z','2026-11-23',false], // 00:30 Nov 24
+ ['2026-11-23T22:59:59Z','2026-11-23',false], // 01:59 Nov 24
+ ['2026-11-23T23:00:00Z','2026-11-23',true],  // 02:00 Nov 24
+ ['2026-11-24T04:59:59Z','2026-11-23',true],  // 07:59 Nov 24
+ ['2026-11-24T05:00:00Z','2026-11-24',false], // 08:00 Nov 24
+];
+for(const [stamp,expectedDay,expectedFlag] of timeCases){
+  assert.equal(f01Context.window.ffF01BusinessDate(new Date(stamp)),expectedDay,
+    'F01 business day: '+stamp);
+  assert.equal(f01Context.window.ffF01IsClosedHours(new Date(stamp)),expectedFlag,
+    'F01 closed-hours detection: '+stamp);
+}
+const schemaSQL=get('supabase/migrations/20261123_f01_operational_day.sql').toString('utf8');
+const reportSQL=get('supabase/migrations/20261123_f01_business_reports.sql').toString('utf8');
+const testSQL=get('supabase/tests/f01_business_date.sql').toString('utf8');
+assert.match(schemaSQL,/ADD COLUMN IF NOT EXISTS business_date date/);
+assert.match(schemaSQL,/ff_f01_stamp_order/);
+assert.match(schemaSQL,/ff_f01_anomaly_notice/);
+assert.match(schemaSQL,/ff_f01_daily_summary/);
+assert.match(reportSQL,/ff40_operations_report/);
+assert.match(reportSQL,/ff51_order_archive/);
+assert.match(testSQL,/2026-11-24 08:00:00\+03/);
