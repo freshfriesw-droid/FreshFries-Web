@@ -173,7 +173,7 @@ BEGIN
  RETURN coalesce((
  SELECT jsonb_agg(to_jsonb(s) ORDER BY s.sent_at DESC)
  FROM (SELECT t.id,t.branch_id,t.order_kind,t.delivery_order_id,t.invoice_ref,
-   t.cashier_name,t.kitchen_name,t.items,t.notes,t.status,t.sent_at,t.accepted_at,t.ready_at,
+   t.cashier_name,t.kitchen_id,t.kitchen_name,t.items,t.notes,t.status,t.sent_at,t.accepted_at,t.ready_at,
    t.acknowledged_at,b.name AS branch_name,
    CASE WHEN t.accepted_at IS NOT NULL AND t.ready_at IS NOT NULL THEN
     greatest(0,extract(epoch from(t.ready_at-t.accepted_at))::integer) ELSE NULL END AS prep_seconds
