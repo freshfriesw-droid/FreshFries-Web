@@ -2843,7 +2843,7 @@ async function ff51LoadCatalog(){
   ff49CatalogAt=0;void ff49LoadCatalog();
  }catch(e){if(current())box.textContent='تعذر تحميل المنيو: '+e.message;}
 }
-$('ff51CatalogBtn').onclick=()=>{ff51Open('ff51CatalogPanel');void ff51LoadCatalog()};
+$('ff51CatalogBtn').onclick=()=>{if(!ff51Viewer(['manager']))return;ff51Open('ff51CatalogPanel');void ff51LoadCatalog()};
 $('ff51CatalogRefresh').onclick=ff51LoadCatalog;
 $('ff51CatalogClose').onclick=()=>{ff51CatalogSeq++;$('ff51CatalogPanel').classList.add('hidden');ff51CatalogInfo=null;$('ff51CatalogItems').replaceChildren();$('ff51OffersList').replaceChildren()};
 $('ff51ItemReset').onclick=()=>{for(const id of ['ff51CatName','ff51ItemName','ff51ItemPrice','ff51EditingItem'])$(id).value=''};
@@ -2889,7 +2889,7 @@ async function ff51LoadCustomers(){
   box.innerHTML=list.length?list.map(c=>`<div class="item"><b>${esc(c.name||'اسم غير محفوظ')}</b> — <span dir="ltr">${esc(c.phone)}</span><p class="muted">${esc(c.address||'')} · آخر طلب ${time(c.last_order_at)} · ${c.notes_count} ملاحظات</p><button class="outline" data-ff51-customer="${esc(c.phone)}">عرض الملاحظات</button></div>`).join(''):'<div class="empty">لا توجد نتائج.</div>';
  }catch(e){if(current())box.textContent='تعذر البحث: '+e.message}
 }
-$('ff51CustomersBtn').onclick=()=>{ff51Open('ff51CustomersPanel');void ff51LoadCustomers()};
+$('ff51CustomersBtn').onclick=()=>{if(!ff51Viewer(['manager','customer_service']))return;ff51Open('ff51CustomersPanel');void ff51LoadCustomers()};
 $('ff51CustomersClose').onclick=()=>{ff51CustomerSeq++;ff51NotesSeq++;$('ff51CustomersPanel').classList.add('hidden');$('ff51CustomersList').replaceChildren();$('ff51CustomerNotesList').replaceChildren();$('ff51CustomerNotesSection').classList.add('hidden');ff51SelectedPhone=null};
 $('ff51CustomerFind').onclick=ff51LoadCustomers;
 $('ff51CustomerSearch').addEventListener('input',()=>{ff51CustomerSeq++;$('ff51CustomersList').replaceChildren()});
@@ -2927,39 +2927,79 @@ function ff51DefaultArchiveDates(){const t=new Date();const today=new Date(t.toL
  const period=window.ffLuxeHistoryPeriod;$('ff51ArchiveTo').value=period?.to||dateString(today);$('ff51ArchiveFrom').value=period?.from||dateString(today);
 }
 async function ff51LoadArchive(reset=false){
+ const actor=ff51Viewer(['manager','customer_service','cashier','supervisor']);if(!actor)return;
  if(reset)ff51ArchiveOffset=0;
+ const sequence=++ff51ArchiveSeq,requestedOffset=ff51ArchiveOffset;
+ const from=$('ff51ArchiveFrom').value,to=$('ff51ArchiveTo').value,
+  selectedBranch=$('ff51ArchiveBranch').value||null,selectedStatus=$('ff51ArchiveStatus').value||null;
+ const current=()=>sequence===ff51ArchiveSeq&&
+   ff51Viewer(['manager','customer_service','cashier','supervisor'])===actor&&
+   !$('ff51ArchivePanel').classList.contains('hidden')&&
+   $('ff51ArchiveFrom').value===from&&$('ff51ArchiveTo').value===to&&
+   ($('ff51ArchiveBranch').value||null)===selectedBranch&&
+   ($('ff51ArchiveStatus').value||null)===selectedStatus&&ff51ArchiveOffset===requestedOffset;
+ ff51ArchiveRows=[];ff51ArchiveTotal=0;
+ $('ff51ArchiveCount').textContent='';
+ for(const id of ['ff51ArchivePrev','ff51ArchiveNext','ff51ArchiveExport'])$(id).disabled=true;
  const box=$('ff51ArchiveList');box.textContent='جاري تحميل الأرشيف...';
  try{
-  const r=await rpc('ff51_order_archive',{p_from:$('ff51ArchiveFrom').value,p_to:$('ff51ArchiveTo').value,
-   p_branch:$('ff51ArchiveBranch').value||null,p_status:$('ff51ArchiveStatus').value||null,p_limit:50,p_offset:ff51ArchiveOffset});
-  ff51ArchiveRows=r.rows||[];ff51ArchiveTotal=Number(r.total||0);
-  $('ff51ArchiveCount').textContent=`الطلبات المطابقة: ${ff51ArchiveTotal} | عرض ${ff51ArchiveOffset+1}–${Math.min(ff51ArchiveOffset+ff51ArchiveRows.length,ff51ArchiveTotal)}`;
+  const r=await rpc('ff51_order_archive',{p_from:from,p_to:to,
+   p_branch:selectedBranch,p_status:selectedStatus,p_limit:50,p_offset:requestedOffset});
+  if(!current())return;
+  if(!r||!Array.isArray(r.rows))throw Error('استجابة الأرشيف غير مكتملة');
+  ff51ArchiveRows=r.rows;ff51ArchiveTotal=Number(r.total||0);
+  $('ff51ArchiveCount').textContent=`الطلبات المطابقة: ${ff51ArchiveTotal} | عرض ${ff51ArchiveRows.length?requestedOffset+1:0}–${Math.min(requestedOffset+ff51ArchiveRows.length,ff51ArchiveTotal)}`;
   box.innerHTML=ff51ArchiveRows.length?ff51ArchiveRows.map(o=>`<details class="ff49-reservation"><summary><b>طلب #${esc(o.number)} — ${esc(o.cashier_desk_name||branchName(o.branch_id))}</b> · ${esc(o.status)} · ${time(o.created_at)} — ${amount(o.total)} ريال</summary><p>${esc(o.customer_name)} · ${esc(o.phone)} · ${esc(o.address)} · موصل: ${esc(o.driver_name||'لم يسند')}</p><div class="note">${(o.items||[]).map(i=>`${esc(i.qty)} × ${esc(i.name)} — ${amount(i.price)} ريال`).join('<br>')}</div><p class="muted">الإضافات: ${(o.additions||[]).length} · طلبات التعديل: ${(o.changes||[]).length} · أحداث الطلب: ${(o.events||[]).length}</p>${(o.changes||[]).map(c=>`<div class="note"><b>تعديل ${esc(c.status)}</b> — ${esc(c.reason)}<p>قبل: ${esc(JSON.stringify(c.old_items))}</p><p>بعد: ${esc(JSON.stringify(c.new_items))}</p></div>`).join('')}</details>`).join(''):'<div class="empty">لا توجد طلبات مطابقة.</div>';
-  $('ff51ArchivePrev').disabled=ff51ArchiveOffset<=0;
-  $('ff51ArchiveNext').disabled=ff51ArchiveOffset+ff51ArchiveRows.length>=ff51ArchiveTotal;
- }catch(e){box.textContent='تعذر قراءة الأرشيف: '+e.message;}
+  $('ff51ArchivePrev').disabled=requestedOffset<=0;
+  $('ff51ArchiveNext').disabled=requestedOffset+ff51ArchiveRows.length>=ff51ArchiveTotal;
+  $('ff51ArchiveExport').disabled=!ff51ArchiveRows.length;
+ }catch(e){if(current())box.textContent='تعذر قراءة الأرشيف: '+e.message;}
 }
-$('ff51ArchiveBtn').onclick=()=>{ff51Open('ff51ArchivePanel');ff51DefaultArchiveDates();
+$('ff51ArchiveBtn').onclick=()=>{if(!ff51Viewer(['manager','customer_service','cashier','supervisor']))return;ff51Open('ff51ArchivePanel');ff51DefaultArchiveDates();
  $('ff51ArchiveBranch').innerHTML='<option value="">كل الفروع المصرح بها</option>'+(data?.branches||[]).map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');
  void ff51LoadArchive(true)};
-$('ff51ArchiveClose').onclick=()=>$('ff51ArchivePanel').classList.add('hidden');
+$('ff51ArchiveClose').onclick=()=>{
+ ff51ArchiveSeq++;ff51ArchiveRows=[];ff51ArchiveOffset=0;ff51ArchiveTotal=0;
+ $('ff51ArchivePanel').classList.add('hidden');$('ff51ArchiveList').replaceChildren();
+ $('ff51ArchiveCount').textContent='';
+ for(const id of ['ff51ArchivePrev','ff51ArchiveNext','ff51ArchiveExport'])$(id).disabled=true;
+};
 $('ff51ArchiveRefresh').onclick=()=>ff51LoadArchive(true);
+for(const id of ['ff51ArchiveFrom','ff51ArchiveTo','ff51ArchiveBranch','ff51ArchiveStatus'])
+ $(id).addEventListener('change',()=>{if(!$('ff51ArchivePanel').classList.contains('hidden'))void ff51LoadArchive(true)});
 $('ff51ArchivePrev').onclick=()=>{ff51ArchiveOffset=Math.max(0,ff51ArchiveOffset-50);void ff51LoadArchive()};
 $('ff51ArchiveNext').onclick=()=>{ff51ArchiveOffset+=50;void ff51LoadArchive()};
 $('ff51ArchiveExport').onclick=()=>{
+ if(!ff51Viewer(['manager','customer_service','cashier','supervisor'])||
+    $('ff51ArchivePanel').classList.contains('hidden'))return;
  if(!ff51ArchiveRows.length)return toast('لا توجد سجلات لتصديرها');
  const lines=[['رقم الطلب','الفرع','اسم العميل','الهاتف','الوقت','الحالة','الموصل','القيمة']];
  for(const r of ff51ArchiveRows)lines.push([r.number,branchName(r.branch_id),r.customer_name,r.phone,r.created_at,r.status,r.driver_name,r.total]);
- const csv='\uFEFF'+lines.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
+ const csvCell=v=>{
+  const text=String(v??'');
+  // Prevent spreadsheet formula injection from customer-provided names and addresses.
+  const safe=/^[\s\uFEFF]*[=+@\-]/.test(text)?"'"+text:text;
+  return '"'+safe.replace(/"/g,'""')+'"';
+ };
+ const csv='\uFEFF'+lines.map(row=>row.map(csvCell).join(',')).join('\r\n');
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download='FreshFries_Archive.csv';a.click();URL.revokeObjectURL(url);
 };
 async function ff51LoadRatings(){
+ const actor=ff51Viewer(['manager','supervisor','driver']);if(!actor)return;
+ const sequence=++ff51RatingsSeq,period=window.ffLuxeHistoryPeriod||{from:ff40TodayYemen(),to:ff40TodayYemen()},
+   selectedBranch=$('ff51RatingBranch')?.value||null;
+ const current=()=>sequence===ff51RatingsSeq&&ff51Viewer(['manager','supervisor','driver'])===actor&&
+  !$('ff51RatingsPanel').classList.contains('hidden')&&
+  ($('ff51RatingBranch')?.value||null)===selectedBranch;
  const box=$('ff51RatingsList');box.textContent='جاري تحميل التقييمات...';
- try{const period=window.ffLuxeHistoryPeriod||{from:ff40TodayYemen(),to:ff40TodayYemen()};const list=await rpc('ff_luxe_rating_summary_period',{p_from:period.from,p_to:period.to,p_branch:$('ff51RatingBranch')?.value||null});box.innerHTML=list.length?list.map(x=>`<div class="item"><b>${esc(x.name)}</b> — ⭐ ${esc(x.average)} / 5 <span class="muted">(${esc(x.count)} تقييم)</span></div>`).join(''):'<div class="empty">لا توجد تقييمات حتى الآن.</div>';
- }catch(e){box.textContent='تعذر تحميل التقييمات: '+e.message}
+ try{const list=await rpc('ff_luxe_rating_summary_period',{p_from:period.from,p_to:period.to,p_branch:selectedBranch});
+  if(!current())return;
+  box.innerHTML=list.length?list.map(x=>`<div class="item"><b>${esc(x.name)}</b> — ⭐ ${esc(x.average)} / 5 <span class="muted">(${esc(x.count)} تقييم)</span></div>`).join(''):'<div class="empty">لا توجد تقييمات حتى الآن.</div>';
+ }catch(e){if(current())box.textContent='تعذر تحميل التقييمات: '+e.message}
 }
 $('ff51RatingsBtn').onclick=()=>{
+  if(!ff51Viewer(['manager','supervisor','driver']))return;
   ff51Open('ff51RatingsPanel');
   const selected=$('ff51RatingBranch'),old=selected.value;
   selected.innerHTML='<option value="">كل الفروع</option>'+
@@ -2969,7 +3009,7 @@ $('ff51RatingsBtn').onclick=()=>{
  };
  $('ff51RatingBranch').onchange=()=>void ff51LoadRatings();
 $('ff51RatingsRefresh').onclick=ff51LoadRatings;
-$('ff51RatingsClose').onclick=()=>$('ff51RatingsPanel').classList.add('hidden');
+$('ff51RatingsClose').onclick=()=>{ff51RatingsSeq++;$('ff51RatingsPanel').classList.add('hidden');$('ff51RatingsList').replaceChildren()};
 $('ff51BreakBtn').onclick=async()=>{
  const b=$('ff51BreakBtn');b.disabled=true;try{const x=await rpc('ff51_driver_set_break',{p_on_break:data?.my_presence!=='paused'});toast(x.state==='paused'?'بدأت الاستراحة؛ لا تعرض عليك طلبات':'انتهت الاستراحة؛ عدت جاهزًا');await reload(true)}catch(e){toast(e.message)}finally{b.disabled=false}
 };
