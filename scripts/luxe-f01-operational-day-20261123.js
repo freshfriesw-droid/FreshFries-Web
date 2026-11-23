@@ -122,7 +122,7 @@
     info.textContent='الفترة: 8:00 صباحاً – 2:00 صباحاً بتوقيت صنعاء'+
       (closed?' · ⏸️ المطعم خارج وقت الدوام، والطلبات تُنسب لليوم السابق.':'')+
       ' · لا توجد عملية حذف أو تصفير لقاعدة البيانات.';
-    if(changed&&followToday){day.value=today;compare.value=prevDay(today);if(authorized())void load();}
+    if(changed&&followToday){day.value=today;compare.value=prevDay(today);if(busy){sequence++;busy=false;}if(authorized())void load();}
     if(withRefresh&&authorized())void load();
   }
   function show(){
@@ -140,5 +140,6 @@
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync(true);});
   window.addEventListener('online',()=>sync(true));
   sync();
+  if(authorized())show();
   setInterval(()=>sync(),15000);
 })();
