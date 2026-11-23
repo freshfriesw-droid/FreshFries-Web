@@ -45,7 +45,15 @@ try:
                     quantity:0,quantityInput:input,showPrice:true,
                     onAdd:()=>shift(1),onRemove:()=>shift(-1)
                   });
-                  document.body.replaceChildren(picker.element);
+                  const grid=document.createElement('div');
+                  grid.id='ffBurgerMenuFields';
+                  const secondary=window.ffLuxePhotoMenu.createTile(
+                    {id:'other',name:'برجر أبيض',price:900},
+                    {quantity:0,onAdd:()=>{},onRemove:()=>{}}
+                  );
+                  grid.append(picker.element,secondary.element);
+                  document.body.replaceChildren(grid);
+                  window.__secondPicker=secondary;
                   const get=()=>({
                     qty:Number(input.value),
                     badge:picker.element.querySelector('.ffb-v2-count').textContent,
@@ -65,6 +73,16 @@ try:
                 qty = lambda: page.evaluate("window.__burgerFixture.get()")
                 assert qty()["qty"] == 0 and qty()["minusDisabled"]
                 assert product.get_attribute("aria-label") == "إضافة سماش برجر أسمر دبل"
+                # The component itself maintains semantic selection, even without
+                # a screen-specific sync() function.
+                assert page.evaluate("""() => {
+                  const picker=window.__secondPicker;
+                  picker.refresh(2);
+                  const pressed=picker.element.querySelector('.ffl-picker-product').getAttribute('aria-pressed');
+                  picker.refresh(0);
+                  const cleared=picker.element.querySelector('.ffl-picker-product').getAttribute('aria-pressed');
+                  return pressed==='true'&&cleared==='false';
+                }""")
                 product.click()
                 assert qty()["qty"] == 1 and qty()["selected"] and qty()["aria"] == "true"
                 product.click()
@@ -86,14 +104,26 @@ try:
                 page.evaluate("window.__burgerFixture.setQuantity(3)")
                 assert qty()["qty"] == 3 and qty()["badge"] == "3"
                 assert page.locator(".ffl-picker-controls input").input_value() == "3"
-                # No button in a small RTL screen may overflow the viewport.
-                result = page.evaluate("""() => [...document.querySelectorAll('.ffl-picker-tile button')]
-                  .map(el=>({x:el.getBoundingClientRect().left,
-                             right:el.getBoundingClientRect().right}))""")
-                assert all(x["x"] >= -1 and x["right"] <= width + 1 for x in result), (
+                # Two real product cards reveal cramped 320px grid layouts.
+                # Check both viewport overflow and tappable +/- dimensions.
+                result = page.evaluate("""() => ({
+                  gridColumns:getComputedStyle(document.getElementById('ffBurgerMenuFields'))
+                    .gridTemplateColumns.split(' ').length,
+                  buttons:[...document.querySelectorAll('.ffl-picker-tile button')]
+                    .map(el=>({name:el.getAttribute('aria-label'),
+                      x:el.getBoundingClientRect().left,
+                      right:el.getBoundingClientRect().right,
+                      height:el.getBoundingClientRect().height,
+                      width:el.getBoundingClientRect().width}))
+                })""")
+                assert result["gridColumns"] == (1 if width <= 370 else 2 if width <= 540 else 2), (
                     width, result
                 )
-                print(f"PASS burger picker: {width}px, tap + / minus, bounds 0-99, ARIA", flush=True)
+                assert all(x["x"] >= -1 and x["right"] <= width + 1
+                           for x in result["buttons"]), (width, result)
+                assert all(x["height"] >= 43 and x["width"] >= 43
+                           for x in result["buttons"]), (width, result)
+                print(f"PASS burger picker: {width}px, tap + / minus, bounds 0-99, ARIA, grid", flush=True)
                 context.close()
         finally:
             browser.close()
