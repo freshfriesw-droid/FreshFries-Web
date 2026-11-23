@@ -243,6 +243,21 @@ assert.match(burgerScript,/ff_burger_transition/, 'Accept-ready-skip RPC missing
 assert.match(burgerScript,/data-ff-burger-start/, 'Prep timer missing');
 assert.match(burgerScript,/postgres_changes/, 'Realtime hint missing');
 assert.match(burgerScript,/ffBurgerCashierReady/, 'Ready alert list missing');
+
+assert.match(burgerScript,/ff-burger-product/, 'Tap-to-add burger buttons are missing');
+assert.match(burgerScript,/product\.addEventListener\('click',\(\)=>shift\(1\)\)/,'Tap burger should increment quantity by 1');
+assert.match(burgerScript,/plus\.addEventListener\('click',\(\)=>shift\(1\)\)/,'Burger plus should increment by 1');
+assert.match(burgerScript,/minus\.addEventListener\('click',\(\)=>shift\(-1\)\)/,'Burger minus should decrement by 1');
+assert.match(burgerScript,/qty\.dataset\.burgerItem=item\.id/,'Order payload must retain official menu ID');
+assert.match(burgerScript,/Math\.max\(0,Math\.min\(99,value\)\)/,'Quantity buttons must enforce 0–99 bounds');
+assert.match(burgerScript,/product\.setAttribute\('aria-pressed'/,'Selected product must be accessible');
+assert.match(burgerScript,/رقم فاتورة الكاشير \(اختياري\)/,'Burger invoice input must be visibly optional');
+assert.doesNotMatch(burgerScript,/name="invoice" required/,'Burger invoice cannot be required in HTML');
+assert.doesNotMatch(burgerScript,/if\(!f\('invoice'\)\.value\.trim\(\)\)/,'Burger invoice cannot be required before saving');
+const burgerInvoiceSQL=get('supabase/migrations/20261123_burger_optional_invoice.sql').toString('utf8');
+assert.match(burgerInvoiceSQL,/length\(btrim\(invoice_ref\)\) <= 80/,'DB must permit empty invoice references');
+assert.match(burgerInvoiceSQL,/length\(btrim\(coalesce\(p_invoice,''\)\)\) > 80/,'Server must retain invoice length validation');
+
 assert.match(burgerScript,/id="ffBurgerKitchenLogout"/,'Burger kitchen must show a dedicated visible logout button');
 assert.match(burgerScript,/ffBurgerDrawerLogout/,'Burger kitchen must show logout in mobile drawer');
 assert.match(burgerScript,/button\.click\(\)/,'Kitchen logout must invoke existing authenticated sign-out');
