@@ -22,6 +22,35 @@ for (let i=0; i<scripts.length; i++) {
   validated++;
 }
 assert.ok(validated >= 20, `Expected at least 20 JavaScript modules; found ${validated}`);
+// Regression: stalled authentication must offer a retry but must never unlock the app.
+const watchdogScript = scripts.find(m => /id="ff-luxe-boot-watchdog"/.test(m[1]))?.[2];
+assert.ok(watchdogScript, 'Boot watchdog script missing');
+assert.match(html, /<noscript>[\s\S]*?JavaScript[\s\S]*?<\/noscript>/, 'Missing no-JavaScript explanation');
+assert.doesNotMatch(watchdogScript, /classList\.remove\(['"]ff-booting/, 'Watchdog may not bypass session checks');
+let fireWatchdog, booting = true;
+const message = {textContent: 'جارِ استعادة جلسة فريش فرايز…'};
+const boot = {links: [], querySelector: () => boot.links[0] || null, appendChild: node => boot.links.push(node)};
+const sandbox = {
+  setTimeout: (fn, ms) => { assert.equal(ms, 20000); fireWatchdog = fn; return 1; },
+  clearTimeout: () => {},
+  document: {
+    body: {classList: {contains: name => name === 'ff-booting' && booting}},
+    getElementById: name => name === 'ff65Boot' ? boot : name === 'ff65BootMessage' ? message : null,
+    createElement: tag => ({tag, style: {}, setAttribute(name, value) {this[name] = value;}})
+  },
+  window: {location: {href: 'https://example.com/index.html'}, addEventListener: () => {}}
+};
+vm.runInNewContext(watchdogScript, sandbox, {timeout: 1000});
+assert.equal(typeof fireWatchdog, 'function');
+fireWatchdog();
+assert.equal(boot.links.length, 1, 'Retry link must be added once');
+assert.equal(boot.links[0].href, 'https://example.com/index.html');
+assert.match(message.textContent, /تأخر تحميل النظام/);
+fireWatchdog();
+assert.equal(boot.links.length, 1, 'Avoid duplicate retry links');
+booting = false;
+fireWatchdog();
+assert.equal(boot.links.length, 1, 'Do not change session state after boot completes');
 const operationalFiles = [
   'scripts/luxe-operational-fixes-20261121.js',
   'scripts/luxe-operational-polish-20261121.js',
