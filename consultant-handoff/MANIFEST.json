@@ -1,0 +1,38 @@
+{
+  "project": "Fresh Fries LUXE",
+  "source_repository": "freshfriesw-droid/FreshFries-Web",
+  "source_commit": "57ab198888f259acad0a09d813eceb132a795eec",
+  "source_date_utc": "2026-11-23T18:27:36Z",
+  "application_version": "v38.38.0",
+  "archive": "FreshFries_LUXE_v38.38.0_2026-11-23.zip",
+  "archive_bytes": 1885051,
+  "archive_sha256": "2cbb27bf829eea87a817ee2f3f1a99cecddc91a8b521749e2751cc3bf9532a68",
+  "parts": [
+    {
+      "name": "FreshFries_LUXE_v38.38.0_2026-11-23.zip.001",
+      "bytes": 377011,
+      "sha256": "8ea8db93a9efa2f71a3a81d97163aead17f918ab95e1035624bca246fe973ae1"
+    },
+    {
+      "name": "FreshFries_LUXE_v38.38.0_2026-11-23.zip.002",
+      "bytes": 377011,
+      "sha256": "cc5f31eb56be6d7ba6bd539db149c3c57a33dd8cb7352942a51ec0a9abea10aa"
+    },
+    {
+      "name": "FreshFries_LUXE_v38.38.0_2026-11-23.zip.003",
+      "bytes": 377011,
+      "sha256": "a3fb0c4030f5fd488f32e62ffe219885b9402ff907e352b0b139e3e1e4fe2d82"
+    },
+    {
+      "name": "FreshFries_LUXE_v38.38.0_2026-11-23.zip.004",
+      "bytes": 377011,
+      "sha256": "db0912eacde81144b3149901c764a5ea9891980dbb4d2a6cc3a85d56b7df3a38"
+    },
+    {
+      "name": "FreshFries_LUXE_v38.38.0_2026-11-23.zip.005",
+      "bytes": 377007,
+      "sha256": "20a91aab4724b310296d417a69f82dec43e1ef3f34a58eb8faa9983562a4031e"
+    }
+  ],
+  "note": "Read-only source snapshot, no live Supabase data or secret keys exported."
+}
