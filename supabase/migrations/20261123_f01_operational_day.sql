@@ -2,7 +2,7 @@
 -- Apply on a *separate staging database* first; production deployment requires passing
 -- supabase/tests/f01_business_date.sql and explicit production release verification.
 -- This migration does not delete orders, reset sequence numbers, or alter operational_date.
-BEGIN;
+-- Migration runners apply this file inside their own transaction.
 
 CREATE OR REPLACE FUNCTION public.ff_business_date(ts timestamptz)
 RETURNS date LANGUAGE sql IMMUTABLE STRICT SET search_path = ''
@@ -161,4 +161,3 @@ BEGIN
 END $$;
 REVOKE ALL ON FUNCTION public.ff_f01_daily_summary(date,date,uuid) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.ff_f01_daily_summary(date,date,uuid) TO authenticated,service_role;
-COMMIT;
