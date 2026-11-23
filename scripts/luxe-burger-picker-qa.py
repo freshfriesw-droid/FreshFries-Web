@@ -47,6 +47,7 @@ try:
                   });
                   const grid=document.createElement('div');
                   grid.id='ffBurgerMenuFields';
+                  grid.style.width='100%'; // Offline fixture otherwise shrink-wraps grid on desktop.
                   const secondary=window.ffLuxePhotoMenu.createTile(
                     {id:'other',name:'برجر أبيض',price:900},
                     {quantity:0,onAdd:()=>{},onRemove:()=>{}}
