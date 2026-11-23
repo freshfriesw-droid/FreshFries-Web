@@ -12,7 +12,7 @@ style.textContent=[
  '#ffLuxeResetOptions .ff-luxe-preview-report ul{margin:6px 0;padding-inline-start:25px}',
  '#ffLuxeResetOptions .ff-luxe-backup-check{display:flex;align-items:center;gap:10px;margin:10px 0;font-weight:800}',
  '#ffLuxeResetOptions [data-reset-run]:disabled{opacity:.45}',
- '#cashierOrders>.item{border:4px solid #ba1423!important;margin:0 0 20px!important;border-radius:16px!important;box-shadow:0 5px 18px #34000024!important}',
+ '#cashierOrders>.item:not(.ff-luxe-cancelled){border:4px solid #ba1423!important;margin:0 0 20px!important;border-radius:16px!important;box-shadow:0 5px 18px #34000024!important}',
  '#cashierOrders .ff-cashier-status{font-size:clamp(19px,3.8vw,25px)!important;font-weight:950!important;color:#a40000!important;border:2px solid #bb1721!important;padding:8px 13px!important}',
  '#ffLuxeCancelledAlerts{margin:12px 0;display:grid;gap:12px}',
  '#ffLuxeCancelledAlerts .ff-luxe-cancelled{padding:18px!important;border:5px solid #b90000!important}',

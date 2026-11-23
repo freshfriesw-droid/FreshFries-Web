@@ -116,7 +116,7 @@ style.textContent = `
   #ffx-menu{display:inline-flex!important;min-width:46px;min-height:46px}
   #ffLuxeDriverCandidate{flex:1 1 220px!important;flex-basis:220px!important;margin:3px 4px!important;min-height:49px;display:flex;align-items:center;line-height:1.45}
   @media(max-width:570px){#ffLuxeDriverCandidate{flex-basis:100%!important;order:-1}}
-  #cashierOrders>.item{border:4px solid #b70e1c!important;margin-block:0 19px!important;padding:16px!important;border-radius:15px!important;box-shadow:0 5px 18px #3b000025!important}
+  #cashierOrders>.item:not(.ff-luxe-cancelled){border:4px solid #b70e1c!important;margin-block:0 19px!important;padding:16px!important;border-radius:15px!important;box-shadow:0 5px 18px #3b000025!important}
   #cashierOrders>.item .ff-cashier-status{font-size:clamp(20px,4vw,27px)!important;font-weight:950!important;color:#a40000!important;background:#fff0f0!important;border:3px solid #bd1220!important;line-height:1.65!important}
   #ffLuxeCancelledAlerts:not(.hidden){display:grid!important;gap:14px!important;margin:12px 0 22px!important}
   #ffLuxeCancelledAlerts .ff-luxe-cancelled{background:#ffdfdf!important;color:#7a0000!important;border:5px solid #b10000!important;border-radius:16px!important;padding:20px!important;box-shadow:0 8px 23px #b000003b!important}
