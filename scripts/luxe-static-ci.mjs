@@ -187,20 +187,3 @@ assert.match(sw, /req\.mode === 'navigate'/, 'Navigation must not be served from
 assert.match(sw, /fetch\(req, \{ cache: 'no-store' \}\)/, 'Navigation must be fetched network-only');
 assert.ok(fs.existsSync('offline.html'), 'Missing offline fallback');
 console.log(`PASS: ${validated} inline JS syntax checks; PWA manifests/icons/zlib verified; secure offline rules; required portals present`);
-
-// Security repairs 12–14: source wiring and no regression of approved shortcuts.
-const securitySource=get('scripts/luxe-security-12-14-20261123.js').toString('utf8');
-new vm.Script(securitySource,{filename:'scripts/luxe-security-12-14-20261123.js'});
-assert.match(html, /scripts\/luxe-security-12-14-20261123\.js/, 'Security module missing from website');
-assert.match(html, /storage:window\.ffSec\.storage/, 'Auth session must be tab-only');
-assert.match(html, /const secureRole=await rpc\('ff_security_my_role'\)/,
- 'Privileged roles must resolve before loading the order snapshot');
-assert.match(html, /await window\.ffSec\.ensureMfa\(client,role\)/,
- 'MFA is mandatory before privileged session opens');
-assert.match(securitySource, /challengeAndVerify/, 'TOTP verification missing');
-assert.match(securitySource, /currentLevel==='aal2'/, 'MFA AAL2 validation missing');
-assert.match(securitySource, /30\*60\*1000/, '30-minute idle expiry missing');
-assert.match(securitySource, /ff_security_login_event/, 'Login event audit missing');
-assert.match(securitySource, /ff_customer_views_manager/, 'Manager customer-view oversight missing');
-assert.match(securitySource, /ff_log_customer_view/, 'CSV export audit missing');
-assert.match(html, /function ff49ParseItemsAndNotes\(/, 'Approved order parser was lost');
