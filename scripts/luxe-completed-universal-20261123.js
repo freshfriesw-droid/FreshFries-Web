@@ -86,7 +86,7 @@
  /* all staff roles use eligible() above */
  function clear(){
   generation++;requestSequence++;viewer='';loaded=[];offset=0;hasMore=true;loading=false;open=false;lastUpdated=0;openCards.clear();
-  activeAction=null;seen.clear();permittedBranches=[];list.replaceChildren();status.textContent='';
+  activeAction=null;seen.clear();permittedBranches=[];list.replaceChildren();status.textContent='';more.disabled=false;refresh.disabled=false;
   search.value='';panel.hidden=true;button.setAttribute('aria-expanded','false');box.hidden=true;branch.replaceChildren(new Option('كل الفروع',''));
  }
  function maintainViewer(){
