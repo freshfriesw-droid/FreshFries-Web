@@ -1136,6 +1136,11 @@ async function ffV12Refresh(force=false){
   ffV12Get('ffV12AssemblyStatus').textContent='⚠️ فشل اتصال التجميع أو صلاحية الفرع: '+(e?.message||'خطأ')+' · آخر تحديث ناجح: '+(ffV12AssemblyLastSuccess?new Date(ffV12AssemblyLastSuccess).toLocaleTimeString('ar-YE',{timeZone:'Asia/Aden'}):'لا يوجد');
  }finally{if(request===ffV12Request)ffV12AssemblyLoading=false;}
 }
+ffV12Get('ffV12Refresh')?.addEventListener('click',()=>{
+ if(!ffV12AssemblyActive)return;
+ ffV12Get('ffV12AssemblyStatus').textContent='🔄 جارٍ تحديث طلبات فرعك...';
+ void ffV12Refresh(true);
+});
 // Assembly account administration is integrated in the existing staff management view.
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ffV12AssemblyActive)void ffV12Refresh(true)});
 window.addEventListener('online',()=>{if(ffV12AssemblyActive)void ffV12Refresh(true)});
