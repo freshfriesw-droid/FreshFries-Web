@@ -89,7 +89,7 @@
  const branchWrap=id('fflStaffBranchWrap'),deskWrap=id('fflStaffDeskWrap'),status=id('fflStaffStatus'),submit=id('fflStaffSubmit');
  const destinations={cairo_first:'cairo',cairo_second:'cairo',sam_mall:'sam_mall',khamseen:'khamseen'};
  function setRole(){
-  const r=role.value, needsBranch=['cashier','driver','assembly'].includes(r);
+  const r=role.value, needsBranch=['cashier','driver','assembly','supervisor'].includes(r);
   branchWrap.hidden=!needsBranch||r==='cashier';deskWrap.hidden=r!=='cashier';
   branch.required=needsBranch&&r!=='cashier';desk.required=r==='cashier';
  }
