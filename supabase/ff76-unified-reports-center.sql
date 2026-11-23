@@ -197,6 +197,18 @@ BEGIN
        WHERE s.customer_id IS NOT NULL GROUP BY s.customer_id,c.name
        ORDER BY orders DESC LIMIT 40) AS x),'[]'::jsonb)
     ELSE '[]'::jsonb END,
+ 'late_orders',CASE WHEN v_role IN('manager','supervisor','customer_service','cashier','driver') THEN coalesce(
+   (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.delivery_minutes DESC)
+    FROM (SELECT order_number,branch_name,
+      round((extract(epoch from(delivery_at-created_at))/60)::numeric,1) AS delivery_minutes,
+      created_at FROM scoped WHERE status='delivered' AND delivery_at>created_at+interval '60 minutes'
+      ORDER BY delivery_at-created_at DESC LIMIT 100) AS x),'[]'::jsonb)
+    ELSE '[]'::jsonb END,
+ 'free_delivery_orders',coalesce(
+   (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.created_at DESC)
+    FROM (SELECT order_number,branch_name,created_at,
+        invoice_amount+invoiced_addons AS total_amount FROM scoped
+       WHERE fee_amount=0 ORDER BY created_at DESC LIMIT 100) AS x),'[]'::jsonb),
  'fastest',coalesce(
    (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.minutes)
     FROM (SELECT s.order_number,s.branch_name,d.name AS driver_name,
