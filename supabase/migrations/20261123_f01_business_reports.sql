@@ -1,6 +1,6 @@
 -- F-01: report & archive business-date refactor on the same staging branch.
 -- Read only reporting functions; preserves all existing role restrictions and outputs.
-BEGIN;
+-- Migration runners apply this file inside their own transaction.
 
 -- ff27_quality (preserved signature and authorization)
 CREATE OR REPLACE FUNCTION public.ff27_quality(p_from date, p_to date, p_branch uuid DEFAULT NULL::uuid)
@@ -365,4 +365,3 @@ begin
  return answer;
 end;$function$;
 
-COMMIT;
