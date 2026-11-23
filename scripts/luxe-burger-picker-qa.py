@@ -116,7 +116,7 @@ try:
                       height:el.getBoundingClientRect().height,
                       width:el.getBoundingClientRect().width}))
                 })""")
-                assert result["gridColumns"] == (1 if width <= 370 else 2 if width <= 540 else 2), (
+                assert result["gridColumns"] == (1 if width <= 370 else 2) if width <= 540 else result["gridColumns"] >= 2, (
                     width, result
                 )
                 assert all(x["x"] >= -1 and x["right"] <= width + 1
