@@ -2468,11 +2468,13 @@ resetUI=function(){ff48PreviousReset();ff48Reset()};
 <script>
 'use strict';
 // v38.20: operational UI. All actual mutations use authenticated, permission-checked RPCs.
-let ff49Catalog=[],ff49CatalogAt=0,ff49Reservations=[],ff49ManualOrderId=null,ff49ReserveSeq=0,ff49ReserveBusy=false,ff49ReserveLoad=null;
+let ff49Catalog=[],ff49CatalogAt=0,ff49CatalogActor='',ff49CatalogSeq=0,ff49CatalogLoad=null,ff49Reservations=[],ff49ManualOrderId=null,ff49ReserveSeq=0,ff49ReserveBusy=false,ff49ReserveLoad=null;
 function ff49Normalize(x){return String(x||'').trim().toLocaleLowerCase('ar').replace(/[\u064B-\u065F\u0640]/g,'').replace(/\s+/g,' ')}
 async function ff49LoadCatalog(){
- if(!user || Date.now()-ff49CatalogAt<300000)return;
- try{let rows=await rpc('ff49_catalog');if(Array.isArray(rows)){ff49Catalog=rows;ff49CatalogAt=Date.now()}}catch(e){console.warn('menu catalog not loaded',e.message)}
+ const actor=user?.id;if(!actor)return false;if(ff49CatalogActor!==actor){ff49Catalog=[];ff49CatalogAt=0;ff49CatalogActor=actor;ff49CatalogLoad=null;}
+ if(Date.now()-ff49CatalogAt<30000)return true;if(ff49CatalogLoad)return ff49CatalogLoad;
+ const seq=++ff49CatalogSeq;const current=()=>user?.id===actor&&seq===ff49CatalogSeq;
+ ff49CatalogLoad=(async()=>{try{const rows=await rpc('ff49_catalog');if(!current())return false;if(!Array.isArray(rows))throw Error('قائمة غير صالحة');ff49Catalog=rows;ff49CatalogAt=Date.now();return true}catch(e){if(current()){ff49Catalog=[];ff49CatalogAt=0;console.warn('menu catalog not loaded',e.message)}return false}finally{if(current())ff49CatalogLoad=null}})();return ff49CatalogLoad;
 }
 // Fresh Fries v38.24 UX stage 1: shared parser used by orders, additions, and reservations.
 const ff49NormalizeInput=x=>String(x||'').toLowerCase().replace(/[\u064b-\u065f\u0670\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[٠-٩۰-۹]/g,d=>String('٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹'.indexOf(d)%10)).replace(/\s+/g,' ').trim();
@@ -2662,7 +2664,7 @@ draw=function(){ff49OldDraw();
 const ff49OldReload=reload;
 reload=async function(...args){const r=await ff49OldReload(...args);if(user&&data?.role){void ff49LoadCatalog();if(!$('ff49ReservationsPanel').classList.contains('hidden'))void ff49RefreshReservations(true)}return r;};
 const ff49OldReset=resetUI;
-resetUI=function(){ff49OldReset();ff49Reservations=[];ff49ManualOrderId=null;ff49Catalog=[];ff49CatalogAt=0;ff49ReserveSeq++;ff49ReserveLoad=null;for(const id of ['ff49ReserveName','ff49ReservePhone','ff49ReserveNotes','ff49ReserveItems','ff49ReservePickup'])$(id).value='';$('ff49ReservationsList').replaceChildren();
+resetUI=function(){ff49OldReset();ff49Reservations=[];ff49ManualOrderId=null;ff49Catalog=[];ff49CatalogAt=0;ff49CatalogActor='';ff49CatalogSeq++;ff49CatalogLoad=null;ff49ReserveSeq++;ff49ReserveLoad=null;for(const id of ['ff49ReserveName','ff49ReservePhone','ff49ReserveNotes','ff49ReserveItems','ff49ReservePickup'])$(id).value='';$('ff49ReservationsList').replaceChildren();
  for(const id of ['ff49ReservationsBtn','ff49TransferBtn','ff49ReservationsPanel','ff49TransferPanel','ff49ManualPanel'])$(id).classList.add('hidden');};
 function ff49ReserveStages(status,role){
  const next={new:'reviewed',reviewed:'confirmed',confirmed:'preparing',preparing:'ready',ready:'collected'};
@@ -3776,7 +3778,7 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
  window.ffbStartNewOrder=resetDraft;
  window.addEventListener('ff:order-created',resetDraft);
  $('ffbTabMenu').onclick=()=>{showMode('menu');void load()};$('ffbTabText').onclick=()=>showMode('text');
- async function load(force=false){if(!user)return;const box=$('ffbMenuGrid');if(force){ff49CatalogAt=0;loaded=false}if(!loaded)box.textContent='جارٍ تحميل المنيو من قاعدة البيانات...';try{await ff49LoadCatalog();catalog=(Array.isArray(ff49Catalog)?ff49Catalog:[]).filter(i=>i.active!==false&&i.name&&Number.isFinite(Number(i.price)));loaded=!!catalog.length;if(!loaded)throw Error('لم تُحمّل أصناف متاحة لهذا الحساب');renderCategories();renderCart();render()}catch(e){box.textContent='تعذر تحميل المنيو: '+e.message;status('تحقق من الاتصال وصلاحية قراءة المنيو',true)}}
+ async function load(force=false){if(!user)return;const actor=user.id,box=$('ffbMenuGrid');if(force){ff49CatalogAt=0;loaded=false}if(!loaded)box.textContent='جارٍ تحميل المنيو من قاعدة البيانات...';try{await ff49LoadCatalog();if(user?.id!==actor)return;catalog=(Array.isArray(ff49Catalog)?ff49Catalog:[]).filter(i=>i.active!==false&&i.name&&Number.isFinite(Number(i.price)));loaded=!!catalog.length;if(!loaded)throw Error('لم تُحمّل أصناف متاحة لهذا الحساب');renderCategories();renderCart();render()}catch(e){if(user?.id!==actor)return;box.textContent='تعذر تحميل المنيو: '+e.message;status('تحقق من الاتصال وصلاحية قراءة المنيو',true)}}
  function renderCategories(){const box=$('ffbCategories');box.replaceChildren();const existing=new Set(catalog.map(categoryOf));for(const name of ['الكل',...order.filter(x=>existing.has(x))]){const b=document.createElement('button');b.type='button';b.textContent=name;b.className='ffb-cat-btn'+(category===name?' selected':'');b.setAttribute('aria-pressed',String(category===name));b.onclick=()=>{category=name;renderCategories();render()};box.append(b)}}
  function render(){const grid=$('ffbMenuGrid');if(!grid)return;const q=normalized($('ffbMenuSearch').value);const filtered=catalog.filter(i=>(category==='الكل'||categoryOf(i)===category)&&(!q||normalized(i.name).includes(q)));
   grid.replaceChildren();for(const item of filtered){const tile=document.createElement('div');tile.className='ffb-v2-tile';tile.dataset.cardStyle=['compact','large'].includes(item.card_style)?item.card_style:'standard';const qty=cart.get(item.id||item.name)||0;
@@ -3786,7 +3788,7 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
   if(!filtered.length)grid.textContent='لا توجد أصناف ضمن هذا القسم والبحث.';
  }
  async function uploadImage(item,b){if(data?.role!=='manager')return status('رفع الصور للمدير فقط',true);const inp=document.createElement('input');inp.type='file';inp.accept='image/png,image/jpeg,image/webp';inp.onchange=async()=>{const f=inp.files?.[0];if(!f)return;if(!['image/png','image/jpeg','image/webp'].includes(f.type)||f.size>2*1024*1024)return status('اختر صورة PNG أو JPG أو WebP أقل من 2 ميجابايت',true);const ext=f.type==='image/png'?'png':f.type==='image/webp'?'webp':'jpg';const kind=item.kind==='offer'||item.type==='offer'?'offer':'menu',path=kind+'/'+item.id+'.'+ext;
-    b.disabled=true;try{if(!client?.storage)throw Error('اتصال تخزين Supabase غير متاح');const result=await client.storage.from('ff_menu_media').upload(path,f,{contentType:f.type,upsert:true,cacheControl:'300'});if(result.error)throw result.error;await rpc('ff53_save_menu_image',{p_item:item.id,p_path:path,p_kind:kind==='offer'?'offer':'item'});status('تم حفظ الصورة في التخزين المركزي، وستظهر لجميع الأجهزة بعد التحديث');await load(true)}catch(e){status('تعذر رفع الصورة المركزية: '+e.message+'. تأكد من تطبيق ملف ترقية الوسائط SQL.',true)}finally{b.disabled=false}};inp.click()}
+    b.disabled=true;try{if(!client?.storage)throw Error('اتصال تخزين Supabase غير متاح');const actor=user?.id;if(!actor||data?.role!=='manager')throw Error('انتهت صلاحية الجلسة');const result=await client.storage.from('ff_menu_media').upload(path,f,{contentType:f.type,upsert:true,cacheControl:'300'});if(result.error)throw result.error;if(user?.id!==actor||data?.role!=='manager')throw Error('تغير الحساب؛ أعد فتح المنيو');await rpc('ff53_save_menu_image',{p_item:item.id,p_path:path,p_kind:kind==='offer'?'offer':'item'});status('تم حفظ الصورة في التخزين المركزي، وستظهر لجميع الأجهزة بعد التحديث');await load(true)}catch(e){status('تعذر رفع الصورة المركزية: '+e.message+'. تأكد من تطبيق ملف ترقية الوسائط SQL.',true)}finally{b.disabled=false}};inp.click()}
  function change(item,by){
   const editor=window.ffLuxeOrderText;
   if(!editor)return status('تعذر تحميل محرر السلة؛ حدّث الصفحة',true);
@@ -3934,7 +3936,7 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
   if(!$('newItems').value.trim()){cart.clear();renderCart();render();autoNotes='';$('ffbQuickInput').value='';$('ffbQuickReview').classList.add('hidden')}
  };
  // Avoid reloading catalog repeatedly during a draft. A live forced refresh remains available.
- const originalReset=resetUI;resetUI=function(){originalReset();reviewSequence++;reviewedInput=null;cart.clear();catalog=[];loaded=false;category='الكل';autoNotes='';previewReady=false;layer.classList.add('hidden');renderCart()};
+ const originalReset=resetUI;resetUI=function(){originalReset();for(const id of ['newPhone','newArea','newFee','newNotes','newItems','newCustomerName','newFullAddress','ffbQuickInput','ffbMenuSearch'])$(id).value='';reviewSequence++;reviewedInput=null;cart.clear();catalog=[];loaded=false;category='الكل';autoNotes='';previewReady=false;layer.classList.add('hidden');renderCart()};
  renderCart();
  // No background data mutation: loading is tied to entering the order screen.
  const triggerNew=document.getElementById('ffx-hero-new');triggerNew?.addEventListener('click',()=>void load());
@@ -5062,15 +5064,16 @@ setTimeout(()=>void refreshAccess(),1800);
     if(currentPhone!==approvedPhone){invalidate();status.textContent='تغير الرقم؛ اطلب رمزًا جديدًا';return}
     const token=digits(codeInput.value).trim();
     if(!/^[0-9]{4,8}$/.test(token)){status.textContent='الرمز غير صحيح';return}
-    setBusy(true);status.textContent='جارٍ تأكيد الرقم...';
+    const seq=generation;setBusy(true);status.textContent='جارٍ تأكيد الرقم...';
     try{
       const {data:auth,error}=await client.auth.verifyOtp({phone:currentPhone,token,type:'sms'});
       if(error)throw error;
       if(!auth?.session)throw Error('لم تُنشأ جلسة دخول');
+      if(seq!==generation){const current=await client.auth.getSession();if(current.data?.session?.access_token&&current.data.session.access_token===auth.session.access_token)await client.auth.signOut({scope:'local'});return;}
       approvedPhone='';codeInput.value='';
       status.textContent='تم تأكيد الرقم بنجاح';
       await setSession(auth.session);
-    }catch(e){status.textContent='تعذر تأكيد الرقم: '+(e?.message||e)}
+    }catch(e){if(seq===generation)status.textContent='تعذر تأكيد الرقم: '+(e?.message||e)}
     finally{setBusy(false)}
   });
 })();
