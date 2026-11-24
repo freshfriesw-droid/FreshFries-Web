@@ -1,5 +1,5 @@
 DO $qa$
-DECLARE b1 uuid:=gen_random_uuid(); b2 uuid:=gen_random_uuid(); a uuid:=gen_random_uuid(); c uuid:=gen_random_uuid(); k uuid:=gen_random_uuid(); m uuid:=gen_random_uuid(); d uuid:=gen_random_uuid(); o uuid:=gen_random_uuid(); t1 uuid:=gen_random_uuid(); t2 uuid:=gen_random_uuid(); n int; rev bigint; passes int:=0;
+DECLARE b1 uuid:=gen_random_uuid(); b2 uuid:=gen_random_uuid(); a uuid:=gen_random_uuid(); c uuid:=gen_random_uuid(); k uuid:=gen_random_uuid(); m uuid:=gen_random_uuid(); d uuid:=gen_random_uuid(); o uuid:=gen_random_uuid(); o2 uuid:=gen_random_uuid(); t1 uuid:=gen_random_uuid(); t2 uuid:=gen_random_uuid(); n int; rev bigint; passes int:=0;
 BEGIN
  BEGIN
  INSERT INTO public.ff_branches(id,code,name) VALUES(b1,'qa-'||b1,'QA RT1'),(b2,'qa-'||b2,'QA RT2');
@@ -16,7 +16,9 @@ BEGIN
  UPDATE public.ff38_delivery_tasks SET cashier_stage='printed' WHERE order_id=o;
  SELECT revision INTO rev FROM public.ff27_branch_updates WHERE branch_id=b1;
  IF rev<>2 THEN RAISE EXCEPTION 'Initial hint revision mismatch: %',rev;END IF;passes:=passes+1;
- INSERT INTO public.ff27_branch_updates(branch_id,revision) VALUES(b2,1);
+ INSERT INTO public.ff_orders(id,order_number,branch_id,phone_snapshot,business_date,area_snapshot)
+ VALUES(o2,-(1+floor(random()*1e12)::bigint),b2,'000000000',public.ff_business_date(now()),'QA');
+ INSERT INTO public.ff27_branch_updates(order_id,branch_id,revision) VALUES(o2,b2,1);
  INSERT INTO public.ff_burger_tickets(id,client_token,branch_id,order_kind,cashier_id,cashier_name,items,notes)
  VALUES(t1,gen_random_uuid(),b1,'local',c,'QA',jsonb_build_array(jsonb_build_object('name','QA','qty',1)),''),
  (t2,gen_random_uuid(),b2,'local',c,'QA',jsonb_build_array(jsonb_build_object('name','QA','qty',1)),'');
