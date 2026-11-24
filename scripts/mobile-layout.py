@@ -230,6 +230,37 @@ with sync_playwright() as playwright:
                 assert page.locator("#ffbQuickCommit").count() == 0
                 assert page.locator("#newItems").input_value() == ''
                 assert page.locator("#ffbQuickInput").input_value() == '2 تشكن'
+                # Use the existing assignment controls and capture the mocked submit RPC.
+                page.evaluate("""() => {
+                  const select=document.querySelector('#newBranch');
+                  select.replaceChildren(new Option('فرع القاهرة','qa-cairo',true,true));
+                  rpc=async(name,args)=>{
+                    if(name==='ff62_get_pinned')return {driver_id:'qa-driver',branch_id:'qa-cairo',driver_name:'موصل اختبار'};
+                    if(name==='ff62_cairo_drivers')return [{id:'qa-driver',name:'موصل اختبار'}];
+                    if(name==='ff_special_courier_status')return {active:5,capacity:5,can_manage:true};
+                    if(name==='ff_confirm_pinned_order'){
+                      window.__pinnedPayload=args;
+                      throw Error('اختبار معاينة فقط');
+                    }
+                    return {};
+                  };
+                  select.dispatchEvent(new Event('change'));
+                  document.querySelector('#newPhone').value='777777777';
+                  document.querySelector('#newArea').value='منطقة تجريبية';
+                  document.querySelector('#newItems').value='1 تشكن';
+                }""")
+                page.wait_for_function("document.querySelector('#ffpcCapacity').textContent.includes('5 من 5')")
+                page.locator('#ffpcDirect').evaluate('b=>b.click()')
+                page.locator('#ffPinnedPreview').wait_for(state='visible')
+                page.locator('#ffpcConfirm').click()
+                assert page.evaluate('window.__pinnedPayload') is None
+                page.locator('#ffpcOverrideReason').fill('اعتماد اختبار')
+                page.locator('#ffpcConfirm').click()
+                page.wait_for_function('!!window.__pinnedPayload')
+                payload = page.evaluate('window.__pinnedPayload')
+                assert (payload['p_driver'], payload['p_branch'], payload['p_override_reason']) == (
+                    'qa-driver', 'qa-cairo', 'اعتماد اختبار')
+                page.locator('#ffpcCancel').click()
                 # A manager's in-flight settlement report must never appear after session reset.
                 page.evaluate("""() => {
                   rpc=(name,args)=>{
