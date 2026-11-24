@@ -434,7 +434,24 @@ with sync_playwright() as playwright:
                 assert page.evaluate("window.ffContentStudio.notice('notices.unknown','fallback',990001,null)") == "fallback"
                 page.evaluate("window.dispatchEvent(new Event('ff-luxe-session-reset'))")
                 assert page.evaluate("window.ffContentStudio.notice('notices.delayed','fallback',990001,null)") == "fallback"
-                page.evaluate("rpc=window.__noticeOriginalRpc")
+                page.evaluate("() => {rpc=window.__noticeOriginalRpc;}")
+                # DEC-09: trusted formatted guidance; official analyzer instructions stay intact.
+                page.evaluate("""async () => {
+                  window.__guideOriginalRpc=rpc;
+                  rpc=async(name,args)=>{
+                    if(name==='ff_content_effective')return [{content_key:'orders.guidance',body:'**راجع المعاينة**\\n- الكمية الصحيحة',revision:99}];
+                    return window.__guideOriginalRpc(name,args);
+                  };
+                  await window.ffContentStudio.sync(true);
+                }""")
+                guide=page.locator('[data-ff-guidance="orders.guidance"]')
+                assert guide.locator("strong").text_content() == "راجع المعاينة"
+                assert guide.locator("li").text_content() == "الكمية الصحيحة"
+                assert "لا تدمج صنفين" in page.locator("#ffbTextPanel > p.muted").text_content()
+                page.evaluate("window.dispatchEvent(new Event('ff-luxe-session-reset'))")
+                assert guide.locator("strong").count() == 0
+                assert "راجع الأصناف" in guide.text_content()
+                page.evaluate("() => {rpc=window.__guideOriginalRpc;}")
                 # DEC-10: manager grant/revoke and staff draft/review; revoked UI closes.
                 page.evaluate("""() => {
                   const old=rpc;window.__qaDelegation=null;window.__qaDelegationCalls=[];
