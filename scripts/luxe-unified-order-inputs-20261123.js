@@ -15,7 +15,7 @@ const mod=document.createElement('dialog');mod.id='ffUnifiedMenuDialog';mod.styl
 mod.innerHTML='<h2>🍟 المنيو التفاعلي · فريش فرايز</h2><p>اضغط الصنف لإضافة قطعة، وعدّل العدد من + و−. تُضاف الأصناف إلى نفس محلل الطلب المعتمد.</p>'+
 '<input id="ffUnifiedMenuSearch" type="search" placeholder="ابحث عن صنف أو عرض" style="width:100%;padding:10px;margin:5px 0 10px">'+
 '<div id="ffUnifiedMenuStatus" role="status"></div><div id="ffUnifiedMenuList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px"></div>'+
-'<div class="actions"><button type="button" id="ffUnifiedMenuReview" class="primary">🔎 تحليل الأصناف ومعاينتها</button><button type="button" id="ffUnifiedMenuClose" class="outline">إغلاق</button></div>';
+'<div class="actions"><button type="button" id="ffUnifiedMenuReview" class="primary">🔎 تحليل الأصناف ومعاينتها</button><button type="button" id="ffUnifiedMenuUndo" class="outline" disabled>تراجع عن آخر تعديل</button><button type="button" id="ffUnifiedMenuClose" class="outline">إغلاق</button></div>';
 document.body.append(mod);
 const categoryBar=make('div');categoryBar.id='ffUnifiedMenuCategories';categoryBar.className='ffl-picker-categories';
 const menuList=$('ffUnifiedMenuList');menuList.removeAttribute('style');menuList.className='ffl-picker-grid';
@@ -23,38 +23,24 @@ menuList.before(categoryBar);
 
 let catalog=[],active=null,request=0,activeCategory='الكل';
 const drafts=new WeakMap();
-function appendText(area,name,delta){
+const undoDrafts=new WeakMap();
+function appendText(area,item,delta){
  if(!area?.isConnected)return;
- const lines=area.value.split(/\r?\n/);
- const nameLower=name.trim().toLowerCase();
- let found=-1;
- for(let i=lines.length-1;i>=0;i--){
-  const match=lines[i].match(/^(\d+)\s+(.+?)\s*$/);
-  if(match&&match[2].trim().toLowerCase()===nameLower){found=i;break}
- }
- if(delta>0){
-  if(found>=0){const current=Number(lines[found].match(/^\d+/)[0]);if(current>=99)return;lines[found]=(current+1)+' '+name;}
-  else lines.push('1 '+name);
- }else if(found>=0){
-  const current=Number(lines[found].match(/^\d+/)[0]);
-  if(current<=1)lines.splice(found,1);else lines[found]=(current-1)+' '+name;
- }else return;
- area.value=lines.join('\n').replace(/^\n+/,'').trimEnd();
- area.dispatchEvent(new Event('input',{bubbles:true}));
- return;
+ try{
+  const before=area.value,after=ff49EditDraftQuantity(before,item,delta);
+  if(before===after)return;
+  area.value=after;area.dispatchEvent(new Event('input',{bubbles:true}));
+  undoDrafts.set(area,{before,after});
+ }catch(e){$('ffUnifiedMenuStatus').textContent=e.message;return false}
+ return true;
 }
 async function loadMenu(){
  if(catalog.length)return catalog;
- const rows=await rpc('ff49_catalog');
+ await ff49LoadCatalog();
+ const rows=ff49Catalog;
  if(!Array.isArray(rows))throw Error('تعذر قراءة أصناف المنيو');
  catalog=rows.filter(x=>x?.name&&x?.id);
  return catalog;
-}
-function count(area,name){
- const regex=/^(\d+)\s+(.+?)\s*$/;
- return area.value.split(/\r?\n/).reduce((n,line)=>{
-  const match=line.match(regex);return match&&match[2].trim()===name?n+Number(match[1]):n;
- },0);
 }
 function render(){
  const box=$('ffUnifiedMenuList');box.replaceChildren();
@@ -65,12 +51,15 @@ function render(){
  ui.categories(tabs,catalog,activeCategory,value=>{activeCategory=value;render()});tabs.scrollLeft=oldScroll;
  const term=ui.normalize($('ffUnifiedMenuSearch').value);
  const filtered=catalog.filter(i=>(activeCategory==='الكل'||ui.category(i)===activeCategory)&&(!term||ui.normalize(i.name+' '+(i.category||'')).includes(term)));
- const total=catalog.reduce((sum,item)=>sum+count(active,item.name),0);
+ const parsed=ff49ParseItemsAndNotes(active.value,{allowPartial:true,allowEmpty:true});
+ const counts=new Map();for(const item of parsed.items)counts.set(item.name,(counts.get(item.name)||0)+item.qty);
+ const total=parsed.items.reduce((sum,item)=>sum+item.qty,0);
+ $('ffUnifiedMenuUndo').disabled=undoDrafts.get(active)?.after!==active.value;
  $('ffUnifiedMenuStatus').textContent=filtered.length+' صنف/عرض · المختار '+total+' قطعة · '+(active.dataset.ffUnifiedLabel||'');
  if(!filtered.length){box.append(make('p','لا توجد أصناف مطابقة للبحث أو القسم'));return}
  for(const item of filtered){
-  const quantity=count(active,item.name);
-  const change=delta=>{appendText(active,item.name,delta);render()};
+  const quantity=counts.get(item.name)||0;
+  const change=delta=>{if(appendText(active,item,delta)!==false)render()};
   const picker=ui.createTile(item,{quantity,onAdd:()=>change(1),onRemove:()=>change(-1)});
   box.append(picker.element);
  }
@@ -111,7 +100,7 @@ function attach(area,info){
  const review=make('div');review.className='ff-unified-review';review.setAttribute('role','status');review.hidden=true;
  wrapper.append(actions,review);
  area.insertAdjacentElement('afterend',wrapper);
- area.addEventListener('input',()=>{drafts.delete(area);review.hidden=true;review.replaceChildren()});
+ area.addEventListener('input',()=>{drafts.delete(area);undoDrafts.delete(area);review.hidden=true;review.replaceChildren()});
 }
 function scan(){for(const info of targets)attach($(info.id),info)}
 const watcher=new MutationObserver(()=>{if(!document.hidden)scan()});
@@ -119,6 +108,7 @@ watcher.observe(document.body,{childList:true,subtree:true});
 scan();
 $('ffUnifiedMenuSearch').addEventListener('input',render);
 $('ffUnifiedMenuClose').onclick=()=>mod.close();
+$('ffUnifiedMenuUndo').onclick=()=>{const previous=active&&undoDrafts.get(active);if(!previous||active.value!==previous.after)return;active.value=previous.before;active.dispatchEvent(new Event('input',{bubbles:true}));undoDrafts.delete(active);render()};
 $('ffUnifiedMenuReview').onclick=async()=>{const area=active;mod.close();await preview(area)};
 document.addEventListener('click',event=>{
  const id=event.target?.id;
