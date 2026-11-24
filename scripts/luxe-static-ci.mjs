@@ -464,7 +464,7 @@ console.log('PASS A02: exact names, line-specific prices and notes, reversible e
  let a03Now=a03Clock;
  const a03Root={innerHTML:''};
  const a03Node={dataset:{exp:'2026-11-25T00:03:00Z'},textContent:'',hasAttribute:k=>k==='data-ff-cs-offer-id'};
- const a03Data={offers:[{id:'old',order_number:1,driver_id:'d1',area:'QA',status:'offered',expires_at:a03Node.dataset.exp}]};
+ const a03Data={role:'customer_service',offers:[{id:'old',order_number:1,driver_id:'d1',driver_phone:'000000001',area:'QA',status:'offered',expires_at:a03Node.dataset.exp}]};
  const a03Context=vm.createContext({data:a03Data,$:()=>a03Root,esc:v=>String(v??''),driverName:id=>id==='d1'?'الموصل الأول':'الموصل الثاني',time:v=>v,
  Date:class extends Date{static now(){return a03Now;}},document:{querySelectorAll:s=>s==='[data-exp]'?[a03Node]:[]}});
  vm.runInContext(html.slice(html.indexOf('function ffOfferSecondsLeft'),html.indexOf('function drawDriver()')),a03Context);
@@ -475,6 +475,9 @@ console.log('PASS A02: exact names, line-specific prices and notes, reversible e
  vm.runInContext(a03Tick,a03Context);
  vm.runInContext('drawOffers();tick()',a03Context);
  assert.match(a03Root.innerHTML,/الموصل الأول/);
+ assert.match(a03Root.innerHTML,/data-ff-offer-courier-contact[\s\S]*?000000001/);
+ a03Data.role='driver';vm.runInContext('drawOffers()',a03Context);assert.doesNotMatch(a03Root.innerHTML,/000000001|data-ff-offer-courier-contact/);
+ a03Data.role='customer_service';vm.runInContext('drawOffers()',a03Context);
  assert.match(a03Root.innerHTML,/data-ff-cs-offer-id="old">180 ثانية/);
  assert.equal(a03Node.textContent,'180 ثانية');
  a03Now=a03Clock+179000;vm.runInContext('tick()',a03Context);assert.equal(a03Node.textContent,'1 ثانية');
@@ -482,7 +485,7 @@ console.log('PASS A02: exact names, line-specific prices and notes, reversible e
  a03Data.offers=[{id:'replacement',order_number:1,driver_id:'d2',area:'QA',status:'offered',expires_at:'2026-11-25T00:13:00Z'}];
  a03Node.dataset.exp=a03Data.offers[0].expires_at;
  vm.runInContext('drawOffers();tick()',a03Context);
- assert.match(a03Root.innerHTML,/الموصل الثاني/);assert.match(a03Root.innerHTML,/data-ff-cs-offer-id="replacement">600 ثانية/);
+ assert.match(a03Root.innerHTML,/الموصل الثاني/);assert.match(a03Root.innerHTML,/رقم الموصل غير مسجل/);assert.doesNotMatch(a03Root.innerHTML,/000000001/);assert.match(a03Root.innerHTML,/data-ff-cs-offer-id="replacement">600 ثانية/);
  assert.equal(a03Node.textContent,'600 ثانية');
  a03Data.offers[0].status='accepted';vm.runInContext('drawOffers()',a03Context);assert.doesNotMatch(a03Root.innerHTML,/data-exp=/);
  a03Data.offers=[];vm.runInContext('drawOffers()',a03Context);assert.doesNotMatch(a03Root.innerHTML,/data-exp=/);
