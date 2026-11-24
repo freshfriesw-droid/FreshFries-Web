@@ -323,6 +323,32 @@ assert.equal(preview.meta.fee,0);
 assert.equal(preview.meta.driver,'أحمد');
 assert.equal(preview.errors.length,1);
 assert.equal(preview.errors[0].line,11);
+const labelled=parseQuick([
+  '١ تشكن', 'اسمُ العميل： مُحمّد   علي', 'العنوان: حيّ   الجامعة',
+  'اسم الموصل: أحْمَد  علي', 'هاتف العميل: ٧٧٧ ۱۲۳-٤٥٦',
+  'رسوم التوصيل: ٥٠٠', 'ملاحظات: بَدون   شطّة',
+  'حَجْز: استلام  مسائي'
+].join('\n'));
+assert.equal(labelled.meta.customer,'مُحمّد   علي');
+assert.equal(labelled.meta.area,'حيّ   الجامعة');
+assert.equal(labelled.meta.driver,'أحْمَد  علي');
+assert.equal(labelled.meta.phone,'777123456');
+assert.equal(labelled.meta.fee,500);
+assert.equal(labelled.notes,'بَدون   شطّة | استلام  مسائي');
+for(const input of ['رسوم التوصيل:', 'العميل:', 'الموصل:', 'عنوان:', 'رقم الهاتف:']){
+  const empty=parseQuick('١ تشكن\n'+input,{allowPartial:true});
+  assert.equal(empty.errors.length,1,input);
+  assert.equal(empty.errors[0].line,2,input);
+  assert.equal(Object.keys(empty.meta).length,0,input);
+}
+assert.equal(parseQuick('١ تشكن\nرسوم التوصيل: ٠').meta.fee,0);
+assert.equal(parseQuick('١ تشكن\nملاحظة:').notes,'');
+assert.equal(parseQuick('١ تشكن\nرسوم التوصيل - ٥٠٠').meta.fee,500);
+for(const fee of ['-٥٠٠', ': -٥٠٠', ': ،', ': 0x10']){
+  const invalid=parseQuick('١ تشكن\nرسوم التوصيل '+fee,{allowPartial:true});
+  assert.equal(invalid.errors[0].line,2);
+  assert.equal(invalid.meta.fee,undefined);
+}
 const customParse=vm.runInNewContext(parserSource+'\nff49ParseItemsAndNotes',{
  ff49Catalog:[{id:1,name:'تشكن فرايز',price:2000,parser_aliases:['وجبة الدجاج']},
  {id:2,name:'عرض الأسرة',price:3000,parser_aliases:['عائلي']}]});
