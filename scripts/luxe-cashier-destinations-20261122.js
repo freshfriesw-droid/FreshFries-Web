@@ -27,6 +27,9 @@
   if(!allowed.length)return;
   const chosen=allowed.find(d=>d.code===prev)||allowed.find(d=>d.code===stored)
       ||allowed.find(d=>d.base.id===select.value)||allowed[0];
+  const existing=[...select.options].map(o=>[o.dataset.ffCashierDesk,o.value,o.textContent]);
+  const expected=allowed.map(d=>[d.code,String(d.base.id),d.label]);
+  if(JSON.stringify(existing)===JSON.stringify(expected)){const i=allowed.findIndex(d=>d.code===chosen.code);if(i>=0&&select.selectedIndex!==i)select.selectedIndex=i;return;}
   const frag=document.createDocumentFragment();
   for(const d of allowed){
    const option=new Option(d.label,d.base.id);

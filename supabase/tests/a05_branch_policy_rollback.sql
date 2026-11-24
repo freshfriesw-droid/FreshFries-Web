@@ -1,0 +1,57 @@
+DO $qa$
+DECLARE b1 uuid:=gen_random_uuid();b2 uuid:=gen_random_uuid();m uuid:=gen_random_uuid();c uuid:=gen_random_uuid();cs uuid:=gen_random_uuid();o uuid:=gen_random_uuid();cat uuid:=gen_random_uuid();item uuid;offer uuid;r jsonb;blocked boolean;passes int:=0;actor uuid;
+BEGIN
+ BEGIN
+ INSERT INTO public.ff_branches(id,code,name) VALUES(b1,'qa-'||b1,'QA one'),(b2,'qa-'||b2,'QA two');
+ INSERT INTO auth.users(id) VALUES(m),(c),(cs);
+ INSERT INTO public.ff_profiles(user_id,display_name,role,active) VALUES(m,'QA manager','manager',true),(c,'QA cashier','cashier',true),(cs,'QA CS','customer_service',true) ON CONFLICT(user_id) DO UPDATE SET role=excluded.role,active=true;
+ INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(c,b1);
+ INSERT INTO public.ff_orders(id,order_number,branch_id,phone_snapshot,business_date,area_snapshot,delivery_fee)
+ VALUES(o,-(1+floor(random()*1e12)::bigint),b1,'000000000',public.ff_business_date(now()),'QA area',450);
+ INSERT INTO public.ff_order_items(order_id,item_name,quantity,unit_price,line_total) VALUES(o,'QA item',1,123,123);
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);SET LOCAL ROLE authenticated;
+ r:=public.ff_a05_branch_policy(b1);
+ IF jsonb_array_length(r->'hours')<>0 OR jsonb_array_length(r->'tariffs')<>0 THEN RAISE EXCEPTION 'Unconfigured branch fabricated settings';END IF;passes:=passes+1;
+ PERFORM public.ff_a05_set_branch_hours(b1,1,time '08:00',time '02:00',time '18:00',false,now(),'QA initial schedule');
+ PERFORM public.ff_a05_set_branch_hours(b1,1,time '09:00',time '23:00',null,false,now()+interval '1 day','QA future schedule');
+ r:=public.ff_a05_branch_policy(b1);
+ IF r->'hours'->0->>'opens_at'<>'08:00:00' OR jsonb_array_length(r->'hour_history')<>2 OR r->'hours'->0->>'source'<>'QA manager' THEN RAISE EXCEPTION 'Hours history/effective mismatch';END IF;passes:=passes+1;
+ blocked:=false;BEGIN PERFORM public.ff_a05_set_branch_hours(b1,1,time '08:00',time '02:00',time '04:00',false,now(),'QA invalid shift');EXCEPTION WHEN SQLSTATE '22023' THEN blocked:=true;END;
+ IF NOT blocked THEN RAISE EXCEPTION 'Invalid shift accepted';END IF;passes:=passes+1;
+ PERFORM public.ff_a05_set_area_tariff(b1,'QA area',500,now(),'QA tariff');
+ PERFORM public.ff_a05_set_area_tariff(b1,' QA  area ',650,now()+interval '1 day','QA future tariff');
+ PERFORM public.ff_a05_set_area_tariff(b2,'QA area',900,now(),'QA other branch');
+ r:=public.ff_a05_area_fee_hint(b1,' QA  AREA ');
+ IF r->'approved'->>'fee'<>'500' OR (r->'history'->0->>'fee')::numeric<>450 THEN RAISE EXCEPTION 'Tariff/source history mismatch: %',r;END IF;passes:=passes+1;
+ r:=public.ff_a05_branch_policy(b1);IF jsonb_array_length(r->'tariff_history')<>2 OR jsonb_array_length(r->'tariffs')<>1 THEN RAISE EXCEPTION 'Branch tariff isolation/history';END IF;passes:=passes+1;
+ PERFORM public.ff38_admin_set_permission(c,'manage_branches',true);
+ r:=public.ff51_catalog_save_item(null,'QA category '||cat,'QA item '||cat,123);item:=(r->>'id')::uuid;
+ PERFORM public.ff51_catalog_save_item(item,'QA category '||cat,'QA item '||cat,234);
+ r:=public.ff51_offer_save(null,'QA offer '||cat,500,true);offer:=(r->>'id')::uuid;
+ PERFORM public.ff51_offer_save(offer,'QA offer '||cat,700,true);
+ RESET ROLE;
+ IF (SELECT count(*) FROM ff_private.a05_catalog_prices WHERE catalog_id IN(item,offer))<>4 OR NOT EXISTS(SELECT 1 FROM ff_private.a05_catalog_prices WHERE catalog_id=item AND previous_price=123 AND price=234 AND actor_id=m) THEN RAISE EXCEPTION 'Catalog price history failed';END IF;passes:=passes+1;
+ IF (SELECT delivery_fee FROM public.ff_orders WHERE id=o)<>450 OR (SELECT unit_price FROM public.ff_order_items WHERE order_id=o)<>123 THEN RAISE EXCEPTION 'Existing order mutated';END IF;passes:=passes+1;
+ PERFORM set_config('request.jwt.claim.sub',c::text,true);SET LOCAL ROLE authenticated;
+ r:=public.ff_a05_branch_policy(b1);IF r->>'can_write'<>'true' THEN RAISE EXCEPTION 'Delegated branch management missing';END IF;passes:=passes+1;
+ blocked:=false;BEGIN PERFORM public.ff_a05_set_area_tariff(b2,'QA area',2,now(),'QA unauthorized');EXCEPTION WHEN SQLSTATE '42501' THEN blocked:=true;END;
+ IF NOT blocked THEN RAISE EXCEPTION 'Cross branch write accepted';END IF;passes:=passes+1;
+ blocked:=false;BEGIN PERFORM public.ff_a05_branch_policy(b2);EXCEPTION WHEN SQLSTATE '42501' THEN blocked:=true;END;
+ IF NOT blocked THEN RAISE EXCEPTION 'Cross branch settings read accepted';END IF;passes:=passes+1;
+ RESET ROLE;
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);SET LOCAL ROLE authenticated;
+ PERFORM public.ff38_admin_set_permission(c,'manage_branches',false);RESET ROLE;
+ PERFORM set_config('request.jwt.claim.sub',c::text,true);SET LOCAL ROLE authenticated;
+ blocked:=false;BEGIN PERFORM public.ff_a05_set_branch_hours(b1,2,time '09:00',time '17:00',null,false,now(),'QA revoked permission');EXCEPTION WHEN SQLSTATE '42501' THEN blocked:=true;END;
+ IF NOT blocked THEN RAISE EXCEPTION 'Revoked branch write accepted';END IF;passes:=passes+1;
+ PERFORM set_config('request.jwt.claim.sub',cs::text,true);
+ r:=public.ff_a05_area_fee_hint(b2,'QA area');IF r->'approved'->>'fee'<>'900' THEN RAISE EXCEPTION 'Central CS tariff unavailable';END IF;passes:=passes+1;
+ blocked:=false;BEGIN PERFORM public.ff_a05_catalog_price_history(100);EXCEPTION WHEN SQLSTATE '42501' THEN blocked:=true;END;
+ IF NOT blocked THEN RAISE EXCEPTION 'Nonmanager price history';END IF;passes:=passes+1;
+ RESET ROLE;
+ IF has_function_privilege('anon','public.ff_a05_branch_policy(uuid)','execute') OR has_table_privilege('authenticated','ff_private.a05_branch_hours','SELECT,INSERT,UPDATE,DELETE') THEN RAISE EXCEPTION 'Direct branch history access';END IF;passes:=passes+1;
+ RAISE EXCEPTION 'QA rollback sentinel' USING ERRCODE='ZQ001';
+ EXCEPTION WHEN SQLSTATE 'ZQ001' THEN NULL;END;
+ IF passes<>14 OR EXISTS(SELECT 1 FROM public.ff_branches WHERE id IN(b1,b2)) OR EXISTS(SELECT 1 FROM ff_private.a05_branch_hours WHERE branch_id IN(b1,b2)) OR EXISTS(SELECT 1 FROM ff_private.a05_catalog_prices WHERE catalog_id IN(item,offer)) THEN RAISE EXCEPTION 'Incomplete QA/rollback: %',passes;END IF;
+END $qa$;
+SELECT 'PASS A05: 14 branch schedules/tariffs/catalog history assertions, effective dates, isolation, revocation, historical order preservation; rollback' AS result;
