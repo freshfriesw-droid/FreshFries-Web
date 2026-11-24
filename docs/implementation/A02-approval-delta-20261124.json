@@ -2,7 +2,7 @@
   "document": "FreshFries_LUXE_Final_Approval_v2_2026-11-24(1).pdf",
   "sha256": "18820bbd27e2939f21c617d5d34aafeccd491e4346c1f6f0b4a2d96288a6fc62",
   "baseline": "A01-approval-status-20261124.json (unchanged)",
-  "scope": "A02 delta only; #77 and #79 merged and public deployment verified; actual staff/device acceptance remains open; A03–A12 not started",
+  "scope": "A02 delta; owner authorized deferral of physical-device/employee-dependent acceptance on 2026-11-24; no waiver or launch; software items remain sequential",
   "reviewed_commit": "e793fac964b14561826d7becc85af7528f1a1b6a",
   "rows": [
     {
@@ -57,16 +57,16 @@
       "id": "FIX-07",
       "title": "تعديل بيانات العميل من الطلب",
       "approval": "معتمد كمطلب",
-      "source_status": "تحديثات #77 و#79 مدمجة ومنشورة؛ إصلاح التنبيه الأول مختبر آليًا",
-      "test_status": "نجاح الاختبارات الجزئية المذكورة؛ القبول النهائي معلق",
-      "release_readiness": "معلق — لا إطلاق رسمي",
+      "source_status": "مكتمل برمجيًا ومدمج ومنشور؛ القبول الميداني مؤجل بموافقة المالك",
+      "test_status": "SQL وChrome وCI والنشر ناجحة؛ الاختبار الميداني غير منفذ",
+      "release_readiness": "معلق — لا إطلاق رسمي قبل نجاح القبول الميداني",
       "implementation_stage": "A02",
       "reviewed_commit": "e793fac964b14561826d7becc85af7528f1a1b6a",
       "review_date": "2026-11-24",
       "reviewer": "مراجعة آلية عبر ChatGPT؛ نتائج GitHub Actions واختبارات SQL بحسب المراجع",
       "reference_page": 6,
       "evidence": "[#19](https://github.com/freshfriesw-droid/FreshFries-Web/pull/19)، [#28](https://github.com/freshfriesw-droid/FreshFries-Web/pull/28) | تصحيح البيانات وسجل قبل/بعد وعزل الهوية والملاحظات؛ اختبار SQL ناجح؛ واجهة #77 مدمجة ومنشورة | https://github.com/freshfriesw-droid/FreshFries-Web/pull/66 | https://github.com/freshfriesw-droid/FreshFries-Web/pull/68 | https://github.com/freshfriesw-droid/FreshFries-Web/pull/71 | https://github.com/freshfriesw-droid/FreshFries-Web/pull/77 | #77: دمج 2fc2a4f1537e472eb2c725fc6de5b2070a4d6ff1؛ CI ناجح https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45480454269؛ تحقق النشر https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45482243606؛ ترقية 20261124202346 مؤكدة؛ صفر ملاحظات تجريبية متبقية. | #79: https://github.com/freshfriesw-droid/FreshFries-Web/pull/79 ؛ SQL rollback PASS؛ Chrome 390/1280 https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45482868263 ؛ النشر مطابق https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45483854051",
-      "remaining": "اختبار دخول الموظفين الحقيقي وتنبيه جهاز الموصل والتزامن الفعلي؛ لا يوجد دليل وصول إشعار فعلي، حساب موصل واحد من أربعة مسجل لاستقبال Push.",
+      "remaining": "مؤجل للاختبار الميداني الشامل: اختبار دخول الموظفين الحقيقي وتنبيه جهاز الموصل والتزامن الفعلي؛ لا يوجد دليل وصول إشعار فعلي، حساب موصل واحد من أربعة مسجل لاستقبال Push.",
       "baseline_reviewed_commit": "4df9a809dfea5a1037066675fc09ec971866c6ad"
     },
     {
@@ -293,5 +293,12 @@
       "remaining": "سرعة وتزامن الرحلة الفعلية",
       "baseline_reviewed_commit": "4df9a809dfea5a1037066675fc09ec971866c6ad"
     }
-  ]
+  ],
+  "owner_decision": {
+    "date": "2026-11-24",
+    "decision": "استكمال التطوير البرمجي بندًا بندًا وتأجيل الاختبارات التي تتطلب حضور المالك أو الموظفين أو الأجهزة الحقيقية إلى الاختبار الميداني الشامل",
+    "acceptance_waived": false,
+    "official_launch_authorized": false,
+    "next_software_item": "FIX-08"
+  }
 }
