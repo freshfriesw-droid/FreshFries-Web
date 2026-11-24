@@ -45,7 +45,7 @@ function iconFor(item){
 }
 function placeholder(item){const s=document.createElement('span');s.className='ffb-placeholder';s.textContent=iconFor(item);s.setAttribute('aria-hidden','true');return s}
 function createTile(item,opts={}){
- const root=document.createElement('div');root.className='ffl-picker-tile';
+ const root=document.createElement('div');root.className='ffl-picker-tile';root.dataset.cardStyle=['compact','large'].includes(item.card_style)?item.card_style:'standard';
  const product=document.createElement('button');product.type='button';product.className='ffl-picker-product';product.setAttribute('aria-label','إضافة '+String(item.name||'صنف'));
  const pic=imageUrl(item);let media;
  if(pic){media=document.createElement('img');media.src=pic;media.loading='lazy';media.alt='صورة '+String(item.name||'صنف');media.onerror=()=>media.replaceWith(placeholder(item))}
