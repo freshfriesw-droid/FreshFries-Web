@@ -7,3 +7,12 @@
 #ffContentStudio .sectionbar,#ffContentStudio .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
 #ffContentStudio .ff-content-preview{border:1px solid currentColor;border-radius:8px;padding:10px;overflow-wrap:anywhere}
 #ffContentStudio [data-content-audit],#ffContentStudio [data-content-status]{overflow-wrap:anywhere}
+
+
+/* Supplemental guidance never replaces official instructions. */
+.ff-safe-guidance,#ffContentStudio [data-content-rich-preview]{padding:8px 12px;margin-block:8px;border-inline-start:3px solid #a82a36;min-width:0;max-width:100%;overflow-wrap:anywhere;text-align:start}
+.ff-safe-guidance p,#ffContentStudio [data-content-rich-preview] p{margin-block:5px;line-height:1.65}
+.ff-safe-guidance ul,#ffContentStudio [data-content-rich-preview] ul{margin-block:6px;padding-inline-start:22px;line-height:1.65}
+#ff76Center .r-head .ff-safe-guidance{flex:1 0 100%;font-size:13px}
+#ffContentStudio [data-content-tools][hidden],#ffContentStudio [data-content-rich-preview][hidden]{display:none!important}
+#ffContentStudio [data-content-tools]{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
