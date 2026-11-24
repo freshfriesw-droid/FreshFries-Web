@@ -379,6 +379,49 @@ with sync_playwright() as playwright:
                 assert (payload['p_driver'], payload['p_branch'], payload['p_override_reason']) == (
                     'qa-driver', 'qa-cairo', 'اعتماد اختبار')
                 page.locator('#ffpcCancel').click()
+                # FIX-18: preserve deliberate section choices and reject old approvals for the same filter.
+                page.evaluate("""() => {
+                  user={id:'fixture-manager'};
+                  data={role:'manager',orders:[],branches:[],drivers:[],offers:[]};
+                  const snapshot={role:'manager',from:'2026-11-24',to:'2026-11-24',scope:'اختبار',
+                    available_sections:['summary','finance','approval'],branches:[],driver_options:[],
+                    totals:{orders:7,delivered:4,item_sales:900,delivery_fees:100,net:1000}};
+                  rpc=(name,args)=>{
+                    if(name==='ff76_reporting_center')return Promise.resolve({...snapshot,from:args.p_from,to:args.p_to});
+                    if(name==='ff_report_preset_list')return Promise.resolve([]);
+                    if(name==='ff76_report_approval_save')return new Promise(resolve=>{window.__oldApproval=resolve});
+                    return Promise.resolve([]);
+                  };
+                  window.ff76OpenReports();
+                }""")
+                page.wait_for_function("!document.getElementById('ff76Run').disabled && !!document.querySelector('#ff76Body section')")
+                page.locator("#ff76Mode").select_option("custom")
+                for box in page.locator("#ff76Choices input").all():
+                    box.uncheck()
+                page.locator("#ff76Mode").select_option("full")
+                page.locator("#ff76Mode").select_option("custom")
+                assert page.locator("#ff76Choices input:checked").count() == 0
+                assert page.locator("#ff76CSV").is_disabled()
+                page.locator("#ff76Choices input[value=finance]").check()
+                assert page.locator("#ff76Body section").count() == 1
+                assert "رسوم التوصيل المستحقة" in page.locator("#ff76Body").inner_text()
+                page.locator("#ff76ManagerName").fill("مدير تجريبي")
+                page.locator("#ff76ManagerNotes").fill("ملاحظة لم تحفظ")
+                page.locator("#ff76Trend").select_option("weekly")
+                assert page.locator("#ff76ManagerNotes").input_value() == "ملاحظة لم تحفظ"
+                page.locator("#ff76SaveApproval").click()
+                page.wait_for_function("typeof window.__oldApproval==='function'")
+                page.locator("#ff76Run").click()
+                page.wait_for_function("!document.getElementById('ff76Run').disabled && !!document.querySelector('#ff76Body section')")
+                page.evaluate("""() => window.__oldApproval({manager_name:'STALE-APPROVAL',
+                    notes:'STALE-APPROVAL-NOTES',approved_at:'2026-11-24T10:00:00Z'})""")
+                page.wait_for_timeout(100)
+                assert page.locator("#ff76ManagerName").input_value() == ""
+                assert page.locator("#ff76ManagerNotes").input_value() == ""
+                assert page.locator("#ff76ApprovalStatus").inner_text() == ""
+                page.locator("#ff76Close").click()
+                assert page.locator("#ff76Body").inner_text() == ""
+                assert page.locator("#ff76CSV").is_disabled()
                 # A manager's in-flight settlement report must never appear after session reset.
                 page.evaluate("""() => {
                   rpc=(name,args)=>{
