@@ -3785,8 +3785,8 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
    grouped.set(line.name,group);
   }
   let sum=0,count=0;
-  for(const item of catalog){
-   const group=grouped.get(item.name);if(!group)continue;
+  for(const [itemName,group] of grouped){
+   const item=catalog.find(x=>x.name===itemName)||{name:itemName};
    const qty=group.qty;cart.set(item.id||item.name,qty);sum+=group.total;count+=qty;
    const row=document.createElement('div');row.className='ffb-v2-cartline';
    const name=document.createElement('strong');name.textContent=item.name;
