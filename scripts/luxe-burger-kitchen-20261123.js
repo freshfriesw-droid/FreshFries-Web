@@ -100,6 +100,9 @@ function reset(){
   if(channel){try{client?.removeChannel(channel)}catch(_){}channel=null}
   if(interval){clearInterval(interval);interval=null}
   for(const id of ['ffBurgerKitchenActive','ffBurgerKitchenFinished','ffBurgerCashierReady','ffBurgerCashierActive','ffBurgerCashierFinished'])$(id)?.replaceChildren();
+  for(const id of ['ffBurgerPendingCount','ffBurgerNewCount','ffBurgerPrepCount','ffBurgerLateCount','ffBurgerDoneCount'])if($(id))$(id).textContent='0';
+  for(const id of ['ffBurgerKitchenBranch','ffBurgerKitchenStatus','ffBurgerCashierStatus'])if($(id))$(id).textContent='';
+  if($('ffBurgerKitchenOnline'))$('ffBurgerKitchenOnline').textContent='لم يتم التحقق من الاتصال';
 }
 window.ffBurgerReset=reset;window.addEventListener('ff-luxe-session-reset',reset);
 function seconds(ticket){
@@ -117,6 +120,7 @@ function burgerFilterTickets(list,filter,now=Date.now()){
 kitchen.querySelectorAll('[data-ff-burger-filter]').forEach(b=>b.addEventListener('click',()=>{
  kitchenFilter=b.dataset.ffBurgerFilter;render();
 }));
+function burgerHasNotes(t){return Boolean(t.notes?.trim()||(t.items||[]).some(i=>String(i.item_notes||'').trim()))}
 function createTicket(t,view){
  const card=make('article',undefined,'ff-burger-card'+(t.status==='ready'?' ready':''));
  card.append(make('h4',(t.invoice_ref?.trim()?'🧾 فاتورة '+t.invoice_ref:'🍔 طلب برجر بدون رقم فاتورة')+' · '+(t.order_kind==='local'?'محلي':'توصيل')));
@@ -134,14 +138,15 @@ function createTicket(t,view){
    row.append(make('span',String(item.qty)+' ×','ff-burger-ticket-product-qty'));
    row.append(make('span',item.name||'صنف غير محدد','ff-burger-ticket-product-name'));
    productList.append(row);
+   if(String(item.item_notes||'').trim())productList.append(make('p','📝 '+item.name+': '+item.item_notes,'ff-burger-urgent-note'));
  }
  if(!productList.children.length)productList.append(make('p','لا توجد أصناف مسجلة','muted'));
  products.append(productList);card.append(products);
  if(t.notes?.trim()){
    const notice=make('div','🚨 تعليمات خاصة يجب تنفيذها قبل التسليم:\n'+t.notes.trim(),'ff-burger-urgent-note');
    notice.setAttribute('role','alert');card.append(notice);
-   if(t.notes_confirmed_at)line('✅ تأكيد تنفيذ الملاحظات: '+time(t.notes_confirmed_at));
  }
+ if(t.notes_confirmed_at&&burgerHasNotes(t))line('✅ تأكيد تنفيذ الملاحظات: '+time(t.notes_confirmed_at));
  const meter=make('p',t.status==='sent'?'⏱️ منذ إرسال الطلب: ':'⏱️ زمن التحضير: ');
  const duration=make('strong',t.status==='sent'?clock((Date.now()-Date.parse(t.sent_at))/1000):seconds(t),'ff-burger-clock');
  duration.dataset.ffBurgerStart=t.accepted_at||t.sent_at||'';duration.dataset.ffBurgerEnd=t.ready_at||'';
@@ -152,7 +157,7 @@ function createTicket(t,view){
  else if(view==='cashier'&&t.status==='ready'){action='skip';label='⏭ تخطي'}
  if(action){
    const b=make('button',label,'primary');b.type='button';
-   if(action==='ready' && t.notes?.trim() && !t.notes_confirmed_at){
+   if(action==='ready' && burgerHasNotes(t) && !t.notes_confirmed_at){
      const wrap=make('label',undefined,'ff-burger-note-confirm');
      const checked=make('input');checked.type='checkbox';
      checked.setAttribute('aria-label','أؤكد تنفيذ جميع الملاحظات');
@@ -226,17 +231,19 @@ function notify(title,body){
 async function updateOnline(force=false){
  if(!authorized()||!identity()||(!force&&Date.now()-presenceAt<15000))return;
  presenceAt=Date.now();
+ const viewer=identity();
  try{
   if(kitchenRole())await rpc('ff_burger_presence_ping',{p_online:true});
   if(cashierRole()||assemblyRole()){
    const status=await rpc('ff_burger_online_status');
+   if(viewer!==identity()||!authorized())return;
    const on=(Array.isArray(status)?status:[]).filter(x=>Number(x.online_count)>0);
    const badge=$('ffBurgerKitchenOnline');const live=on.length>0;
    badge.textContent=live?'🟢 قسم البرجر متصل ويستقبل الطلبات — '+on.map(x=>x.branch_name).join('، '):
     '🔴 قسم البرجر غير متصل الآن؛ يمكنك إرسال الطلب وسيظهر عند اتصال الموظف';
    badge.classList.toggle('live',live);badge.classList.toggle('offline',!live);
   }
- }catch(e){if(cashierRole()||assemblyRole())$('ffBurgerKitchenOnline').textContent='⚠️ تعذر التحقق من اتصال قسم البرجر'}
+ }catch(e){if(viewer===identity()&&(cashierRole()||assemblyRole()))$('ffBurgerKitchenOnline').textContent='⚠️ تعذر التحقق من اتصال قسم البرجر'}
 }
 async function refresh(force=false){
  if(!authorized()||!identity()||loading||(!force&&Date.now()-fetchAt<5000))return;
@@ -264,6 +271,7 @@ async function refresh(force=false){
  }catch(e){
    if(request!==seq||previous!==identity()||!authorized())return;
    rows=[];items=[];
+   for(const id of ['ffBurgerPendingCount','ffBurgerNewCount','ffBurgerPrepCount','ffBurgerLateCount','ffBurgerDoneCount'])if($(id))$(id).textContent='0';
    for(const id of ['ffBurgerKitchenActive','ffBurgerKitchenFinished','ffBurgerCashierReady','ffBurgerCashierActive','ffBurgerCashierFinished'])$(id)?.replaceChildren();
    const element=$(kitchenRole()?'ffBurgerKitchenStatus':'ffBurgerCashierStatus');
    if(element)element.textContent='⚠️ تعذر تحديث قسم البرجر: '+errorText(e)+' — استخدم زر تحديث الأوامر بعد التحقق من الاتصال';
@@ -368,22 +376,25 @@ async function open(initialKind='local',linkedOrder=''){
   const qty=make('input');qty.type='number';qty.min='0';qty.max='99';qty.step='1';qty.value='0';qty.inputMode='numeric';
   qty.dataset.burgerItem=item.id;qty.setAttribute('aria-label','كمية '+item.name);
   let picker,legacy;
+  const noteLabel=make('label','ملاحظة الصنف: '+item.name);noteLabel.hidden=true;
+  const noteInput=make('input');noteInput.type='text';noteInput.maxLength=300;noteInput.dataset.burgerItemNote=item.id;noteInput.setAttribute('aria-label','ملاحظة '+item.name);noteLabel.append(noteInput);
   function sync(){
    const value=Number(qty.value),valid=Number.isInteger(value)&&value>=0&&value<=99;
    if(picker){picker.refresh(valid?value:0);picker.element.querySelector('.ffl-picker-product')?.setAttribute('aria-pressed',String(valid&&value>0));}
    if(legacy)legacy.classList.toggle('selected',valid&&value>0);
+   noteLabel.hidden=!(valid&&value>0);
   }
   function setQuantity(value){qty.value=String(Math.max(0,Math.min(99,Number(value)||0)));sync()}
   function shift(delta){const n=Number(qty.value);setQuantity((Number.isInteger(n)&&n>=0&&n<=99?n:0)+delta)}
   if(ui){
    picker=ui.createTile(item,{quantity:0,quantityInput:qty,showPrice:true,onAdd:()=>shift(1),onRemove:()=>shift(-1)});
-   box.append(picker.element);
+   picker.element.append(noteLabel);box.append(picker.element);
   }else{
    legacy=make('div',undefined,'ff-burger-item');
    const product=make('button',item.name,'ff-burger-product');product.type='button';product.onclick=()=>shift(1);
    const less=make('button','−','ff-burger-minus'),more=make('button','+','ff-burger-plus');less.type=more.type='button';
    less.onclick=()=>shift(-1);more.onclick=()=>shift(1);
-   legacy.append(product,less,qty,more);box.append(legacy);
+   legacy.append(product,less,qty,more,noteLabel);box.append(legacy);
   }
   qty.addEventListener('input',sync);
   qty.addEventListener('change',()=>{const raw=qty.value.trim(),n=Number(raw);setQuantity(raw!==''&&Number.isFinite(n)?Math.trunc(n):0)});
@@ -400,8 +411,9 @@ document.addEventListener('click',e=>{
 $('ffBurgerCancel').onclick=()=>{if(!busy)dialog.close()};
 form.addEventListener('submit',async e=>{
  e.preventDefault();if(busy||(!cashierRole()&&!assemblyRole()))return;
+ const noteByItem=new Map([...form.querySelectorAll('[data-burger-item-note]')].map(n=>[n.dataset.burgerItemNote,n.value.trim()]));
  const selected=[...form.querySelectorAll('[data-burger-item]')]
-  .map(x=>({id:x.dataset.burgerItem,qty:Number(x.value)})).filter(x=>x.qty>0);
+  .map(x=>({id:x.dataset.burgerItem,qty:Number(x.value),item_notes:noteByItem.get(x.dataset.burgerItem)||''})).filter(x=>x.qty>0);
  if(!selected.length||selected.some(x=>!Number.isInteger(x.qty)||x.qty>99)){
    $('ffBurgerDialogStatus').textContent='حدد صنف برجر واحدًا على الأقل بكمية صحيحة';return
  }
