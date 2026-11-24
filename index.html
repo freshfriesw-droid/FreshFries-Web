@@ -3767,7 +3767,7 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
      const el=$(id);if(el)el.value='';
    }
    const channel=$('newChannel');if(channel)channel.value='phone';
-   cart.clear();autoNotes='';previewReady=false;reviewSequence++;reviewedInput=null;
+   window.ffLuxeOrderText?.clearUndo($('newItems'));window.ffLuxeOrderText?.clearUndo($('ffbQuickInput'));cart.clear();autoNotes='';previewReady=false;reviewSequence++;reviewedInput=null;
    $('ffbQuickReview').classList.add('hidden');$('ffbQuickReview').replaceChildren();
    $('ffbParseStatus').textContent='';
    const history=$('ff-fee-history');if(history){history.classList.add('hidden');history.textContent='';}
@@ -3816,7 +3816,7 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
   if(!count){const note=document.createElement('div');note.className='ffb-v2-empty';note.textContent='اختر صنفًا من المنيو، أو انتقل إلى الكتابة السريعة';panel.prepend(note)}
   if(editor?.canUndo(area)){const undo=document.createElement('button');undo.id='ffbUndoCart';undo.type='button';undo.className='outline';undo.textContent='تراجع عن آخر تعديل للسلة';undo.onclick=()=>{editor.undo(area);renderCart();render()};panel.append(undo)}
  }
- function fillFromParsed(parsed){for(const [id,key]of [['newPhone','phone'],['newArea','area'],['newFee','fee'],['newCustomerName','customer']])if(parsed.meta[key]!==undefined)$(id).value=parsed.meta[key];const previous=$('newNotes').value;if(autoNotes&&previous.includes(autoNotes))$('newNotes').value=previous.replace(autoNotes,'').replace(/^\s*\|\s*|\s*\|\s*$/g,'').trim();autoNotes=[parsed.notes,parsed.meta.driver?'موصل مطلوب: '+parsed.meta.driver:''].filter(Boolean).join(' | ');$('newNotes').value=[$('newNotes').value,autoNotes].filter(Boolean).join(' | ');$('newItems').value=parsed.items.map(i=>i.qty+' '+i.name+(i.item_notes?' '+i.item_notes:'')+' | '+i.price).join('\n');renderCart();render();previewReady=false}
+ function fillFromParsed(parsed){for(const [id,key]of [['newPhone','phone'],['newArea','area'],['newFee','fee'],['newCustomerName','customer']])if(parsed.meta[key]!==undefined)$(id).value=parsed.meta[key];const previous=$('newNotes').value;if(autoNotes&&previous.includes(autoNotes))$('newNotes').value=previous.replace(autoNotes,'').replace(/^\s*\|\s*|\s*\|\s*$/g,'').trim();autoNotes=[parsed.notes,parsed.meta.driver?'موصل مطلوب: '+parsed.meta.driver:''].filter(Boolean).join(' | ');$('newNotes').value=[$('newNotes').value,autoNotes].filter(Boolean).join(' | ');$('newItems').value=parsed.items.map(i=>i.qty+' '+i.name+(i.item_notes?' '+i.item_notes:'')+' | '+i.price).join('\n');window.ffLuxeOrderText?.clearUndo($('newItems'));renderCart();render();previewReady=false}
  let analysisGeneration=0;
  const quickInput=$('ffbQuickInput');
  function invalidateAnalysis(){
