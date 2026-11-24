@@ -1,0 +1,46 @@
+DO $qa$
+DECLARE cs uuid; mgr uuid; ca uuid; br uuid; item uuid; oid uuid; rid uuid; pn text; old_style text; old_sort int; old_active boolean; x jsonb; state text; pickup timestamptz:=now()+interval '1 day'; prev text; rq uuid:=gen_random_uuid(); v_price numeric; checks int:=0;
+BEGIN
+ SELECT user_id INTO STRICT cs FROM public.ff_profiles WHERE active AND role='customer_service' LIMIT 1;
+ SELECT user_id INTO STRICT mgr FROM public.ff_profiles WHERE active AND role='manager' LIMIT 1;
+ SELECT user_id INTO STRICT ca FROM public.ff_profiles WHERE active AND role='cashier' LIMIT 1;
+ SELECT id INTO STRICT br FROM public.ff_branches WHERE active AND code='khamseen';
+ SELECT m.id,m.price,m.extra->>'card_style',m.sort_order,m.active INTO STRICT item,v_price,old_style,old_sort,old_active FROM public.ff_menu_items m WHERE m.active AND m.name='تشكن فرايز';
+ pn:='7'||lpad((floor(random()*100000000)::bigint)::text,8,'0');
+ IF EXISTS(SELECT 1 FROM public.ff_orders WHERE ff_private.customer_phone_key(phone_snapshot)=pn) THEN RAISE EXCEPTION 'QA phone collision'; END IF;
+ prev:=current_setting('request.jwt.claim.sub',true);
+ PERFORM set_config('lock_timeout','3s',true);
+ BEGIN
+  PERFORM set_config('request.jwt.claim.sub',cs::text,true);
+  SET LOCAL ROLE authenticated;
+  oid:=(public.ff27_submit(rq,'delivery',jsonb_build_object('p_branch',br,'p_phone',pn,'p_area','QA A02 area','p_items',jsonb_build_array(jsonb_build_object('name','تشكن فرايز','qty',1,'price',v_price,'item_notes','QA note')),'p_delivery_fee',0,'p_customer_name','QA customer','p_channel','phone','p_full_address','QA address','p_notes','A02 completion QA'))->>'order_id')::uuid;
+  x:=public.ff_a02_customer_history('+967'||pn);
+  IF jsonb_array_length(x->'orders')<>1 OR x->'orders'->0->>'id'<>oid::text OR x->'orders'->0->>'area'<>'QA A02 area' THEN RAISE EXCEPTION 'history exact identity mismatch'; END IF;
+  x:=public.ff51_customer_directory('QA A02 area',150);
+  IF NOT EXISTS(SELECT 1 FROM jsonb_array_elements(x) j WHERE j->>'phone'=pn AND j->>'area'='QA A02 area') THEN RAISE EXCEPTION 'area search missing'; END IF;
+  checks:=checks+2;
+  rid:=(public.ff49_create_reservation(br,'QA customer',pn,pickup,jsonb_build_array(jsonb_build_object('name','تشكن فرايز','qty',2,'price',v_price,'item_notes','QA note')),'QA reservation')->>'reservation_id')::uuid;
+  state:=NULL; BEGIN PERFORM public.ff49_create_reservation(br,'QA customer',pn,pickup,'[{"name":"QA","qty":1.5,"price":2}]'::jsonb,'QA'); EXCEPTION WHEN SQLSTATE '22023' THEN state:=SQLSTATE; END;
+  IF state IS DISTINCT FROM '22023' THEN RAISE EXCEPTION 'fractional quantity accepted'; END IF;
+  checks:=checks+1;
+  state:=NULL;BEGIN PERFORM public.ff_a02_catalog_presentation('item',item,7,'compact');EXCEPTION WHEN SQLSTATE '42501' THEN state:=SQLSTATE;END;
+  IF state IS DISTINCT FROM '42501' THEN RAISE EXCEPTION 'service presentation write allowed';END IF;
+  checks:=checks+1;
+  PERFORM set_config('request.jwt.claim.sub',ca::text,true);
+  state:=NULL;BEGIN PERFORM public.ff_a02_customer_history(pn);EXCEPTION WHEN SQLSTATE '42501' THEN state:=SQLSTATE;END;
+  IF state IS DISTINCT FROM '42501' THEN RAISE EXCEPTION 'cashier customer history allowed';END IF;
+  checks:=checks+1;
+  PERFORM set_config('request.jwt.claim.sub',mgr::text,true);
+  PERFORM public.ff_a02_catalog_presentation('item',item,7,'compact');
+  x:=public.ff49_catalog();
+  IF NOT EXISTS(SELECT 1 FROM jsonb_array_elements(x) j WHERE j->>'id'=item::text AND j->>'card_style'='compact' AND (j->>'sort_order')::int=7) THEN RAISE EXCEPTION 'catalog presentation mismatch'; END IF;
+  checks:=checks+1;
+  RESET ROLE;
+  IF NOT EXISTS(SELECT 1 FROM public.ff49_reservations WHERE id=rid AND pickup_at=pickup AND NOT pickup_unspecified AND items->0->>'item_notes'='QA note') THEN RAISE EXCEPTION 'reservation pickup or note missing'; END IF;
+  checks:=checks+1;
+  RAISE EXCEPTION 'QA rollback sentinel' USING ERRCODE='ZQ001';
+ EXCEPTION WHEN SQLSTATE 'ZQ001' THEN NULL; END;
+ IF checks<>7 OR oid IS NULL OR rid IS NULL OR EXISTS(SELECT 1 FROM public.ff_orders WHERE id=oid) OR EXISTS(SELECT 1 FROM public.ff49_reservations WHERE id=rid) OR EXISTS(SELECT 1 FROM public.ff70_atomic_requests WHERE request_id=rq) OR NOT EXISTS(SELECT 1 FROM public.ff_menu_items WHERE id=item AND sort_order=old_sort AND (extra->>'card_style') IS NOT DISTINCT FROM old_style AND active=old_active) THEN RAISE EXCEPTION 'QA rollback incomplete'; END IF;
+ PERFORM set_config('request.jwt.claim.sub',coalesce(prev,''),true);
+END $qa$;
+SELECT 'PASS: 7 UI completion behavioral checks and rollback' AS result;
