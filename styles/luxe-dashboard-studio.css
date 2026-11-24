@@ -18,11 +18,6 @@
 .ff-design-layout>.ffx-hero :is(h1,p,.ffx-eyebrow){color:inherit}
 .ff-design-layout>.ffx-hero .ffx-outline-light{color:var(--pack-ink);border-color:currentColor;background:transparent}
 .ff-design-layout .ffx-panel,.ff-design-layout .ffx-kpi{border-radius:var(--pack-radius)}
-body[data-ff-bar=icons] #ffx-mobile-nav button span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
-body[data-ff-bar=wide] #ffx-mobile-nav button{flex-direction:row;gap:3px}
-body[data-ff-bar=floating] #ffx-mobile-nav{bottom:max(8px,env(safe-area-inset-bottom));inset-inline:8px;border-radius:18px}
-body[data-ff-bar=floating] main{padding-bottom:100px}
-body[data-ff-bar=compact] #ffx-mobile-nav button:not(:first-child):not(.active):not(:last-child){display:none}
 .ff-design-layout[data-pack=D01]{--pack-bg:#ffffff;--pack-ink:#231e20;--pack-radius:14px;grid-template-columns:2fr 1fr;grid-template-areas:"heading heading" "hero hero" "stats stats" "work late"}
 @media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D01]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "stats" "work" "late"}}
 .ff-design-layout[data-pack=D02]{--pack-bg:#242127;--pack-ink:#ffffff;--pack-radius:6px;grid-template-columns:1fr 1fr;grid-template-areas:"heading heading" "hero stats" "work work" "late late"}
@@ -92,8 +87,6 @@ body[data-ff-bar=compact] #ffx-mobile-nav button:not(:first-child):not(.active):
 @media(max-width:850px){
  #ffx-mobile-nav button{min-width:0;min-height:44px;overflow-wrap:anywhere;text-align:center;line-height:1.25}
  #ffx-mobile-nav button:focus-visible{outline:2px solid #fff;outline-offset:-3px}
- body[data-ff-bar=wide] #ffx-mobile-nav button{flex-wrap:wrap;justify-content:center;align-content:center;gap:2px}
- body[data-ff-bar=floating] main,body[data-ff-bar=wide] main{padding-bottom:calc(128px + env(safe-area-inset-bottom,0px))}
 }
 
 
