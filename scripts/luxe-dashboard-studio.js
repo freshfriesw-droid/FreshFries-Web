@@ -11,7 +11,7 @@
  <label>الجهاز<select name="device"><option value="all">كل الأجهزة</option><option value="mobile">الجوال</option><option value="desktop">الكمبيوتر</option></select></label>
  <label>حزمة التصميم<select name="pack"></select></label><label>شريط الجوال<select name="bar"><option value="labels">أيقونات وتسميات</option><option value="icons">أيقونات فقط</option><option value="wide">أزرار عريضة</option><option value="floating">شريط عائم</option><option value="compact">مختصر مع المزيد</option></select></label>
  <label>وصف الرئيسية<input name="caption" maxlength="180" placeholder="استخدام الوصف الأصلي"></label></div>
- <h3>معاينة بتفاصيل تجريبية</h3><label>عرض المعاينة بالبكسل<select name="viewport"></select></label><div class="ff-preview-scroll" tabindex="0" aria-label="معاينة قابلة للتمرير"><div class="ff-studio-preview"><div class="ff-design-layout"><h3 class="ffx-section-head">لوحة التحكم</h3><div data-slot="hero">الرئيسية</div><div data-slot="stats">مؤشرات · ٤ طلبات</div><div data-slot="work">الطلبات والإجراءات السريعة</div><div data-slot="late">المتابعة · طلب متأخر</div></div></div></div>
+ <h3>معاينة بتفاصيل تجريبية</h3><label>عرض المعاينة بالبكسل<select name="viewport"></select></label><div class="ff-preview-scroll" tabindex="0" aria-label="معاينة قابلة للتمرير"><div class="ff-studio-preview"><div class="ff-design-layout"><h3 class="ffx-section-head">لوحة التحكم</h3><div data-slot="hero">الرئيسية</div><div data-slot="stats">مؤشرات · ٤ طلبات</div><div data-slot="work">الطلبات والإجراءات السريعة</div><div data-slot="late">المتابعة · طلب متأخر</div></div><div class="ff-studio-bar" aria-label="معاينة شريط الهاتف — غير تفاعلية"></div></div></div><section class="ff-studio-impact" aria-label="تقرير أثر المسودة"><h3>تقرير التأثير قبل النشر</h3><p data-impact-scope></p><p data-impact-contrast></p><p data-impact-nav></p><p>معاينة اصطناعية لا تنفذ طلبات أو تغيّر صلاحيات. فحص التباين هنا خاص بخلفية الحزمة ونصها؛ لا يغني عن اختبار الشاشات الفعلية.</p></section>
  <div class="ff-studio-fields"><label>اسم المسودة<input name="draftName" maxlength="80" required></label>
  <label>وصف التعديل<textarea name="description" maxlength="400"></textarea></label></div>
  <div class="actions"><button type="submit" class="primary">حفظ مسودة جديدة</button></div>
@@ -56,9 +56,32 @@
   }catch{ /* Keep last confirmed version for this context during network loss. */ }
  }
  function reset(){serial++;session++;context='';last=0;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();status.textContent='';if(dlg.open)dlg.close();apply(null)}
+ const sampleNav={all:['الرئيسية','الطلبات','المزيد'],manager:['الرئيسية','طلب جديد','الطلبات','تحكم المدير','المزيد'],supervisor:['الرئيسية','الطلبات','المزيد'],customer_service:['الرئيسية','طلب جديد','الطلبات','المزيد'],cashier:['الرئيسية','شاشة الكاشير','المزيد'],driver:['الرئيسية','مهامي','المزيد'],assembly:['الرئيسية','المزيد'],burger_kitchen:['الرئيسية','المزيد']};
+ function luminance(hex){
+  const parts=/^#([0-9a-f]{6})$/i.exec(hex.trim());if(!parts)return null;
+  const v=parts[1].match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=0.04045?x/12.92:((x+0.055)/1.055)**2.4);
+  return v[0]*0.2126+v[1]*0.7152+v[2]*0.0722;
+ }
  function redraw(){
-  preview.parentElement.style.width=field('viewport').value+'px';
-  preview.dataset.pack=field('pack').value;preview.querySelector('[data-slot=hero]').textContent=field('caption').value||'الرئيسية'}
+  const width=Number(field('viewport').value),role=field('role').value,bar=field('bar').value;
+  preview.parentElement.style.width=width+'px';
+  preview.dataset.pack=field('pack').value;preview.querySelector('[data-slot=hero]').textContent=field('caption').value||'الرئيسية';
+  const nav=dlg.querySelector('.ff-studio-bar');nav.dataset.bar=bar;nav.hidden=width>850;nav.replaceChildren();
+  const labels=sampleNav[role]||sampleNav.all;
+  for(const [i,label] of labels.entries()){
+   const item=document.createElement('span');item.className='ff-studio-bar-item';item.title=label;
+   const mark=document.createElement('span');mark.setAttribute('aria-hidden','true');mark.textContent=i===0?'⌂':i===labels.length-1?'☰':'◇';
+   const name=document.createElement('span');name.className='ff-studio-bar-label';name.textContent=label;
+   item.append(mark,name);nav.append(item);
+  }
+  const targets=['role','branch','device'].map(name=>field(name).selectedOptions[0]?.textContent||'—');
+  dlg.querySelector('[data-impact-scope]').textContent='النطاق: '+targets.join(' · ')+' · الرئيسية فقط · '+width+'px';
+  const style=getComputedStyle(preview),bg=luminance(style.getPropertyValue('--pack-bg')),ink=luminance(style.getPropertyValue('--pack-ink'));
+  const ratio=bg===null||ink===null?null:(Math.max(bg,ink)+0.05)/(Math.min(bg,ink)+0.05);
+  dlg.querySelector('[data-impact-contrast]').textContent=ratio===null?'تباين الحزمة: يحتاج تحقق':'تباين النص والخلفية: '+ratio.toFixed(2)+':1 — '+(ratio>=4.5?'يتوافق مع حد النص العادي 4.5:1':'يحتاج تعديل');
+  dlg.querySelector('[data-impact-nav]').textContent=width>850?'شريط الهاتف لا يظهر في هذا العرض.':bar==='compact'?'الشريط المختصر: الرئيسية والمزيد والإجراء النشط؛ الاختصارات الأخرى عبر قائمة المزيد.':bar==='icons'?'الأيقونات فقط؛ أسماء العناصر تبقى لقارئ الشاشة.':'معاينة شكل الشريط؛ لا تخفي الإجراءات.';
+ }
+
  function selectRecord(row){
   for(const [name,value] of Object.entries({draftName:row.draft_name||'',description:row.draft_description||'',role:row.role_scope,branch:row.branch_id||'',device:row.device,caption:row.layout_text,pack:row.pack,bar:row.bar}))field(name).value=value;
   redraw();
@@ -114,14 +137,14 @@
   finally{if(valid(token,who)){busy=false;buttons()}}
  }
  function open(){
-  if(!manager()||dlg.open)return;session++;form.reset();records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();status.textContent='';field('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));redraw();dlg.showModal();void run(token=>history(token));
+  if(!manager()||dlg.open)return;session++;form.reset();records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();status.textContent='';field('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));redraw();dlg.showModal();redraw();void run(token=>history(token));
  }
  for(const width of [320,360,390,430,768,1024,1440]){
   field('viewport').add(new Option(String(width),String(width),width===390,width===390));
  }
  for(const [k,label] of Object.entries(roles))field('role').add(new Option(label,k));
  packs.forEach((name,i)=>{const code='D'+String(i+1).padStart(2,'0');field('pack').add(new Option(code+' · '+name,code))});
- form.oninput=redraw;field('baseline').onchange=compare;field('version').onchange=()=>{field('accounts').replaceChildren();buttons();compare()};
+ form.oninput=redraw;form.addEventListener('change',redraw);field('baseline').onchange=compare;field('version').onchange=()=>{field('accounts').replaceChildren();buttons();compare()};
  form.onsubmit=e=>{e.preventDefault();void run(async(token,who)=>{
   const id=await rpc('ff_ui_named_draft',{p_name:field('draftName').value,p_description:field('description').value,p_role:field('role').value,p_branch:field('branch').value||null,p_device:field('device').value,p_pack:field('pack').value,p_text:field('caption').value,p_bar:field('bar').value});
   if(valid(token,who)){await history(token,id);if(valid(token,who))status.textContent='حُفظت المسودة رقم '+id}
