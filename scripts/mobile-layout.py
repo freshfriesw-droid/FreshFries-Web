@@ -40,6 +40,36 @@ def check_order_status_colors(page):
         assert result[id]['cancelledWidth'] == '4px', (id, result)
 
 
+def check_version_badge_styles(page):
+    """Compare all three badges against the cascade preceding FIX-04."""
+    page.evaluate("""() => {
+      const panel = document.createElement('div');
+      panel.id = 'fixture-version-badges';
+      panel.style.cssText = 'position:fixed;top:0;left:0;z-index:2147483647;background:white';
+      for (const state of ['good', 'bad', 'unknown']) {
+        const badge = document.createElement('span');
+        badge.className = 'ff48-version ' + state;
+        badge.textContent = state;
+        panel.append(badge);
+      }
+      document.body.append(panel);
+    }""")
+    panel = page.locator('#fixture-version-badges')
+    current = panel.screenshot(animations='disabled')
+    page.evaluate("""() => {
+      const previous = document.createElement('style');
+      previous.id = 'fixture-previous-badge-rules';
+      previous.textContent = [
+        '.ff48-version.good{background:var(--ffb-soft2);color:var(--ffb-ink)}',
+        '.ff48-version.bad,.ff48-version.unknown{background:var(--ffb-redwash);color:var(--ffb-redink)}'
+      ].join('');
+      document.querySelector('#ffx-luxe-style').before(previous);
+    }""")
+    assert current == panel.screenshot(animations='disabled'), 'FIX-04 changed badge appearance'
+    page.locator('#fixture-previous-badge-rules').evaluate('el => el.remove()')
+    panel.evaluate('el => el.remove()')
+
+
 def check_legacy_status_feedback(page, width):
     # Simulate ordinary operational success/error feedback without touching Supabase.
     toast = page.locator("#toast")
@@ -105,6 +135,8 @@ with sync_playwright() as playwright:
           for (const id of ['ff61ManageShortcut','ff63NotificationsShortcut'])
             document.getElementById(id).hidden=false;
         }""")
+        if width in (390, 1280):
+            check_version_badge_styles(page)
         check_order_status_colors(page)
         check_legacy_status_feedback(page, width)
         for selector in ("main", "#ffx-topbar", "#ff61ManageShortcut", "#ff63NotificationsShortcut", "#ffx-options"):
@@ -180,6 +212,24 @@ with sync_playwright() as playwright:
                 dialog.get_by_role("button", name="عرض ملخص البيانات", exact=False).click()
                 dialog.get_by_text("تمت قراءة الملخص", exact=False).wait_for()
                 dialog.get_by_role("button", name="إغلاق", exact=True).click()
+                # Editing a quick-order draft must invalidate its previous transfer button.
+                page.evaluate("""() => {
+                  ff49Catalog=[{id:'fixture-chicken',name:'تشكن فرايز',price:2000,active:true}];
+                  ff49CatalogAt=Date.now();
+                  document.querySelector('#ffbQuickInput').value='1 تشكن بدون شطة';
+                  document.querySelector('#ffbApplyText').click();
+                }""")
+                page.locator("#ffbQuickCommit").wait_for(state="attached")
+                page.evaluate("""() => {
+                  const old=document.querySelector('#ffbQuickCommit');
+                  const input=document.querySelector('#ffbQuickInput');
+                  input.value='2 تشكن';
+                  input.dispatchEvent(new Event('input',{bubbles:true}));
+                  old.click();
+                }""")
+                assert page.locator("#ffbQuickCommit").count() == 0
+                assert page.locator("#newItems").input_value() == ''
+                assert page.locator("#ffbQuickInput").input_value() == '2 تشكن'
                 # A manager's in-flight settlement report must never appear after session reset.
                 page.evaluate("""() => {
                   rpc=(name,args)=>{
