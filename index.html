@@ -2673,6 +2673,34 @@ function ff49AliasGroups(catalog){
  }
  return result;
 }
+// Match only the normalized label. Slice the original string so addresses, names and notes keep their spelling.
+const ff49FieldLabels=[
+ [/^(?:رقم\s*(?:العميل|الهاتف|التلفون)?|هاتف(?:\s*العميل)?|جوال|تلفون|موبايل)(?=$|[\s:：+\d-])/u,'phone'],
+ [/^(?:المنطقه|منطقه|العنوان|عنوان)(?=$|[\s:：-])/u,'area'],
+ [/^(?:اجره\s*التوصيل|رسوم\s*التوصيل|التوصيل)(?=$|[\s:：\d-])/u,'fee'],
+ [/^(?:اسم\s*الموصل|الموصل|موصل)(?=$|[\s:：-])/u,'driver'],
+ [/^(?:اسم\s*العميل|العميل)(?=$|[\s:：-])/u,'customer'],
+ [/^(?:ملاحظات|ملاحظه)(?=$|[\s:：-])/u,'note'],
+ [/^حجز(?=$|[\s:：-])/u,'reservation']
+];
+function ff49ReadField(raw,normalized){
+ for(const [pattern,key] of ff49FieldLabels){
+  const match=normalized.match(pattern);
+  if(!match)continue;
+  // Arabic label letters normalize one-to-one except marks, tatweel and whitespace.
+  let remaining=match[0].replace(/\s/g,'').length;
+  let end=0;
+  while(remaining>0 && end<raw.length){
+   if(ff49NormalizeInput(raw[end]))remaining--;
+   end++;
+  }
+  const tail=raw.slice(end).replace(/^[\u064b-\u065f\u0670\u0640]*/u,'').trim();
+  const separator=key==='fee'?/^(?:[:：]|-\s+)/u:/^[:：-]/u;
+  const value=tail.replace(separator,'').trim();
+  return {key,value};
+ }
+ return null;
+}
 function ff49ParseItemsAndNotes(value, options={}){
  const items=[],notes=[],meta={},details=[],warnings=[],errors=[];
  const allowPartial=options?.allowPartial===true;
@@ -2688,23 +2716,28 @@ function ff49ParseItemsAndNotes(value, options={}){
  const fail=(raw,line,reason)=>{const e={line,text:raw,reason};errors.push(e);details.push({line,kind:'error',raw,reason})};
  for(let k=0;k<lines.length;k++){
   const raw=lines[k].trim(),text=norm(raw),line=k+1;if(!raw)continue;
-  if(/^حجز(?:\s|$)/u.test(text)){meta.kind='reservation';details.push({line,kind:'reservation',raw});const note=raw.replace(/^حجز\s*/u,'').trim();if(note)notes.push(note);continue}
-  const fields=[
-   [/^(?:رقم\s*(?:العميل|الهاتف|التلفون)?|هاتف(?:\s*العميل)?|جوال|تلفون|موبايل)\s*[:：-]?\s*(.+)$/u,'phone'],
-   [/^(?:المنطقه|منطقه|العنوان|عنوان)\s*[:：-]?\s*(.+)$/u,'area'],
-   [/^(?:اجره\s*التوصيل|رسوم\s*التوصيل|التوصيل)\s*[:：-]?\s*(.+)$/u,'fee'],
-   [/^(?:اسم\s*الموصل|الموصل|موصل)\s*[:：-]?\s*(.+)$/u,'driver'],
-   [/^(?:اسم\s*العميل|العميل)\s*[:：-]?\s*(.+)$/u,'customer'],
-   [/^(?:ملاحظه|ملاحظات)\s*[:：-]?\s*(.*)$/u,'note']
-  ];
-  let handled=false;
-  for(const [pattern,key] of fields){const m=text.match(pattern);if(!m)continue;handled=true;const val=raw.slice(raw.length-m[1].length).trim();
-   if(key==='fee'){const fee=Number(norm(val).replace(/[,،\s]/g,''));if(!Number.isFinite(fee)||fee<0)fail(raw,line,'أجرة التوصيل غير صحيحة');else{meta.fee=fee;details.push({line,kind:'fee',raw,value:fee})}}
-   else if(key==='note'){if(val)notes.push(val);details.push({line,kind:'note',raw,value:val})}
-   else{meta[key]=val;details.push({line,kind:key,raw,value:val})}
-   break;
+  const field=ff49ReadField(raw,text);
+  if(field){
+   let {key,value}=field;
+   if(key==='reservation'){
+    meta.kind='reservation';if(value)notes.push(value);
+   }else if(key==='note'){
+    if(value)notes.push(value);
+   }else{
+    if(!value){fail(raw,line,'أدخل قيمة الحقل بعد اسمه');continue}
+    if(key==='fee'){
+     const amount=norm(value).replace(/[,،\s]/g,'');
+     if(!/^\d+(?:\.\d+)?$/.test(amount)||!Number.isFinite(Number(amount))){fail(raw,line,'أجرة التوصيل غير صحيحة');continue}
+     value=Number(amount);
+    }else if(key==='phone'){
+     value=norm(value).replace(/[\s-]/g,'');
+     if(!/^\+?\d+$/.test(value)){fail(raw,line,'رقم الهاتف غير صحيح');continue}
+    }
+    meta[key]=value;
+   }
+   details.push({line,kind:key,raw,value});
+   continue;
   }
-  if(handled)continue;
   if(/^\+?\d[\d\s-]{6,}$/.test(text)){meta.phone=text.replace(/[\s-]/g,'');details.push({line,kind:'phone',raw,value:meta.phone});continue}
   const m=text.match(/^(\d+(?:\.\d+)?)\s+(.+)$/u);
   if(m){const qty=Number(m[1]);if(!Number.isInteger(qty)||qty<1||qty>100){fail(raw,line,'الكمية يجب أن تكون رقمًا صحيحًا بين 1 و100');continue}
