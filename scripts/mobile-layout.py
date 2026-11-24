@@ -276,6 +276,35 @@ with sync_playwright() as playwright:
                 page.locator("#ffx-nav [data-key=studio]").click()
                 studio = page.locator("#ffStudio")
                 assert studio.is_visible()
+                # DEC-03: verify effective published source against concrete role/device scopes.
+                page.evaluate("""() => {
+                  const before=rpc;
+                  rpc=async(name,args)=>{
+                    if(name==='ff_ui_manager_source'){
+                      if(args.p_role==='cashier'&&args.p_device==='mobile')
+                        return [{id:73,role_scope:'cashier',branch_id:null,device:'mobile',pack:'D05',bar:'icons',layout_text:'وصف منشور'}];
+                      if(args.p_role==='driver')
+                        return new Promise(resolve=>window.__sourceLate=resolve);
+                      return [];
+                    }
+                    return before(name,args);
+                  };
+                }""")
+                studio.locator("select[name=role]").select_option("cashier")
+                studio.locator("select[name=device]").select_option("mobile")
+                page.wait_for_function("document.querySelector(\'[data-source-pack]\').textContent === \'D05\'")
+                assert studio.locator("[data-source-caption]").inner_text() == "وصف منشور"
+                assert "#73" in studio.locator("[data-source-status]").inner_text()
+                studio.locator("select[name=role]").select_option("driver")
+                page.wait_for_function("typeof window.__sourceLate==='function'")
+                studio.locator("select[name=role]").select_option("supervisor")
+                page.wait_for_function("document.querySelector(\'[data-source-status]\').textContent.includes(\'التصميم الأساسي للنظام\')")
+                page.evaluate("window.__sourceLate([{id:999,role_scope:'driver',device:'mobile',pack:'D16',bar:'wide',layout_text:'STALE'}])")
+                page.wait_for_timeout(100)
+                assert "999" not in studio.locator("[data-source-status]").inner_text()
+                assert studio.locator("[data-source-details]").is_hidden()
+                studio.locator("select[name=role]").select_option("all")
+                studio.locator("select[name=device]").select_option("all")
                 # Exercise all approved preview widths, including desktop in a mobile browser.
                 for preview_width in (320, 360, 390, 430, 768, 1024, 1440):
                     studio.locator("select[name=viewport]").select_option(str(preview_width))
