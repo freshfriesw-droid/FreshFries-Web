@@ -13,6 +13,7 @@ modal.innerHTML='<h2>✏️ تعديل بيانات العميل</h2><p id="ffCu
 '<label>المنطقة<input name="area" required minlength="2" maxlength="150"></label>'+
 '<label>العنوان الكامل<input name="address" required minlength="2" maxlength="500"></label>'+
 '<label>سبب التعديل<input name="reason" required maxlength="300" placeholder="مثال: صحّح العميل رقم الهاتف"></label>'+
+'<label id="ffCustomerEditNoteLabel" hidden>ملاحظة جديدة خاصة بسجل العميل (اختيارية)<textarea name="customer_note" minlength="3" maxlength="2000"></textarea><small>تحفظ للرقم الحالي بعد التصحيح؛ لا تُنقل ملاحظات الرقم السابق تلقائيًا.</small></label>'+
 '<p id="ffCustomerEditMessage" role="status"></p><div class="actions">'+
 '<button id="ffCustomerEditSave" type="submit" class="primary">✅ حفظ التعديل وإشعار الموصل</button>'+
 '<button id="ffCustomerEditCancel" type="button" class="outline">إلغاء</button></div></form>';
@@ -39,7 +40,7 @@ window.addEventListener('ff-assembly-snapshot-success',mark);
 window.ffCustomerEdit=async id=>{
  if(!permitted()){if(typeof toast==='function')toast('هذه الصلاحية تحتاج تخويل المدير');return}
  const actor=user?.id,request=++nonce;order='';working=false;
- form.reset();$('ffCustomerEditSave').disabled=true;$('ffCustomerEditTitle').textContent='';
+ form.reset();$('ffCustomerEditNoteLabel').hidden=!['manager','customer_service'].includes(data?.role);field('customer_note').disabled=$('ffCustomerEditNoteLabel').hidden;$('ffCustomerEditSave').disabled=true;$('ffCustomerEditTitle').textContent='';
  $('ffCustomerEditMessage').textContent='جارٍ تحميل بيانات الطلب...';
  if(!modal.open)modal.showModal();
  try{
@@ -63,11 +64,13 @@ form.addEventListener('submit',async event=>{
  const actor=user.id,request=nonce;working=true;$('ffCustomerEditSave').disabled=true;
  $('ffCustomerEditMessage').textContent='جارٍ حفظ التعديل...';
  try{
-  const result=await rpc('ff_order_customer_edit',{
+  const input={
    p_order:order,p_phone:field('phone').value.trim(),p_area:field('area').value.trim(),
    p_name:field('name').value.trim(),p_address:field('address').value.trim(),
    p_reason:field('reason').value.trim()
-  });
+  };
+  const note=field('customer_note').disabled?'':field('customer_note').value.trim();
+  const result=await rpc(note?'ff_order_customer_edit_with_note':'ff_order_customer_edit',note?{...input,p_note:note}:input);
   if(actor!==user?.id||request!==nonce)return;
   if(!result?.saved)throw Error('تعذر تأكيد حفظ التعديل من الخادم');
   $('ffCustomerEditMessage').textContent='✅ حُفظ تعديل العميل وسيظهر تنبيه في بطاقة الموصل';
