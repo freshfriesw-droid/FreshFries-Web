@@ -332,14 +332,16 @@ with sync_playwright() as playwright:
                 studio.locator("#ffContentOpen").click()
                 content = page.locator("#ffContentStudio")
                 assert content.is_visible()
-                content.locator("[data-content-key] option").wait_for()
+                content.locator("[data-content-key] option").wait_for(state="attached")
+                assert content.locator("[data-content-key]").is_visible()
                 check_width(page, width, "#ffContentStudio")
                 content.locator("[data-content-body]").fill("<script>مرفوض</script>")
                 content.locator("[data-content-save]").click()
                 assert page.evaluate("window.__contentCalls.length") == 0
                 content.locator("[data-content-body]").fill("طلب جديد تجريبي")
                 content.locator("[data-content-save]").click()
-                content.locator("[data-content-history] option").wait_for()
+                content.locator("[data-content-history] option").wait_for(state="attached")
+                assert content.locator("[data-content-history]").is_visible()
                 assert content.locator("[data-content-preview]").inner_text() == "طلب جديد تجريبي"
                 assert "طلب جديد تجريبي" not in page.locator("#ffx-hero-new").text_content()
                 page.once("dialog", lambda prompt: prompt.accept())
