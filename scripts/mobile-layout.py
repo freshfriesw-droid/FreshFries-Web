@@ -225,17 +225,28 @@ with sync_playwright() as playwright:
                 page.evaluate("""() => {
                   user={id:'fixture-cashier'};
                   data={role:'cashier',orders:[],branches:[],drivers:[],offers:[]};
+                  const previousRpc=rpc;
+                  rpc=async(name,args)=>{
+                    if(name==='ff80_dashboard_metrics')return {role:data.role,business_day:'2026-11-24',orders_today:12,late_today:2,completed_today:7,available_drivers:null};
+                    return previousRpc(name,args);
+                  };
                 }""")
                 cashier_link = page.locator("#ffx-mobile-nav [data-key=cashier]")
                 cashier_link.wait_for()
                 cashier_link.click()
                 assert cashier_link.evaluate("el => el.classList.contains('active')")
-                assert page.locator("#ffx-kpis button[data-ffx-kpi=cashier]").count() == 3
+                page.wait_for_function("document.querySelectorAll(\'#ffx-kpis button[data-ffx-kpi=cashier]\').length===3")
+                assert page.locator("[data-ffx-metric=orders_today] .ffx-kpi-value").inner_text() == "12"
+                assert page.locator("[data-ffx-metric=late_today] .ffx-kpi-value").inner_text() == "2"
+                assert page.locator("[data-ffx-metric=completed_today] .ffx-kpi-value").inner_text() == "7"
+                assert page.locator("[data-ffx-metric=available_drivers] .ffx-kpi-value").inner_text() == "—"
                 assert page.locator("#ffx-kpis button[data-ffx-kpi=drivers]").count() == 0
                 page.evaluate("data.role='driver'")
                 page.locator("#ffx-mobile-nav [data-key=driver]").wait_for()
                 assert cashier_link.count() == 0
-                assert page.locator("#ffx-kpis button[data-ffx-kpi=driver]").count() == 4
+                page.wait_for_function("document.querySelectorAll(\'#ffx-kpis button[data-ffx-kpi=driver]\').length===3")
+                assert page.locator("#ffx-kpis [data-ffx-metric]").count() == 4
+                assert page.locator("[data-ffx-metric=available_drivers] .ffx-kpi-value").inner_text() == "—"
                 page.evaluate("""() => {
                   user={id:'fixture-manager'};
                   data={role:'manager', orders:[], branches:[], drivers:[], offers:[]};
