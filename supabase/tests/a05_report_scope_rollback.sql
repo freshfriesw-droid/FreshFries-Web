@@ -19,6 +19,8 @@ BEGIN
  PERFORM set_config('request.jwt.claim.sub',c::text,true);SET LOCAL ROLE authenticated;
  r:=public.ff38_snapshot();
  IF NOT EXISTS(SELECT 1 FROM jsonb_array_elements(r->'orders') x WHERE x->>'id'=o1::text) OR EXISTS(SELECT 1 FROM jsonb_array_elements(r->'orders') x WHERE x->>'id'=o2::text) THEN RAISE EXCEPTION 'Legacy snapshot bypass';END IF;passes:=passes+1;
+ r:=public.ff51_order_archive(public.ff_business_date(now()),public.ff_business_date(now()),b1,null,60,0);
+ IF (r->>'total')::int<>1 OR NOT EXISTS(SELECT 1 FROM jsonb_array_elements(r->'rows') x WHERE x->>'id'=o1::text) THEN RAISE EXCEPTION 'Archive cashier desk scope';END IF;passes:=passes+1;
  IF EXISTS(SELECT 1 FROM public.ff_orders WHERE id=o2) THEN RAISE EXCEPTION 'Raw other desk read';END IF;passes:=passes+1;
  RESET ROLE;
  PERFORM set_config('request.jwt.claim.sub',cs::text,true);SET LOCAL ROLE authenticated;
@@ -39,6 +41,8 @@ BEGIN
  IF NOT blocked THEN RAISE EXCEPTION 'Revoked report not blocked';END IF;passes:=passes+1;
  blocked:=false;BEGIN PERFORM public.ff80_dashboard_metrics(b1);EXCEPTION WHEN SQLSTATE '42501' THEN blocked:=true;END;
  IF NOT blocked THEN RAISE EXCEPTION 'Revoked dashboard not blocked';END IF;passes:=passes+1;
+ blocked:=false;BEGIN PERFORM public.ff51_order_archive(public.ff_business_date(now()),public.ff_business_date(now()),b1,null,60,0);EXCEPTION WHEN SQLSTATE '42501' THEN blocked:=true;END;
+ IF NOT blocked THEN RAISE EXCEPTION 'Revoked archive not blocked';END IF;passes:=passes+1;
  RESET ROLE;
  END LOOP;
  PERFORM set_config('request.jwt.claim.sub',a::text,true);SET LOCAL ROLE authenticated;
@@ -47,6 +51,6 @@ BEGIN
  RESET ROLE;
  RAISE EXCEPTION 'QA rollback sentinel' USING ERRCODE='ZQ001';
  EXCEPTION WHEN SQLSTATE 'ZQ001' THEN NULL;END;
- IF passes<>10 OR EXISTS(SELECT 1 FROM public.ff_branches WHERE id IN(b1,b2)) THEN RAISE EXCEPTION 'Incomplete QA/rollback: %',passes;END IF;
+ IF passes<>13 OR EXISTS(SELECT 1 FROM public.ff_branches WHERE id IN(b1,b2)) THEN RAISE EXCEPTION 'Incomplete QA/rollback: %',passes;END IF;
 END $qa$;
-SELECT 'PASS A05: 10 report and desk scope assertions; central roles, revoked reports, assembly revocation; rollback' AS result;
+SELECT 'PASS A05: 13 report and desk scope assertions; central roles, revoked reports, assembly revocation; rollback' AS result;
