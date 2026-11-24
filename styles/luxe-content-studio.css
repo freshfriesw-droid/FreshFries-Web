@@ -1,0 +1,9 @@
+/* DEC-09: isolated RTL content editor, does not style the operational controls. */
+#ffContentStudio{width:min(680px,calc(100vw - 24px));max-height:88dvh;box-sizing:border-box;overflow:auto;background:var(--ffx-surface,#fff);color:var(--ffx-ink,#181818);border:1px solid var(--ffx-line,#bbb);border-radius:16px;padding:16px}
+#ffContentStudio::backdrop{background:#14111899}
+#ffContentStudio label{display:grid;gap:4px;margin-block:10px;min-width:0}
+#ffContentStudio input,#ffContentStudio select,#ffContentStudio textarea{width:100%;min-width:0;max-width:100%;box-sizing:border-box;min-height:44px}
+#ffContentStudio button{min-height:44px;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+#ffContentStudio .sectionbar,#ffContentStudio .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+#ffContentStudio .ff-content-preview{border:1px solid currentColor;border-radius:8px;padding:10px;overflow-wrap:anywhere}
+#ffContentStudio [data-content-audit],#ffContentStudio [data-content-status]{overflow-wrap:anywhere}
