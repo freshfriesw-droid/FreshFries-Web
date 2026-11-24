@@ -4985,50 +4985,73 @@ setTimeout(()=>void refreshAccess(),1800);
  });
 })();
 </script><script id="ff71-customer-phone-otp">
-/* Authenticated customer portal: Supabase SMS OTP; no local passwords, no guest order searches. */
+/* Authenticated customer portal: server SMS OTP only, challenge bound to the entered number. */
 (() => {
   'use strict';
   const el = id => document.getElementById(id);
   const toggle=el('ff71CustomerToggle'),panel=el('ff71CustomerPanel');
   const send=el('ff71CustomerSend'),verify=el('ff71CustomerVerify'),status=el('ff71CustomerMessage');
-  let approvedPhone='',lastSent=0;
+  const phoneInput=el('ff71CustomerPhone'),codeInput=el('ff71CustomerCode');
+  let approvedPhone='',lastSent=0,generation=0,busy=false;
+  const digits=value=>String(value||'').replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-0x660)).replace(/[۰-۹]/g,c=>String(c.charCodeAt(0)-0x6f0));
   const phone=()=>{
-    let d=String(el('ff71CustomerPhone').value||'').replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-0x660)).replace(/[۰-۹]/g,c=>String(c.charCodeAt(0)-0x6f0)).replace(/[^0-9]/g,'');
+    const raw=digits(phoneInput.value).trim();
+    if(!/^\+?[0-9 ()-]+$/.test(raw))throw Error('أدخل رقم هاتف يمني صحيح من 9 أرقام');
+    let d=raw.replace(/[^0-9]/g,'');
     if(d.startsWith('00967'))d=d.slice(5);
     else if(d.startsWith('967'))d=d.slice(3);
     if(!/^7[0-9]{8}$/.test(d))throw Error('أدخل رقم هاتف يمني صحيح من 9 أرقام');
     return '+967'+d;
   };
+  function invalidate(clearPhone=false){
+    generation++;approvedPhone='';codeInput.value='';status.textContent='';
+    if(clearPhone){phoneInput.value='';panel.classList.add('hidden')}
+  }
+  function setBusy(value){
+    busy=value;send.disabled=value;verify.disabled=value;phoneInput.disabled=value;codeInput.disabled=value;
+  }
+  phoneInput.addEventListener('input',()=>{if(!busy)invalidate()});
+  window.addEventListener('ff-luxe-session-reset',()=>invalidate(true));
   toggle?.addEventListener('click',()=>{
     panel.classList.toggle('hidden');
-    if(!panel.classList.contains('hidden'))el('ff71CustomerPhone').focus();
+    if(!panel.classList.contains('hidden'))phoneInput.focus();
   });
   send?.addEventListener('click',async()=>{
+    if(busy)return;
     if(!client){status.textContent='تعذر الاتصال بالخادم';return;}
+    let seq;
     try{
       const p=phone(),now=Date.now();
       if(now-lastSent<90000)throw Error('انتظر قبل طلب رمز آخر');
-      send.disabled=true;status.textContent='جارٍ إرسال الرمز...';
+      invalidate();seq=generation;
+      setBusy(true);status.textContent='جارٍ إرسال الرمز...';
       const {error}=await client.auth.signInWithOtp({phone:p,options:{shouldCreateUser:true}});
       if(error)throw error;
-      approvedPhone=p;lastSent=now;
+      lastSent=Date.now();
+      if(seq!==generation)return;
+      approvedPhone=p;
       status.textContent='تم طلب الرمز. أدخل رمز SMS الذي وصلك ثم اضغط تأكيد.';
-    }catch(e){status.textContent='تعذر إرسال الرمز: '+(e?.message||e)}
-    finally{send.disabled=false}
+    }catch(e){if(seq===undefined||seq===generation)status.textContent='تعذر إرسال الرمز: '+(e?.message||e)}
+    finally{setBusy(false)}
   });
   verify?.addEventListener('click',async()=>{
-    const token=String(el('ff71CustomerCode').value||'').trim();
+    if(busy)return;
     if(!approvedPhone){status.textContent='اطلب رمز التحقق أولًا';return}
+    let currentPhone;
+    try{currentPhone=phone()}catch(e){invalidate();status.textContent=e.message;return}
+    if(currentPhone!==approvedPhone){invalidate();status.textContent='تغير الرقم؛ اطلب رمزًا جديدًا';return}
+    const token=digits(codeInput.value).trim();
     if(!/^[0-9]{4,8}$/.test(token)){status.textContent='الرمز غير صحيح';return}
-    verify.disabled=true;status.textContent='جارٍ تأكيد الرقم...';
+    setBusy(true);status.textContent='جارٍ تأكيد الرقم...';
     try{
-      const {data:auth,error}=await client.auth.verifyOtp({phone:approvedPhone,token,type:'sms'});
+      const {data:auth,error}=await client.auth.verifyOtp({phone:currentPhone,token,type:'sms'});
       if(error)throw error;
       if(!auth?.session)throw Error('لم تُنشأ جلسة دخول');
+      approvedPhone='';codeInput.value='';
       status.textContent='تم تأكيد الرقم بنجاح';
       await setSession(auth.session);
     }catch(e){status.textContent='تعذر تأكيد الرقم: '+(e?.message||e)}
-    finally{verify.disabled=false}
+    finally{setBusy(false)}
   });
 })();
 </script>
