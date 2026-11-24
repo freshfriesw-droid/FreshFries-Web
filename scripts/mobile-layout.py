@@ -120,7 +120,7 @@ def wait_for_open_drawer(page, width):
 
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(channel="chrome")
-    for width in (320, 344, 360, 390, 430, 768, 850, 851, 1280):
+    for width in (320, 344, 360, 390, 430, 768, 850, 851, 1024, 1280, 1440):
         context = browser.new_context(viewport={"width": width, "height": 800},
                                       is_mobile=width <= 850, service_workers="block")
         context.route("**/*", lambda route: route.continue_() if route.request.url.startswith(origin) else route.abort())
