@@ -12,6 +12,18 @@ AS $function$
 BEGIN
  IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Authentication required' USING ERRCODE='42501'; END IF;
  IF p_kind IS DISTINCT FROM 'delivery' THEN RAISE EXCEPTION 'Invalid request' USING ERRCODE='22023'; END IF;
+ IF p_request IS NULL OR jsonb_typeof(p_input) IS DISTINCT FROM 'object'
+    OR jsonb_typeof(p_input->'p_items') IS DISTINCT FROM 'array' THEN
+  RAISE EXCEPTION 'Invalid request or items' USING ERRCODE='22023';
+ END IF;
+ IF jsonb_array_length(p_input->'p_items') NOT BETWEEN 1 AND 50 OR EXISTS (
+  SELECT 1 FROM jsonb_array_elements(p_input->'p_items') e
+  WHERE btrim(coalesce(e->>'name',''))=''
+   OR length(coalesce(e->>'item_notes',''))>500
+   OR (e->>'qty') IS NULL OR (e->>'price') IS NULL
+   OR (e->>'qty') !~ '^[0-9]+([.][0-9]+)?$'
+   OR (e->>'price') !~ '^[0-9]+([.][0-9]+)?$'
+ ) THEN RAISE EXCEPTION 'Invalid item data or notes' USING ERRCODE='22023'; END IF;
  RETURN public.ff27_submit(p_request,p_kind,p_input);
 END;
 $function$;
