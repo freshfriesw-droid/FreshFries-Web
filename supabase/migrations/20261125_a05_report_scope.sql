@@ -1,5 +1,7 @@
 -- FIX-15: ensure all report entry points honor explicit individual revocation.
 -- Retain the personal reports already available to cashier/courier/kitchen/assembly by default.
+ALTER TABLE public.ff38_role_permission_defaults DROP CONSTRAINT ff38_role_permission_role_check;
+ALTER TABLE public.ff38_role_permission_defaults ADD CONSTRAINT ff38_role_permission_role_check CHECK(role IN ('customer_service','cashier','driver','supervisor','assembly','burger_kitchen'));
 INSERT INTO public.ff38_role_permission_defaults(role,permission_key,allowed)
  VALUES('assembly','view_reports',false),('burger_kitchen','view_reports',false)
  ON CONFLICT(role,permission_key) DO NOTHING;
