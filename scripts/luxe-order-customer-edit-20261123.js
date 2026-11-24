@@ -29,7 +29,7 @@ function mark(){
   if(o.id==null)continue;
   const time=o.customer_update?.at;
   const before=observed.get(o.id);
-  if(data?.role==='driver'&&time&&before&&time!==before){
+  if(data?.role==='driver'&&time&&observed.has(o.id)&&time!==before){
    try{if(typeof ding==='function')ding()}catch(_){}
    try{if(typeof toast==='function')toast('⚠️ تم تعديل هاتف أو عنوان العميل لطلب #'+o.number)}catch(_){}
   }
