@@ -99,3 +99,71 @@ with sync_playwright() as pw:
         print(f"PASS {width}px: OTP phone binding, Arabic digits, session reset, rating, stale-account privacy",flush=True)
         context.close()
     browser.close()
+
+# Exercise the shipped reservation and customer-history handlers without contacting production.
+def section(start,end):
+    i=html.index(start)
+    return html[i:html.index(end,i)]
+reservations=section('function ff49ReserveStages','async function ff49LoadTransfers')
+history=section('async function ff51CustomerNotes(phone)',"document.addEventListener('click',e=>{const b=e.target.closest('[data-ff51-customer]')")
+photo=(root/'scripts/luxe-shared-photo-menu-20261123.js').read_text(encoding='utf-8')
+with sync_playwright() as pw:
+    browser=pw.chromium.launch(channel='chrome')
+    for width in (390,1280):
+        ctx=browser.new_context(viewport={'width':width,'height':850},service_workers='block')
+        ctx.route('**/*',lambda route:route.abort())
+        page=ctx.new_page()
+        page.set_content("""<style>.hidden{display:none}</style>
+          <button id="ff49ReservationsBtn"></button><button id="ffReserveBottom"></button>
+          <button id="ff49ReservationsRefresh"></button><button id="ff49ReservationsClose"></button>
+          <div id="ff49ReservationsPanel"><div id="ff49ReservationsCreate">
+          <select id="newBranch"><option value="cairo">القاهرة</option></select>
+          <select id="ff49ReserveBranch"><option value="cairo">القاهرة</option></select>
+          <input id="ff49ReserveName"><input id="ff49ReservePhone"><input id="ff49ReserveNotes">
+          <textarea id="ff49ReserveItems"></textarea><input type="datetime-local" id="ff49ReservePickup">
+          <button id="ff49ReserveSave">حفظ</button></div><div id="ff49ReservationsList"></div></div>
+          <div id="ff51CustomersPanel"><div id="ff51CustomerNotesSection"><h3 id="ff51CustomerNotesHeading"></h3>
+          <textarea id="ff51CustomerNoteText"></textarea><div id="ff51CustomerNotesList"></div><div id="ff51CustomerHistory"></div></div></div>""")
+        page.add_script_tag(content="""var $=id=>document.getElementById(id),user={id:'cs'},data={role:'customer_service',branches:[{id:'cairo',name:'القاهرة'}]};
+        var ff49ReserveSeq=0,ff49ReserveLoad=null,ff49ReserveBusy=false,ff49Reservations=[];
+        var ff51NotesSeq=0,ff51SelectedPhone=null,ff51Viewer=roles=>roles.includes(data.role)?user.id:null;
+        var esc=x=>String(x??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+        var amount=x=>String(x),time=x=>String(x),branchName=x=>x,ffLuxeDial=x=>esc(x),toast=x=>window.lastToast=x;
+        var ff49LoadCatalog=async()=>true,ff49ParseItemsAndNotes=()=>({items:[{name:'تشكن فرايز',qty:2,price:1500,item_notes:'بدون شطة'}],notes:'ملاحظة',meta:{}});
+        window.submissions=[];var ff27Submit=async(kind,args)=>{submissions.push({kind,args});return {ok:true}};
+        var rpc=async(name,args)=>{
+          if(name==='ff49_reservations_list')return [];
+          if(name==='ff51_customer_notes_list')return [{note:args.p_phone==='A'?'private A':'private B',added_at:'today'}];
+          if(name==='ff_a02_customer_history'){
+            if(args.p_phone==='A')return await new Promise(resolve=>window.resolveA=resolve);
+            return {orders:[{order_number:222,area:'<script>',address:'B',total:1200,rating:5,edit_count:0}],complaints:[{subject:'شكوى B',status:'open'}]};
+          }throw Error(name);
+        };""")
+        for code in (reservations,history,photo):
+            page.add_script_tag(content=code)
+        page.locator('#ff49ReserveName').fill('عميل')
+        page.locator('#ff49ReservePhone').fill('777123456')
+        page.locator('#ff49ReserveItems').fill('2 تشكن')
+        page.locator('#ff49ReservePickup').fill('2099-02-03T14:30')
+        page.locator('#ff49ReserveSave').click()
+        page.wait_for_function('submissions.length===1')
+        args=page.evaluate('submissions[0]')
+        assert args['kind']=='reservation' and args['args']['p_pickup']=='2099-02-03T11:30:00.000Z'
+        assert args['args']['p_items'][0]['item_notes']=='بدون شطة'
+        assert 'p_delivery_fee' not in args['args'] and 'p_driver_id' not in args['args']
+        page.evaluate("void ff51CustomerNotes('A')")
+        page.wait_for_function("typeof resolveA==='function'")
+        page.locator('#ff51CustomerNoteText').fill('private draft A')
+        page.evaluate("void ff51CustomerNotes('B')")
+        page.wait_for_function("document.getElementById('ff51CustomerHistory').textContent.includes('222')")
+        page.evaluate("resolveA({orders:[{order_number:999}],complaints:[]})")
+        assert page.locator('#ff51CustomerNoteText').input_value()==''
+        assert '999' not in page.locator('#ff51CustomerHistory').inner_text()
+        assert 'private A' not in page.locator('#ff51CustomerNotesList').inner_text()
+        assert 'private B' in page.locator('#ff51CustomerNotesList').inner_text()
+        assert page.locator('#ff51CustomerHistory script').count()==0
+        assert page.evaluate("ffLuxePhotoMenu.createTile({name:'تشكن',price:1500,card_style:'compact'}).element.dataset.cardStyle")=='compact'
+        assert page.evaluate("ffLuxePhotoMenu.createTile({name:'تشكن',card_style:'large'}).element.dataset.cardStyle")=='large'
+        ctx.close()
+        print(f'PASS A02 {width}px: timed reservation, item notes, no delivery fields, customer history isolation, shared card styles',flush=True)
+    browser.close()
