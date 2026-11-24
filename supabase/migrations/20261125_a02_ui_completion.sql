@@ -46,38 +46,26 @@ BEGIN
 END;
 $function$;
 CREATE OR REPLACE FUNCTION public.ff49_catalog()
- RETURNS jsonb
- LANGUAGE plpgsql
- STABLE SECURITY DEFINER
- SET search_path TO ''
-AS $function$
+RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path TO '' AS $function$
 BEGIN
-  IF NOT EXISTS(SELECT 1 FROM public.ff_profiles WHERE user_id=auth.uid() AND active=true)
-    THEN RAISE EXCEPTION 'غير مصرح' USING ERRCODE='42501'; END IF;
-      RETURN (
-          COALESCE((SELECT jsonb_agg(jsonb_build_object(
-                'id',m.id,'name',m.name,'price',m.price,'category',c.name,
-                      'kind','item','type','item','parser_aliases',m.parser_aliases,'image_path',m.extra->>'image_path',
-                            'image_version',m.extra->>'image_version','card_style',coalesce(m.extra->>'card_style','standard'),'sort_order',m.sort_order)
-                                  ORDER BY c.sort_order,m.sort_order,m.name)
-                                       FROM public.ff_menu_items m JOIN public.ff_menu_categories c ON c.id=m.category_id
-                                            WHERE m.active AND c.active),'[]'::jsonb)
-                                                ||
-                                                    COALESCE((SELECT jsonb_agg(jsonb_build_object(
-                                                          'id',o.id,'name',o.name,'price',o.price,'category','العروض',
-                                                                'kind','offer','type','offer','parser_aliases',o.parser_aliases,'image_path',o.details->>'image_path',
-                                                                      'image_version',o.details->>'image_version','card_style',coalesce(o.details->>'card_style','standard'),'sort_order',CASE WHEN o.details->>'sort_order' ~ '^[0-9]{1,5}
-                                                                            FROM public.ff_offers o WHERE o.active),'[]'::jsonb)
-                                                                              );
-                                                                              END $function$
- THEN (o.details->>'sort_order')::integer ELSE 0 END) ORDER BY CASE WHEN o.details->>'sort_order' ~ '^[0-9]{1,5}
-                                                                            FROM public.ff_offers o WHERE o.active),'[]'::jsonb)
-                                                                              );
-                                                                              END $function$
- THEN (o.details->>'sort_order')::integer ELSE 0 END,o.name)
-                                                                            FROM public.ff_offers o WHERE o.active),'[]'::jsonb)
-                                                                              );
-                                                                              END $function$;
+ IF NOT EXISTS(SELECT 1 FROM public.ff_profiles WHERE user_id=auth.uid() AND active=true)
+ THEN RAISE EXCEPTION 'غير مصرح' USING ERRCODE='42501'; END IF;
+ RETURN
+ COALESCE((SELECT jsonb_agg(jsonb_build_object(
+ 'id',m.id,'name',m.name,'price',m.price,'category',c.name,'kind','item','type','item',
+ 'parser_aliases',m.parser_aliases,'image_path',m.extra->>'image_path','image_version',m.extra->>'image_version',
+ 'card_style',coalesce(m.extra->>'card_style','standard'),'sort_order',m.sort_order)
+ ORDER BY c.sort_order,m.sort_order,m.name)
+ FROM public.ff_menu_items m JOIN public.ff_menu_categories c ON c.id=m.category_id WHERE m.active AND c.active),'[]'::jsonb)
+ ||
+ COALESCE((SELECT jsonb_agg(jsonb_build_object(
+ 'id',o.id,'name',o.name,'price',o.price,'category','العروض','kind','offer','type','offer',
+ 'parser_aliases',o.parser_aliases,'image_path',o.details->>'image_path','image_version',o.details->>'image_version',
+ 'card_style',coalesce(o.details->>'card_style','standard'),
+ 'sort_order',CASE WHEN o.details->>'sort_order' ~ '^[0-9]{1,5}$' THEN (o.details->>'sort_order')::integer ELSE 0 END)
+ ORDER BY CASE WHEN o.details->>'sort_order' ~ '^[0-9]{1,5}$' THEN (o.details->>'sort_order')::integer ELSE 0 END,o.name)
+ FROM public.ff_offers o WHERE o.active),'[]'::jsonb);
+END $function$;
 CREATE OR REPLACE FUNCTION public.ff49_create_reservation(p_branch uuid, p_customer_name text, p_phone text, p_pickup timestamp with time zone, p_items jsonb, p_notes text DEFAULT ''::text)
  RETURNS jsonb
  LANGUAGE plpgsql
