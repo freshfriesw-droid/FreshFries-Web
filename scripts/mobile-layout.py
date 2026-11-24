@@ -253,6 +253,15 @@ with sync_playwright() as playwright:
                         page.locator("#ffx-menu").click()
                 mode.select_option("accordion")
                 assert page.locator("#ffx-group-links-system").is_hidden()
+                page.evaluate("""() => {
+                  document.getElementById('staffView').classList.remove('hidden');
+                  document.getElementById('staffAdminCard').hidden=false;
+                }""")
+                search.fill("إدارة نقطة التجميع")
+                page.locator("#ffx-nav [data-key=assembly_admin]").click()
+                assert page.locator("#staffAdminCard > .ffl-fold-toggle").get_attribute("aria-expanded") == "true"
+                assert page.locator("#staffAdminList").is_visible()
+                page.locator("#ffx-menu").click()
                 search.fill("التصفير")
                 assert page.locator("#ffx-nav [data-key=data_center]").is_visible()
                 assert page.locator("#ffx-nav [data-key=home]").is_hidden()
