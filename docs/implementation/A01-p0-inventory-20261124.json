@@ -624,5 +624,1617 @@
   "style_metrics": {
     "inline_style_blocks": 30,
     "inline_important": 159
-  }
+  },
+  "index_button_source_candidates": [
+    {
+      "line": 505,
+      "id": null,
+      "label": "تقديم الطلب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 505,
+      "id": "ff28Refresh",
+      "label": "تحديث",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 505,
+      "id": "ff28Logout",
+      "label": "خروج",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff52RoutesBtn",
+      "label": "📍 توجيه مناطق الجامعات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff51CatalogBtn",
+      "label": "🍟 المنيو والعروض",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff51CustomersBtn",
+      "label": "👥 العملاء",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff51ArchiveBtn",
+      "label": "📁 الأرشيف",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff51RatingsBtn",
+      "label": "⭐ التقييمات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff50ChangesBtn",
+      "label": "📝 تعديلات الطلبات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff49ReservationsBtn",
+      "label": "📅 الحجوزات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff49TransferBtn",
+      "label": "🔄 نقل الموصل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff48DiagnosticsBtn",
+      "label": "🩺 تشخيص النسخة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff47QABtn",
+      "label": "📋 الاختبار الشامل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff46ReadinessBtn",
+      "label": "🧪 جاهزية الإطلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff45AccessBtn",
+      "label": "🔐 عزل الفروع",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff44IntegrityBtn",
+      "label": "🔎 سلامة البيانات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff43SecurityBtn",
+      "label": "🛡️ أمان النظام",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff42SettlementsBtn",
+      "label": "💰 تسويات الموصلين",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff40ReportsBtn",
+      "label": "📊 التقارير",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff40AlertsBtn",
+      "label": "⚠️ متابعة التشغيل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff41CasesBtn",
+      "label": "📋 الشكاوى والتظلمات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "ff39InboxBtn",
+      "label": "📨 الرسائل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "notificationsBtn",
+      "label": "🔔 تفعيل التنبيهات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "refreshBtn",
+      "label": "تحديث",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 506,
+      "id": "logoutBtn",
+      "label": "خروج",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 508,
+      "id": "ff66AssemblySoundSettings",
+      "label": "🔔 النغمات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 508,
+      "id": "ffV12Refresh",
+      "label": "تحديث الطلبات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 508,
+      "id": "ffV12BurgerOpen",
+      "label": "🍔 أوامر قسم البرجر",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 508,
+      "id": "ffV12Logout",
+      "label": "🚪 تسجيل الخروج",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 519,
+      "id": null,
+      "label": "جميع الطلبات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 520,
+      "id": null,
+      "label": "بانتظار التحضير",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 521,
+      "id": null,
+      "label": "قيد التحضير",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 522,
+      "id": null,
+      "label": "جاهزة للتسليم",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 529,
+      "id": "ff48Refresh",
+      "label": "تحديث التشخيص",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 529,
+      "id": "ff48Export",
+      "label": "تصدير CSV",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 529,
+      "id": "ff48Close",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 545,
+      "id": "ff47Reload",
+      "label": "تحديث النتائج",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 545,
+      "id": "ff47Close",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 550,
+      "id": "ff47Create",
+      "label": "إنشاء جولة اختبار",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 554,
+      "id": "ff47Export",
+      "label": "تصدير النتائج CSV",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 555,
+      "id": "ff47Finish",
+      "label": "اعتماد اكتمال الجولة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 556,
+      "id": "ff47Reopen",
+      "label": "إعادة فتح الجولة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 571,
+      "id": "ff46Run",
+      "label": "فحص جاهزية النسخة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 571,
+      "id": "ff46Export",
+      "label": "تصدير CSV",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 571,
+      "id": "ff46Close",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 584,
+      "id": "ff45Run",
+      "label": "فحص الوصول",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 584,
+      "id": "ff45Export",
+      "label": "تصدير CSV",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 584,
+      "id": "ff45Close",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 598,
+      "id": "ff44Export",
+      "label": "تصدير النتائج CSV",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 598,
+      "id": "ff44Close",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 600,
+      "id": "ff44Run",
+      "label": "بدء فحص البيانات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 609,
+      "id": "ff43Run",
+      "label": "فحص الآن",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 609,
+      "id": "ff43Export",
+      "label": "تصدير نتائج CSV",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 609,
+      "id": "ff43Close",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 619,
+      "id": "ff42Export",
+      "label": "تصدير CSV",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 619,
+      "id": "ff42ClosePanel",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 621,
+      "id": "ff42Load",
+      "label": "عرض التسويات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 630,
+      "id": "ff42Save",
+      "label": "حفظ التسوية",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 630,
+      "id": "ff42CloseSettlement",
+      "label": "🔒 إقفال التسوية",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 630,
+      "id": "ff42ShowDetail",
+      "label": "عرض الطلبات والسجل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 636,
+      "id": "ff41Refresh",
+      "label": "تحديث البلاغات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 636,
+      "id": "ff41Close",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 648,
+      "id": "ff41Create",
+      "label": "حفظ البلاغ",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 656,
+      "id": "ff39Refresh",
+      "label": "تحديث الرسائل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 656,
+      "id": "ff39Close",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 666,
+      "id": "ff39Send",
+      "label": "إرسال التعميم",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 666,
+      "id": "ff39SentRefresh",
+      "label": "سجل الإرسال",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 673,
+      "id": "ff40AlertRefresh",
+      "label": "تحديث التنبيهات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 673,
+      "id": "ff40AlertsClose",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 679,
+      "id": "ff40ExportCSV",
+      "label": "تصدير CSV",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 679,
+      "id": "ff40ReportsClose",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 686,
+      "id": "ff40RunReport",
+      "label": "إعداد التقرير",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 698,
+      "id": "ff51BreakBtn",
+      "label": "☕ بدء استراحة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 698,
+      "id": "clockInBtn",
+      "label": "تسجيل حضور / جاهز",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 698,
+      "id": "clockOutBtn",
+      "label": "إنهاء الدوام",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 706,
+      "id": "linkUserBtn",
+      "label": "ربط الحساب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 708,
+      "id": "ffEditMyAccount",
+      "label": "✏️ تعديل حساب المدير",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 708,
+      "id": "staffAdminRefresh",
+      "label": "تحديث الموظفين",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 708,
+      "id": "permissionLoad",
+      "label": "عرض صلاحيات الموظف",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 708,
+      "id": "staffAuditRefresh",
+      "label": "عرض السجل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 712,
+      "id": "ffbApplyText",
+      "label": "تحليل الأسطر ومعاينتها",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 721,
+      "id": "ffbTabMenu",
+      "label": "🍟 المنيو التفاعلي",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 721,
+      "id": "ffbTabText",
+      "label": "🧠 الانتقال إلى المحلّل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 722,
+      "id": "ffbMenuReload",
+      "label": "تحديث المنيو",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 724,
+      "id": "createBtn",
+      "label": "اعتماد الطلب وحفظه",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 724,
+      "id": "ffReserveBottom",
+      "label": "📅 حجز للاستلام",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 728,
+      "id": "auditRefreshBtn",
+      "label": "تحديث السجل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 733,
+      "id": "ff51CatalogRefresh",
+      "label": "تحديث",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 733,
+      "id": "ff51CatalogClose",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 736,
+      "id": "ff51ItemSave",
+      "label": "حفظ الصنف",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 736,
+      "id": "ff51ItemReset",
+      "label": "إلغاء التعديل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 739,
+      "id": "ff51OfferSave",
+      "label": "حفظ العرض",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 739,
+      "id": "ff51OfferReset",
+      "label": "إلغاء التعديل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 744,
+      "id": "ffAliasSave",
+      "label": "حفظ المرادفات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 744,
+      "id": "ffAliasDefault",
+      "label": "استعادة المرادفات الافتراضية",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 748,
+      "id": "ff51CustomersClose",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 750,
+      "id": "ff51CustomerFind",
+      "label": "بحث",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 754,
+      "id": "ff51CustomerNoteSave",
+      "label": "حفظ ملاحظة العميل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 757,
+      "id": "ff51ArchiveRefresh",
+      "label": "بحث",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 757,
+      "id": "ff51ArchiveExport",
+      "label": "تصدير CSV",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 757,
+      "id": "ff51ArchiveClose",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 761,
+      "id": "ff51ArchivePrev",
+      "label": "الصفحة السابقة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 761,
+      "id": "ff51ArchiveNext",
+      "label": "الصفحة التالية",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 764,
+      "id": "ff51RatingsRefresh",
+      "label": "تحديث",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 764,
+      "id": "ff51RatingsClose",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 769,
+      "id": "ff50Refresh",
+      "label": "تحديث",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 769,
+      "id": "ff50Close",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 775,
+      "id": "ff50RequestSave",
+      "label": "إرسال طلب التعديل للكاشير",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 775,
+      "id": "ff50RequestCancel",
+      "label": "إلغاء",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 780,
+      "id": "ff49ReservationsRefresh",
+      "label": "تحديث",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 780,
+      "id": "ff49ReservationsClose",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 786,
+      "id": "ff49ReserveSave",
+      "label": "حفظ الحجز وإرساله لكاشير الفرع",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 791,
+      "id": "ff49TransferRefresh",
+      "label": "تحديث",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 791,
+      "id": "ff49TransferClose",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 796,
+      "id": "ff49ManualClose",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 800,
+      "id": "ff49ManualConfirm",
+      "label": "تأكيد الإسناد وتوثيق السبب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 803,
+      "id": "ff52LateClose",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 807,
+      "id": "ff75LatePreview",
+      "label": "🔎 تحليل ومعاينة الإضافة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 807,
+      "id": "ff52LateSave",
+      "label": "تأكيد إرسال الإضافة إلى الموصل للموافقة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 810,
+      "id": "ff52RoutesClose",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 815,
+      "id": "ff52RouteSave",
+      "label": "حفظ قاعدة التوجيه",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 820,
+      "id": "loginBtn",
+      "label": "تسجيل الدخول",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 821,
+      "id": "ff61ApplyToggle",
+      "label": "📝 تقديم طلب انضمام",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 821,
+      "id": "ff61StatusToggle",
+      "label": "🔎 متابعة طلبي",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 821,
+      "id": "ff71CustomerToggle",
+      "label": "👤 متابعة طلباتي",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 825,
+      "id": "ff71CustomerSend",
+      "label": "إرسال رمز التحقق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 827,
+      "id": "ff71CustomerVerify",
+      "label": "تأكيد الرقم وعرض طلباتي",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 844,
+      "id": "ff61ApplySend",
+      "label": "إرسال طلب الانضمام",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 847,
+      "id": "ff61TrackSend",
+      "label": "عرض الحالة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1055,
+      "id": null,
+      "label": "${allowed?'✅ رفض الموصل مسموح — اضغط للمنع':'🔒 رفض الموصل ممنوع — اضغط للسماح'}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1066,
+      "id": null,
+      "label": "✅ أوافق على استلام الإضافة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1066,
+      "id": null,
+      "label": "❌ لا أستطيع الاستلام",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1067,
+      "id": null,
+      "label": "📦 استلمت الإضافة من الفرع",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1068,
+      "id": null,
+      "label": "🧾 توثيق فاتورة الإضافة المتأخرة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1069,
+      "id": null,
+      "label": "🚫 إلغاء مع سبب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1070,
+      "id": null,
+      "label": "🧾 توثيق رقم فاتورة الإضافة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1071,
+      "id": null,
+      "label": "إلغاء الإضافة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1075,
+      "id": null,
+      "label": "➕ إضافة أصناف للطلب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1075,
+      "id": null,
+      "label": "➕ إضافة بعد خروج الموصل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1076,
+      "id": null,
+      "label": "🔎 تحليل ومعاينة الإضافة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1076,
+      "id": null,
+      "label": "تأكيد إرسال الإضافة للكاشير والموصل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1076,
+      "id": null,
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1113,
+      "id": null,
+      "label": "✅ قبول الطلب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1113,
+      "id": null,
+      "label": "رفض وتحويل للتالي",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1113,
+      "id": null,
+      "label": "${rejectPermissionReady?'🔒 الرفض غير مسموح — تحقق من الإذن':'⏳ تحقق من صلاحية الرفض'}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1114,
+      "id": null,
+      "label": "🛵 استلمت الطلب وأنا في الطريق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1114,
+      "id": null,
+      "label": "📍 وصلت لموقع العميل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1114,
+      "id": null,
+      "label": "✅ تم تسليم الطلب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1124,
+      "id": null,
+      "label": "✏️ تعديل بيانات العميل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1124,
+      "id": null,
+      "label": "إسناد تلقائي",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1124,
+      "id": null,
+      "label": "إسناد يدوي",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1124,
+      "id": null,
+      "label": "📝 طلب تعديل أصناف",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1124,
+      "id": null,
+      "label": "🔄 تغيير الموصل قبل الفاتورة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1124,
+      "id": null,
+      "label": "🔄 طلب نقل موصل بعد القطع",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1124,
+      "id": null,
+      "label": "🚫 إلغاء الطلب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1126,
+      "id": null,
+      "label": "✏️ تعديل بيانات العميل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1126,
+      "id": null,
+      "label": "🍔 إعلام قسم البرجر",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1126,
+      "id": null,
+      "label": "🧾 اعتماد القطع (المرجع اختياري)",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1126,
+      "id": null,
+      "label": "📥 استلمت الطلب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1126,
+      "id": null,
+      "label": "${esc(labels[next[o.cashier_stage]])}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1285,
+      "id": null,
+      "label": "${p.active?'تعطيل حساب الدخول':'إعادة تفعيل الحساب'}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1285,
+      "id": null,
+      "label": "تفعيل التجميع لهذا الفرع",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1285,
+      "id": null,
+      "label": "سحب صلاحية التجميع",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1285,
+      "id": null,
+      "label": "تحويل الدور الوظيفي",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1285,
+      "id": null,
+      "label": "✏️ تعديل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1285,
+      "id": null,
+      "label": "✏️ تعديل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1285,
+      "id": null,
+      "label": "${p.active?'تعطيل الحساب':'إعادة تفعيل الحساب'}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1285,
+      "id": null,
+      "label": "حفظ الدور والفروع",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1440,
+      "id": null,
+      "label": "حفظ الصلاحية",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1470,
+      "id": null,
+      "label": "✅ اطلعت على الرسالة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1471,
+      "id": null,
+      "label": "تمييز كمقروءة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1710,
+      "id": null,
+      "label": "عرض التفاصيل والردود",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1739,
+      "id": null,
+      "label": "حفظ تغيير الحالة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1747,
+      "id": null,
+      "label": "حفظ الرد",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 1842,
+      "id": null,
+      "label": "${r.settlement_status==='closed'?'استعراض التسوية':'فتح / تعديل التسوية'}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2295,
+      "id": null,
+      "label": "حفظ النتيجة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2670,
+      "id": null,
+      "label": "${esc(labels[n])}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2671,
+      "id": null,
+      "label": "إلغاء الحجز",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2715,
+      "id": null,
+      "label": "✅ أقرّ تحديث حساب الموصل وفاتورة MicroPOS",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2801,
+      "id": null,
+      "label": "السماح بالتعديل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2801,
+      "id": null,
+      "label": "رفض التعديل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2801,
+      "id": null,
+      "label": "اعتماد التعديل من خدمة العملاء",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2801,
+      "id": null,
+      "label": "تم تعديل الفاتورة في MicroPOS",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2899,
+      "id": null,
+      "label": "تعديل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2899,
+      "id": null,
+      "label": "${i.active?'إيقاف':'إعادة تفعيل'}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2901,
+      "id": null,
+      "label": "تعديل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2901,
+      "id": null,
+      "label": "${o.active?'إيقاف':'تفعيل'}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 2981,
+      "id": null,
+      "label": "عرض الملاحظات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3146,
+      "id": null,
+      "label": "تعديل القاعدة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3208,
+      "id": "ffx-drawer-close",
+      "label": "${icon('close')}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3211,
+      "id": "ffx-menu",
+      "label": "${icon('menu')}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3211,
+      "id": "ffx-refresh",
+      "label": "${icon('refresh')}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3211,
+      "id": "ffx-bell",
+      "label": "${icon('bell')}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3211,
+      "id": "ffx-theme-toggle",
+      "label": "${icon('moon')}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3211,
+      "id": "ffx-options",
+      "label": "${icon('settings')}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3215,
+      "id": "ffx-hero-new",
+      "label": "${icon('plus','sm')} طلب جديد",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3215,
+      "id": "ffx-hero-reserve",
+      "label": "📅 حجز للاستلام",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3215,
+      "id": "ffx-hero-overdue",
+      "label": "${icon('alert','sm')} الطلبات المتأخرة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3216,
+      "id": "ffx-kpi-reload",
+      "label": "${icon('refresh','sm')} تحديث",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3218,
+      "id": null,
+      "label": "عرض الكل ${icon('arrow','sm')}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3219,
+      "id": "ffx-open-alerts",
+      "label": "عرض مركز المتابعة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3224,
+      "id": "ffx-pref-close",
+      "label": "${icon('close')}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3226,
+      "id": "ffx-play-sound",
+      "label": "${icon('volume','sm')} تجربة النغمة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3226,
+      "id": "ffx-play-delay",
+      "label": "تجربة تنبيه التأخير",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3226,
+      "id": "ffx-push-permission",
+      "label": "🔔 تفعيل إشعارات الخلفية واختبارها",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3227,
+      "id": "ff-luxe-audio-unlock",
+      "label": "🔊 تفعيل وتشغيل النغمة التجريبية",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3229,
+      "id": "ff66-tone-add",
+      "label": "➕ إضافة النغمة للمطعم",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3230,
+      "id": "ff66-tone-refresh",
+      "label": "🔄 تحديث مكتبة النغمات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3232,
+      "id": "ffx-reset",
+      "label": "استعادة تفضيلات التصميم الافتراضية",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3243,
+      "id": null,
+      "label": null,
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3667,
+      "id": null,
+      "label": "متابعة ${icon('arrow','sm')}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3689,
+      "id": null,
+      "label": "فتح الطلب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3701,
+      "id": "ffx-demo-theme",
+      "label": "${icon('moon','sm')} تغيير الإضاءة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3701,
+      "id": "ffx-demo-prefs",
+      "label": "${icon('settings','sm')} تخصيص",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3701,
+      "id": "ffx-demo-close",
+      "label": "إغلاق المعاينة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3702,
+      "id": null,
+      "label": "لوحة التحكم",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3702,
+      "id": null,
+      "label": "المتأخرة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3702,
+      "id": null,
+      "label": "واجهة الموصل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3702,
+      "id": null,
+      "label": "إدخال الطلب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3703,
+      "id": null,
+      "label": "التفاصيل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3703,
+      "id": null,
+      "label": "الموصل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3703,
+      "id": null,
+      "label": "طلب جديد",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3703,
+      "id": null,
+      "label": "${icon('plus')} طلب جديد",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3703,
+      "id": null,
+      "label": "${icon('alert')} المتأخرة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3703,
+      "id": null,
+      "label": "${icon('bike')} الموصلون",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3703,
+      "id": "ffx-demo-sounds",
+      "label": "${icon('volume')} معاينة صوت",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3706,
+      "id": "ffx-demo-order",
+      "label": "${icon('check')} معاينة اعتماد الطلب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3706,
+      "id": null,
+      "label": "العودة للوحة التحكم",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3845,
+      "id": "ffbCloseReview",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3845,
+      "id": "ffbConfirmSave",
+      "label": "تأكيد إنشاء الطلب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3845,
+      "id": "ffbCancelReview",
+      "label": "عودة للتعديل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3904,
+      "id": "ff2-close",
+      "label": "✕",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3932,
+      "id": "ff3-close",
+      "label": "إغلاق ×",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3943,
+      "id": "ff3-launch",
+      "label": "🧭 مراحل الطلب",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3977,
+      "id": "ff4-launch",
+      "label": "📊 متابعة التشغيل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3980,
+      "id": "ff4-refresh",
+      "label": "تحديث البيانات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3980,
+      "id": "ff4-export",
+      "label": "تصدير CSV",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 3980,
+      "id": "ff4-close",
+      "label": "إغلاق ×",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4044,
+      "id": "ff5-launch",
+      "label": "🧭 غرفة العمليات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4046,
+      "id": "ff5-refresh",
+      "label": "تحديث مباشر",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4046,
+      "id": "ff5-export",
+      "label": "تصدير المتابعة CSV",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4046,
+      "id": "ff5-close",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4077,
+      "id": null,
+      "label": "${esc(name)}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4080,
+      "id": null,
+      "label": "فتح الطلب في الشاشة الأصلية",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4113,
+      "id": "ff60-refresh",
+      "label": "تحديث البيانات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4113,
+      "id": "ff60-close",
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4120,
+      "id": "ff60-open-old",
+      "label": "الواجهة الأصلية",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4122,
+      "id": "ff60-save-policy",
+      "label": "حفظ المهل للطلبات الجديدة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4152,
+      "id": null,
+      "label": "${label}",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4167,
+      "id": null,
+      "label": "سجل المراحل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4170,
+      "id": null,
+      "label": "اعتماد الفاتورة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 4172,
+      "id": null,
+      "label": "إرسال عرض جديد",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5068,
+      "id": "ffEditClose",
+      "label": "إغلاق ✕",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5085,
+      "id": "ffEditSave",
+      "label": "💾 حفظ البيانات",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5085,
+      "id": "ffEditShare",
+      "label": "📤 مشاركة بيانات الدخول",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5155,
+      "id": null,
+      "label": "حفظ التقييم",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5155,
+      "id": null,
+      "label": "تخطي",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5198,
+      "id": null,
+      "label": "✅ راجعت الطلب وألغيت الفاتورة إن وجدت — إخفاء",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5239,
+      "id": null,
+      "label": "حفظ التقييم",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5239,
+      "id": null,
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5254,
+      "id": null,
+      "label": "إرسال للإدارة",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5254,
+      "id": null,
+      "label": "إغلاق",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5287,
+      "id": null,
+      "label": "📋 خدمة العملاء",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5287,
+      "id": null,
+      "label": "🧾 الكاشير",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5287,
+      "id": null,
+      "label": "🛵 الموصل (معاينة)",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5318,
+      "id": null,
+      "label": "تحديد التصفير التشغيلي الشامل",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5318,
+      "id": null,
+      "label": "إلغاء التحديد",
+      "scope": "source candidate; runtime context requires A06"
+    },
+    {
+      "line": 5318,
+      "id": null,
+      "label": "🔴 تنفيذ تصفير البيانات المحددة",
+      "scope": "source candidate; runtime context requires A06"
+    }
+  ],
+  "index_button_source_candidate_count": 268,
+  "button_inventory_scope": "index.html static markup and literal generated markup; prior FIX-03-authored-buttons.csv maps 146 authored elements, current route mapping is 30; external script and runtime-only elements remain A06."
 }
