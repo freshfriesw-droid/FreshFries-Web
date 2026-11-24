@@ -2,6 +2,21 @@
 (()=>{
 'use strict';
 const targets={
+ "orders.field.branch":"#serviceOnly label[for=\"newBranch\"]",
+ "orders.field.phone":"#serviceOnly label[for=\"newPhone\"]",
+ "orders.field.area":"#serviceOnly label[for=\"newArea\"]",
+ "orders.field.fee":"#serviceOnly label[for=\"newFee\"]",
+ "orders.field.notes":"#serviceOnly label[for=\"newNotes\"]",
+ "orders.field.customer":"#serviceOnly label[for=\"newCustomerName\"]",
+ "orders.field.channel":"#serviceOnly label[for=\"newChannel\"]",
+ "orders.field.address":"#serviceOnly label[for=\"newFullAddress\"]",
+ "orders.field.items":"#serviceOnly label[for=\"newItems\"]",
+ "orders.field.quick":"#serviceOnly label[for=\"ffbQuickInput\"]",
+ "orders.title":"#serviceOnly .ff-neworder-workspace > h2",
+ "orders.analyzer.title":"#ffbTextPanel > h3",
+ "orders.cart.title":"#ffbMenuPanel .ffb-v2-cart > h3",
+ "cashier.title":"#cashierView .card > h2",
+ "driver.title":"#driverView .card .sectionbar > h2",
  'dashboard.title':'#ffx-hero-title','dashboard.new':'#ffx-hero-new','dashboard.reserve':'#ffx-hero-reserve','dashboard.late':'#ffx-hero-overdue',
  'reports.title':'#ff76Center .r-head h2','reports.subtitle':'#ff76Center .r-head p','reports.run':'#ff76Run',
  'reports.preview':'#ff76Preview','reports.download':'#ff76Download','reports.share':'#ff76Share','reports.csv':'#ff76CSV','reports.close':'#ff76Close',
@@ -22,9 +37,11 @@ const targets={
  'assembly.refresh':'#ffV12Refresh',
  'reservations.refresh':'#ff49ReservationsRefresh'
 };
+const hintTargets={"orders.hint.phone":"#newPhone","orders.hint.area":"#newArea","orders.hint.fee":"#newFee","orders.hint.notes":"#newNotes","orders.hint.menu":"#ffbMenuSearch","orders.hint.search":"#orderSearch"};
+const hintOriginals=new WeakMap();
 const templates=new Set(['notices.delayed','notices.reminder']);
 const guides={'orders.guidance':{parent:'#ffbTextPanel',original:'راجع الأصناف والكميات في المعاينة قبل الاعتماد.'},'reports.guidance':{parent:'#ff76Center .r-head',original:'اختر الفترة والأقسام المطلوبة، ثم اضغط إعداد التقرير.'}};
-const known=k=>Object.hasOwn(targets,k)||templates.has(k)||Object.hasOwn(guides,k);
+const known=k=>Object.hasOwn(targets,k)||Object.hasOwn(hintTargets,k)||templates.has(k)||Object.hasOwn(guides,k);
 function isGuide(k){return Object.hasOwn(guides,k)}
 function appendInline(node,line){
  for(const part of line.split(/(\*\*[^*\n]+\*\*)/g)){
@@ -47,7 +64,7 @@ function renderGuide(key,value){
  const body=actor()&&typeof value==='string'&&validText(value,key)?value:guide.original;
  if(node.dataset.source!==body){node.dataset.source=body;formatGuide(node,body)}
 }
-const screens={notices:'التنبيهات التشغيلية',dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
+const screens={cashier:'واجهة الكاشير',driver:'واجهة الموصل',notices:'التنبيهات التشغيلية',dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
 const roles={all:'كل الأدوار',manager:'المدير العام',supervisor:'المشرف',customer_service:'خدمة العملاء',cashier:'الكاشير',driver:'الموصل',assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر'};
 const originalTitles={manager:'إدارة ذكية، ورؤية أوضح لكل فرع',driver:'توصيلاتك... بوضوح وسرعة',cashier:'كل طلب في وقته الصحيح',customer_service:'خدمة سريعة، وتجربة عميل أجمل',supervisor:'متابعة دقيقة في كل لحظة'};
 const actor=()=>typeof user!=='undefined'&&user?.id&&typeof data!=='undefined'&&data?.role?user.id:'';
@@ -58,14 +75,14 @@ let values=new Map(),context='',last=0,serial=0,session=0,catalog=[],history=[],
 const dialog=document.createElement('dialog');dialog.id='ffContentStudio';dialog.dir='rtl';dialog.setAttribute('aria-labelledby','ffContentHeading');
 dialog.innerHTML='<div class="sectionbar"><h2 id="ffContentHeading">استوديو المحتوى والمسميات</h2><button type="button" data-content-close>إغلاق</button></div>'+
  '<p>تعديل النصوص المحددة فقط؛ لا تتغير وظائف الأزرار أو الصلاحيات أو قواعد العمل.</p>'+
- '<label>بحث في النصوص<input data-content-search type="search" placeholder="اسم الشاشة أو العنصر"></label>'+
+ '<label>بحث في النصوص<input data-content-search type="search" placeholder="اسم الشاشة أو العنصر"></label><label>تصفية الواجهة<select data-content-screen></select></label>'+
  '<label>العنصر<select data-content-key></select></label><label>الدور<select data-content-role></select></label><label>الفرع<select data-content-branch></select></label>'+
  '<label>النص الجديد<textarea data-content-body maxlength="180" rows="3"></textarea></label>'+
  '<div data-content-tools hidden class="actions"><button type="button" data-content-bold>خط عريض</button><button type="button" data-content-bullet>نقطة قائمة</button><small>تنسيق موثوق فقط؛ لا يسمح بالروابط أو HTML.</small></div>'+
  '<p data-content-vars hidden>المتغير المتاح: {order_number} — المعاينة تستخدم رقمًا تجريبيًا فقط.</p>'+
  '<section class="ff-content-preview"><h3>معاينة قبل / بعد</h3><p>الأصل: <b data-content-original></b></p><p>المسودة: <b data-content-preview></b></p><div data-content-rich-preview hidden></div></section>'+
  '<div class="actions"><button type="button" data-content-save>حفظ مسودة</button><button type="button" data-content-restore>استعادة الأصل كمسودة</button></div>'+
- '<label>الإصدارات<select data-content-history></select></label><p data-content-audit></p>'+
+ '<div class="actions"><label>دور الإصدارات<select data-content-history-role></select></label><label>فرع الإصدارات<select data-content-history-branch></select></label></div><label>الإصدارات (أحدث 200 نتيجة في النطاق)<select data-content-history></select></label><p data-content-audit></p>'+
  '<div class="actions"><button type="button" data-content-load>معاينة الإصدار</button><button type="button" data-content-publish>نشر الإصدار المحدد</button></div>'+
  '<p data-content-status role="status" aria-live="polite"></p>';
 document.body.append(dialog);
@@ -101,7 +118,15 @@ function write(key,value){
   item[2]=next;
  }
 }
-function render(){for(const key of Object.keys(targets))write(key,values.get(key)?.body??null);for(const key of Object.keys(guides))renderGuide(key,values.get(key)?.body??null)}
+function writeHint(key,body){
+ const node=document.querySelector(hintTargets[key]);if(!node)return;
+ const prior=hintOriginals.get(node),current=node.getAttribute('placeholder');
+ if(body==null){if(prior){if(current===prior.applied){if(prior.original===null)node.removeAttribute('placeholder');else node.setAttribute('placeholder',prior.original)}hintOriginals.delete(node)}return}
+ if(!validText(body,key))return;
+ const original=prior&&current===prior.applied?prior.original:current;
+ node.setAttribute('placeholder',body);hintOriginals.set(node,{original,applied:body});
+}
+function render(){for(const key of Object.keys(targets))write(key,values.get(key)?.body??null);for(const key of Object.keys(hintTargets))writeHint(key,values.get(key)?.body??null);for(const key of Object.keys(guides))renderGuide(key,values.get(key)?.body??null)}
 function reset(){
  serial++;session++;context='';last=0;values.clear();catalog=[];history=[];busy=false;
  if(dialog.open)dialog.close();for(const name of ['key','history','branch'])q(name).replaceChildren();
@@ -136,24 +161,25 @@ function audit(){
  q('publish').disabled=busy||!row||!!row.published_at;q('load').disabled=busy||!row;
 }
 function controls(){
- for(const name of ['search','key','role','branch','body','history','bold','bullet'])q(name).disabled=busy;
+ for(const name of ['search','screen','key','role','branch','body','history','history-role','history-branch','bold','bullet'])q(name).disabled=busy;
  for(const name of ['save','restore'])q(name).disabled=busy||!q('key').value;
  audit();
 }
 function setKeys(){
- const term=q('search').value.trim().toLocaleLowerCase('ar'),old=q('key').value;
- const rows=catalog.filter(x=>[x.key,x.screen,x.label,x.original,screens[x.screen]||x.screen].join(' ').toLocaleLowerCase('ar').includes(term));
+ const normalize=s=>String(s).normalize('NFKC').replace(/[َ-ْـ]/g,'').replace(/[أإآ]/g,'ا').trim().toLocaleLowerCase('ar');
+ const term=normalize(q('search').value),old=q('key').value,screen=q('screen').value;
+ const rows=catalog.filter(x=>(!screen||x.screen===screen)&&normalize([x.key,x.screen,x.label,x.original,screens[x.screen]||x.screen].join(' ')).includes(term));
  q('key').replaceChildren(...rows.map(x=>new Option(x.label+' — '+(screens[x.screen]||x.screen),x.key)));
  if(rows.some(x=>x.key===old))q('key').value=old;
 }
 async function getHistory(token,selectId){
- const key=q('key').value;history=[];q('history').replaceChildren();controls();
+ const key=q('key').value,who=actor(),role=q('history-role').value,branchFilter=q('history-branch').value;history=[];q('history').replaceChildren();controls();
  if(!key)return;
- const rows=await rpc('ff_content_history',{p_key:key});
- if(token!==session||!manager()||q('key').value!==key)return;
+ const rows=role||branchFilter?await rpc('ff86_content_history_scoped',{p_key:key,p_role:role||null,p_branch:branchFilter==='__global__'?null:branchFilter||null,p_global_branch:branchFilter==='__global__'}):await rpc('ff_content_history',{p_key:key});
+ if(token!==session||who!==actor()||!manager()||q('key').value!==key||q('history-role').value!==role||q('history-branch').value!==branchFilter)return;
  history=rows||[];
  q('history').replaceChildren(...history.map(r=>new Option('#'+r.id+' · '+(r.published_at?'منشور':'مسودة')+' · '+roles[r.role_scope]+' · '+(r.branch_id?(data.branches||[]).find(b=>b.id===r.branch_id)?.name||'فرع محدد':'كل الفروع'),String(r.id))));
- if(selectId)q('history').value=String(selectId);controls();
+ if(selectId&&history.some(r=>String(r.id)===String(selectId)))q('history').value=String(selectId);controls();
 }
 async function run(action){
  if(!manager()||busy)return;const token=session,who=actor();busy=true;controls();
@@ -165,11 +191,14 @@ async function open(){
  session++;busy=false;catalog=[];history=[];q('search').value='';q('body').value='';q('status').textContent='';q('key').replaceChildren();q('history').replaceChildren();
  q('role').replaceChildren(...Object.entries(roles).map(([k,v])=>new Option(v,k)));
  q('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));
+ q('screen').replaceChildren(new Option('كل الواجهات',''));
+ q('history-role').replaceChildren(new Option('جميع نطاقات الأدوار',''),...Object.entries(roles).map(([k,v])=>new Option(v,k)));
+ q('history-branch').replaceChildren(new Option('جميع نطاقات الفروع',''),new Option('عام دون فرع','__global__'),...(data.branches||[]).map(b=>new Option(b.name,b.id)));
  dialog.showModal();controls();
  await run(async(token,who)=>{
   const rows=await rpc('ff_content_catalog_list');
   if(token!==session||who!==actor()||!manager())return;
-  catalog=(rows||[]).filter(r=>known(r.key));setKeys();preview();await getHistory(token);
+  catalog=(rows||[]).filter(r=>known(r.key));q('screen').replaceChildren(new Option('كل الواجهات',''),...[...new Set(catalog.map(r=>r.screen))].map(k=>new Option(screens[k]||k,k)));setKeys();preview();await getHistory(token);
  });
 }
 function selectKey(){q('body').value='';preview();void run(token=>getHistory(token))}
@@ -183,6 +212,7 @@ function insertFormat(prefix,suffix){
 }
 q('bold').onclick=()=>insertFormat('**','**');
 q('bullet').onclick=()=>insertFormat(q('body').selectionStart===0||q('body').value[q('body').selectionStart-1]==='\n'?'- ':'\n- ','');
+q('screen').onchange=()=>{setKeys();selectKey()};q('history-role').onchange=q('history-branch').onchange=()=>void run(token=>getHistory(token));
 q('key').onchange=selectKey;q('role').onchange=preview;q('body').oninput=preview;q('history').onchange=audit;
 q('load').onclick=()=>{const row=selected();if(!row)return;q('role').value=row.role_scope;q('branch').value=row.branch_id||'';q('body').value=row.body??originalText(row.content_key,row.role_scope);preview()};
 async function draft(restore){
@@ -191,7 +221,8 @@ async function draft(restore){
  await run(async(token,who)=>{
   const id=await rpc('ff_content_create_draft',{p_key:key,p_role:role,p_branch:b,p_body:body});
   if(token!==session||who!==actor())return;
-  await getHistory(token,id);if(token===session)q('status').textContent='حُفظت المسودة #'+id+'؛ لم تُنشر بعد.';
+  q('history-role').value=role;q('history-branch').value=b||'__global__';
+  await getHistory(token,id);if(token===session&&who===actor())q('status').textContent='حُفظت المسودة #'+id+'؛ لم تُنشر بعد.';
  });
 }
 q('save').onclick=()=>void draft(false);q('restore').onclick=()=>void draft(true);
@@ -201,7 +232,7 @@ q('publish').onclick=()=>void run(async(token,who)=>{
  if(!confirm('نشر النص المحدد #'+row.id+'؟\n'+scope+'\n'+(row.body??'استعادة النص الأصلي')))return;
  await rpc('ff_content_publish',{p_id:row.id});
  if(token!==session||who!==actor()||!manager())return;
- await getHistory(token,row.id);if(token===session){q('status').textContent='تم نشر النص #'+row.id;void sync(true)}
+ await getHistory(token,row.id);if(token===session&&who===actor()){q('status').textContent='تم نشر النص #'+row.id;void sync(true)}
 });
 q('close').onclick=()=>dialog.close();dialog.onclose=()=>{session++;busy=false;q('rich-preview').replaceChildren();q('body').value=''};
 const studio=document.querySelector('#ffStudio form');
