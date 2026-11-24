@@ -131,6 +131,30 @@ BEGIN
  RETURN jsonb_build_object('role',v_role,'branches',v_branches);
 END $function$;
 
+CREATE OR REPLACE FUNCTION ff_private.a04_burger_has_notes(p_notes text, p_items jsonb)
+ RETURNS boolean
+ LANGUAGE sql
+ IMMUTABLE
+ SET search_path TO ''
+AS $function$
+ SELECT length(btrim(coalesce(p_notes,'')))>0 OR EXISTS(
+ SELECT 1 FROM jsonb_array_elements(coalesce(p_items,'[]'::jsonb)) i
+ WHERE length(btrim(coalesce(i->>'item_notes','')))>0);
+$function$;
+
+CREATE OR REPLACE FUNCTION ff_private.ff_burger_ready_notes_guard()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SET search_path TO ''
+AS $function$
+BEGIN
+ IF NEW.status='ready' AND OLD.status='preparing'
+ AND ff_private.a04_burger_has_notes(NEW.notes,NEW.items) AND NEW.notes_confirmed_at IS NULL THEN
+ RAISE EXCEPTION 'لا يمكن إنهاء البرجر قبل تأكيد تنفيذ الملاحظات' USING ERRCODE='23514';
+ END IF;
+ RETURN NEW;
+END $function$;
+
 CREATE OR REPLACE FUNCTION public.ff_burger_send(p_branch uuid, p_order_kind text, p_delivery_order uuid, p_invoice text, p_items jsonb, p_notes text, p_token uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -176,7 +200,11 @@ BEGIN
  WHERE i.id=v_item_id AND i.active AND c.active AND
  (c.name ILIKE '%برجر%' OR (c.name='الإضافات' AND i.name IN ('إكسترا سماش','شريحة جبن شيدر')));
  IF v_name IS NULL THEN RAISE EXCEPTION 'يوجد صنف غير فعال أو ليس من قسم البرجر';END IF;
- v_checked:=v_checked||jsonb_build_array(jsonb_build_object('id',v_item_id,'name',v_name,'qty',v_qty));
+ 
+ IF (v_item ? 'item_notes' AND jsonb_typeof(v_item->'item_notes') NOT IN ('string','null'))
+ OR length(btrim(coalesce(v_item->>'item_notes','')))>300 THEN RAISE EXCEPTION 'ملاحظة الصنف غير صالحة أو تتجاوز 300 حرف';END IF;
+ v_checked:=v_checked||jsonb_build_array(jsonb_build_object('id',v_item_id,'name',v_name,'qty',v_qty,'item_notes',nullif(btrim(coalesce(v_item->>'item_notes','')),'')));
+ 
  END LOOP;
  SELECT display_name INTO v_name FROM public.ff_profiles WHERE user_id=auth.uid();
  INSERT INTO public.ff_burger_tickets
@@ -212,7 +240,7 @@ BEGIN
  accepted_at=clock_timestamp() WHERE id=p_ticket;
  ELSIF p_action='ready' AND v_role='burger_kitchen' AND v_row.status='preparing'
  AND v_row.kitchen_id=auth.uid() THEN
- IF length(btrim(v_row.notes))>0 AND v_row.notes_confirmed_at IS NULL THEN
+ IF ff_private.a04_burger_has_notes(v_row.notes,v_row.items) AND v_row.notes_confirmed_at IS NULL THEN
  RAISE EXCEPTION 'أكد تنفيذ الملاحظات المرفقة قبل جاهزية الطلب' USING ERRCODE='42501';
  END IF;
  UPDATE public.ff_burger_tickets SET status='ready',ready_at=clock_timestamp() WHERE id=p_ticket;
@@ -242,10 +270,11 @@ BEGIN
  IF NOT EXISTS(SELECT 1 FROM public.ff_user_branches ub JOIN public.ff_branches b ON b.id=ub.branch_id AND b.active
  WHERE ub.user_id=auth.uid() AND ub.branch_id=v_ticket.branch_id) THEN
  RAISE EXCEPTION 'طلب يخص فرعًا آخر' USING ERRCODE='42501';END IF;
- IF length(btrim(v_ticket.notes))=0 THEN RETURN true;END IF;
+ IF NOT ff_private.a04_burger_has_notes(v_ticket.notes,v_ticket.items) THEN RETURN true;END IF;
  IF v_ticket.notes_confirmed_at IS NULL THEN
  UPDATE public.ff_burger_tickets SET notes_confirmed_at=clock_timestamp(),notes_confirmed_by=auth.uid()
  WHERE id=p_ticket;
  END IF;
  RETURN true;
 END $function$;
+CREATE TRIGGER ff_burger_ready_notes_guard BEFORE UPDATE OF status ON public.ff_burger_tickets FOR EACH ROW EXECUTE FUNCTION ff_private.ff_burger_ready_notes_guard();
