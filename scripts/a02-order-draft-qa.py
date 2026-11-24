@@ -12,6 +12,7 @@ Thread(target=server.serve_forever,daemon=True).start()
 origin=f"http://127.0.0.1:{server.server_port}/"
 fixture="""async () => {
  document.body.dataset.access='staff';
+ document.body.classList.remove('ff-booting');
  document.getElementById('loginOverlay').classList.add('hidden');
  user={id:'a02-fixture'};
  const branches=[{id:'fixture-cairo',name:'القاهرة',code:'cairo'}];
@@ -23,7 +24,7 @@ fixture="""async () => {
  draw();
  document.getElementById('staffView').classList.remove('hidden');
  document.getElementById('serviceOnly').classList.remove('hidden');
- window.dispatchEvent(new Event('ff:open-order'));
+ document.getElementById('ffx-hero-new').click();
 }"""
 with sync_playwright() as pw:
  browser=pw.chromium.launch(channel="chrome")
@@ -31,17 +32,26 @@ with sync_playwright() as pw:
   ctx=browser.new_context(viewport={"width":width,"height":900},is_mobile=width<850,service_workers="block")
   ctx.route("**/*",lambda route:route.continue_() if route.request.url.startswith(origin) else route.abort())
   page=ctx.new_page()
+  page.on("pageerror",lambda error:print("PAGE ERROR:",error,flush=True))
   page.goto(origin)
+  page.wait_for_function("typeof window.ffLuxeOrderText?.appendText==='function'")
   page.evaluate(fixture)
   # Activate actual menu action rather than duplicating its implementation.
-  page.locator("#ffbTabMenu").evaluate("(b)=>b.click()")
+  page.locator("#ffbTabMenu").evaluate("""b=>{
+    const parents=[];for(let n=b;n;n=n.parentElement)parents.push(n);
+    for(const n of parents.reverse()){
+      if(n.matches("details"))n.open=true;
+      if(n.matches(".ff-menu-closed,.ffl-collapsed"))n.querySelector(":scope > .ff-menu-toggle[aria-expanded=false],:scope > .ffl-fold-toggle[aria-expanded=false]")?.click();
+    }b.click();
+  }""")
   page.wait_for_function("document.querySelectorAll('#ffbMenuGrid .ffb-v2-item').length===2")
   draft=page.locator("#newItems")
   raw="١ تشكن بدون شطّة | 1200\n2 برجر اسمر دبل\nملاحظة: اتصل بالعميل"
   draft.evaluate("(el,raw)=>{el.value=raw;el.dispatchEvent(new Event('input',{bubbles:true}))}",raw)
-  page.locator("#ffbCart").get_by_role("button",name="زيادة تشكن فرايز",exact=True).evaluate("(b)=>b.click()")
+  print("A02 cart diagnostics:",page.evaluate("""()=>({actor:user?.id, catalog:ff49Catalog.length, parsed:window.ffLuxeOrderText.itemRows(document.querySelector("#newItems")),cart:document.querySelector("#ffbCart").textContent,ancestors:(()=>{const a=[];for(let n=document.querySelector("#ffbCart");n;n=n.parentElement)a.push({id:n.id,cls:n.className,display:getComputedStyle(n).display,hidden:n.hidden});return a})()})"""),flush=True)
+  page.locator("#ffbCart").get_by_role("button",name="زيادة تشكن فرايز",exact=True).click(timeout=10000)
   assert draft.input_value()=="2 تشكن بدون شطّة | 1200\n2 برجر اسمر دبل\nملاحظة: اتصل بالعميل"
-  page.locator("#ffbMenuGrid .ffb-v2-item").filter(has_text="تشكن فرايز").evaluate("(b)=>b.click()")
+  page.locator("#ffbMenuGrid .ffb-v2-item").filter(has_text="تشكن فرايز").click()
   assert draft.input_value().endswith("1 تشكن فرايز")
   page.locator("#ffbUndoCart").evaluate("(b)=>b.click()")
   assert not draft.input_value().endswith("1 تشكن فرايز")
