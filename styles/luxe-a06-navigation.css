@@ -1,0 +1,47 @@
+/* A06 shared component tokens. No permission, hidden-state or status semantic overrides. */
+:root{
+ --ff-a06-space-1:4px;--ff-a06-space-2:8px;--ff-a06-space-3:12px;--ff-a06-radius:12px;
+ --ff-a06-touch:44px;--ff-a06-focus:#2563eb;--ff-a06-danger-bg:#991b1b;--ff-a06-danger-text:#fff;
+ --ff-a06-drawer-width:280px;--ff-a06-nav-height:72px;
+}
+body.ffx-dark,body.ffx-contrast{--ff-a06-focus:#ffcb66}
+#ffx-sidebar{width:min(var(--ff-a06-drawer-width),calc(100vw - 24px))}
+#ffx-nav .ffx-side-link[aria-current=location]{border-inline-start:3px solid #ff4353}
+#ffx-nav input,#ffx-nav select{min-height:var(--ff-a06-touch);max-width:100%}
+#ffx-nav .ffx-side-link span{min-width:0;overflow-wrap:anywhere}
+#ffx-nav .ffx-side-link>svg{flex:none}
+#ffA06ScopeLabel{display:block!important;font-size:12px;overflow-wrap:anywhere}
+#ffA06GlobalSearch{font-size:12px;font-weight:800}
+.ff-a06-skip{position:fixed;inset-inline-start:12px;top:6px;transform:translateY(-180%);z-index:2147483646;padding:12px;background:#fff;color:#161616;border:2px solid #2563eb;border-radius:8px}
+.ff-a06-skip:focus-visible{transform:none}
+body[data-access=staff] :is(button,a[href],summary,input,select,textarea):focus-visible{outline:3px solid var(--ff-a06-focus);outline-offset:2px}
+#ffx-sidebar :is(button,input,select):focus-visible{outline-color:#ffcb66}
+body[data-access=staff] button.ff-a06-danger:not(:disabled){background:var(--ff-a06-danger-bg);color:var(--ff-a06-danger-text);border-color:var(--ff-a06-danger-bg)}
+body[data-access=staff] :is(main,dialog) :is(input,select,textarea){max-width:100%;min-width:0}
+body[data-access=staff] :is(main,dialog) label{overflow-wrap:anywhere}
+#ffA06CentralNav,#ffA06SpecialMore{width:min(640px,94vw);max-height:88dvh;overflow:auto;border:1px solid var(--ffb-line,#ddd);border-radius:16px;padding:16px;background:var(--ffb-surface,#fff);color:var(--ffb-ink,#242424)}
+#ffA06CentralNav form{display:grid;gap:12px}
+#ffA06CentralNav label{display:grid;gap:4px}
+#ffA06CentralNav :is(input,select,button),#ffA06SpecialMore button{min-height:44px}
+#ffA06SpecialNav[hidden]{display:none!important}
+#ffA06SpecialNav{display:none}
+@media(min-width:851px){body[data-access=staff] main :is(.card,section,button,input,select,textarea){scroll-margin-top:100px}}
+@media(max-width:850px){
+ body[data-access=staff] main{padding-bottom:calc(max(100px,var(--ff-a06-nav-height) + 24px) + env(safe-area-inset-bottom,0px))}
+ body[data-access=staff] :is(main,dialog) :is(button,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=hidden]),select,textarea){min-height:44px}
+ body[data-access=staff] main :is(button,input,select,textarea,.card,section){scroll-margin-top:100px;scroll-margin-bottom:calc(var(--ff-a06-nav-height) + 20px)}
+ body[data-access=staff] :is(main,dialog) :is(.row,.actions,.flex){min-width:0;flex-wrap:wrap}
+ body[data-access=staff] main :is(.row,.actions,.flex)>*{min-width:0;max-width:100%}
+ body[data-access=staff] main :is(input,select,textarea){font-size:16px}
+ #ffA06SpecialNav{position:fixed;inset-inline:0;bottom:0;z-index:850;display:flex;justify-content:space-around;align-items:stretch;gap:2px;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));background:#171719;border-top:2px solid #d51e2c;color:#fff}
+ :is(#ffx-mobile-nav,#ffA06SpecialNav) button{min-width:0;min-height:44px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#f6f6f6;background:transparent;border:0;padding:4px 2px;text-align:center;line-height:1.25;font-size:12px;white-space:normal;overflow-wrap:anywhere}
+ :is(#ffx-mobile-nav,#ffA06SpecialNav) button.active{color:#fff;background:#8b1622;border-radius:10px}
+ :is(#ffx-mobile-nav,#ffA06SpecialNav) button:focus-visible{outline:2px solid #ffcb66;outline-offset:-3px}
+ #ffA06SpecialNav .ff-a06-symbol{font-size:21px;line-height:1}
+ :is(body[data-ff-a06-bar=icons],body:not([data-ff-a06-bar])[data-ff-bar=icons]) :is(#ffx-mobile-nav button span,#ffA06SpecialNav .ff-a06-label){position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ :is(body[data-ff-a06-bar=wide],body:not([data-ff-a06-bar])[data-ff-bar=wide]) :is(#ffx-mobile-nav,#ffA06SpecialNav) button{flex-direction:row;flex-wrap:wrap;gap:2px}
+ :is(body[data-ff-a06-bar=floating],body:not([data-ff-a06-bar])[data-ff-bar=floating]) :is(#ffx-mobile-nav,#ffA06SpecialNav){bottom:max(8px,env(safe-area-inset-bottom,0px));inset-inline:8px;border-radius:18px;box-shadow:0 8px 26px #0004}
+ :is(body[data-ff-a06-bar=compact],body:not([data-ff-a06-bar])[data-ff-bar=compact]) :is(#ffx-mobile-nav,#ffA06SpecialNav) button:not(:first-child):not(.active):not(:last-child){display:none}
+}
+@media(max-width:380px){#ffx-topbar .ffx-top-intro{display:block;flex:1 1 100%;order:2}#ffx-topbar .ffx-top-intro>span:not(#ffA06ScopeLabel){display:none}}
+@media(prefers-reduced-motion:reduce){body[data-access=staff] :is(button,a,input,select,textarea,.ff-menu-arrow,.ffx-accordion-arrow){transition:none!important;animation:none!important}html{scroll-behavior:auto!important}}
