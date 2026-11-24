@@ -1,0 +1,41 @@
+name: LUXE A03 PostgreSQL concurrency QA
+on:
+  pull_request:
+    paths:
+      - 'supabase/tests/a03_concurrent_core_fixture.sql'
+      - 'scripts/a03-concurrent-core-qa.py'
+      - '.github/workflows/luxe-a03-concurrent-qa.yml'
+      - 'supabase/migrations/20261125_a03_*.sql'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  concurrency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: local-ci-only
+          POSTGRES_DB: a03_qa
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d a03_qa"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: local-ci-only
+      PGDATABASE: a03_qa
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify PostgreSQL client
+        run: psql --version
+      - name: Prove simultaneous offer, reply and capacity guards
+        run: python3 scripts/a03-concurrent-core-qa.py
