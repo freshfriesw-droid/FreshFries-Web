@@ -305,7 +305,58 @@ with sync_playwright() as playwright:
                 studio.locator("select[name=viewport]").select_option("1440")
                 assert studio.locator(".ff-studio-bar").is_hidden()
                 studio.locator("select[name=viewport]").select_option("390")
-                studio.get_by_role("button", name="إغلاق", exact=True).click()
+                # DEC-09 phase 1: manager edits a fixed text key without replacing the operational button.
+                page.evaluate("""() => {
+                  window.__contentOriginalRpc=rpc;
+                  window.__contentCalls=[];
+                  window.__contentHistory=[];
+                  window.__contentEffective=[];
+                  window.__contentOriginalNode=document.querySelector('#ffx-hero-new');
+                  rpc=async(name,args)=>{
+                    if(name==='ff_content_catalog_list')return [{key:'dashboard.new',screen:'dashboard',label:'زر طلب جديد',original:'طلب جديد'}];
+                    if(name==='ff_content_history')return window.__contentHistory;
+                    if(name==='ff_content_effective')return window.__contentEffective;
+                    if(name==='ff_content_create_draft'){
+                      window.__contentCalls.push(args);
+                      window.__contentHistory=[{id:1,content_key:args.p_key,role_scope:args.p_role,branch_id:args.p_branch,body:args.p_body,actor_id:'manager-fixture',created_at:'2026-11-24T12:00:00Z'}];
+                      return 1;
+                    }
+                    if(name==='ff_content_publish'){
+                      window.__contentHistory[0].published_at='2026-11-24T12:01:00Z';
+                      window.__contentEffective=[{content_key:'dashboard.new',body:window.__contentHistory[0].body,revision:1}];
+                      return null;
+                    }
+                    return window.__contentOriginalRpc(name,args);
+                  };
+                }""")
+                studio.locator("#ffContentOpen").click()
+                content = page.locator("#ffContentStudio")
+                assert content.is_visible()
+                content.locator("[data-content-key] option").wait_for()
+                check_width(page, width, "#ffContentStudio")
+                content.locator("[data-content-body]").fill("<script>مرفوض</script>")
+                content.locator("[data-content-save]").click()
+                assert page.evaluate("window.__contentCalls.length") == 0
+                content.locator("[data-content-body]").fill("طلب جديد تجريبي")
+                content.locator("[data-content-save]").click()
+                content.locator("[data-content-history] option").wait_for()
+                assert content.locator("[data-content-preview]").inner_text() == "طلب جديد تجريبي"
+                assert "طلب جديد تجريبي" not in page.locator("#ffx-hero-new").text_content()
+                page.once("dialog", lambda prompt: prompt.accept())
+                content.locator("[data-content-publish]").click()
+                page.wait_for_function("document.querySelector('#ffx-hero-new').textContent.includes('طلب جديد تجريبي')")
+                assert page.evaluate("window.__contentOriginalNode===document.querySelector('#ffx-hero-new')")
+                assert page.locator("#ffx-hero-new svg").count() == 1
+                content.locator("[data-content-close]").click()
+                page.evaluate("""() => {
+                  rpc=window.__contentOriginalRpc;
+                  window.dispatchEvent(new Event('ff-luxe-session-reset'));
+                  data.role='cashier';
+                  window.ffContentStudio.open();
+                }""")
+                assert content.is_hidden()
+                assert "طلب جديد تجريبي" not in page.locator("#ffx-hero-new").text_content()
+                page.evaluate("data.role='manager'")
                 page.locator("#ffx-menu").click()
                 search.fill("إدارة نقطة التجميع")
                 page.locator("#ffx-nav [data-key=assembly_admin]").click()
