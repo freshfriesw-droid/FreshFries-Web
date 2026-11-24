@@ -88,13 +88,15 @@ assert scalar(f"select cashier_stage from ff38_delivery_tasks where order_id='{o
 race(stage(assembly,"handed_over","ready"),stage(cashier,"handed_over","ready"),"يجب تحديث مراحل الكاشير بالترتيب")
 assert scalar(f"select cashier_stage from ff38_delivery_tasks where order_id='{order}'")=="handed_over"
 assert scalar(f"select count(*) from ff60_workflow_events where order_id='{order}' and event_type='cashier'")=="4"
-send=actor(cashier,f"select ff_burger_send('{branch}','local',null,'',jsonb_build_array(jsonb_build_object('id','{item}','qty',2)),'QA note','{token}')")
+send=actor(cashier,f"select ff_burger_send('{branch}','local',null,'',jsonb_build_array(jsonb_build_object('id','{item}','qty',2,'item_notes','QA note')),'','{token}')")
 race(send,send)
 assert scalar(f"select count(*) from ff_burger_tickets where client_token='{token}'")=="1"
 ticket=scalar(f"select id from ff_burger_tickets where client_token='{token}'")
 def transition(u,a):return actor(u,f"select ff_burger_transition('{ticket}','{a}')")
 race(transition(k1,"receive"),transition(k2,"receive"),"المرحلة تغيرت")
 assert scalar(f"select kitchen_id from ff_burger_tickets where id='{ticket}'")==k1
+blocked=query(transition(k1,"ready"),check=False)
+assert blocked.returncode!=0 and "أكد تنفيذ الملاحظات" in blocked.stderr,blocked.stderr
 query(actor(k1,f"select ff_burger_confirm_notes('{ticket}')"))
 race(transition(k1,"ready"),transition(k1,"ready"),"المرحلة تغيرت")
 race(transition(assembly,"skip"),transition(cashier,"skip"),"المرحلة تغيرت")
