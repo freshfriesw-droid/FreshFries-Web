@@ -136,7 +136,7 @@ serve(async req=>{
     if(phone){fields.phone=normalizePhone(phone);fields.phone_confirm=true;}
     if(password)fields.password=password;
     const {error:updateError}=await admin.auth.admin.updateUserById(target,fields);
-    if(updateError)throw Error("تعذر تحديث حساب الدخول: "+updateError.message);
+    if(updateError)throw Error("تعذر تحديث حساب الدخول؛ تحقق من صلاحية الاسم والبريد والهاتف");
     const {error:profileError}=await admin.from("ff_profiles").update({display_name:name}).eq("user_id",target);
     if(profileError)throw Error("تم تحديث بيانات الدخول لكن تعذر تحديث الاسم في سجل الموظفين");
     if(application?.id){
@@ -212,18 +212,23 @@ serve(async req=>{
     check(["driver","cashier","assembly","burger_kitchen"].includes(role)?uuid.test(branch):!branch,"الفرع غير صالح");
     check(Array.from(password).length===8,"كلمة المرور يجب أن تكون 8 خانات بالضبط");
     check(b.phone_ownership_verified===true,"يجب أن تؤكد الإدارة ملكية رقم الهاتف");
+    const desk=pick(b.desk),reason=pick(b.reason)||"تم قبول الطلب، تُستلم بيانات الدخول من الإدارة.";
+    check(!desk||(role==="cashier"&&desk.length<=100),"وجهة الكاشير غير صالحة");
+    check(reason.length>=5&&reason.length<=1200,"سبب القبول مطلوب");
     const {data:application,error:appErr}=await admin.from("ff61_employee_applications").select("id,email,phone,full_name,status").eq("id",id).single();
     if(appErr||application.status!=="pending")return reply({error:"الطلب لم يعد معلقًا"},409,origin);
     const {data:user,error:createErr}=await admin.auth.admin.createUser({...(application.email?{email:application.email,email_confirm:false}:{}),phone:normalizePhone(application.phone),password,phone_confirm:true,user_metadata:{full_name:application.full_name,created_via:"ff61_employee_application"}});
     if(createErr||!user?.user?.id)return reply({error:"تعذر إنشاء حساب الدخول؛ قد يكون رقم الهاتف مسجلًا سابقًا"},409,origin);
-    const {error:decisionErr}=await admin.rpc("ff61_approve_application",{p_application:id,p_actor:actor,p_auth_user:user.user.id,p_role:role,p_branch:branch||null});
+    const {data:decision,error:decisionErr}=await admin.rpc("ff_a05_approve_application",{p_application:id,p_actor:actor,p_auth_user:user.user.id,p_role:role,p_branch:branch||null,p_desk:desk||null,p_reason:reason});
     if(decisionErr){
-      const {data:latest}=await admin.from("ff61_employee_applications").select("status,approved_user_id").eq("id",id).maybeSingle();
-      if(latest?.status==="approved"&&latest?.approved_user_id===user.user.id)return reply({ok:true,approved:true,user_id:user.user.id},200,origin);
+      const {data:latest,error:latestErr}=await admin.from("ff61_employee_applications").select("status,approved_user_id").eq("id",id).maybeSingle();
+      if(latest?.status==="approved"&&latest?.approved_user_id===user.user.id)return reply({ok:true,approved:true,user_id:user.user.id,desk:desk||null},200,origin);
+      // A lost response is not proof of failure. Never delete an account if the committed decision cannot be verified.
+      if(latestErr||!latest)return reply({error:"تعذر التحقق من نتيجة الاعتماد؛ راجع حالة الطلب قبل إعادة المحاولة"},409,origin);
       const {error:cleanupErr}=await admin.auth.admin.deleteUser(user.user.id);
       return reply({error:cleanupErr?"تعذر ربط الحساب ويجب مراجعة إدارة Authentication":"تعذر اعتماد الموظف ولم تُمنح له صلاحيات"},409,origin);
     }
-    return reply({ok:true,approved:true,user_id:user.user.id},200,origin);
+    return reply({ok:true,approved:true,user_id:user.user.id,desk:decision?.desk||null},200,origin);
   }
   if(action==="reject"){
     check(await can(actor,"reject"),"ليس لديك صلاحية الرفض");
