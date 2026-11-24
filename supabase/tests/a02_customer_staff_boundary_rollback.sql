@@ -2,17 +2,17 @@
 -- Synthetic auth fixture is rolled back; no SMS or employee/account changes.
 DO $qa$
 DECLARE u uuid:=gen_random_uuid(); branch uuid; missing uuid:=gen_random_uuid();
- cs uuid; phone text; stmt text; code text; count_pass int:=0; prev text;
+ cs uuid; v_phone text; stmt text; code text; count_pass int:=0; prev text;
 BEGIN
  SELECT id INTO STRICT branch FROM public.ff_branches WHERE code='cairo' AND active;
  SELECT user_id INTO cs FROM public.ff_profiles WHERE active AND role='customer_service' LIMIT 1;
  IF cs IS NULL THEN RAISE EXCEPTION 'CS fixture unavailable';END IF;
- phone:='9677'||lpad((10000000+floor(random()*89999999)::int)::text,8,'0');
- IF EXISTS(SELECT 1 FROM auth.users WHERE auth.users.phone=phone) THEN RAISE EXCEPTION 'Fixture collision';END IF;
+ v_phone:='9677'||lpad((10000000+floor(random()*89999999)::int)::text,8,'0');
+ IF EXISTS(SELECT 1 FROM auth.users WHERE auth.users.phone=v_phone) THEN RAISE EXCEPTION 'Fixture collision';END IF;
  prev:=current_setting('request.jwt.claim.sub',true);
  BEGIN
   INSERT INTO auth.users(id,aud,role,phone,phone_confirmed_at,created_at,updated_at)
-   VALUES(u,'authenticated','authenticated',phone,now(),now(),now());
+   VALUES(u,'authenticated','authenticated',v_phone,now(),now(),now());
   PERFORM set_config('request.jwt.claim.sub',u::text,true);
   SET LOCAL ROLE authenticated;
   IF public.ff28_my_role() IS DISTINCT FROM 'customer' THEN RAISE EXCEPTION 'Customer fixture invalid'; END IF;
