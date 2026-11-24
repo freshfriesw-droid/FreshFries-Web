@@ -504,6 +504,35 @@ with sync_playwright() as playwright:
                 page.locator("#ff76Close").click()
                 assert page.locator("#ff76Body").inner_text() == ""
                 assert page.locator("#ff76CSV").is_disabled()
+                # Operational alerts: a slower response from another branch must never appear.
+                page.evaluate("""() => {
+                  user={id:'fixture-manager'};
+                  data={role:'manager',orders:[],drivers:[],offers:[],branches:[{id:'qa-cairo',name:'القاهرة'},{id:'qa-sam',name:'سام مول'}]};
+                  document.querySelector('#ff40AlertsBtn').classList.remove('hidden');
+                  const select=document.querySelector('#ffx-branch');
+                  select.replaceChildren(new Option('القاهرة','qa-cairo'),new Option('سام مول','qa-sam'));
+                  rpc=(name,args)=>{
+                    if(name==='ff40_operations_alerts'){
+                      if(args.p_branch==='qa-cairo')return new Promise(resolve=>window.__oldAlerts=resolve);
+                      return Promise.resolve({items:[{kind:'late',order_id:'new-alert',order_number:'NEW-BRANCH-ALERT',title:'تنبيه',description:'اختبار',severity:1,age_minutes:65}]});
+                    }
+                    return Promise.resolve([]);
+                  };
+                  select.value='qa-cairo';select.dispatchEvent(new Event('change'));
+                }""")
+                page.wait_for_function("typeof window.__oldAlerts==='function'")
+                page.evaluate("""() => {
+                  const select=document.querySelector('#ffx-branch');
+                  select.value='qa-sam';select.dispatchEvent(new Event('change'));
+                }""")
+                page.wait_for_function("document.querySelector('#ffx-overdue-list').textContent.includes('NEW-BRANCH-ALERT')")
+                page.evaluate("""() => window.__oldAlerts({items:[{kind:'late',order_id:'old-alert',order_number:'PRIVATE-OLD-BRANCH-ALERT',title:'تنبيه',description:'اختبار',severity:3}]})""")
+                page.wait_for_timeout(100)
+                assert "PRIVATE-OLD-BRANCH-ALERT" not in page.locator("#ffx-overdue-list").inner_text()
+                assert "NEW-BRANCH-ALERT" in page.locator("#ffx-overdue-list").inner_text()
+                page.evaluate("window.dispatchEvent(new Event('ff-luxe-session-reset'))")
+                assert "NEW-BRANCH-ALERT" not in page.locator("#ffx-overdue-list").inner_text()
+                assert page.locator("#ffx-overdue-count").inner_text() == "—"
                 # A manager's in-flight settlement report must never appear after session reset.
                 page.evaluate("""() => {
                   rpc=(name,args)=>{
