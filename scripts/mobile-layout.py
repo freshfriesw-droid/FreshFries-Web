@@ -109,6 +109,10 @@ def check_width(page, width, selector):
 
 
 def wait_for_open_drawer(page, width):
+    if page.evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches"):
+        assert page.locator("#ffx-sidebar").evaluate(
+            "el => getComputedStyle(el).transitionDuration"
+        ) == "0s", "Drawer must respect reduced motion while open"
     # Measure after the slide animation, including the 851px desktop breakpoint.
     page.wait_for_function("""w => {
       const el = document.querySelector('#ffx-sidebar');
@@ -172,6 +176,7 @@ with sync_playwright() as playwright:
     check_delivery_review(browser)
     for width in (320, 344, 360, 390, 430, 768, 850, 851, 1024, 1280, 1440):
         context = browser.new_context(viewport={"width": width, "height": 800},
+                                      reduced_motion="reduce" if width in (344, 1024) else "no-preference",
                                       is_mobile=width <= 850, service_workers="block")
         context.route("**/*", lambda route: route.continue_() if route.request.url.startswith(origin) else route.abort())
         page = context.new_page()
