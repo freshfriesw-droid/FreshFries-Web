@@ -45,3 +45,7 @@ body[data-access=staff] :is(main,dialog) label{overflow-wrap:anywhere}
 }
 @media(max-width:380px){#ffx-topbar .ffx-top-intro{display:block;flex:1 1 100%;order:2}#ffx-topbar .ffx-top-intro>span:not(#ffA06ScopeLabel){display:none}}
 @media(prefers-reduced-motion:reduce){body[data-access=staff] :is(button,a,input,select,textarea,.ff-menu-arrow,.ffx-accordion-arrow){transition:none!important;animation:none!important}html{scroll-behavior:auto!important}}
+
+body.ffx-menu-open #ffx-drawer-close{display:grid;place-items:center;width:44px;height:44px;flex:none;background:#ffffff12;color:white;margin-inline-start:auto}
+#ffA06OrderSearchResults[hidden]{display:none!important}
+#ffA06OrderSearchResults button{font-size:12px;overflow-wrap:anywhere}
