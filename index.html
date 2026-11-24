@@ -267,7 +267,7 @@ body.ff-v12-assembly-mode > button, body.ff-v12-assembly-mode #ff60-launch{displ
 body.ff-v12-assembly-mode #ffx-topbar,body.ff-v12-assembly-mode #ffx-sidebar,body.ff-v12-assembly-mode #ffx-mobile-nav,body.ff-v12-assembly-mode #ffx-dimmer,body.ff-v12-assembly-mode #ffx-preferences,body.ff-v12-assembly-mode #ffx-showcase{display:none!important}
 body.ff-v12-assembly-mode main{margin:0 auto!important;max-width:1250px!important;padding:12px!important}
 body.ff-v12-assembly-mode #ffx-toast{display:none!important}
-#ffV12AssemblyStatus{white-space:pre-wrap;line-height:1.7}
+#ffV12AssemblyStatus{white-space:pre-wrap;line-height:1.7}#ffV12AssemblyWorkspace.ff-assembly-closed>:not(.ff-assembly-brand):not(.sectionbar):not(#ffV12AssemblyStatus){display:none!important}#ffV12AssemblyWorkspace.ff-assembly-closed #ffV12Refresh,#ffV12AssemblyWorkspace.ff-assembly-closed #ffV12BurgerOpen,#ffV12AssemblyWorkspace.ff-assembly-closed #ff66AssemblySoundSettings{display:none!important}
 #ffV12AssemblyOrders .ff-assembly-order{border:1px solid var(--ffb-line,#e6e6e6);border-radius:15px;padding:15px}
 #ffV12AssemblyOrders .ff-assembly-items{white-space:pre-wrap;line-height:1.7}
 #ffV12AssemblyOrders .ff-assembly-time{font-size:12px;opacity:.7}
@@ -505,7 +505,7 @@ body.ffx-menu-open .ffx-screen-dimmer{display:block!important}
 </script><section id="ff28Portal" aria-live="polite"><h1 id="ff28Title"></h1><p id="ff28State"></p><form id="ff28Apply" hidden><label>الاسم<input id="ff28Name" maxlength="100" minlength="2" required></label><label>الوظيفة المطلوبة<select id="ff28Role"><option value="driver">موصل</option><option value="cashier">كاشير</option><option value="customer_service">خدمة العملاء</option><option value="supervisor">مشرف</option><option value="assembly">نقطة التجميع</option></select></label><button>تقديم الطلب</button></form><div id="ff28Rows"></div><button id="ff28Refresh">تحديث</button><button id="ff28Logout">خروج</button></section>
 <header class="head"><div><div class="brand">🍟 <span>FRESH</span> FRIES <small class="version">v38.36.1-rc1</small></div><div class="sub">منصة خدمة العملاء والتوصيل</div></div><div class="flex"><span class="topinfo" id="identity">لم يتم تسجيل الدخول</span><span id="ff48VersionStatus" class="ff48-version hidden" role="status" aria-live="polite">فحص توافق الإصدار...</span><button id="ff52RoutesBtn" class="outline hidden" type="button">📍 توجيه مناطق الجامعات</button><button id="ff51CatalogBtn" class="outline hidden" type="button">🍟 المنيو والعروض</button><button id="ff51CustomersBtn" class="outline hidden" type="button">👥 العملاء</button><button id="ff51ArchiveBtn" class="outline hidden" type="button">📁 الأرشيف</button><button id="ff51RatingsBtn" class="outline hidden" type="button">⭐ التقييمات</button><button id="ff50ChangesBtn" class="outline hidden" type="button">📝 تعديلات الطلبات</button><button id="ff49ReservationsBtn" class="outline hidden" type="button">📅 الحجوزات</button><button id="ff49TransferBtn" class="outline hidden" type="button">🔄 نقل الموصل</button><button id="ff48DiagnosticsBtn" class="outline hidden" type="button">🩺 تشخيص النسخة</button><button id="ff47QABtn" class="outline hidden" type="button">📋 الاختبار الشامل</button><button id="ff46ReadinessBtn" class="outline hidden" type="button">🧪 جاهزية الإطلاق</button><button id="ff45AccessBtn" class="outline hidden" type="button">🔐 عزل الفروع</button><button id="ff44IntegrityBtn" class="outline hidden" type="button">🔎 سلامة البيانات</button><button id="ff43SecurityBtn" class="outline hidden" type="button">🛡️ أمان النظام</button><button id="ff42SettlementsBtn" class="outline hidden" type="button">💰 تسويات الموصلين</button><button id="ff40ReportsBtn" class="outline hidden" type="button">📊 التقارير</button><button id="ff40AlertsBtn" class="outline hidden" type="button">⚠️ متابعة التشغيل <span id="ff40AlertCount" class="pill">0</span></button><button id="ff41CasesBtn" class="outline hidden" type="button">📋 الشكاوى والتظلمات <span id="ff41OpenBadge" class="pill">0</span></button><button id="ff39InboxBtn" class="outline hidden" type="button">📨 الرسائل <span id="ff39UnreadBadge" class="pill">0</span></button><button id="notificationsBtn" class="outline hidden" type="button">🔔 تفعيل التنبيهات</button><button id="refreshBtn" class="outline hidden" type="button">تحديث</button><button id="logoutBtn" class="outline hidden" type="button">خروج</button></div></header>
 <main>
-<section id="ffV12AssemblyWorkspace" class="card hidden" aria-label="نقطة التجميع الخاصة بالفرع">  <div class="ff-assembly-brand"><img src="./assets/ff-official-logo.png" alt="شعار مطعم فريش فرايز" loading="eager"><div><strong>FRESH FRIES LUXE</strong><span>نقطة التجميع · إدارة طلبات فرعك</span></div></div><div class="sectionbar"><button id="ff66AssemblySoundSettings" type="button" class="outline" >🔔 النغمات</button><h2>📦 نقطة التجميع · <span id="ffV12BranchTitle">فرعك</span></h2><div class="actions"><button id="ffV12Refresh" type="button" class="outline">تحديث الطلبات</button><button id="ffV12BurgerOpen" type="button" class="primary" aria-controls="ffBurgerCashierPanel" aria-expanded="false">🍔 أوامر قسم البرجر</button><button id="ffV12Logout" type="button" class="primary" aria-label="تسجيل الخروج من نقطة التجميع">🚪 تسجيل الخروج</button></div></div>
+<section id="ffV12AssemblyWorkspace" class="card hidden" aria-label="نقطة التجميع الخاصة بالفرع">  <div class="ff-assembly-brand"><img src="./assets/ff-official-logo.png" alt="شعار مطعم فريش فرايز" loading="eager"><div><strong>FRESH FRIES LUXE</strong><span>نقطة التجميع · إدارة طلبات فرعك</span></div></div><div class="sectionbar"><button id="ff66AssemblySoundSettings" type="button" class="outline" >🔔 النغمات</button><h2>📦 نقطة التجميع · <span id="ffV12BranchTitle">فرعك</span></h2><div class="actions"><button id="ffV12Toggle" type="button" class="primary" aria-expanded="false">فتح نقطة التجميع</button><button id="ffV12Refresh" type="button" class="outline">تحديث الطلبات</button><button id="ffV12BurgerOpen" type="button" class="primary" aria-controls="ffBurgerCashierPanel" aria-expanded="false">🍔 أوامر قسم البرجر</button><button id="ffV12Logout" type="button" class="primary" aria-label="تسجيل الخروج من نقطة التجميع">🚪 تسجيل الخروج</button></div></div>
  <p class="muted">واجهة مستقلة وظيفيًا لحساب التجميع فقط. لا تعرض بيانات الفروع الأخرى ولا قوائم الكاشير وخدمة العملاء. تعمل أثناء فتحها فقط.</p>
  <div id="ffV12AssemblyStatus" class="statusbar" role="status" aria-live="polite">التحقق من تسجيل الدخول وصلاحيات الفرع...</div>
  <div id="ffV12AssemblySummary" class="muted" aria-live="polite" style="margin:14px 0"></div>
@@ -519,7 +519,7 @@ body.ffx-menu-open .ffx-screen-dimmer{display:block!important}
   <button type="button" class="ff-assembly-filter active" data-assembly-filter="all" aria-pressed="true">جميع الطلبات</button>
   <button type="button" class="ff-assembly-filter" data-assembly-filter="printed" aria-pressed="false">بانتظار التحضير</button>
   <button type="button" class="ff-assembly-filter" data-assembly-filter="preparing" aria-pressed="false">قيد التحضير</button>
-  <button type="button" class="ff-assembly-filter" data-assembly-filter="ready" aria-pressed="false">جاهزة للتسليم</button>
+  <button type="button" class="ff-assembly-filter" data-assembly-filter="ready" aria-pressed="false">جاهزة للتسليم</button><button type="button" class="ff-assembly-filter" data-assembly-filter="late" aria-pressed="false">متأخرة (40+ دقيقة)</button><button type="button" class="ff-assembly-filter" data-assembly-filter="priority" aria-pressed="false">الأولوية</button>
  </div>
  <div class="ff-assembly-workspace-title"><h3>📋 طلبات التجميع</h3><span id="ffV12FilteredCount"></span></div>
  <div id="ffV12AssemblyOrders" class="ff-assembly-grid"></div>
@@ -866,7 +866,7 @@ window.ffRequiredDeliveryFee=function(value){
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.48.1/dist/umd/supabase.min.js" onerror="var s=document.createElement('script');s.src='https://unpkg.com/@supabase/supabase-js@2.48.1/dist/umd/supabase.min.js';document.head.appendChild(s)"></script>
 <script id="ff-v12-assembly-unified-logic">
 'use strict';
-let ffV12AssemblyActive=false,ffV12AssemblyBusy=false,ffV12AssemblyLoading=false;
+let ffV12AssemblyActive=false,ffV12AssemblyOpened=false,ffV12AssemblyBusy=false,ffV12AssemblyLoading=false;
 let ffV12Generation=0,ffV12Request=0;
 let ffV12AssemblyTimer=null,ffV12AssemblyPayload=null,ffV12AssemblyLastSuccess=0;
 const ffV12Get=id=>document.getElementById(id);
@@ -882,13 +882,15 @@ async function ffV12CheckSession(){
 }
 function ffV12Reset(){
  ffV12Generation++;ffV12Request++;
- ffV12AssemblyActive=false;ffV12AssemblyBusy=false;ffV12AssemblyLoading=false;
+ ffV12AssemblyActive=false;ffV12AssemblyOpened=false;ffV12AssemblyBusy=false;ffV12AssemblyLoading=false;
  ffV12AssemblyPayload=null;ffV12AssemblyLastSuccess=0;
  ffV12Filter='all';document.querySelectorAll('[data-assembly-filter]').forEach(b=>{const active=b.dataset.assemblyFilter==='all';b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
  if(ffV12AssemblyTimer){clearInterval(ffV12AssemblyTimer);ffV12AssemblyTimer=null;}
  document.body.classList.remove('ff-v12-assembly-mode');
  ffV12Get('ffV12AssemblyWorkspace')?.classList.add('hidden');
  ffV12Get('ffV12AssemblyOrders')?.replaceChildren();
+ if(ffV12Get('ffV12BranchTitle'))ffV12Get('ffV12BranchTitle').textContent='فرعك';
+ if(ffV12Get('ffV12AssemblySummary'))ffV12Get('ffV12AssemblySummary').textContent='';
  window.ffBurgerOnAssemblyStop?.();
 }
 async function ffV12Start(){
@@ -900,7 +902,7 @@ async function ffV12Start(){
  if(assemblyLogout)assemblyLogout.onclick=()=>ffV12Get('logoutBtn')?.click();
  const assemblyBurger=ffV12Get('ffV12BurgerOpen');
  if(assemblyBurger)assemblyBurger.onclick=()=>{
-  if(!ffV12AssemblyActive)return;
+  if(!ffV12AssemblyActive||!ffV12AssemblyOpened)return;
   if(typeof window.ffBurgerToggleAssembly==='function'){
    const didOpen=window.ffBurgerToggleAssembly();
    if(!didOpen)ffV12Get('ffV12AssemblyStatus').textContent='⚠️ واجهة البرجر غير متاحة لهذه الجلسة؛ حدّث الصفحة وأعد الدخول';
@@ -909,15 +911,36 @@ async function ffV12Start(){
   }
  };
  ffV12Get('identity').textContent='📦 موظف نقطة التجميع · '+(user?.email||user?.phone||'');
- const generation=ffV12Generation;
+ ffV12SetOpened(false);
+ ffV12Get('ffV12Toggle').onclick=()=>ffV12SetOpened(!ffV12AssemblyOpened);
+}
+function ffV12SetOpened(open){
+ if(!ffV12AssemblyActive)return;
+ ffV12AssemblyOpened=Boolean(open);ffV12Generation++;ffV12Request++;
+ ffV12AssemblyBusy=false;ffV12AssemblyLoading=false;ffV12AssemblyPayload=null;
+ const root=ffV12Get('ffV12AssemblyWorkspace'),button=ffV12Get('ffV12Toggle');
+ root.classList.toggle('ff-assembly-closed',!ffV12AssemblyOpened);
+ button.textContent=ffV12AssemblyOpened?'إغلاق نقطة التجميع':'فتح نقطة التجميع';
+ button.setAttribute('aria-expanded',String(ffV12AssemblyOpened));
+ if(ffV12AssemblyTimer){clearInterval(ffV12AssemblyTimer);ffV12AssemblyTimer=null;}
+ ffV12Get('ffV12AssemblyOrders').replaceChildren();
+ ffV12Get('ffV12BranchTitle').textContent='فرعك';
+ ffV12Get('ffV12AssemblySummary').textContent='';
+ for(const id of ['ffV12CountAll','ffV12CountPrinted','ffV12CountPreparing','ffV12CountReady','ffV12FilteredCount'])if(ffV12Get(id))ffV12Get(id).textContent='0';
+ if(!ffV12AssemblyOpened){
+  window.ffBurgerOnAssemblyStop?.();
+  if(typeof ff27Watch==='function')ff27Watch();
+  ffV12Get('ffV12AssemblyStatus').textContent='نقطة التجميع متوقفة؛ افتحها عند الحاجة.';
+  return;
+ }
+ ffV12Get('ffV12AssemblyStatus').textContent='جاري التحقق من صلاحية الفرع...';
  window.ffBurgerOnAssemblyStart?.();
- await ffV12Refresh(true);
- if(generation!==ffV12Generation)return;
+ void ffV12Refresh(true);
  ffV12AssemblyTimer=setInterval(()=>{if(!document.hidden&&!ffV12AssemblyBusy)void ffV12Refresh(false);},12000);
 }
 let ffV12Filter='all';
 function ffV12SetFilter(value){
- ffV12Filter=['all','printed','preparing','ready'].includes(value)?value:'all';
+ ffV12Filter=['all','printed','preparing','ready','late','priority'].includes(value)?value:'all';
  document.querySelectorAll('[data-assembly-filter]').forEach(b=>{
   const active=b.dataset.assemblyFilter===ffV12Filter;b.classList.toggle('active',active);
   b.setAttribute('aria-pressed',String(active));
@@ -925,6 +948,15 @@ function ffV12SetFilter(value){
  ffV12Render();
 }
 document.querySelectorAll('[data-assembly-filter]').forEach(b=>b.addEventListener('click',()=>ffV12SetFilter(b.dataset.assemblyFilter)));
+function ffV12Age(order,now=Date.now()){
+ const started=Date.parse(order?.created_at||'');return Number.isFinite(started)?Math.max(0,Math.floor((now-started)/60000)):0;
+}
+function ffV12SelectOrders(live,filter,now=Date.now()){
+ const age=o=>ffV12Age(o,now);
+ const priority=o=>o.cashier_stage==='ready'||age(o)>=25;
+ const selected=filter==='all'?live:filter==='late'?live.filter(o=>age(o)>=40):filter==='priority'?live.filter(priority):live.filter(o=>o.cashier_stage===filter);
+ return [...selected].sort((a,b)=>Number(priority(b))-Number(priority(a))||age(b)-age(a));
+}
 function ffV12Render(){
  const root=ffV12Get('ffV12AssemblyOrders');root.replaceChildren();
  const payload=ffV12AssemblyPayload;if(!payload)return;
@@ -937,7 +969,7 @@ function ffV12Render(){
  for(const [id,value] of [['ffV12CountAll',live.length],['ffV12CountPrinted',counts.printed],['ffV12CountPreparing',counts.preparing],['ffV12CountReady',counts.ready]]){
   const el=ffV12Get(id);if(el)el.textContent=String(value);
  }
- const shown=ffV12Filter==='all'?live:live.filter(o=>o.cashier_stage===ffV12Filter);
+ const shown=ffV12SelectOrders(live,ffV12Filter);
  ffV12Get('ffV12FilteredCount').textContent=shown.length+' طلب';
  if(!shown.length){
   root.append(ffV12Node('div',live.length?'لا توجد طلبات في هذه المرحلة.':'لا توجد طلبات بانتظار التجميع في هذا الفرع.','empty'));return;
@@ -953,7 +985,7 @@ function ffV12Render(){
   meta.append(ffV12Node('div','👩‍💼 خدمة العملاء: '+(order.customer_service_name||'غير محدد')));
   meta.append(ffV12Node('div','🧾 الكاشير: '+(order.cashier_employee_name||'بانتظار استلام الكاشير')));
   if(order.created_at){
-   const age=Math.max(0,Math.floor((Date.now()-Date.parse(order.created_at))/60000));
+   const age=ffV12Age(order);
    meta.append(ffV12Node('div','⏱️ عمر الطلب: '+age+' دقيقة','ff-assembly-time'+(age>=40?' late':age>=25?' warn':'')));
   }
   item.append(meta);
@@ -966,6 +998,7 @@ function ffV12Render(){
    line.append(ffV12Node('span',String(product.qty??0)+' ×','ff-assembly-item-qty'));
    line.append(ffV12Node('span',String(product.name??'صنف'),'ff-assembly-item-name'));
    products.append(line);
+   if(product.item_notes)products.append(ffV12Node('div','📝 '+product.item_notes,'ff-assembly-order-note'));
   }
   item.append(products);
   if(order.notes)item.append(ffV12Node('div','📝 ملاحظات الطلب:\n'+order.notes,'ff-assembly-order-note'));
@@ -997,7 +1030,7 @@ function ffV12Render(){
  }
 }
 async function ffV12Refresh(force=false){
- if(!ffV12AssemblyActive||ffV12AssemblyLoading||!client||!user||(!force&&document.hidden))return;
+ if(!ffV12AssemblyActive||!ffV12AssemblyOpened||ffV12AssemblyLoading||!client||!user||(!force&&document.hidden))return;
  const request=++ffV12Request;ffV12AssemblyLoading=true;
  try{
   const r=await rpc('ff_v12_assembly_snapshot');
@@ -4557,7 +4590,7 @@ function ff27Submit(kind,input){
 
 let ff27Channel=null,ff27ChannelKey='';
 function ff27Watch(branch=''){
- const role=ffV12AssemblyActive?'assembly':data?.role;
+ const role=ffV12AssemblyActive?(ffV12AssemblyOpened?'assembly':null):data?.role;
  const key=user&&['cashier','assembly'].includes(role)?user.id+'-'+role+'-'+branch:'';
  if(key===ff27ChannelKey)return;
  if(ff27Channel)client.removeChannel(ff27Channel).catch(()=>{});
@@ -4566,7 +4599,7 @@ function ff27Watch(branch=''){
  const config={event:'*',schema:'public',table:'ff27_branch_updates'};if(branch)config.filter='branch_id=eq.'+branch;
  ff27Channel=client.channel('branch-stage-'+key).on('postgres_changes',config,()=>{
   if(ff27ChannelKey!==key||document.hidden)return;
-  if(ffV12AssemblyActive){if(!ffV12AssemblyBusy)void ffV12Refresh(true)}else void reload(true);
+  if(ffV12AssemblyActive){if(ffV12AssemblyOpened&&!ffV12AssemblyBusy)void ffV12Refresh(true)}else void reload(true);
  }).subscribe();
 }
 window.addEventListener('ff-assembly-snapshot-success',()=>ff27Watch());

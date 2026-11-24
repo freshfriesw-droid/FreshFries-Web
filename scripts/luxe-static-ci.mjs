@@ -490,3 +490,27 @@ console.log('PASS A02: exact names, line-specific prices and notes, reversible e
  a03Data.offers[0].status='accepted';vm.runInContext('drawOffers()',a03Context);assert.doesNotMatch(a03Root.innerHTML,/data-exp=/);
  a03Data.offers=[];vm.runInContext('drawOffers()',a03Context);assert.doesNotMatch(a03Root.innerHTML,/data-exp=/);
  console.log('PASS A03: production CS countdown, expiry, new offer and acceptance removal');
+
+
+ // A04: exercise actual priority and overdue selectors, including closed and finished states.
+ const a04Now=Date.parse('2026-11-25T12:00:00Z');
+ const a04Date=mins=>new Date(a04Now-mins*60000).toISOString();
+ const a04Assembly=vm.runInNewContext(html.slice(html.indexOf('function ffV12Age('),html.indexOf('function ffV12Render()'))+'\nffV12SelectOrders');
+ const a04Orders=[{id:'new',cashier_stage:'printed',created_at:a04Date(2)},{id:'old',cashier_stage:'preparing',created_at:a04Date(45)},{id:'ready',cashier_stage:'ready',created_at:a04Date(4)},{id:'warning',cashier_stage:'preparing',created_at:a04Date(25)}];
+ const a04Ids=x=>Array.from(x,o=>o.id).join(',');
+ assert.equal(a04Ids(a04Assembly(a04Orders,'all',a04Now)),'old,warning,ready,new');
+ assert.equal(a04Ids(a04Assembly(a04Orders,'late',a04Now)),'old');
+ assert.equal(a04Ids(a04Assembly(a04Orders,'priority',a04Now)),'old,warning,ready');
+ assert.equal(a04Ids(a04Assembly(a04Orders,'printed',a04Now)),'new');
+ assert.match(html,/ffV12SetOpened\(false\);/);
+ assert.match(html,/!ffV12AssemblyActive\|\|!ffV12AssemblyOpened\|\|ffV12AssemblyLoading/);
+ assert.match(html,/product\.item_notes/);
+ const a04Burger=vm.runInNewContext(burgerScript.slice(burgerScript.indexOf('function burgerIsLate('),burgerScript.indexOf("kitchen.querySelectorAll('[data-ff-burger-filter]')"))+'\nburgerFilterTickets');
+ const a04Tickets=[{id:'new',status:'sent',sent_at:a04Date(3)},{id:'prep',status:'preparing',sent_at:a04Date(30)},{id:'done',status:'ready',sent_at:a04Date(90)},{id:'ack',status:'acknowledged',sent_at:a04Date(80)}];
+ assert.equal(a04Ids(a04Burger(a04Tickets,'all',a04Now)),'prep,new');
+ assert.equal(a04Ids(a04Burger(a04Tickets,'sent',a04Now)),'new');
+ assert.equal(a04Ids(a04Burger(a04Tickets,'preparing',a04Now)),'prep');
+ assert.equal(a04Ids(a04Burger(a04Tickets,'late',a04Now)),'prep');
+ assert.match(burgerScript,/ffBurgerPendingCount/);
+ assert.match(burgerScript,/const scoped=await rpc\('ff_burger_my_branch'\)/);
+ console.log('PASS A04: optional assembly, live priority and delay filters, burger queue separation and scoped refresh');
