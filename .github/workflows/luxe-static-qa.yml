@@ -12,6 +12,10 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+      - name: Verify A01 pinned baseline and traceability
+        run: |
+          git fetch --no-tags --depth=1 origin 57ab198888f259acad0a09d813eceb132a795eec f49085db1776c356611b8a072b8f33334c0a14bb
+          python scripts/a01-baseline-qa.py
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
