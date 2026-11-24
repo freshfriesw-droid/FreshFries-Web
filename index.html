@@ -5107,9 +5107,10 @@ const previewRevisions=new WeakMap();
     if(!['item','note','error'].includes(d.kind)){d.kind='error';d.reason='بيانات الطلب الأصلي لا تُعدّل من الإضافة؛ اكتب الأصناف والملاحظات فقط';parsed.errors.push({line:d.line,text:d.raw,reason:d.reason})}
    }
    const total=parsed.items.reduce((sum,i)=>sum+Number(i.qty)*Number(i.price),0);
-   const valid=parsed.errors.length===0&&parsed.items.length>0&&parsed.items.length<=50&&Number.isFinite(total)&&total>0;
+   const exact=parsed.items.every(i=>Number.isInteger(i.qty)&&i.qty>=1&&i.qty<=100&&Number.isFinite(i.price)&&i.price>=0&&i.price<1e12&&/^\d+(?:\.\d{1,2})?$/.test(String(i.price)));
+   const valid=parsed.errors.length===0&&parsed.items.length>0&&parsed.items.length<=50&&exact&&Number.isFinite(total)&&total>0&&total<1e12;
    t.area.innerHTML=window.ff75RenderReview(parsed,t.heading);
-   if(!valid&&parsed.errors.length===0){const error=document.createElement('p');error.className='ff75-review-error';error.textContent='الإضافة تحتاج من 1 إلى 50 سطر صنف وإجماليًا أكبر من صفر.';t.area.append(error)}
+   if(!valid&&parsed.errors.length===0){const error=document.createElement('p');error.className='ff75-review-error';error.textContent='الإضافة تحتاج من 1 إلى 50 سطر صنف؛ الكمية عدد صحيح، والسعر بمنزلتين عشريتين كحد أقصى، والإجمالي أكبر من صفر وضمن النطاق المسموح.';t.area.append(error)}
    if(valid){window[t.key]={actor,orderId:t.orderId,raw,items:makeItems(parsed)};t.save.disabled=false;t.save.hidden=false;}
    return valid;
   }catch(err){if(current())t.area.textContent='تعذر عرض المعاينة: '+err.message;return false}
