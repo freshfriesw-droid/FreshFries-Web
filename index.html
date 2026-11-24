@@ -3782,6 +3782,8 @@ let mobSig='';function drawMobile(){const sig=['home','new','orders','driver','c
 function setBranchOptions(){const sel=$x('ffx-branch');if(!sel||!userLogged())return;const prev=sel.value;const bs=Array.isArray(data.branches)?data.branches:[];const ids=Array.from(sel.options).slice(1).map(o=>o.value);if(bs.length===ids.length&&bs.every((b,i)=>b.id===ids[i]))return;sel.innerHTML='<option value="">كل الفروع المتاحة</option>'+bs.map(b=>`<option value="${h(b.id)}">${h(b.name)}</option>`).join('');sel.value=bs.some(b=>String(b.id)===prev)?prev:''}
 function visibleOrders(){if(!userLogged())return[];const branch=$x('ffx-branch').value;return (Array.isArray(data.orders)?data.orders:[]).filter(o=>!branch||o.branch_id===branch)}
 let dailyKpi={key:'',request:0,last:0,pending:false,values:null,error:false};
+let activeCardLayout=null;
+window.ffApplyCardLayout=layout=>{activeCardLayout=Array.isArray(layout)?layout.map(x=>({...x})):null;paintKpis()};
 function kpiScope(){return userLogged()?[user.id,data.role,$x('ffx-branch').value].join('|'):''}
 function clearDailyKpi(){dailyKpi={key:'',request:dailyKpi.request+1,last:0,pending:false,values:null,error:false}}
 function ensureDailyKpi(){const key=kpiScope();if(key!==dailyKpi.key){clearDailyKpi();dailyKpi.key=key}}
@@ -3803,21 +3805,22 @@ function paintKpis(){
  const v=dailyKpi.values,role=data?.role;
  const ordersKey=role==='driver'?'driver':role==='cashier'?'cashier':roleAllowed('orders')?'orders':roleAllowed('reports')?'reports':null;
  const scopedKey=role==='driver'?'driver':role==='cashier'?'cashier':roleAllowed('late')?'late':ordersKey;
- const entries=[
+ const defaults=[
  {metric:'orders_today',label:'طلبات اليوم التشغيلي',icon:'orders',key:ordersKey,color:'#d31c2b',bg:'#ffeced'},
  {metric:'late_today',label:'طلبات اليوم المتأخرة (60 دقيقة)',icon:'clock',key:scopedKey,color:'#b21b25',bg:'#ffeced'},
  {metric:'completed_today',label:'طلبات اليوم المنجزة',icon:'orders',key:ordersKey,color:'#141414',bg:'#efefef'},
  {metric:'available_drivers',label:'الموصلون المتاحون الآن',icon:'users',key:role==='driver'?'driver':'drivers',color:'#141414',bg:'#efefef'}
  ];
+ const entries=activeCardLayout===null?defaults:activeCardLayout.flatMap(card=>{const base=defaults.find(d=>d.metric===card.metric);return base?[{...base,label:card.label,size:card.size,tone:card.tone}]:[]});
  target.innerHTML=entries.map(e=>{
  const value=v?.[e.metric],known=typeof value==='number'&&Number.isFinite(value)&&value>=0,available=known&&e.key&&roleAllowed(e.key);
  const tag=available?'button':'div',action=available?'type="button" data-ffx-kpi="'+e.key+'"':'';
  const hint=known?(e.metric==='available_drivers'?'جاهزون ومتصلون':'اليوم '+v.business_day):dailyKpi.error?'غير متاح أو غير مصرح':v?'غير متاح لهذا الدور':'بانتظار البيانات';
- return `<${tag} ${action} data-ffx-metric="${e.metric}" class="ffx-kpi" style="--kpi-color:${e.color};--kpi-wash:${e.bg}"><div class="ffx-kpi-top"><span class="ffx-kpi-label">${h(e.label)}</span><span class="ffx-kpi-icon">${icon(e.icon)}</span></div><div class="ffx-kpi-value">${known?h(value):'—'}</div><span class="ffx-kpi-footer">${h(hint)}${available?icon('arrow','sm'):''}</span></${tag}>`;
+ return `<${tag} ${action} data-ffx-metric="${e.metric}" data-card-size="${h(e.size||'normal')}" data-card-tone="${h(e.tone||'default')}" class="ffx-kpi" style="--kpi-color:${e.color};--kpi-wash:${e.bg}"><div class="ffx-kpi-top"><span class="ffx-kpi-label">${h(e.label)}</span><span class="ffx-kpi-icon">${icon(e.icon)}</span></div><div class="ffx-kpi-value">${known?h(value):'—'}</div><span class="ffx-kpi-footer">${h(hint)}${available?icon('arrow','sm'):''}</span></${tag}>`;
  }).join('');
  target.querySelectorAll('[data-ffx-kpi]').forEach(b=>b.onclick=()=>navigate(b.dataset.ffxKpi));
 }
-window.addEventListener('ff-luxe-session-reset',()=>{clearDailyKpi();paintKpis()});
+window.addEventListener('ff-luxe-session-reset',()=>{activeCardLayout=null;clearDailyKpi();paintKpis()});
 function paintOrders(){const container=$x('ffx-order-list');const active=visibleOrders().filter(o=>o.phase!=='delivered'&&!['cancelled','delivered'].includes(o.status));if(!userLogged()){container.innerHTML='<div class="ffx-empty">بعد تسجيل الدخول ستظهر الطلبات الحية المتاحة لحسابك.</div>';return}if(!active.length){container.innerHTML='<div class="ffx-empty">لا توجد طلبات مفتوحة ضمن الفرع المحدد.</div>';return}container.innerHTML=active.slice(0,5).map(o=>{const state=o.phase||'unassigned',tags={unassigned:'بانتظار الإسناد',assigned:'بانتظار الاستلام',on_way:'في الطريق',arrived:'وصل العميل'},status=tags[state]||String(o.status||'قيد التنفيذ'),cl=state==='unassigned'?'waiting':state==='arrived'?'good':'';return `<div class="ffx-order"><div class="ffx-order-main"><strong>طلب #${h(o.number)} <span class="ffx-status ${cl}">${h(status)}</span></strong><p>${h((data?.branches||[]).find(b=>b.id===o.branch_id)?.name||'الفرع')}${o.area?' • '+h(o.area):''} • ${h(o.driver_name||'موصل غير محدد')}</p></div><button class="ffx-smallbtn" data-ffx-order="${h(o.number)}">متابعة ${icon('arrow','sm')}</button></div>`}).join('');container.querySelectorAll('[data-ffx-order]').forEach(b=>b.onclick=()=>focusOrder(b.dataset.ffxOrder))}
 function focusOrder(num){if(roleAllowed('orders')){const search=$x('orderSearch');if(search){search.value=num;search.dispatchEvent(new Event('input',{bubbles:true}))}navigate('orders')}else if(roleAllowed('driver'))navigate('driver');else if(roleAllowed('cashier'))navigate('cashier');else showToast('تفاصيل الطلب غير متاحة لهذا الدور')}
 function paintStatus(){const online=userLogged();$x('ffx-connection-state').textContent=online?'متصل بالحساب':'غير مسجل';$x('ffx-last-update').textContent=online?`تعرض هذه الصفحة بيانات الحساب الحالي. يتم تحديثها مع دورة النظام الأساسية.`:'تسجيل الدخول مطلوب لعرض البيانات الحية.';$x('ffx-live').innerHTML=`<i class="ffx-live-dot" style="background:${online?'#ff3b4a':'#8a8a90'}"></i> ${online?'بيانات حية':'غير متصل'}`;$x('ffx-profile-name').textContent=online?String(user?.email||user?.phone||'مستخدم'): 'نظام فريش فرايز';$x('ffx-profile-role').textContent=online?({manager:'المدير العام',driver:'بوابة الموصل',cashier:'الكاشير',customer_service:'خدمة العملاء',supervisor:'المشرف'}[data.role]||data.role):'لم يتم تسجيل الدخول';$x('ffx-hero-title').textContent=online?({manager:'إدارة ذكية، ورؤية أوضح لكل فرع',driver:'توصيلاتك... بوضوح وسرعة',cashier:'كل طلب في وقته الصحيح',customer_service:'خدمة سريعة، وتجربة عميل أجمل',supervisor:'متابعة دقيقة في كل لحظة'}[data.role]||'مساحة العمل الذكية'):'التحكم في كل التفاصيل، من شاشة واحدة';$x('ffx-hero-new').style.display=roleAllowed('new')?'':'none';$x('ffx-hero-overdue').style.display=roleAllowed('late')?'':'none';$x('ffx-overdue').style.display=roleAllowed('late')?'':'none'}
