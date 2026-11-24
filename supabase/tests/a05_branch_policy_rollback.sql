@@ -22,7 +22,7 @@ BEGIN
  PERFORM public.ff_a05_set_area_tariff(b1,' QA  area ',650,now()+interval '1 day','QA future tariff');
  PERFORM public.ff_a05_set_area_tariff(b2,'QA area',900,now(),'QA other branch');
  r:=public.ff_a05_area_fee_hint(b1,' QA  AREA ');
- IF r->'approved'->>'fee'<>'500' OR r->'history'->0->>'fee'<>'450' THEN RAISE EXCEPTION 'Tariff/source history mismatch: %',r;END IF;passes:=passes+1;
+ IF r->'approved'->>'fee'<>'500' OR (r->'history'->0->>'fee')::numeric<>450 THEN RAISE EXCEPTION 'Tariff/source history mismatch: %',r;END IF;passes:=passes+1;
  r:=public.ff_a05_branch_policy(b1);IF jsonb_array_length(r->'tariff_history')<>2 OR jsonb_array_length(r->'tariffs')<>1 THEN RAISE EXCEPTION 'Branch tariff isolation/history';END IF;passes:=passes+1;
  PERFORM public.ff38_admin_set_permission(c,'manage_branches',true);
  r:=public.ff51_catalog_save_item(null,'QA category '||cat,'QA item '||cat,123);item:=(r->>'id')::uuid;
