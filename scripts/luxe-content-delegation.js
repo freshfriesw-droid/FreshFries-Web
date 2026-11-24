@@ -4,7 +4,7 @@
 const actor=()=>typeof user!=='undefined'&&user?.id&&typeof data!=='undefined'&&data?.role?user.id:'';
 const manager=()=>!!actor()&&data.role==='manager';
 const capLabels={view:'مشاهدة',edit:'تحرير المسودة',preview:'معاينة',review:'مراجعة'};
-const screens={dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
+const screens={notices:'التنبيهات التشغيلية',dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
 const roles={manager:'المدير العام',supervisor:'المشرف',customer_service:'خدمة العملاء',cashier:'الكاشير',driver:'الموصل',assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر'};
 const dialog=document.createElement('dialog');dialog.id='ff82Delegation';dialog.dir='rtl';dialog.setAttribute('aria-labelledby','ff82Title');
 dialog.innerHTML='<div class="sectionbar"><h2 id="ff82Title">التفويض المتدرج للمحتوى</h2><button type="button" data-d-close>إغلاق</button></div><p>هذا التفويض يخص النصوص فقط، ولا يمنح أي صلاحية تشغيلية أو نشر نهائي.</p>'+
@@ -15,7 +15,7 @@ dialog.innerHTML='<div class="sectionbar"><h2 id="ff82Title">التفويض ال
  '<details><summary>سجل التدقيق</summary><div data-d-audit></div></details><details><summary>مراجعات مسودة محتوى</summary><label>رقم المسودة<input type="number" min="1" data-d-revision></label><button type="button" data-d-read-reviews>عرض المراجعات</button><div data-d-reviews></div></details></section>'+
  '<section data-d-worker hidden><p data-d-scope></p><label>العنصر<select data-d-key></select></label><label>الإصدارات<select data-d-history></select></label><p data-d-body></p>'+
  '<section data-d-preview hidden><h3>معاينة النص</h3><p data-d-original></p><p data-d-sample></p></section>'+
- '<section data-d-edit hidden><label>مسودة نص جديد<textarea data-d-text maxlength="180" rows="3"></textarea></label><button type="button" data-d-save>حفظ مسودة للمدير</button></section>'+
+ '<section data-d-edit hidden><label>مسودة نص جديد<textarea data-d-text maxlength="180" rows="3"></textarea></label><p data-d-format-help hidden></p><button type="button" data-d-save>حفظ مسودة للمدير</button></section>'+
  '<section data-d-review hidden><label>ملاحظة المراجعة<textarea data-d-note maxlength="500" rows="3"></textarea></label><button type="button" data-d-send-review>رفع المراجعة إلى المدير</button></section></section>'+
  '<p data-d-status role="status" aria-live="polite"></p>';
 document.body.append(dialog);
@@ -37,7 +37,7 @@ async function sync(force=false){
  if(grant&&!enabled(grant.capabilities[0])){grant=null;button.hidden=true;invalidateDialog()}
  if(!force&&Date.now()-last<15000)return;
  last=Date.now();const seq=++request;
- try{const rows=await rpc('ff82_my_grant');if(seq!==request||key()!==k)return;const next=rows?.[0]||null;const changed=grant?.id!==next?.id;grant=next;button.hidden=!grant;if(dialog.open&&(!grant||changed))invalidateDialog()}
+ try{const rows=await rpc('ff82_my_grant');if(seq!==request||key()!==k)return;const next=rows?.[0]||null;const changed=grant?.id!==next?.id;grant=next&&next.role_scope===data.role?next:null;button.hidden=!grant;if(dialog.open&&(!grant||changed))invalidateDialog()}
  catch{if(seq===request&&key()===k){grant=null;button.hidden=true;invalidateDialog()}}
 }
 function guard(token,who){return dialog.open&&token===session&&who===actor()&&context===key()}
@@ -54,17 +54,26 @@ async function managerRefresh(token,who){
  lines(q('audit'),(audit||[]).map(x=>'#'+x.id+' · '+new Date(x.created_at).toLocaleString('ar-YE')+' · '+x.action+' · '+x.outcome+' · '+x.reason+' · '+x.actor_id));
 }
 function selection(){return history.find(x=>String(x.id)===q('history').value)}
-function preview(){const row=selection(),c=catalog.find(x=>x.key===q('key').value);q('body').textContent=row?'#'+row.id+' · '+(row.published_at?'منشور':'مسودة')+' · '+(row.body??'النص الأصلي'):'لا توجد إصدارات ضمن نطاقك';q('original').textContent=c?.original||'';q('sample').textContent=q('text').value||row?.body||c?.original||'—'}
+function preview(){
+ const row=selection(),c=catalog.find(x=>x.key===q('key').value),rich=['orders.guidance','reports.guidance'].includes(c?.key),notice=['notices.delayed','notices.reminder'].includes(c?.key);
+ q('text').maxLength=rich?1000:180;
+ q('format-help').hidden=!(rich||notice);
+ q('format-help').textContent=rich?'يمكن استخدام **خط عريض** وسطور قائمة تبدأ بشرطة. تُراجع المسودة قبل النشر.':notice?'المتغير المسموح به: {order_number}. تستخدم المعاينة رقمًا تجريبيًا فقط.':'';
+ q('body').textContent=row?'#'+row.id+' · '+(row.published_at?'منشور':'مسودة')+' · '+(row.body??'النص الأصلي'):'لا توجد إصدارات ضمن نطاقك';
+ q('original').textContent=c?.original||'';
+ const sample=q('text').value||row?.body||c?.original||'—';
+ q('sample').textContent=notice?sample.replaceAll('{order_number}','990001 (تجريبي)'):sample;
+}
 async function loadHistory(token,who){const k=q('key').value;history=[];options(q('history'),[]);if(k){const rows=await rpc('ff82_delegate_history',{p_key:k});if(!guard(token,who)||q('key').value!==k)return;history=rows||[];options(q('history'),history.map(r=>[r.id,'#'+r.id+' · '+(r.published_at?'منشور':'مسودة')]))}preview()}
 async function workerRefresh(token,who){
- const rows=await rpc('ff82_my_grant');if(!guard(token,who))return;grant=rows?.[0]||null;
+ const rows=await rpc('ff82_my_grant');if(!guard(token,who))return;grant=rows?.[0]?.role_scope===data.role?rows[0]:null;
  if(!grant){button.hidden=true;invalidateDialog();return}
  q('scope').textContent=(roles[grant.role_scope]||grant.role_scope)+' · '+(data.branches?.find(b=>b.id===grant.branch_id)?.name||grant.branch_id)+' · '+(screens[grant.screen]||grant.screen)+' · ينتهي '+new Date(grant.ends_at).toLocaleString('ar-YE');
  q('edit').hidden=!enabled('edit');q('review').hidden=!enabled('review');q('preview').hidden=!enabled('preview');
  const items=await rpc('ff82_delegate_catalog');if(!guard(token,who))return;catalog=items||[];options(q('key'),catalog.map(c=>[c.key,c.label]));await loadHistory(token,who)
 }
 button.onclick=()=>{if(!actor()||context!==key()||(!manager()&&(!grant||!enabled(grant.capabilities[0]))))return;session++;status('');q('manager').hidden=!manager();q('worker').hidden=manager();q('start').value=localDate(Date.now());q('end').value=localDate(Date.now()+3600000);dialog.showModal();void run(manager()?managerRefresh:workerRefresh)};
-q('grant').onclick=()=>void run(async(token,who)=>{if(!manager())return;const a=accounts[Number(q('account').value)],caps=Array.from(q('caps').querySelectorAll('input:checked'),x=>x.value),start=new Date(q('start').value),end=new Date(q('end').value);if(!a||!caps.length||!Number.isFinite(+start)||!Number.isFinite(+end)||end<=start||end<=new Date()){status('تحقق من الحساب والصلاحيات ووقت البدء والانتهاء');return}if(!confirm('اعتماد التفويض لهذا الحساب وإلغاء تفويضه السابق؟'))return;const id=await rpc('ff82_set_grant',{p_recipient:a.user_id,p_branch:a.branch_id,p_screen:q('screen').value,p_capabilities:caps,p_start:start.toISOString(),p_end:end.toISOString()});if(guard(token,who)){await managerRefresh(token,who);status('تم اعتماد التفويض #'+id)}});
+q('grant').onclick=()=>void run(async(token,who)=>{if(!manager())return;const a=accounts[Number(q('account').value)],caps=Array.from(q('caps').querySelectorAll('input:checked'),x=>x.value),start=new Date(q('start').value),end=new Date(q('end').value);if(!q('account').value||!a||!caps.length||!Number.isFinite(+start)||!Number.isFinite(+end)||end<=start||end<=new Date()){status('تحقق من الحساب والصلاحيات ووقت البدء والانتهاء');return}if(!confirm('اعتماد التفويض لهذا الحساب وإلغاء تفويضه السابق؟'))return;const id=await rpc('ff82_set_grant',{p_recipient:a.user_id,p_branch:a.branch_id,p_screen:q('screen').value,p_capabilities:caps,p_start:start.toISOString(),p_end:end.toISOString()});if(guard(token,who)){await managerRefresh(token,who);status('تم اعتماد التفويض #'+id)}});
 q('revoke').onclick=()=>void run(async(token,who)=>{if(!manager()||!q('grants').value)return;if(!confirm('إلغاء التفويض المحدد؟'))return;const ok=await rpc('ff82_revoke_grant',{p_id:Number(q('grants').value)});if(guard(token,who)){await managerRefresh(token,who);status(ok?'أُلغي التفويض':'التفويض غير نشط')}});
 q('read-reviews').onclick=()=>void run(async(token,who)=>{if(!manager()||!q('revision').value)return;const rows=await rpc('ff82_manager_reviews',{p_revision:Number(q('revision').value)});if(guard(token,who))lines(q('reviews'),(rows||[]).map(x=>x.note+' · '+x.reviewer+' · '+new Date(x.created_at).toLocaleString('ar-YE')))});
 q('key').onchange=()=>{q('text').value='';q('note').value='';void run(loadHistory)};q('history').onchange=preview;q('text').oninput=preview;
