@@ -403,7 +403,7 @@ assert.match(get('scripts/luxe-unified-order-inputs-20261123.js').toString('utf8
 
 // A02: real parser + shared picker quantity logic, with no database mutations.
 const unifiedSource=get('scripts/luxe-unified-order-inputs-20261123.js').toString('utf8');
-const pickerSource=unifiedSource.slice(unifiedSource.indexOf('function itemRows('),unifiedSource.indexOf('async function loadMenu('));
+const pickerSource=unifiedSource.slice(unifiedSource.indexOf('function itemRows('),unifiedSource.indexOf('window.ffLuxeOrderText='));
 const a02Picker=vm.runInNewContext(parserSource+'\n'+pickerSource+'\n({itemRows,appendText})',{
  ff49Catalog:menuNames.map((name,id)=>({id:id+1,name,price:1000})),
  Event:class {constructor(type){this.type=type}}
@@ -432,3 +432,10 @@ assert.equal(a02Picker.itemRows(a02Area).reduce((sum,row)=>sum+row.qty,0),99);
 a02Picker.appendText(a02Area,menuNames[0],-1);
 assert.equal(a02Area.value,'98 تشكن');
 console.log('PASS A02: shared picker, aliases, notes, price, decrement/restore, removal and quantity cap');
+
+// Main order cart and popup share the same text editor. No separate cart serializer.
+assert.match(html,/editor\.appendText\(\$\('newItems'\),item\.name,by\)/);
+assert.match(html,/window\.ffLuxeOrderText\?\.itemRows\(\$\('newItems'\)\)/);
+assert.match(html,/group\.total\+=line\.qty\*line\.price/);
+assert.match(html,/\$\('newItems'\)\.addEventListener\('input',\(\)=>\{renderCart\(\);render\(\);previewReady=false\}\)/);
+assert.doesNotMatch(html,/function syncCart\(\)\{const rows=\[\]/);

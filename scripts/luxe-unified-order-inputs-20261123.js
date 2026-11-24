@@ -28,11 +28,11 @@ const drafts=new WeakMap();
 function itemRows(area){
  const rows=[];
  for(const [index,raw] of area.value.split(/\r?\n/).entries()){
-  if(!/^\s*[0-9٠-٩۰-۹]+\s+/u.test(raw))continue;
+  if(!/^\s*[0-9٠-٩۰-۹]+(?:\.[0-9٠-٩۰-۹]+)?\s+/u.test(raw))continue;
   const parsed=ff49ParseItemsAndNotes(raw,{allowPartial:true});
   if(parsed.errors.length||parsed.items.length!==1)continue;
   const item=parsed.items[0];
-  rows.push({index,name:item.name,qty:item.qty});
+  rows.push({index,name:item.name,qty:item.qty,price:Number(item.price),notes:item.item_notes||''});
  }
  return rows;
 }
@@ -44,15 +44,16 @@ function appendText(area,name,delta){
  const last=matches.at(-1);
  if(delta>0){
   if(total>=99)return;
-  if(last)lines[last.index]=lines[last.index].replace(/^(\s*)[0-9٠-٩۰-۹]+/u,(_,space)=>space+String(last.qty+1));
+  if(last)lines[last.index]=lines[last.index].replace(/^(\s*)[0-9٠-٩۰-۹]+(?:\.[0-9٠-٩۰-۹]+)?/u,(_,space)=>space+String(last.qty+1));
   else lines.push('1 '+name);
  }else if(last){
   if(last.qty===1)lines.splice(last.index,1);
-  else lines[last.index]=lines[last.index].replace(/^(\s*)[0-9٠-٩۰-۹]+/u,(_,space)=>space+String(last.qty-1));
+  else lines[last.index]=lines[last.index].replace(/^(\s*)[0-9٠-٩۰-۹]+(?:\.[0-9٠-٩۰-۹]+)?/u,(_,space)=>space+String(last.qty-1));
  }else return;
  area.value=lines.join('\n').replace(/^\n+/,'').trimEnd();
  area.dispatchEvent(new Event('input',{bubbles:true}));
 }
+window.ffLuxeOrderText=Object.freeze({itemRows,appendText});
 async function loadMenu(){
  const token=++request,actor=typeof user!=='undefined'?user?.id:null;
  if(!actor)throw Error('سجل الدخول أولًا');

@@ -126,6 +126,60 @@ try:
                 assert all(x["height"] >= 43 and x["width"] >= 43
                            for x in result["buttons"]), (width, result)
                 print(f"PASS burger picker: {width}px, tap + / minus, bounds 0-99, ARIA, grid", flush=True)
+                # Exercise the actual main cart functions and shipped parser in
+                # real DOM, including transfer from a text draft and quantity edits.
+                source = (root / "index.html").read_text(encoding="utf-8")
+                unified = (root / "scripts/luxe-unified-order-inputs-20261123.js").read_text(encoding="utf-8")
+                parser = source[source.index("const ff49NormalizeInput="):source.index("// Prevent older create callback")]
+                editor = unified[unified.index("function itemRows("):unified.index("window.ffLuxeOrderText=")]
+                cart_source = source[source.index(" function change(item,by){"):source.index(" function fillFromParsed(parsed){")]
+                fixture = """
+                (() => {
+                  document.body.replaceChildren();
+                  const field=document.createElement('textarea');field.id='newItems';
+                  const panel=document.createElement('div');panel.id='ffbCart';panel.style.width='100%';
+                  document.body.append(field,panel);
+                  const $=id=>document.getElementById(id);
+                  const catalog=[{id:'burger',name:'سماش برجر دبل أسمر',price:1500},
+                    {id:'chicken',name:'تشكن فرايز',price:1750}];
+                  let ff49Catalog=catalog,cart=new Map();
+                  const status=message=>{throw Error(message)};
+                """ + parser + editor + """
+                  window.ffLuxeOrderText={itemRows,appendText};
+                """ + cart_source + """
+                  field.value=['٣ برجر اسمر دبل بدون شطة | 1400','1 تشكن | 1750','ملاحظة: لا تتصل'].join('\\n');
+                  field.addEventListener('input',renderCart);
+                  renderCart();
+                  window.__mainCartFixture=()=>({
+                    items:ff49ParseItemsAndNotes(field.value).items,
+                    notes:ff49ParseItemsAndNotes(field.value).notes,
+                    quantity:cart.get('burger')||0
+                  });
+                })();
+                """
+                page.add_script_tag(content=fixture)
+                burger_row=page.locator(".ffb-v2-cartline").first
+                def cart_state(expected):
+                    state=page.evaluate("window.__mainCartFixture()")
+                    assert state["quantity"] == expected, state
+                    if expected:
+                        assert state["items"][0]["qty"] == expected, state
+                        assert state["items"][0]["price"] == 1400, state
+                        assert state["items"][0]["item_notes"] == "بدون شطة", state
+                        assert burger_row.locator(".ffb-v2-qty").inner_text() == str(expected)
+                        assert "بدون شطة" in burger_row.inner_text()
+                    assert state["items"][-1]["name"] == "تشكن فرايز", state
+                    assert state["items"][-1]["qty"] == 1, state
+                    assert state["notes"] == "لا تتصل", state
+                cart_state(3)
+                for label, expected in [("تقليل", 2), ("تقليل", 1), ("زيادة", 2), ("زيادة", 3)]:
+                    page.get_by_role("button", name=label+" سماش برجر دبل أسمر", exact=True).click()
+                    cart_state(expected)
+                for expected in (2,1,0):
+                    page.get_by_role("button", name="تقليل سماش برجر دبل أسمر", exact=True).click()
+                    cart_state(expected)
+                assert page.locator(".ffb-v2-cartline").count() == 1
+                print(f"PASS A02 main cart: {width}px, quantity rollback, notes, price, removal", flush=True)
                 context.close()
         finally:
             browser.close()
