@@ -2,6 +2,21 @@
 (()=>{
 'use strict';
 const targets={
+ "orders.field.branch":"#serviceOnly label[for=\"newBranch\"]",
+ "orders.field.phone":"#serviceOnly label[for=\"newPhone\"]",
+ "orders.field.area":"#serviceOnly label[for=\"newArea\"]",
+ "orders.field.fee":"#serviceOnly label[for=\"newFee\"]",
+ "orders.field.notes":"#serviceOnly label[for=\"newNotes\"]",
+ "orders.field.customer":"#serviceOnly label[for=\"newCustomerName\"]",
+ "orders.field.channel":"#serviceOnly label[for=\"newChannel\"]",
+ "orders.field.address":"#serviceOnly label[for=\"newFullAddress\"]",
+ "orders.field.items":"#serviceOnly label[for=\"newItems\"]",
+ "orders.field.quick":"#serviceOnly label[for=\"ffbQuickInput\"]",
+ "orders.title":"#serviceOnly .ff-neworder-workspace > h2",
+ "orders.analyzer.title":"#ffbTextPanel > h3",
+ "orders.cart.title":"#ffbMenuPanel .ffb-v2-cart > h3",
+ "cashier.title":"#cashierView .card > h2",
+ "driver.title":"#driverView .card .sectionbar > h2",
  'dashboard.title':'#ffx-hero-title','dashboard.new':'#ffx-hero-new','dashboard.reserve':'#ffx-hero-reserve','dashboard.late':'#ffx-hero-overdue',
  'reports.title':'#ff76Center .r-head h2','reports.subtitle':'#ff76Center .r-head p','reports.run':'#ff76Run',
  'reports.preview':'#ff76Preview','reports.download':'#ff76Download','reports.share':'#ff76Share','reports.csv':'#ff76CSV','reports.close':'#ff76Close',
@@ -22,9 +37,11 @@ const targets={
  'assembly.refresh':'#ffV12Refresh',
  'reservations.refresh':'#ff49ReservationsRefresh'
 };
+const hintTargets={"orders.hint.phone":"#newPhone","orders.hint.area":"#newArea","orders.hint.fee":"#newFee","orders.hint.notes":"#newNotes","orders.hint.menu":"#ffbMenuSearch","orders.hint.search":"#orderSearch"};
+const hintOriginals=new WeakMap();
 const templates=new Set(['notices.delayed','notices.reminder']);
 const guides={'orders.guidance':{parent:'#ffbTextPanel',original:'راجع الأصناف والكميات في المعاينة قبل الاعتماد.'},'reports.guidance':{parent:'#ff76Center .r-head',original:'اختر الفترة والأقسام المطلوبة، ثم اضغط إعداد التقرير.'}};
-const known=k=>Object.hasOwn(targets,k)||templates.has(k)||Object.hasOwn(guides,k);
+const known=k=>Object.hasOwn(targets,k)||Object.hasOwn(hintTargets,k)||templates.has(k)||Object.hasOwn(guides,k);
 function isGuide(k){return Object.hasOwn(guides,k)}
 function appendInline(node,line){
  for(const part of line.split(/(\*\*[^*\n]+\*\*)/g)){
@@ -47,7 +64,7 @@ function renderGuide(key,value){
  const body=actor()&&typeof value==='string'&&validText(value,key)?value:guide.original;
  if(node.dataset.source!==body){node.dataset.source=body;formatGuide(node,body)}
 }
-const screens={notices:'التنبيهات التشغيلية',dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
+const screens={cashier:'واجهة الكاشير',driver:'واجهة الموصل',notices:'التنبيهات التشغيلية',dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
 const roles={all:'كل الأدوار',manager:'المدير العام',supervisor:'المشرف',customer_service:'خدمة العملاء',cashier:'الكاشير',driver:'الموصل',assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر'};
 const originalTitles={manager:'إدارة ذكية، ورؤية أوضح لكل فرع',driver:'توصيلاتك... بوضوح وسرعة',cashier:'كل طلب في وقته الصحيح',customer_service:'خدمة سريعة، وتجربة عميل أجمل',supervisor:'متابعة دقيقة في كل لحظة'};
 const actor=()=>typeof user!=='undefined'&&user?.id&&typeof data!=='undefined'&&data?.role?user.id:'';
@@ -101,7 +118,15 @@ function write(key,value){
   item[2]=next;
  }
 }
-function render(){for(const key of Object.keys(targets))write(key,values.get(key)?.body??null);for(const key of Object.keys(guides))renderGuide(key,values.get(key)?.body??null)}
+function writeHint(key,body){
+ const node=document.querySelector(hintTargets[key]);if(!node)return;
+ const prior=hintOriginals.get(node),current=node.getAttribute('placeholder');
+ if(body==null){if(prior){if(current===prior.applied){if(prior.original===null)node.removeAttribute('placeholder');else node.setAttribute('placeholder',prior.original)}hintOriginals.delete(node)}return}
+ if(!validText(body,key))return;
+ const original=prior&&current===prior.applied?prior.original:current;
+ node.setAttribute('placeholder',body);hintOriginals.set(node,{original,applied:body});
+}
+function render(){for(const key of Object.keys(targets))write(key,values.get(key)?.body??null);for(const key of Object.keys(hintTargets))writeHint(key,values.get(key)?.body??null);for(const key of Object.keys(guides))renderGuide(key,values.get(key)?.body??null)}
 function reset(){
  serial++;session++;context='';last=0;values.clear();catalog=[];history=[];busy=false;
  if(dialog.open)dialog.close();for(const name of ['key','history','branch'])q(name).replaceChildren();
