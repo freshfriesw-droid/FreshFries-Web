@@ -1,0 +1,628 @@
+{
+  "reviewed_commit": "65c533405a680b6020fe8f3c5ce8f1eac234847a",
+  "scope": "P0 baseline inventory, not an operational acceptance test; route visibility and DB defaults are not proof of authorization; legacy/dynamic/internal controls require A06 review.",
+  "routes": [
+    {
+      "group": "الرئيسية",
+      "label": "لوحة التحكم",
+      "key": "home",
+      "handler": "navigate(home)",
+      "target": "window.scrollTo",
+      "visibility": "كل حساب له دور",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "mobile bar",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الرئيسية",
+      "label": "طلب جديد",
+      "key": "new",
+      "handler": "navigate(new)",
+      "target": "ffbStartNewOrder / ffbTextPanel / ff:open-order",
+      "visibility": "manager/customer_service + canAction(create_order)",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "quick action",
+        "mobile bar",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الرئيسية",
+      "label": "الطلبات والمتابعة",
+      "key": "orders",
+      "handler": "navigate(orders)",
+      "target": "staffOrders",
+      "visibility": "manager/customer_service/supervisor",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "quick action",
+        "mobile bar",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الرئيسية",
+      "label": "الطلبات المتأخرة",
+      "key": "late",
+      "handler": "navigate(late)",
+      "target": "ffx-overdue / updateOverdue",
+      "visibility": "ff40AlertsBtn غير مخفي",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "quick action",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "الموصلون",
+      "key": "drivers",
+      "handler": "navigate(drivers)",
+      "target": "driversRoster",
+      "visibility": "manager/customer_service/supervisor",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "quick action",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "بوابة الموصل",
+      "key": "driver",
+      "handler": "navigate(driver)",
+      "target": "driverView",
+      "visibility": "driver",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "quick action",
+        "mobile bar",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "شاشة الكاشير",
+      "key": "cashier",
+      "handler": "navigate(cashier)",
+      "target": "cashierView",
+      "visibility": "cashier",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "quick action",
+        "mobile bar",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "الحجوزات",
+      "key": "reservations",
+      "handler": "navigate(reservations)",
+      "target": "ff49ReservationsBtn",
+      "visibility": "originalButton present and not hidden: ff49ReservationsBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "نقل الموصل",
+      "key": "transfer",
+      "handler": "navigate(transfer)",
+      "target": "ff49TransferBtn",
+      "visibility": "originalButton present and not hidden: ff49TransferBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "توجيه مناطق الجامعات",
+      "key": "routes",
+      "handler": "navigate(routes)",
+      "target": "ff52RoutesBtn",
+      "visibility": "originalButton present and not hidden: ff52RoutesBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "الرسائل",
+      "key": "messages",
+      "handler": "navigate(messages)",
+      "target": "ff39InboxBtn",
+      "visibility": "originalButton present and not hidden: ff39InboxBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "quick action",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "الشكاوى والتظلمات",
+      "key": "cases",
+      "handler": "navigate(cases)",
+      "target": "ff41CasesBtn",
+      "visibility": "originalButton present and not hidden: ff41CasesBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التقارير",
+      "label": "مركز التقارير الإداري",
+      "key": "reports",
+      "handler": "navigate(reports)",
+      "target": "ff76OpenReports",
+      "visibility": "كل حساب له دور؛ نطاق الخادم مستقل",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "quick action",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التقارير",
+      "label": "الأرشيف",
+      "key": "archive",
+      "handler": "navigate(archive)",
+      "target": "ff51ArchiveBtn",
+      "visibility": "originalButton present and not hidden: ff51ArchiveBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التقارير",
+      "label": "التقييمات",
+      "key": "ratings",
+      "handler": "navigate(ratings)",
+      "target": "ff51RatingsBtn",
+      "visibility": "originalButton present and not hidden: ff51RatingsBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "المالية",
+      "label": "تسويات الموصلين",
+      "key": "settlements",
+      "handler": "navigate(settlements)",
+      "target": "ff42SettlementsBtn",
+      "visibility": "originalButton present and not hidden: ff42SettlementsBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "المالية",
+      "label": "🎟️ أكواد التعويض والجوائز",
+      "key": "rewards",
+      "handler": "navigate(rewards)",
+      "target": "ffRewardManager",
+      "visibility": "manager",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "quick action",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "المنيو والعروض",
+      "key": "catalog",
+      "handler": "navigate(catalog)",
+      "target": "ff51CatalogBtn",
+      "visibility": "originalButton present and not hidden: ff51CatalogBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "العملاء",
+      "key": "customers",
+      "handler": "navigate(customers)",
+      "target": "ff51CustomersBtn",
+      "visibility": "originalButton present and not hidden: ff51CustomersBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "تعديل الطلبات",
+      "key": "changes",
+      "handler": "navigate(changes)",
+      "target": "ff50ChangesBtn",
+      "visibility": "originalButton present and not hidden: ff50ChangesBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "الموظفون والصلاحيات",
+      "key": "team",
+      "handler": "navigate(team)",
+      "target": "staffAdminCard",
+      "visibility": "manager",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "إدارة نقطة التجميع",
+      "key": "assembly_admin",
+      "handler": "navigate(assembly_admin)",
+      "target": "staffAdminList",
+      "visibility": "manager",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "quick action",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "شاشة تحكم المدير العام",
+      "key": "studio",
+      "handler": "navigate(studio)",
+      "target": "ffDashboardStudio.open",
+      "visibility": "manager",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "mobile bar",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "إدارة البيانات والتصفير",
+      "key": "data_center",
+      "handler": "navigate(data_center)",
+      "target": "ff62DataCenter.showModal",
+      "visibility": "manager",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "أمان النظام",
+      "key": "security",
+      "handler": "navigate(security)",
+      "target": "ff43SecurityBtn",
+      "visibility": "originalButton present and not hidden: ff43SecurityBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "تدقيق سلامة البيانات",
+      "key": "integrity",
+      "handler": "navigate(integrity)",
+      "target": "ff44IntegrityBtn",
+      "visibility": "originalButton present and not hidden: ff44IntegrityBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "عزل الفروع",
+      "key": "access",
+      "handler": "navigate(access)",
+      "target": "ff45AccessBtn",
+      "visibility": "originalButton present and not hidden: ff45AccessBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "جاهزية الإطلاق",
+      "key": "readiness",
+      "handler": "navigate(readiness)",
+      "target": "ff46ReadinessBtn",
+      "visibility": "originalButton present and not hidden: ff46ReadinessBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "الاختبار الشامل",
+      "key": "qa",
+      "handler": "navigate(qa)",
+      "target": "ff47QABtn",
+      "visibility": "originalButton present and not hidden: ff47QABtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "تشخيص النسخة",
+      "key": "diagnostics",
+      "handler": "navigate(diagnostics)",
+      "target": "ff48DiagnosticsBtn",
+      "visibility": "originalButton present and not hidden: ff48DiagnosticsBtn",
+      "branch": "server scope not proven by visibility",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    }
+  ],
+  "default_permission_count": 28,
+  "default_permissions": [
+    {
+      "role": "cashier",
+      "permission_key": "assign_driver",
+      "allowed": false
+    },
+    {
+      "role": "cashier",
+      "permission_key": "cancel_order",
+      "allowed": false
+    },
+    {
+      "role": "cashier",
+      "permission_key": "create_order",
+      "allowed": false
+    },
+    {
+      "role": "cashier",
+      "permission_key": "edit_order",
+      "allowed": false
+    },
+    {
+      "role": "cashier",
+      "permission_key": "manage_branches",
+      "allowed": false
+    },
+    {
+      "role": "cashier",
+      "permission_key": "manage_drivers",
+      "allowed": false
+    },
+    {
+      "role": "cashier",
+      "permission_key": "view_reports",
+      "allowed": false
+    },
+    {
+      "role": "customer_service",
+      "permission_key": "assign_driver",
+      "allowed": true
+    },
+    {
+      "role": "customer_service",
+      "permission_key": "cancel_order",
+      "allowed": true
+    },
+    {
+      "role": "customer_service",
+      "permission_key": "create_order",
+      "allowed": true
+    },
+    {
+      "role": "customer_service",
+      "permission_key": "edit_order",
+      "allowed": true
+    },
+    {
+      "role": "customer_service",
+      "permission_key": "manage_branches",
+      "allowed": false
+    },
+    {
+      "role": "customer_service",
+      "permission_key": "manage_drivers",
+      "allowed": true
+    },
+    {
+      "role": "customer_service",
+      "permission_key": "view_reports",
+      "allowed": true
+    },
+    {
+      "role": "driver",
+      "permission_key": "assign_driver",
+      "allowed": false
+    },
+    {
+      "role": "driver",
+      "permission_key": "cancel_order",
+      "allowed": false
+    },
+    {
+      "role": "driver",
+      "permission_key": "create_order",
+      "allowed": false
+    },
+    {
+      "role": "driver",
+      "permission_key": "edit_order",
+      "allowed": false
+    },
+    {
+      "role": "driver",
+      "permission_key": "manage_branches",
+      "allowed": false
+    },
+    {
+      "role": "driver",
+      "permission_key": "manage_drivers",
+      "allowed": false
+    },
+    {
+      "role": "driver",
+      "permission_key": "view_reports",
+      "allowed": false
+    },
+    {
+      "role": "supervisor",
+      "permission_key": "assign_driver",
+      "allowed": false
+    },
+    {
+      "role": "supervisor",
+      "permission_key": "cancel_order",
+      "allowed": false
+    },
+    {
+      "role": "supervisor",
+      "permission_key": "create_order",
+      "allowed": false
+    },
+    {
+      "role": "supervisor",
+      "permission_key": "edit_order",
+      "allowed": false
+    },
+    {
+      "role": "supervisor",
+      "permission_key": "manage_branches",
+      "allowed": false
+    },
+    {
+      "role": "supervisor",
+      "permission_key": "manage_drivers",
+      "allowed": false
+    },
+    {
+      "role": "supervisor",
+      "permission_key": "view_reports",
+      "allowed": true
+    }
+  ],
+  "contrast_scope": "Declared pack background/foreground only; actual-screen contrast requires visual QA.",
+  "pack_contrast": [
+    {
+      "pack": "D01",
+      "bg": "#ffffff",
+      "ink": "#231e20",
+      "ratio": 16.43
+    },
+    {
+      "pack": "D02",
+      "bg": "#242127",
+      "ink": "#ffffff",
+      "ratio": 15.89
+    },
+    {
+      "pack": "D03",
+      "bg": "#302e31",
+      "ink": "#ffffff",
+      "ratio": 13.45
+    },
+    {
+      "pack": "D04",
+      "bg": "#ffffff",
+      "ink": "#211e20",
+      "ratio": 16.52
+    },
+    {
+      "pack": "D05",
+      "bg": "#353638",
+      "ink": "#ffffff",
+      "ratio": 12.1
+    },
+    {
+      "pack": "D06",
+      "bg": "#8d1630",
+      "ink": "#ffffff",
+      "ratio": 9.17
+    },
+    {
+      "pack": "D07",
+      "bg": "#faf2e6",
+      "ink": "#392d23",
+      "ratio": 12.02
+    },
+    {
+      "pack": "D08",
+      "bg": "#101010",
+      "ink": "#ffffff",
+      "ratio": 19.03
+    },
+    {
+      "pack": "D09",
+      "bg": "#fff6f6",
+      "ink": "#281b22",
+      "ratio": 15.56
+    },
+    {
+      "pack": "D10",
+      "bg": "#f1f3f3",
+      "ink": "#1a2125",
+      "ratio": 14.64
+    },
+    {
+      "pack": "D11",
+      "bg": "#f1f4fa",
+      "ink": "#18243a",
+      "ratio": 14.1
+    },
+    {
+      "pack": "D12",
+      "bg": "#fff5ec",
+      "ink": "#372820",
+      "ratio": 13.13
+    },
+    {
+      "pack": "D13",
+      "bg": "#192525",
+      "ink": "#f7ffff",
+      "ratio": 15.53
+    },
+    {
+      "pack": "D14",
+      "bg": "#fff6dc",
+      "ink": "#292113",
+      "ratio": 14.73
+    },
+    {
+      "pack": "D15",
+      "bg": "#ffffff",
+      "ink": "#101010",
+      "ratio": 19.03
+    },
+    {
+      "pack": "D16",
+      "bg": "#f8f0e8",
+      "ink": "#302322",
+      "ratio": 13.4
+    }
+  ],
+  "style_metrics": {
+    "inline_style_blocks": 30,
+    "inline_important": 159
+  }
+}
