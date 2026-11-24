@@ -889,6 +889,8 @@ function ffV12Reset(){
  document.body.classList.remove('ff-v12-assembly-mode');
  ffV12Get('ffV12AssemblyWorkspace')?.classList.add('hidden');
  ffV12Get('ffV12AssemblyOrders')?.replaceChildren();
+ if(ffV12Get('ffV12BranchTitle'))ffV12Get('ffV12BranchTitle').textContent='فرعك';
+ if(ffV12Get('ffV12AssemblySummary'))ffV12Get('ffV12AssemblySummary').textContent='';
  window.ffBurgerOnAssemblyStop?.();
 }
 async function ffV12Start(){
@@ -922,6 +924,9 @@ function ffV12SetOpened(open){
  button.setAttribute('aria-expanded',String(ffV12AssemblyOpened));
  if(ffV12AssemblyTimer){clearInterval(ffV12AssemblyTimer);ffV12AssemblyTimer=null;}
  ffV12Get('ffV12AssemblyOrders').replaceChildren();
+ ffV12Get('ffV12BranchTitle').textContent='فرعك';
+ ffV12Get('ffV12AssemblySummary').textContent='';
+ for(const id of ['ffV12CountAll','ffV12CountPrinted','ffV12CountPreparing','ffV12CountReady','ffV12FilteredCount'])if(ffV12Get(id))ffV12Get(id).textContent='0';
  if(!ffV12AssemblyOpened){
   window.ffBurgerOnAssemblyStop?.();
   if(typeof ff27Watch==='function')ff27Watch();
