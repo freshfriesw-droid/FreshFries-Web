@@ -118,8 +118,58 @@ def wait_for_open_drawer(page, width):
     }""", arg=width)
 
 
+def check_delivery_review(browser):
+    context = browser.new_context(viewport={"width": 390, "height": 800}, service_workers="block")
+    context.route("**/*", lambda route: route.continue_() if route.request.url.startswith(origin) else route.abort())
+    page = context.new_page()
+    page.goto(origin)
+    page.evaluate(r"""async () => {
+      const el=id=>document.getElementById(id);
+      const check=(ok,message)=>{if(!ok)throw Error(message)};
+      user={id:'qa-service'};
+      data={role:'customer_service',branches:[{id:'branch',code:'cairo'}],orders:[],drivers:[]};
+      ff49Catalog=[{id:'fixture',name:'تشكن فرايز',price:100}];
+      ff49LoadCatalog=async()=>{};
+      reload=async()=>{};
+      const submissions=[],predictions=[];
+      rpc=async(name,args)=>{
+        if(name==='ff_luxe_dispatch_preview'){predictions.push(args);return {state:'waiting'}}
+        if(name==='ff27_submit'){
+          submissions.push(args.p_input);
+          return {order_id:'fixture-order',order_number:1};
+        }
+        throw Error('Unexpected RPC: '+name);
+      };
+      const select=el('newBranch');
+      select.replaceChildren();
+      for(const code of ['cairo_first','cairo_second']){
+        const opt=new Option(code,'branch');opt.dataset.ffCashierDesk=code;select.add(opt);
+      }
+      el('newItems').value='٢ تشكن بدون شطّة\nالعميل: مُحمّد علي\nالعنوان: حيّ الجامعة\nرسوم التوصيل: ٠\nالموصل: أحمد';
+      el('newPhone').value='000000000';
+      el('newFullAddress').value='شارع الاختبار';
+      el('newChannel').value='whatsapp';
+      await el('createBtn').onclick();
+      check(submissions.length===0 && !el('ffbConfirmLayer').classList.contains('hidden'),'Preview must not save');
+      check(el('ffbReviewBody').textContent.includes('مُحمّد علي') && el('ffbReviewBody').textContent.includes('الموصل المطلوب: أحمد'),'Mismatch in contact or notes');
+      check(predictions[0].p_area==='حيّ الجامعة','Prediction must use reviewed area');
+      select.selectedIndex=1; // Same branch ID, different cashier desk.
+      await el('ffbConfirmSave').onclick();
+      check(submissions.length===0 && el('ffbConfirmLayer').classList.contains('hidden'),'Stale destination accepted');
+      await el('createBtn').onclick();
+      await el('ffbConfirmSave').onclick();
+      const saved=submissions[0];
+      check(submissions.length===1 && saved.p_desk==='cairo_second','Wrong destination or submission count');
+      check(saved.p_customer_name==='مُحمّد علي' && saved.p_items[0].item_notes==='بدون شطّة' && saved.p_delivery_fee===0,'Wrong reviewed payload');
+      check(saved.p_channel==='whatsapp' && saved.p_full_address==='شارع الاختبار','Missing channel or address');
+      check(el('newItems').value==='','Successful save did not clear draft');
+    }""")
+    context.close()
+
+
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(channel="chrome")
+    check_delivery_review(browser)
     for width in (320, 344, 360, 390, 430, 768, 850, 851, 1024, 1280, 1440):
         context = browser.new_context(viewport={"width": width, "height": 800},
                                       is_mobile=width <= 850, service_workers="block")

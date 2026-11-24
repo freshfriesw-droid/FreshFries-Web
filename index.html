@@ -870,7 +870,11 @@ body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{
  <div class="row"><div><label>هاتف العميل</label><input id="newPhone" inputmode="tel" placeholder="77xxxxxxx"></div><div><label>المنطقة</label><input id="newArea" placeholder="اسم المنطقة بالتحديد"></div></div>
  <div id="ff-fee-history" class="ff-fee-history hidden" role="status" aria-live="polite"></div>
  <div class="row"><div><label>رسوم التوصيل</label><input id="newFee" type="number" min="0" step="0.01" placeholder="اكتب الأجرة أو 0 للمجاني"></div><div><label>ملاحظات الطلب</label><input id="newNotes" placeholder="ملاحظة العميل"></div></div>
- <div id="ffbRequiredMore" hidden><input type="hidden" id="newCustomerName" value=""><select id="newChannel" hidden><option value="phone">اتصال هاتفي</option></select><input type="hidden" id="newFullAddress" value=""></div>
+ <div id="ffbRequiredMore">
+  <div class="row"><div><label for="newCustomerName">اسم العميل (اختياري)</label><input id="newCustomerName" maxlength="100"></div>
+  <div><label for="newChannel">مصدر الطلب</label><select id="newChannel"><option value="phone">اتصال هاتفي</option><option value="whatsapp">واتساب</option></select></div></div>
+  <label for="newFullAddress">العنوان التفصيلي (اختياري)</label><input id="newFullAddress" maxlength="500">
+ </div>
  <div class="ff-step-label">02 <span>أصناف الطلب</span></div><div class="ffb-order-tabs"><button type="button" class="primary" id="ffbTabMenu">🍟 المنيو التفاعلي</button><button type="button" class="outline" id="ffbTabText">🧠 الانتقال إلى المحلّل</button></div>
  <div id="ffbMenuPanel"><div class="ffb-menu-head"><input id="ffbMenuSearch" placeholder="🔎 ابحث عن صنف أو عرض" aria-label="بحث في المنيو"><button type="button" id="ffbMenuReload" class="outline">تحديث المنيو</button></div><div id="ffbCategories" class="ffb-categories" aria-label="أقسام المنيو"></div><div class="ffb-order-layout"><div id="ffbMenuGrid" class="ffb-menu-grid"></div><div class="ffb-v2-cart"><h3>🧾 سلة الطلب</h3><div id="ffbCart"></div><p class="muted">اضغط الصنف لزيادة الكمية، واستخدم + أو − للتعديل. رفع الصور المركزي يعمل بعد تطبيق ملف ترقية الوسائط.</p></div></div></div>
  <div class="ff-step-label">03 <span>المراجعة والاعتماد</span></div><label for="newItems">الأصناف النهائية (يمكن تعديلها يدويًا)</label><textarea id="newItems" rows="4" placeholder="1 تشكن&#10;2 استربس&#10;ملاحظة بدون شطة"></textarea><div id="ffbParseStatus" class="muted" role="status"></div>
@@ -2779,22 +2783,30 @@ function ff49ParseItemsAndNotes(value, options={}){
 }
 
 // Prevent older create callback from firing: override the pre-existing property handler.
-$('createBtn').onclick=async()=>{
+function ff49DeliveryInput(parsed){
+ return {
+  p_branch:$('newBranch').value,p_desk:window.ffLuxeChosenCashierDesk?.()||null,
+  p_phone:(parsed.meta.phone||$('newPhone').value).trim(),p_area:(parsed.meta.area||$('newArea').value).trim(),
+  p_items:parsed.items,p_delivery_fee:window.ffRequiredDeliveryFee(parsed.meta.fee??$('newFee').value),
+  p_notes:[$('newNotes').value.trim(),parsed.notes,parsed.meta.driver?'الموصل المطلوب: '+parsed.meta.driver:''].filter(Boolean).join(' | '),
+  p_customer_name:(parsed.meta.customer||$('newCustomerName').value).trim(),p_channel:$('newChannel').value,
+  p_full_address:$('newFullAddress').value.trim()
+ };
+}
+async function ff49SaveDelivery(input){
  const b=$('createBtn');b.disabled=true;
  try{
-  await ff49LoadCatalog();const parsed=ff49ParseItemsAndNotes($('newItems').value);
-  const notes=[$('newNotes').value.trim(),parsed.notes,parsed.meta.driver?'الموصل المطلوب: '+parsed.meta.driver:''].filter(Boolean).join(' | ');
-  const x=await ff27Submit('delivery',{
-   p_branch:$('newBranch').value,p_phone:(parsed.meta.phone||$('newPhone').value).trim(),p_area:(parsed.meta.area||$('newArea').value).trim(),
-   p_items:parsed.items,p_delivery_fee:window.ffRequiredDeliveryFee(parsed.meta.fee??$('newFee').value),p_notes:notes,
-   p_customer_name:(parsed.meta.customer||$('newCustomerName').value).trim(),p_channel:$('newChannel').value,
-   p_full_address:$('newFullAddress').value.trim()
-  });
-  if(parsed.items.some(i=>i.item_notes)){try{await rpc('ff70_set_item_notes',{p_order:x.order_id,p_items:parsed.items})}catch(noteError){toast('تنبيه: الطلب محفوظ، لكن ملاحظات الأصناف لم تُحفظ: '+noteError.message);return}}
+  const x=await ff27Submit('delivery',input);
   toast('تم اعتماد الطلب #'+x.order_number+' — '+(x.dispatch?.state==='assigned_cumulative'?'إسناد تراكمي مباشر':x.dispatch?.state==='offered'?'أُرسل عرض للموصل وفق المهلة المحددة':'بانتظار موصل مناسب'));
   window.dispatchEvent(new CustomEvent('ff:order-created',{detail:{orderNumber:x.order_number}}));
   await reload(true);
  }catch(e){toast('تعذر إنشاء الطلب: '+e.message)}finally{b.disabled=false}
+};
+$('createBtn').onclick=async()=>{
+ try{
+  await ff49LoadCatalog();
+  await ff49SaveDelivery(ff49DeliveryInput(ff49ParseItemsAndNotes($('newItems').value)));
+ }catch(e){toast('تعذر إنشاء الطلب: '+e.message)}
 };
 const ff49OldDraw=draw;
 draw=function(){ff49OldDraw();
@@ -3839,7 +3851,7 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
      const el=$(id);if(el)el.value='';
    }
    const channel=$('newChannel');if(channel)channel.value='phone';
-   cart.clear();autoNotes='';previewReady=false;
+   cart.clear();autoNotes='';previewReady=false;reviewSequence++;reviewedInput=null;
    $('ffbQuickReview').classList.add('hidden');$('ffbQuickReview').replaceChildren();
    $('ffbParseStatus').textContent='';
    const history=$('ff-fee-history');if(history){history.classList.add('hidden');history.textContent='';}
@@ -3929,30 +3941,56 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
  const oldFill=fillBranchSelects;fillBranchSelects=function(){oldFill();if(!user||!data?.branches?.length)return;const k='ff-luxe-branch:'+user.id;let saved='';try{saved=localStorage.getItem(k)||''}catch{}const sel=$('newBranch');if(saved&&data.branches.some(b=>b.id===saved)&&sel.value!==saved)sel.value=saved};
  $('newBranch').addEventListener('change',()=>{if(!user)return;try{localStorage.setItem('ff-luxe-branch:'+user.id,$('newBranch').value)}catch{}});
  // Two-stage confirmation with a read-only preview. The existing server-checked RPC remains untouched.
- const btn=$('createBtn'),original=btn.onclick;
+ const btn=$('createBtn');
+ let reviewedInput=null,reviewSequence=0,reviewKey='';
+ function draftKey(){
+  const fields=['newBranch','newPhone','newArea','newFee','newCustomerName','newNotes','newFullAddress','newItems','newChannel'];
+  return JSON.stringify([user?.id,data?.role,window.ffLuxeChosenCashierDesk?.(),...fields.map(id=>$(id).value)]);
+ }
  const predictor=document.createElement('div');predictor.id='ffLuxeDriverCandidate';predictor.className='ff-luxe-candidate';predictor.setAttribute('role','status');predictor.textContent='🛵 الموصل المتوقع: يتحقق عند المراجعة';btn.parentElement?.insertBefore(predictor,btn);
  const layer=document.createElement('div');layer.id='ffbConfirmLayer';layer.className='ffb-v2-confirm hidden';layer.innerHTML='<div class="ffb-v2-dialog" role="dialog" aria-modal="true" aria-label="مراجعة الطلب"><div class="ffb-v2-dialoghead"><h3>مراجعة الطلب قبل الإرسال</h3><button id="ffbCloseReview" type="button" class="outline">إغلاق</button></div><div id="ffbReviewBody"></div><div class="actions"><button id="ffbConfirmSave" class="primary" type="button">تأكيد إنشاء الطلب</button><button id="ffbCancelReview" type="button" class="outline">عودة للتعديل</button></div></div>';document.body.append(layer);
- function closeReview(){layer.classList.add('hidden');previewReady=false;btn.focus()}
+ function closeReview(){reviewSequence++;reviewedInput=null;layer.classList.add('hidden');previewReady=false;btn.focus()}
  $('ffbCloseReview').onclick=closeReview;$('ffbCancelReview').onclick=closeReview;
  layer.addEventListener('click',e=>{if(e.target===layer)closeReview()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!layer.classList.contains('hidden'))closeReview()});
- async function openReview(){try{
- const box=$('ffLuxeDriverCandidate');if(box)box.textContent='🛵 جارٍ فحص الموصل المتوقع...';
- const branch=$('newBranch')?.value,areaPreview=$('newArea')?.value||'';
- if(branch){try{const p=await rpc('ff_luxe_dispatch_preview',{p_branch:branch,p_area:areaPreview});const msg=p?.state==='candidate'?'🛵 الموصل المتوقع: '+p.driver_name+' (مرشح مبدئي غير مضمون)':p?.state==='waiting'?'🛵 الموصل المتوقع: لا يوجد مرشح متاح الآن؛ الطلب يدخل الانتظار':'🛵 الموصل المتوقع: لا يمكن تحديده';if(box)box.textContent=msg;}catch(e){if(box)box.textContent='🛵 تعذر توقع الموصل؛ سيحدد النظام الموصل عند الإسناد'}}
- await ff49LoadCatalog();const p=ff49ParseItemsAndNotes($('newItems').value);if(p.meta.kind==='reservation')throw Error('الحجز يجب أن يُنشأ في شاشة حجوزات الكاشير');
- const phone=String(p.meta.phone||$('newPhone').value).trim(),area=String(p.meta.area||$('newArea').value).trim(),fee=String(p.meta.fee??$('newFee').value).trim(),name=$('newCustomerName').value.trim(),address=$('newFullAddress').value.trim();
- if(!phone){$('newPhone').focus();throw Error('هاتف العميل مطلوب')};if(!area){$('newArea').focus();throw Error('المنطقة مطلوبة')};if(fee===''){ $('newFee').focus();throw Error('أدخل رسوم التوصيل، أو اكتب 0 عند التوصيل المجاني')};if(!Number.isFinite(Number(fee))||Number(fee)<0)throw Error('رسوم التوصيل غير صحيحة');
- 
- window.ffRequiredDeliveryFee(fee);
- let total=p.items.reduce((a,x)=>a+Number(x.price)*x.qty,0);const notes=[$('newNotes').value,p.notes].filter(Boolean).join(' | ');
+ async function openReview(){
+ const sequence=++reviewSequence,key=draftKey();
+ const current=()=>reviewSequence===sequence&&key===draftKey();
+ try{
+  await ff49LoadCatalog();if(!current())return;
+  const p=ff49ParseItemsAndNotes($('newItems').value);
+  if(p.meta.kind==='reservation')throw Error('الحجز يجب أن يُنشأ في شاشة حجوزات الكاشير');
+  const input=ff49DeliveryInput(p);
+  const {p_branch:branch,p_phone:phone,p_area:area,p_delivery_fee:fee,p_customer_name:name,p_full_address:address,p_notes:notes}=input;
+  if(!phone){$('newPhone').focus();throw Error('هاتف العميل مطلوب')}
+  if(!area){$('newArea').focus();throw Error('المنطقة مطلوبة')}
+  const box=$('ffLuxeDriverCandidate');let candidate='🛵 الموصل المتوقع: لا يمكن تحديده';
+  if(branch){
+   box.textContent='🛵 جارٍ فحص الموصل المتوقع...';
+   try{
+    const prediction=await rpc('ff_luxe_dispatch_preview',{p_branch:branch,p_area:area});
+    if(prediction?.state==='candidate')candidate='🛵 الموصل المتوقع: '+prediction.driver_name+' (مرشح مبدئي غير مضمون)';
+    else if(prediction?.state==='waiting')candidate='🛵 الموصل المتوقع: لا يوجد مرشح متاح الآن؛ الطلب يدخل الانتظار';
+   }catch{candidate='🛵 تعذر توقع الموصل؛ سيحدد النظام الموصل عند الإسناد'}
+  }
+  if(!current())return;
+  box.textContent=candidate;
+  const total=input.p_items.reduce((sum,item)=>sum+Number(item.price)*item.qty,0);
  $('ffbReviewBody').innerHTML='<div class="ffb-v2-reviewline"><b>الفرع</b><span>'+esc($('newBranch').selectedOptions[0]?.textContent||'')+'</span></div><div class="ffb-v2-reviewline"><b>العميل</b><span>'+esc(name)+' • '+esc(phone)+'</span></div><div class="ffb-v2-reviewline"><b>المنطقة والعنوان</b><span>'+esc(area)+' — '+esc(address)+'</span></div><h4>الأصناف</h4>'+p.items.map(x=>'<div class="ffb-v2-reviewline"><span>'+x.qty+' × '+esc(x.name)+(x.item_notes?'<small class="ff75-item-note">ملاحظة الصنف: '+esc(x.item_notes)+'</small>':'')+'</span><b>'+(x.qty*Number(x.price)).toLocaleString('ar-YE')+' ريال</b></div>').join('')+'<div class="ffb-v2-reviewline"><b>رسوم التوصيل</b><span>'+Number(fee).toLocaleString('ar-YE')+' ريال</span></div><div class="ffb-v2-reviewline"><b>الإجمالي المتوقع</b><strong>'+(total+Number(fee)).toLocaleString('ar-YE')+' ريال</strong></div>'+(notes?'<div class="ffb-v2-reviewnotes">الملاحظات: '+esc(notes)+'</div>':'')+(p.warnings.length?'<p class="warning">'+esc(p.warnings.join(' | '))+'</p>':'')+'<p class="muted">بعد الاعتماد سيتم توزيع الطلب وفق قواعد الخادم والصلاحيات؛ هذه المعاينة ليست فاتورة مالية.</p>';
  $('ffbReviewBody').insertAdjacentHTML('beforeend','<p class="ff-luxe-candidate">'+esc($('ffLuxeDriverCandidate')?.textContent||'')+'</p>');
- previewReady=true;layer.classList.remove('hidden');$('ffbConfirmSave').focus();status('المعاينة جاهزة. راجع البيانات ثم أكّد.');
- }catch(e){status('تعذر عرض المعاينة: '+e.message,true)}}
- btn.textContent='مراجعة الطلب ثم اعتماده';btn.onclick=async function(){if(!previewReady){await openReview();return}previewReady=false;layer.classList.add('hidden');await original.call(this);if(!$('newItems').value.trim()){cart.clear();renderCart();render();autoNotes='';$('ffbQuickInput').value='';$('ffbQuickReview').classList.add('hidden')} };
- $('ffbConfirmSave').onclick=()=>{if(!previewReady)return;btn.click()};
+ reviewKey=key;reviewedInput=input;previewReady=true;layer.classList.remove('hidden');$('ffbConfirmSave').focus();status('المعاينة جاهزة. راجع البيانات ثم أكّد.');
+ }catch(e){if(current())status('تعذر عرض المعاينة: '+e.message,true)}}
+ btn.textContent='مراجعة الطلب ثم اعتماده';btn.onclick=openReview;
+ $('ffbConfirmSave').onclick=async()=>{
+  if(!previewReady||!reviewedInput||reviewKey!==draftKey()){
+   closeReview();status('تغيرت بيانات الطلب؛ راجع الطلب مجددًا قبل التأكيد.',true);return;
+  }
+  const input=reviewedInput;
+  closeReview();
+  await ff49SaveDelivery(input);
+  if(!$('newItems').value.trim()){cart.clear();renderCart();render();autoNotes='';$('ffbQuickInput').value='';$('ffbQuickReview').classList.add('hidden')}
+ };
  // Avoid reloading catalog repeatedly during a draft. A live forced refresh remains available.
- const originalReset=resetUI;resetUI=function(){originalReset();cart.clear();catalog=[];loaded=false;category='الكل';autoNotes='';previewReady=false;layer.classList.add('hidden');renderCart()};
+ const originalReset=resetUI;resetUI=function(){originalReset();reviewSequence++;reviewedInput=null;cart.clear();catalog=[];loaded=false;category='الكل';autoNotes='';previewReady=false;layer.classList.add('hidden');renderCart()};
  renderCart();
  // No background data mutation: loading is tied to entering the order screen.
  const triggerNew=document.getElementById('ffx-hero-new');triggerNew?.addEventListener('click',()=>void load());
