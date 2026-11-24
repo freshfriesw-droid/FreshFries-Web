@@ -22,7 +22,9 @@ const targets={
  'assembly.refresh':'#ffV12Refresh',
  'reservations.refresh':'#ff49ReservationsRefresh'
 };
-const screens={dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
+const templates=new Set(['notices.delayed','notices.reminder']);
+const known=k=>Object.hasOwn(targets,k)||templates.has(k);
+const screens={notices:'التنبيهات التشغيلية',dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
 const roles={all:'كل الأدوار',manager:'المدير العام',supervisor:'المشرف',customer_service:'خدمة العملاء',cashier:'الكاشير',driver:'الموصل',assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر'};
 const originalTitles={manager:'إدارة ذكية، ورؤية أوضح لكل فرع',driver:'توصيلاتك... بوضوح وسرعة',cashier:'كل طلب في وقته الصحيح',customer_service:'خدمة سريعة، وتجربة عميل أجمل',supervisor:'متابعة دقيقة في كل لحظة'};
 const actor=()=>typeof user!=='undefined'&&user?.id&&typeof data!=='undefined'&&data?.role?user.id:'';
@@ -36,6 +38,7 @@ dialog.innerHTML='<div class="sectionbar"><h2 id="ffContentHeading">استودي
  '<label>بحث في النصوص<input data-content-search type="search" placeholder="اسم الشاشة أو العنصر"></label>'+
  '<label>العنصر<select data-content-key></select></label><label>الدور<select data-content-role></select></label><label>الفرع<select data-content-branch></select></label>'+
  '<label>النص الجديد<textarea data-content-body maxlength="180" rows="3"></textarea></label>'+
+ '<p data-content-vars hidden>المتغير المتاح: {order_number} — المعاينة تستخدم رقمًا تجريبيًا فقط.</p>'+
  '<section class="ff-content-preview"><h3>معاينة قبل / بعد</h3><p>الأصل: <b data-content-original></b></p><p>المسودة: <b data-content-preview></b></p></section>'+
  '<div class="actions"><button type="button" data-content-save>حفظ مسودة</button><button type="button" data-content-restore>استعادة الأصل كمسودة</button></div>'+
  '<label>الإصدارات<select data-content-history></select></label><p data-content-audit></p>'+
@@ -91,14 +94,15 @@ async function sync(force=false){
  try{
   const rows=await rpc('ff_content_effective',{p_branch:b});
   if(request!==serial||actor()!==who||branch()!==b||data?.role!==role)return;
-  values=new Map((rows||[]).filter(r=>Object.hasOwn(targets,r.content_key)).map(r=>[r.content_key,r]));render();
+  values=new Map((rows||[]).filter(r=>known(r.content_key)).map(r=>[r.content_key,r]));render();
  }catch{/* Old database or network loss: keep confirmed values within the same account/scope only. */}
 }
-function validText(s){return !!s.trim()&&s.length<=180&&!/[<>{}\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/u.test(s)&&!/(https?:\/\/|www\.|javascript:|data:|vbscript:|\/\/)/i.test(s)}
+function validText(s,key){const clean=templates.has(key)?s.replaceAll('{order_number}',''):s;return !!s.trim()&&s.length<=180&&!/[<>{}\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/u.test(clean)&&!/(https?:\/\/|www\.|javascript:|data:|vbscript:|\/\/)/i.test(s)}
 function preview(){
  const key=q('key').value,original=originalText(key,q('role').value);
+ q('vars').hidden=!templates.has(key);
  q('original').textContent=original;
- q('preview').textContent=q('body').value||'—';
+ q('preview').textContent=(templates.has(key)?q('body').value.replaceAll('{order_number}','990001 (تجريبي)'):q('body').value)||'—';
 }
 function audit(){
  const row=selected();
@@ -139,7 +143,7 @@ async function open(){
  await run(async(token,who)=>{
   const rows=await rpc('ff_content_catalog_list');
   if(token!==session||who!==actor()||!manager())return;
-  catalog=(rows||[]).filter(r=>Object.hasOwn(targets,r.key));setKeys();preview();await getHistory(token);
+  catalog=(rows||[]).filter(r=>known(r.key));setKeys();preview();await getHistory(token);
  });
 }
 function selectKey(){q('body').value='';preview();void run(token=>getHistory(token))}
@@ -148,7 +152,7 @@ q('key').onchange=selectKey;q('role').onchange=preview;q('body').oninput=preview
 q('load').onclick=()=>{const row=selected();if(!row)return;q('role').value=row.role_scope;q('branch').value=row.branch_id||'';q('body').value=row.body??originalText(row.content_key,row.role_scope);preview()};
 async function draft(restore){
  const key=q('key').value,role=q('role').value,b=q('branch').value||null,body=restore?null:q('body').value.trim();
- if(!key||(!restore&&!validText(body))){q('status').textContent='أدخل نصاً عادياً آمناً دون روابط أو رموز برمجية';return}
+ if(!key||(!restore&&!validText(body,key))){q('status').textContent='أدخل نصاً عادياً آمناً دون روابط أو رموز برمجية';return}
  await run(async(token,who)=>{
   const id=await rpc('ff_content_create_draft',{p_key:key,p_role:role,p_branch:b,p_body:body});
   if(token!==session||who!==actor())return;
@@ -171,5 +175,15 @@ if(studio){
  button.onclick=()=>{if(!manager())return;document.getElementById('ffStudio').close();void open()};studio.prepend(button);
 }
 window.addEventListener('ff-luxe-session-reset',reset);
-window.ffContentStudio={sync,open};
+function notice(key,fallback,number,orderBranch){
+ if(!templates.has(key)||!actor()||context!==[actor(),data.role,branch()].join('|'))return fallback;
+ // Only a number from the already-authorized alert response may be substituted.
+ // A branch-selected template must not be used for a notice from another branch.
+ if(branch()&&orderBranch!==branch())return fallback;
+ const body=values.get(key)?.body;
+ if(typeof body!=='string'||!validText(body,key))return fallback;
+ const safe=/^\d{1,20}$/.test(String(number??''))?String(number):'—';
+ return body.replaceAll('{order_number}',safe);
+}
+window.ffContentStudio={sync,open,notice};
 })();
