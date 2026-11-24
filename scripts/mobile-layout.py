@@ -248,7 +248,7 @@ with sync_playwright() as playwright:
                 # FIX-03: administrative links live in a six-group, keyboard-accessible
                 # accordion. Verify opening, not just existence of a hidden DOM node.
                 nav_groups = page.locator("#ffx-nav [data-ffx-group-toggle]")
-                nav_groups.first.wait_for(state="attached", timeout=20000)
+                page.locator("#ffx-nav [data-ffx-group-toggle=system]").wait_for(state="attached", timeout=20000)
                 assert nav_groups.count() == 6, nav_groups.count()
                 system_group = page.locator("#ffx-nav [data-ffx-group-toggle=system]")
                 assert system_group.get_attribute("aria-expanded") == "false"
