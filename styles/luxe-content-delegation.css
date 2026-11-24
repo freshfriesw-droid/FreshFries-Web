@@ -1,0 +1,9 @@
+#ff82Open[hidden],#ff82Delegation [hidden]{display:none!important}
+#ff82Delegation{width:min(680px,calc(100vw - 24px));max-height:88dvh;overflow:auto;box-sizing:border-box;background:var(--ffx-surface,#fff);color:var(--ffx-ink,#181818);border:1px solid #888;border-radius:16px;padding:16px}
+#ff82Delegation::backdrop{background:#14111899}
+#ff82Delegation label{display:grid;gap:4px;margin-block:10px;min-width:0}
+#ff82Delegation input:not([type=checkbox]),#ff82Delegation select,#ff82Delegation textarea{width:100%;min-width:0;box-sizing:border-box;min-height:44px}
+#ff82Delegation [data-d-caps]{display:flex;flex-wrap:wrap;gap:8px}
+#ff82Delegation [data-d-caps] label{display:flex;align-items:center;gap:6px;min-height:44px}
+#ff82Delegation button{min-height:44px;max-width:100%;white-space:normal}
+#ff82Delegation p{overflow-wrap:anywhere}
