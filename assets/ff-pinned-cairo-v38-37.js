@@ -8,10 +8,14 @@ var css=document.createElement('style');css.textContent='#ffPinnedCairo{margin:1
 var panel=document.createElement('section');panel.id='ffPinnedCairo';panel.hidden=true;panel.innerHTML='<strong>🛵 الموصل المثبت — القاهرة</strong><small id="ffpcState">لم يتم تحميل بيانات التثبيت</small><small id="ffpcCapacity" role="status"></small><button type="button" id="ffpcDirect" class="ffpc-primary">مراجعة وإسناد للموصل المثبت</button><details style="margin-top:10px"><summary style="cursor:pointer;font-weight:bold">⚙️ تثبيت الموصل أو تغييره</summary><p style="font-size:12px">موصل خاص بأجر يومي، خارج الدور التلقائي، إسناد فوري دون انتظار قبول، وأجرة التوصيل صفر.</p><div class="ffpc-row"><select id="ffpcDriver"><option value="">بدون موصل</option></select><button id="ffpcSave" type="button">حفظ التثبيت</button><button id="ffpcRefresh" type="button">تحديث</button></div><label id="ffpcCapEdit" hidden>سقف الطلبات والعروض الجارية<input id="ffpcLimit" type="number" min="1" step="1"><button type="button" id="ffpcSetLimit">حفظ السقف</button></label></details>';
 (create.closest('.actions')||create.parentElement).before(panel);
 var overlay=document.createElement('div');overlay.id='ffPinnedPreview';overlay.hidden=true;overlay.innerHTML='<article role="dialog" aria-modal="true" aria-labelledby="ffpcTitle"><h3 id="ffpcTitle">معاينة الإسناد المباشر</h3><div id="ffpcSummary"></div><label id="ffpcReasonLabel" hidden>سبب التجاوز الاستثنائي<input id="ffpcOverrideReason" maxlength="300"></label><div class="ffpc-row"><button type="button" id="ffpcConfirm" class="ffpc-primary">تأكيد وإنشاء الطلب</button><button type="button" id="ffpcCancel">إلغاء</button></div></article>';document.body.appendChild(overlay);
-var capacity=null,epoch=0,pin=null,loading=false,sending=false,lastLoad=0;
+var capacity=null,epoch=0,pin=null,loading=false,sending=false,previewing=false,savingPin=false,lastLoad=0,previewSequence=0;
+const draftFields=['newPhone','newArea','newCustomerName','newFullAddress','newNotes','newItems'];
+function draftSnapshot(){return JSON.stringify([branch.value,window.ffLuxeChosenCashierDesk?.()||'cairo_first',...draftFields.map(id=>$(id)?.value??'')])}
+function dismissPreview(){previewSequence++;previewing=false;overlay.hidden=true;$('ffpcConfirm').onclick=null;$('ffpcSummary').replaceChildren();$('ffpcOverrideReason').value='';refreshUI()}
+function sameSession(request,actor){return request===epoch&&typeof user!=='undefined'&&user?.id===actor}
 function cairo(){return branch.selectedOptions[0]?.textContent.includes('القاهرة')||Boolean(pin&&branch.value===pin.branch_id)}
 function msg(m){$('ffpcState').textContent=m}
-function refreshUI(){panel.hidden=!cairo();$('ffpcDirect').disabled=!pin?.driver_id||sending||loading}
+function refreshUI(){panel.hidden=!cairo();$('ffpcDirect').disabled=!pin?.driver_id||sending||loading||previewing||savingPin}
 function showCapacity(info){
  capacity=info;
  $('ffpcCapacity').textContent=info?'الطلبات والعروض الجارية: '+info.active+' من '+info.capacity+(info.active>=info.capacity?' — اكتمل السقف':''):'';
@@ -19,7 +23,7 @@ function showCapacity(info){
  if(info&&document.activeElement!==$('ffpcLimit'))$('ffpcLimit').value=String(info.capacity);
 }
 window.addEventListener('ff-luxe-session-reset',()=>{
- epoch++;pin=null;loading=false;sending=false;lastLoad=0;overlay.hidden=true;
+ epoch++;pin=null;loading=false;sending=false;savingPin=false;lastLoad=0;dismissPreview();$('ffpcConfirm').disabled=false;$('ffpcSave').disabled=false;$('ffpcSetLimit').disabled=false;
  $('ffpcDriver').replaceChildren();$('ffpcSummary').replaceChildren();$('ffpcOverrideReason').value='';
  msg('لم يتم تحميل بيانات التثبيت');showCapacity(null);refreshUI();
 });
@@ -46,26 +50,53 @@ $('ffpcSetLimit').onclick=async function(){
  }catch(e){if(request===epoch)msg(e.message)}finally{this.disabled=false}
 };
 $('ffpcRefresh').onclick=function(){void load(true)};
-$('ffpcSave').onclick=async function(){var btn=this;btn.disabled=true;try{pin=await rpc('ff62_set_pinned',{p_driver:$('ffpcDriver').value||null});lastLoad=0;await load(true)}catch(e){msg('فشل تثبيت الموصل: '+e.message)}finally{btn.disabled=false}};
-branch.addEventListener('change',function(){refreshUI();if(cairo())void load(true)});
+$('ffpcSave').onclick=async function(){
+ if(savingPin||sending||typeof user==='undefined'||!user)return;
+ const btn=this,request=epoch,actor=user.id;
+ dismissPreview();savingPin=true;btn.disabled=true;refreshUI();
+ try{const updated=await rpc('ff62_set_pinned',{p_driver:$('ffpcDriver').value||null});if(!sameSession(request,actor))return;pin=updated;lastLoad=0;await load(true)}
+ catch(e){if(sameSession(request,actor))msg('فشل تثبيت الموصل: '+e.message)}
+ finally{if(sameSession(request,actor)){savingPin=false;btn.disabled=false;refreshUI()}}
+};
+branch.addEventListener('change',function(){if(!sending)dismissPreview();refreshUI();if(cairo())void load(true)});
 window.addEventListener('focus',function(){if(cairo())void load(true)});
-$('ffpcCancel').onclick=function(){if(!sending)overlay.hidden=true};
-overlay.addEventListener('click',function(e){if(e.target===overlay&&!sending)overlay.hidden=true});
-$('ffpcDirect').onclick=async function(){try{if(!cairo()||!pin?.driver_id)throw Error('اختر موصلًا مثبتًا أولًا');const selectedDriver=pin.driver_id,selectedBranch=branch.value,selectedDesk=window.ffLuxeChosenCashierDesk?.()||'cairo_first',request=epoch;
+$('ffpcCancel').onclick=function(){if(!sending)dismissPreview()};
+overlay.addEventListener('click',function(e){if(e.target===overlay&&!sending)dismissPreview()});
+document.addEventListener('input',e=>{if(draftFields.includes(e.target?.id)&&!sending&&(!overlay.hidden||previewing))dismissPreview()},true);
+$('ffpcDirect').onclick=async function(){
+ if(previewing||sending||savingPin||typeof user==='undefined'||!user)return;
+ const request=epoch,actor=user.id,sequence=++previewSequence,snapshot=draftSnapshot();
+ previewing=true;refreshUI();
+ const validPreview=()=>sameSession(request,actor)&&sequence===previewSequence&&draftSnapshot()===snapshot;
+ try{if(!cairo()||!pin?.driver_id)throw Error('اختر موصلًا مثبتًا أولًا');const selectedDriver=pin.driver_id,selectedBranch=branch.value,selectedDesk=window.ffLuxeChosenCashierDesk?.()||'cairo_first';
  const info=await rpc('ff_special_courier_status',{p_driver:selectedDriver});
- if(request!==epoch||pin?.driver_id!==selectedDriver||branch.value!==selectedBranch)return;
+ if(!validPreview()||pin?.driver_id!==selectedDriver||branch.value!==selectedBranch)return;
  showCapacity(info);
  const full=Boolean(info&&info.active>=info.capacity);
  if(full&&!info.can_manage)throw Error('اكتمل سقف الموصل الخاص. يلزم اعتماد المدير للتجاوز.');
  $('ffpcReasonLabel').hidden=!full;$('ffpcOverrideReason').value='';
- await ff49LoadCatalog();if(request!==epoch||pin?.driver_id!==selectedDriver||branch.value!==selectedBranch)return;
+ await ff49LoadCatalog();if(!validPreview()||pin?.driver_id!==selectedDriver||branch.value!==selectedBranch)return;
  var parsed=ff49ParseItemsAndNotes($('newItems').value);if(parsed.errors?.length)throw Error(parsed.errors.join('، '));if(parsed.warnings?.length)throw Error('راجع السطور غير الواضحة في الطلب أولًا');if(!parsed.items?.length)throw Error('لا توجد أصناف صالحة');var phone=String(parsed.meta?.phone||$('newPhone')?.value||'').trim(),area=String(parsed.meta?.area||$('newArea')?.value||'').trim();if(!phone||!area)throw Error('رقم الهاتف والمنطقة مطلوبان');var notes=[$('newNotes')?.value,Array.isArray(parsed.notes)?parsed.notes.join('؛ '):parsed.notes,$('newCustomerName')?.value?'اسم العميل: '+$('newCustomerName').value:'',$('newFullAddress')?.value?'العنوان: '+$('newFullAddress').value:''].filter(Boolean).join(' | ');var sum=parsed.items.reduce(function(v,i){return v+Number(i.price)*Number(i.qty)},0);$('ffpcSummary').innerHTML='<p><b>الموصل:</b> '+safe(pin.driver_name)+' — <b>أجرة التوصيل:</b> 0 ريال</p><p><b>الهاتف:</b> '+safe(phone)+' — <b>المنطقة:</b> '+safe(area)+'</p>'+parsed.items.map(function(i){return '<p>'+safe(i.name)+' × '+safe(i.qty)+' — '+safe(Number(i.price)*Number(i.qty))+' ريال</p>'}).join('')+'<p><b>الإجمالي: '+safe(sum)+' ريال</b></p><p>'+safe(notes)+'</p>';overlay.hidden=false;
-$('ffpcConfirm').onclick=async function(){if(sending)return;sending=true;this.disabled=true;try{var p=await rpc('ff62_get_pinned');if(request!==epoch||branch.value!==selectedBranch||p?.driver_id!==selectedDriver)throw Error('تم تغيير الموصل المثبت؛ أعد المعاينة');const reason=full?$('ffpcOverrideReason').value.trim():'';
+$('ffpcConfirm').onclick=async function(){
+ if(sending||overlay.hidden)return;
+ if(!validPreview()){dismissPreview();return toast('تغيرت بيانات الطلب؛ أعد المعاينة قبل التأكيد')}
+ sending=true;this.disabled=true;refreshUI();
+ try{var p=await rpc('ff62_get_pinned');if(!sameSession(request,actor))return;
+ if(!validPreview()||p?.driver_id!==selectedDriver){dismissPreview();throw Error('تغيرت بيانات الطلب أو الموصل المثبت؛ أعد المعاينة')}
+ const reason=full?$('ffpcOverrideReason').value.trim():'';
  if(full&&!reason)throw Error('اكتب سبب التجاوز قبل التأكيد');
  var out=await rpc('ff_confirm_pinned_order',{p_driver:selectedDriver,p_branch:selectedBranch,p_desk:selectedDesk,p_phone:phone,p_area:area,p_items:parsed.items,p_notes:notes,p_override_reason:reason});
- if(request!==epoch)return;
- void load(true);overlay.hidden=true;toast('تم إنشاء الطلب رقم '+out.order_number+' وإسناده للموصل المثبت');['newPhone','newArea','newCustomerName','newFullAddress','newNotes','newItems'].forEach(function(id){if($(id))$(id).value=''});await reload(true)}catch(e){toast('تعذر الإسناد المباشر: '+e.message)}finally{sending=false;$('ffpcConfirm').disabled=false;refreshUI()}};
-}catch(e){toast('تعذر عرض المعاينة: '+e.message)}};
+ if(!sameSession(request,actor))return;
+ const unchanged=draftSnapshot()===snapshot;
+ dismissPreview();void load(true);toast('تم إنشاء الطلب رقم '+out.order_number+' وإسناده للموصل المثبت');
+ if(unchanged)draftFields.forEach(id=>{if($(id))$(id).value=''});
+ try{await reload(true)}catch(e){if(sameSession(request,actor))toast('تم حفظ الطلب؛ تعذر تحديث القائمة: '+e.message)}
+ }catch(e){if(sameSession(request,actor))toast('تعذر الإسناد المباشر: '+e.message)}
+ finally{if(sameSession(request,actor)){sending=false;$('ffpcConfirm').disabled=false;refreshUI()}}
+ };
+ }catch(e){if(validPreview())toast('تعذر عرض المعاينة: '+e.message)}
+ finally{if(sameSession(request,actor)&&sequence===previewSequence){previewing=false;refreshUI()}}
+};
 setInterval(function(){if(typeof user!=='undefined'&&user&&cairo())void load(false)},20000);
 setTimeout(function(){refreshUI();if(cairo())void load(true)},1100);
 })();
