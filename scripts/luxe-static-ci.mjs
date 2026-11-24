@@ -404,13 +404,13 @@ assert.match(get('scripts/luxe-unified-order-inputs-20261123.js').toString('utf8
 // A02: real parser + shared picker quantity logic, with no database mutations.
 const unifiedSource=get('scripts/luxe-unified-order-inputs-20261123.js').toString('utf8');
 const pickerSource=unifiedSource.slice(unifiedSource.indexOf('function itemRows('),unifiedSource.indexOf('window.ffLuxeOrderText='));
-const a02Picker=vm.runInNewContext(parserSource+'\n'+pickerSource+'\n({itemRows,appendText})',{
+const a02Picker=vm.runInNewContext(parserSource+'\n'+pickerSource+'\n({itemRows,appendText,undo,canUndo,clearUndo})',{
  ff49Catalog:menuNames.map((name,id)=>({id:id+1,name,price:1000})),
  Event:class {constructor(type){this.type=type}}
 });
 let a02Events=0;
 const a02Area={isConnected:true,value:'٣ برجر اسمر دبل بدون شطة | 1000\n1 تشكن\nملاحظة: لا تتصل',
- dispatchEvent(event){assert.equal(event.type,'input');a02Events++}};
+ dispatchEvent(event){assert.ok(['input','ff-cart-edit'].includes(event.type));if(event.type==='input')a02Events++}};
 const a02Burger=menuNames[3];
 assert.equal(a02Picker.itemRows(a02Area)[0].qty,3);
 for(const [delta,expected] of [[-1,2],[-1,1],[1,2],[1,3]]){
@@ -434,8 +434,26 @@ assert.equal(a02Area.value,'98 تشكن');
 console.log('PASS A02: shared picker, aliases, notes, price, decrement/restore, removal and quantity cap');
 
 // Main order cart and popup share the same text editor. No separate cart serializer.
-assert.match(html,/editor\.appendText\(\$\('newItems'\),item\.name,by\)/);
-assert.match(html,/window\.ffLuxeOrderText\?\.itemRows\(\$\('newItems'\)\)/);
-assert.match(html,/group\.total\+=line\.qty\*line\.price/);
-assert.match(html,/\$\('newItems'\)\.addEventListener\('input',\(\)=>\{renderCart\(\);render\(\);previewReady=false\}\)/);
+assert.ok(html.includes("editor.appendText($('newItems'),item,by,line)"));
+assert.ok(html.includes("editor?.itemRows(area)"));
+assert.ok(html.includes("sum+=qty*line.price"));
+assert.ok(html.includes("clearUndo($('newItems'))"));
+assert.ok(html.includes("ffbUndoCart"));
+assert.ok(html.includes("i.item_notes||i.notes"));
 assert.doesNotMatch(html,/function syncCart\(\)\{const rows=\[\]/);
+const a02Raw='١ تشكن بدون شطة | 900\n1 تشكن فرايز | 1000\nملاحظة: اتصل';
+a02Area.value=a02Raw;
+a02Picker.appendText(a02Area,{name:menuNames[0],price:1000},1,0);
+assert.equal(a02Area.value,'2 تشكن بدون شطة | 900\n1 تشكن فرايز | 1000\nملاحظة: اتصل');
+assert.ok(a02Picker.canUndo(a02Area));assert.ok(a02Picker.undo(a02Area));assert.equal(a02Area.value,a02Raw);
+a02Picker.appendText(a02Area,{name:menuNames[0],price:1000},1);
+assert.equal(a02Area.value,'١ تشكن بدون شطة | 900\n2 تشكن فرايز | 1000\nملاحظة: اتصل');
+a02Area.value='1 تشكن بدون شطة | 900';
+a02Picker.appendText(a02Area,{name:menuNames[0],price:1000},1);
+assert.equal(a02Area.value,'1 تشكن بدون شطة | 900\n1 تشكن فرايز');
+a02Area.value+='\nملاحظة: جديدة';assert.equal(a02Picker.canUndo(a02Area),false);
+assert.throws(()=>a02Picker.appendText(a02Area,{name:menuNames[0],price:1000},1,99));
+a02Area.value='1 صنف مجهول';assert.throws(()=>a02Picker.appendText(a02Area,{name:menuNames[0],price:1000},1));
+const exactParser=vm.runInNewContext(parserSource+'\nff49ParseItemsAndNotes',{ff49Catalog:[{id:1,name:menuNames[0],price:1000,parser_aliases:[menuNames[0]]},{id:2,name:'عرض الأسرة',price:2000,parser_aliases:[menuNames[0]]}]});
+assert.equal(exactParser('1 تشكن فرايز').items[0].name,menuNames[0]);
+console.log('PASS A02: exact names, line-specific prices and notes, reversible edits, ambiguous draft guard');

@@ -30,6 +30,15 @@ jobs:
         run: python scripts/a01-runtime-button-map.py
       - name: Verify burger picker interactions in real Chrome (FIX-02)
         run: python scripts/luxe-burger-picker-qa.py
+      - name: Verify A02 order draft cart and note preservation
+        run: python scripts/a02-order-draft-qa.py
+      - name: Retain A02 cart evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a02-order-draft
+          path: a02-evidence/
+          if-no-files-found: warn
       - name: Load base styles for drawer visual comparison
         if: github.event_name == 'pull_request'
         env:

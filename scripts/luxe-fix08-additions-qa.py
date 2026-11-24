@@ -24,7 +24,7 @@ var user={id:'cs-fixture'},activeAdditionForm='a',additionDraft='',additionReady
 var $=id=>document.getElementById(id),esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 var amount=x=>String(x),time=x=>String(x),branchName=x=>x,driverName=x=>x,canAction=()=>true;
 var phaseNames={},cashierNames={},presenceNames={},ffLuxeAssignmentPanel=()=>'',ffLuxeOrderStaffMeta=()=>'',ffLuxeDial=()=>'',ff27DriverCall=()=>'',rejectControl=()=>'',itemLines=()=>'',ding=()=>{},notify=()=>{},toast=m=>window.lastToast=m,confirm=()=>true;
-var ff49CatalogAt=0,ff49Catalog=[{id:'chicken',name:'تشكن فرايز',price:1500,category:'وجبات',active:true,parser_aliases:['تشكن']},{id:'cheese',name:'جبن شيدر وذرة',price:300,category:'سمبوسة',active:true,parser_aliases:['جبن ذرة']}];
+var ff49CatalogAt=0,ff49CatalogActor='',ff49Catalog=[{id:'chicken',name:'تشكن فرايز',price:1500,category:'وجبات',active:true,parser_aliases:['تشكن']},{id:'cheese',name:'جبن شيدر وذرة',price:300,category:'سمبوسة',active:true,parser_aliases:['جبن ذرة']}];
 var data={role:'customer_service',orders:[{id:'a',number:1,driver_id:'driver',status:'sent',phase:'assigned',cashier_stage:'ready',total:2000,delivery_fee:500,branch_id:'cairo'},{id:'b',number:2,driver_id:'driver',status:'sent',phase:'on_way',cashier_stage:'handed_over',total:2500,delivery_fee:500,branch_id:'cairo'}],offers:[]};
 window.calls=[];
 var ff49LoadCatalog=async()=>{};
@@ -58,6 +58,10 @@ with sync_playwright() as pw:
         page.get_by_role('button',name='زيادة تشكن فرايز',exact=True).wait_for()
         page.evaluate('drawOrders()')
         page.get_by_role('button',name='زيادة تشكن فرايز',exact=True).click()
+        assert regular.input_value()=='2 تشكن بدون شطة | 1600\nملاحظة: اتصال بالعميل\n1 تشكن فرايز'
+        page.locator('#ffUnifiedMenuUndo').click()
+        assert regular.input_value()=='2 تشكن بدون شطة | 1600\nملاحظة: اتصال بالعميل'
+        page.get_by_role('button',name='زيادة سطر 1 تشكن فرايز',exact=True).click()
         assert '3 تشكن بدون شطة | 1600' in regular.input_value()
         page.locator('#ffUnifiedMenuReview').click()
         page.wait_for_function("window.ff75AdditionReview?.items[0].quantity===3")

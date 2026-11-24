@@ -132,7 +132,7 @@ try:
                 unified = (root / "scripts/luxe-unified-order-inputs-20261123.js").read_text(encoding="utf-8")
                 parser = source[source.index("const ff49NormalizeInput="):source.index("// Prevent older create callback")]
                 editor = unified[unified.index("function itemRows("):unified.index("window.ffLuxeOrderText=")]
-                cart_source = source[source.index(" function change(item,by){"):source.index(" function fillFromParsed(parsed){")]
+                cart_source = source[source.index(" function change(item,by,line=null){"):source.index(" function fillFromParsed(parsed){")]
                 fixture = """
                 (() => {
                   document.body.replaceChildren();
@@ -143,12 +143,13 @@ try:
                   const catalog=[{id:'burger',name:'سماش برجر دبل أسمر',price:1500},
                     {id:'chicken',name:'تشكن فرايز',price:1750}];
                   let ff49Catalog=catalog,cart=new Map();
-                  const status=message=>{throw Error(message)};
+                  const status=message=>{throw Error(message)},render=()=>{};
                 """ + parser + editor + """
-                  window.ffLuxeOrderText={itemRows,appendText};
+                  window.ffLuxeOrderText={itemRows,appendText,undo,canUndo,clearUndo};
                 """ + cart_source + """
                   field.value=['٣ برجر اسمر دبل بدون شطة | 1400','1 تشكن | 1750','ملاحظة: لا تتصل'].join('\\n');
-                  field.addEventListener('input',renderCart);
+                  field.addEventListener('input',()=>{clearUndo(field);renderCart()});
+                  field.addEventListener('ff-cart-edit',renderCart);
                   renderCart();
                   window.__mainCartFixture=()=>({
                     items:ff49ParseItemsAndNotes(field.value).items,
@@ -179,6 +180,8 @@ try:
                     page.get_by_role("button", name="تقليل سماش برجر دبل أسمر", exact=True).click()
                     cart_state(expected)
                 assert page.locator(".ffb-v2-cartline").count() == 1
+                page.locator("#ffbUndoCart").click()
+                cart_state(1)
                 print(f"PASS A02 main cart: {width}px, quantity rollback, notes, price, removal", flush=True)
                 context.close()
         finally:
