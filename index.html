@@ -481,7 +481,7 @@ body.ffx-menu-open .ffx-screen-dimmer{display:block!important}
 @media(prefers-reduced-motion:reduce){#ffx-sidebar,body.ffx-menu-open #ffx-sidebar{transition:none!important}}
 </style><link rel="stylesheet" href="./styles/luxe-operations.css">
 <link rel="stylesheet" href="./assets/luxe-report-center-20261123.css"><link rel="stylesheet" href="./styles/ffx-nav-groups.css"><link rel="stylesheet" href="./styles/luxe-dashboard-studio.css"><link rel="stylesheet" href="./styles/luxe-content-studio.css"><link rel="stylesheet" href="./styles/luxe-content-delegation.css">
-</head>
+<style id="ff-a02-card-design">.ffb-v2-tile[data-card-style=compact] .ffb-v2-item{height:auto!important;min-height:102px!important}.ffb-v2-tile[data-card-style=compact] :is(img,.ffb-placeholder),.ffl-picker-tile[data-card-style=compact] :is(img,.ffb-placeholder){height:46px!important}.ffl-picker-tile[data-card-style=compact] .ffl-picker-product{min-height:90px!important}.ffb-v2-tile[data-card-style=large] .ffb-v2-item{height:auto!important;min-height:190px!important}.ffb-v2-tile[data-card-style=large] :is(img,.ffb-placeholder),.ffl-picker-tile[data-card-style=large] :is(img,.ffb-placeholder){height:115px!important}</style></head>
 <body class="ff-booting" data-access="locked"><div id="ff65Boot" role="status" aria-live="polite" style="text-align:center;padding:20px"><div id="ff65BootMessage">جارِ استعادة جلسة فريش فرايز…</div><noscript><p style="font-size:14px">يلزم تفعيل JavaScript في المتصفح لاستخدام نظام فريش فرايز.</p></noscript></div>
 <script id="ff-luxe-boot-watchdog">
 (()=>{
@@ -737,7 +737,7 @@ body.ffx-menu-open .ffx-screen-dimmer{display:block!important}
  <div id="ff51CatalogItems" class="ff49-items"></div><hr>
  <h3>العروض</h3><div class="row"><div><label>اسم العرض</label><input id="ff51OfferName"></div><div><label>سعر العرض</label><input id="ff51OfferPrice" type="number" min="0"></div></div>
  <input id="ff51EditingOffer" type="hidden"><div class="actions"><button id="ff51OfferSave" class="primary">حفظ العرض</button><button id="ff51OfferReset" class="outline">إلغاء التعديل</button></div>
- <div id="ff51OffersList" class="ff49-items"></div>
+ <div id="ff51OffersList" class="ff49-items"></div><details><summary>ترتيب وتصميم بطاقات المنيو والعروض</summary><label>الصنف أو العرض<select id="ffCatalogCardTarget"></select></label><div class="row"><div><label>ترتيب البطاقة (الأصغر أولًا)</label><input id="ffCatalogCardSort" type="number" min="0" max="99999" step="1"></div><div><label>تصميم البطاقة</label><select id="ffCatalogCardStyle"><option value="standard">قياسي</option><option value="compact">مدمج</option><option value="large">صورة كبيرة</option></select></div></div><button id="ffCatalogCardSave" type="button" class="primary">حفظ تصميم البطاقة مركزيًا</button><p id="ffCatalogCardStatus" role="status"></p></details>
  <details><summary>مرادفات محلّل الطلب</summary>
  <label>الصنف أو العرض<select id="ffAliasTarget"></select></label>
  <label>المرادفات، كل مرادف في سطر<textarea id="ffAliasNames" rows="4"></textarea></label>
@@ -750,7 +750,7 @@ body.ffx-menu-open .ffx-screen-dimmer{display:block!important}
  <div class="flex"><input id="ff51CustomerSearch" style="flex:1" placeholder="ابحث برقم الهاتف أو اسم العميل"><button id="ff51CustomerFind" class="primary">بحث</button></div>
  <div id="ff51CustomersList" class="ff49-items"></div>
  <div id="ff51CustomerNotesSection" class="hidden"><h3 id="ff51CustomerNotesHeading"></h3>
- <div id="ff51CustomerNotesList"></div><label>إضافة ملاحظة</label><textarea id="ff51CustomerNoteText"></textarea>
+ <div id="ff51CustomerHistory" role="status"></div><div id="ff51CustomerNotesList"></div><label>إضافة ملاحظة</label><textarea id="ff51CustomerNoteText"></textarea>
  <button id="ff51CustomerNoteSave" class="primary">حفظ ملاحظة العميل</button></div>
 </section>
 <section id="ff51ArchivePanel" class="card hidden">
@@ -2863,7 +2863,7 @@ function ff51ClearPrivate(){
  ff51ArchiveSeq++;ff51CustomerSeq++;ff51NotesSeq++;ff51RatingsSeq++;ff51CatalogSeq++;
  ff51ArchiveRows=[];ff51ArchiveOffset=0;ff51ArchiveTotal=0;ff51CatalogInfo=null;ff51SelectedPhone=null;
  for(const id of ['ff51CatalogItems','ff51OffersList','ff51CustomersList','ff51CustomerNotesList',
-  'ff51CustomerNotesHeading','ff51ArchiveList','ff51ArchiveCount','ff51RatingsList']){
+  'ff51CustomerNotesHeading','ff51CustomerHistory','ff51ArchiveList','ff51ArchiveCount','ff51RatingsList']){
   const el=$(id);if(el)el.replaceChildren();
  }
  for(const id of ['ff51CustomerNoteText','ff51CustomerSearch'])if($(id))$(id).value='';
@@ -2897,7 +2897,7 @@ async function ff51LoadCatalog(){
   const catalog=await rpc('ff51_manager_catalog');
   if(!current())return;
   ff51CatalogInfo=catalog;
-  ff51PopulateAliases();
+  ff51PopulateAliases();ff51PopulateCardSettings();
   const groups=ff51CatalogInfo.categories||[],items=ff51CatalogInfo.items||[];
   box.innerHTML=items.length?items.map(i=>{
    const cat=groups.find(c=>c.id===i.category_id)?.name||'بدون قسم';
@@ -2907,6 +2907,20 @@ async function ff51LoadCatalog(){
   ff49CatalogAt=0;void ff49LoadCatalog();
  }catch(e){if(current())box.textContent='تعذر تحميل المنيو: '+e.message;}
 }
+function ff51ShowCardSettings(){
+ const item=ff51AliasRows().find(x=>x.kind+':'+x.id===$('ffCatalogCardTarget').value);if(!item)return;
+ const meta=item.kind==='offer'?item.details:item.extra;
+ $('ffCatalogCardSort').value=item.sort_order??meta?.sort_order??0;
+ $('ffCatalogCardStyle').value=['standard','compact','large'].includes(meta?.card_style)?meta.card_style:'standard';
+ $('ffCatalogCardStatus').textContent='';
+}
+function ff51PopulateCardSettings(){const select=$('ffCatalogCardTarget'),old=select.value;select.replaceChildren(...ff51AliasRows().map(x=>new Option(x.name,x.kind+':'+x.id)));if([...select.options].some(x=>x.value===old))select.value=old;ff51ShowCardSettings()}
+$('ffCatalogCardTarget').onchange=ff51ShowCardSettings;
+$('ffCatalogCardSave').onclick=async()=>{
+ const actor=ff51Viewer(['manager']),item=ff51AliasRows().find(x=>x.kind+':'+x.id===$('ffCatalogCardTarget').value),b=$('ffCatalogCardSave');if(!actor||!item)return;
+ const sort=$('ffCatalogCardSort').value.trim(),style=$('ffCatalogCardStyle').value;if(!/^\d{1,5}$/.test(sort)){$('ffCatalogCardStatus').textContent='أدخل ترتيبًا صحيحًا من 0 إلى 99999';return;}
+ b.disabled=true;try{await rpc('ff_a02_catalog_presentation',{p_kind:item.kind,p_id:item.id,p_sort:Number(sort),p_card_style:style});if(ff51Viewer(['manager'])!==actor)return;await ff51LoadCatalog();$('ffCatalogCardStatus').textContent='تم حفظ ترتيب وتصميم البطاقة'}catch(e){if(ff51Viewer(['manager'])===actor)$('ffCatalogCardStatus').textContent=e.message}finally{b.disabled=false}
+};
 function ff51AliasRows(){
  return [...(ff51CatalogInfo?.items||[]).map(item=>({...item,kind:'item'})),
   ...(ff51CatalogInfo?.offers||[]).map(item=>({...item,kind:'offer'}))];
@@ -2983,13 +2997,13 @@ async function ff51LoadCustomers(){
  try{
   const list=await rpc('ff51_customer_directory',{p_query:query,p_limit:70});
   if(!current())return;
-  box.innerHTML=list.length?list.map(c=>`<div class="item"><b>${esc(c.name||'اسم غير محفوظ')}</b> — <span dir="ltr">${esc(c.phone)}</span><p class="muted">${esc(c.address||'')} · آخر طلب ${time(c.last_order_at)} · ${esc(c.orders_count??0)} طلبات مسجلة · ${c.notes_count} ملاحظات</p><button class="outline" data-ff51-customer="${esc(c.phone)}">عرض الملاحظات</button></div>`).join(''):'<div class="empty">لا توجد نتائج.</div>';
+  box.innerHTML=list.length?list.map(c=>`<div class="item"><b>${esc(c.name||'اسم غير محفوظ')}</b> — <span dir="ltr">${esc(c.phone)}</span><p class="muted">${esc(c.area||'')} · ${esc(c.address||'')} · آخر طلب ${time(c.last_order_at)} · ${esc(c.orders_count??0)} طلبات مسجلة · ${c.notes_count} ملاحظات</p><button class="outline" data-ff51-customer="${esc(c.phone)}">عرض التاريخ والملاحظات</button></div>`).join(''):'<div class="empty">لا توجد نتائج.</div>';
  }catch(e){if(current())box.textContent='تعذر البحث: '+e.message}
 }
 $('ff51CustomersBtn').onclick=()=>{if(!ff51Viewer(['manager','customer_service']))return;ff51Open('ff51CustomersPanel');void ff51LoadCustomers()};
-$('ff51CustomersClose').onclick=()=>{ff51CustomerSeq++;ff51NotesSeq++;$('ff51CustomersPanel').classList.add('hidden');$('ff51CustomersList').replaceChildren();$('ff51CustomerNotesList').replaceChildren();$('ff51CustomerNotesSection').classList.add('hidden');ff51SelectedPhone=null;$('ff51CustomerNoteText').value=''};
+$('ff51CustomersClose').onclick=()=>{ff51CustomerSeq++;ff51NotesSeq++;$('ff51CustomersPanel').classList.add('hidden');$('ff51CustomersList').replaceChildren();$('ff51CustomerNotesList').replaceChildren();$('ff51CustomerNotesSection').classList.add('hidden');ff51SelectedPhone=null;$('ff51CustomerHistory').replaceChildren();$('ff51CustomerNoteText').value=''};
 $('ff51CustomerFind').onclick=ff51LoadCustomers;
-$('ff51CustomerSearch').addEventListener('input',()=>{ff51CustomerSeq++;ff51NotesSeq++;ff51SelectedPhone=null;$('ff51CustomerNoteText').value='';$('ff51CustomerNotesSection').classList.add('hidden');$('ff51CustomersList').replaceChildren();$('ff51CustomerNotesList').replaceChildren()});
+$('ff51CustomerSearch').addEventListener('input',()=>{ff51CustomerSeq++;ff51NotesSeq++;ff51SelectedPhone=null;$('ff51CustomerHistory').replaceChildren();$('ff51CustomerNoteText').value='';$('ff51CustomerNotesSection').classList.add('hidden');$('ff51CustomersList').replaceChildren();$('ff51CustomerNotesList').replaceChildren()});
 $('ff51CustomerSearch').addEventListener('keydown',e=>{if(e.key==='Enter')void ff51LoadCustomers()});
 async function ff51CustomerNotes(phone){
  const actor=ff51Viewer(['manager','customer_service']);if(!actor||!phone)return;
@@ -2999,11 +3013,12 @@ async function ff51CustomerNotes(phone){
   ff51SelectedPhone===phone&&!$('ff51CustomersPanel').classList.contains('hidden');
  $('ff51CustomerNotesHeading').textContent='ملاحظات العميل: '+phone;
  $('ff51CustomerNotesSection').classList.remove('hidden');
- $('ff51CustomerNotesList').textContent='جارٍ تحميل الملاحظات...';
- try{const notes=await rpc('ff51_customer_notes_list',{p_phone:phone});
+ $('ff51CustomerNotesList').textContent='جارٍ تحميل الملاحظات...';$('ff51CustomerHistory').textContent='جارٍ تحميل تاريخ العميل...';
+ try{const [notes,history]=await Promise.all([rpc('ff51_customer_notes_list',{p_phone:phone}),rpc('ff_a02_customer_history',{p_phone:phone})]);
   if(!current())return;
+  $('ff51CustomerHistory').innerHTML='<h4>الطلبات السابقة (آخر 100)</h4>'+((history.orders||[]).map(o=>`<div class="item"><b>طلب #${esc(o.order_number)} · ${esc(branchName(o.branch_id))}</b><p>${esc(o.area)} · ${esc(o.address)} · ${amount(o.total)} ريال · ${esc(o.status)}</p><p class="muted">${esc(time(o.created_at))} · ${o.rating?esc(o.rating)+' من 5':'بلا تقييم'} · تعديلات البيانات: ${esc(o.edit_count)}</p></div>`).join('')||'<p>لا توجد طلبات.</p>')+'<h4>الشكاوى المرتبطة</h4>'+((history.complaints||[]).map(c=>`<p>${esc(c.subject)} — ${esc(c.status)} · ${esc(time(c.created_at))}</p>`).join('')||'<p>لا توجد شكاوى.</p>');
   $('ff51CustomerNotesList').innerHTML=notes.map(n=>`<div class="item"><span>${esc(n.note)}</span><p class="muted">${time(n.added_at)}</p></div>`).join('')||'لا توجد ملاحظات.';
- }catch(e){if(current())toast(e.message)}
+ }catch(e){if(current()){$('ff51CustomerHistory').textContent='تعذر تحميل تاريخ العميل';$('ff51CustomerNotesList').textContent='تعذر تحميل الملاحظات';toast(e.message)}}
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ff51-customer]');if(b)void ff51CustomerNotes(b.dataset.ff51Customer)});
 $('ff51CustomerNoteSave').onclick=async()=>{
@@ -3764,7 +3779,7 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
  async function load(force=false){if(!user)return;const box=$('ffbMenuGrid');if(force){ff49CatalogAt=0;loaded=false}if(!loaded)box.textContent='جارٍ تحميل المنيو من قاعدة البيانات...';try{await ff49LoadCatalog();catalog=(Array.isArray(ff49Catalog)?ff49Catalog:[]).filter(i=>i.active!==false&&i.name&&Number.isFinite(Number(i.price)));loaded=!!catalog.length;if(!loaded)throw Error('لم تُحمّل أصناف متاحة لهذا الحساب');renderCategories();renderCart();render()}catch(e){box.textContent='تعذر تحميل المنيو: '+e.message;status('تحقق من الاتصال وصلاحية قراءة المنيو',true)}}
  function renderCategories(){const box=$('ffbCategories');box.replaceChildren();const existing=new Set(catalog.map(categoryOf));for(const name of ['الكل',...order.filter(x=>existing.has(x))]){const b=document.createElement('button');b.type='button';b.textContent=name;b.className='ffb-cat-btn'+(category===name?' selected':'');b.setAttribute('aria-pressed',String(category===name));b.onclick=()=>{category=name;renderCategories();render()};box.append(b)}}
  function render(){const grid=$('ffbMenuGrid');if(!grid)return;const q=normalized($('ffbMenuSearch').value);const filtered=catalog.filter(i=>(category==='الكل'||categoryOf(i)===category)&&(!q||normalized(i.name).includes(q)));
-  grid.replaceChildren();for(const item of filtered){const tile=document.createElement('div');tile.className='ffb-v2-tile';const qty=cart.get(item.id||item.name)||0;
+  grid.replaceChildren();for(const item of filtered){const tile=document.createElement('div');tile.className='ffb-v2-tile';tile.dataset.cardStyle=['compact','large'].includes(item.card_style)?item.card_style:'standard';const qty=cart.get(item.id||item.name)||0;
     const btn=document.createElement('button');btn.type='button';btn.className='ffb-v2-item';btn.title='اضغط لإضافة '+item.name;btn.setAttribute('aria-label','إضافة '+item.name);
     const pic=image(item),fallbackIcon=window.ffLuxePhotoMenu?.iconFor(item)||'🍟';btn.innerHTML=(pic?'<img loading="lazy" src="'+esc(pic)+'" alt="صورة '+esc(item.name)+'">':'<span class="ffb-placeholder">'+esc(fallbackIcon)+'</span>')+'<span class="ffb-v2-name">'+esc(item.name)+'</span><span class="ffb-v2-price">'+Number(item.price).toLocaleString('ar-YE')+' ريال</span>'+(qty?'<span class="ffb-v2-count">'+qty+'</span>':'');btn.onclick=()=>change(item,1);tile.append(btn);
     if(data?.role==='manager' && item.id){const edit=document.createElement('button');edit.type='button';edit.className='ffb-photo-button';edit.textContent='رفع صورة مركزية';edit.onclick=()=>uploadImage(item,edit);tile.append(edit)}grid.append(tile)}
@@ -5408,4 +5423,4 @@ run.title='يجب تحميل المعاينة والتحقق من النسخة �
 status.textContent='جارٍ تهيئة أدوات المعاينة الآمنة…';
 center.append(box);
 })();
-</script><script src="./scripts/luxe-dashboard-studio.js" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script></body></html>
+</script><script src="./scripts/luxe-dashboard-studio.js" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script></body></html>
