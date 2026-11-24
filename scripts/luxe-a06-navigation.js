@@ -33,12 +33,12 @@ function renderSpecial(s){
  for(const [key,label,ico,action] of [...rows,["more","المزيد","⋯",()=>openMore(s)]]){
  const b=node("button");b.type="button";b.dataset.key=key;b.setAttribute("aria-label",label);b.title=label;
  const icon=node("span",ico);icon.className="ff-a06-symbol";icon.setAttribute("aria-hidden","true");const name=node("span",label);name.className="ff-a06-label";b.append(icon,name);
- b.onclick=()=>{if(identity()?.key!==s.key&&identity()?.role!==role)return;if(key!=="more")specialActive=key;action();markSpecial()};special.append(b);
+ b.onclick=()=>{if(identity()?.actor!==s.actor||identity()?.role!==role)return;if(key!=="more")specialActive=key;action();markSpecial()};special.append(b);
  }}
  markSpecial();
 }
 function markSpecial(){for(const b of special.querySelectorAll("button")){const on=b.dataset.key===specialActive;b.classList.toggle("active",on);if(on)b.setAttribute("aria-current","location");else b.removeAttribute("aria-current")}}
-function openMore(s){if(identity()?.role!==s.role)return;opener=document.activeElement;const box=$("ffA06MoreItems");box.replaceChildren();
+function openMore(s){if(identity()?.actor!==s.actor||identity()?.role!==s.role)return;opener=document.activeElement;const box=$("ffA06MoreItems");box.replaceChildren();
  const list=s.role==="assembly"?[["فتح أو إغلاق نقطة التجميع","#ffV12Toggle"],["تحديث الطلبات","#ffV12Refresh"],["أوامر البرجر","#ffV12BurgerOpen"],["النغمات","#ff66AssemblySoundSettings"],["تسجيل الخروج","#ffV12Logout"]]:[["جميع الطلبات",'[data-ff-burger-filter="all"]'],["تحديث الطلبات","#ffBurgerKitchenRefresh"],["الإشعارات","#ffBurgerKitchenNotifications"],["تسجيل الخروج","#ffBurgerKitchenLogout"]];
  for(const [label,selector]of list){const b=node("button",label);b.type="button";b.className="outline";b.onclick=()=>{more.close();if(s.role==="assembly"&&["#ffV12Refresh","#ffV12BurgerOpen","#ff66AssemblySoundSettings"].includes(selector)&&!ffV12AssemblyOpened)$("ffV12Toggle").click();runTarget(selector)};box.append(b)}
  more.showModal();
