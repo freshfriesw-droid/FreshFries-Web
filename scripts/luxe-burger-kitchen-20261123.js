@@ -39,7 +39,7 @@ const main=document.querySelector('main');if(!main)return;
 const kitchen=make('section');kitchen.id='ffBurgerKitchenWorkspace';kitchen.className='card hidden';
 kitchen.innerHTML='<div class="ff-burger-head"><h2>🍔 المطبخ · قسم البرجر</h2><button type="button" class="outline" id="ffBurgerKitchenNotifications">🔔 تفعيل الإشعارات</button><button type="button" class="primary" id="ffBurgerViewFinished">✅ الطلبات المنتهية <span id="ffBurgerDoneCount">0</span></button><button type="button" class="outline" id="ffBurgerKitchenRefresh">تحديث</button><button type="button" class="outline" id="ffBurgerKitchenLogout">🚪 تسجيل الخروج</button></div>'+
 '<p id="ffBurgerKitchenBranch" class="muted"></p><p id="ffBurgerKitchenStatus" role="status"></p>'+
-'<h3>الطلبات الواردة والجاري تحضيرها</h3><div id="ffBurgerKitchenActive" class="ff-burger-list"></div>'+
+'<div class="actions" role="group" aria-label="تصفية طلبات البرجر"><button type="button" class="outline" data-ff-burger-filter="all" aria-pressed="true">المعلقة <span id="ffBurgerPendingCount">0</span></button><button type="button" class="outline" data-ff-burger-filter="sent" aria-pressed="false">جديدة <span id="ffBurgerNewCount">0</span></button><button type="button" class="outline" data-ff-burger-filter="preparing" aria-pressed="false">قيد التحضير <span id="ffBurgerPrepCount">0</span></button><button type="button" class="outline" data-ff-burger-filter="late" aria-pressed="false">متأخرة <span id="ffBurgerLateCount">0</span></button></div><h3>الطلبات الواردة والجاري تحضيرها</h3><div id="ffBurgerKitchenActive" class="ff-burger-list"></div>'+
 '<details id="ffBurgerFinishedDetails"><summary>✅ الطلبات المنتهية · قسم البرجر</summary><div id="ffBurgerKitchenFinished" class="ff-burger-list"></div></details>';
 main.prepend(kitchen);
 const cashier=$('cashierView');const panel=make('section');panel.id='ffBurgerCashierPanel';panel.className='card hidden';
@@ -62,8 +62,8 @@ dialog.innerHTML='<h2>🍔 إعلام قسم البرجر</h2><form id="ffBurger
 '<button id="ffBurgerSubmit" class="primary" type="submit">✅ اعتماد وإرسال الطلب</button><button id="ffBurgerCancel" class="outline" type="button">إلغاء</button></div></form>';
 document.body.append(dialog);
 const form=$('ffBurgerForm'),f=name=>form.elements.namedItem(name);
-let isKitchenMode=false,profile=null,items=[],rows=[],channel=null,interval=null,loading=false,fetchAt=0,seq=0,owner='',initial=true,lastNew=new Set(),lastReady=new Set(),busy=false,token=null,presenceAt=0;
-const assemblyRole=()=>typeof ffV12AssemblyActive!=='undefined'&&ffV12AssemblyActive&&typeof user!=='undefined'&&!!user?.id;
+let kitchenFilter='all',isKitchenMode=false,profile=null,items=[],rows=[],channel=null,interval=null,loading=false,fetchAt=0,seq=0,owner='',initial=true,lastNew=new Set(),lastReady=new Set(),busy=false,token=null,presenceAt=0;
+const assemblyRole=()=>typeof ffV12AssemblyActive!=='undefined'&&ffV12AssemblyActive&&ffV12AssemblyOpened&&typeof user!=='undefined'&&!!user?.id;
 const cashierRole=()=>typeof data!=='undefined'&&data?.role==='cashier'&&typeof user!=='undefined'&&!!user?.id;
 const kitchenRole=()=>isKitchenMode&&profile?.role==='burger_kitchen'&&typeof user!=='undefined'&&!!user?.id;
 const authorized=()=>cashierRole()||assemblyRole()||kitchenRole();
@@ -93,7 +93,7 @@ const identity=()=>String(typeof user!=='undefined'&&user?.id||'');
 
 const errorText=e=>String(e?.message||e);
 function reset(){
-  seq++;loading=false;fetchAt=0;presenceAt=0;owner='';isKitchenMode=false;profile=null;items=[];rows=[];initial=true;lastNew.clear();lastReady.clear();busy=false;token=null;
+  seq++;kitchenFilter='all';loading=false;fetchAt=0;presenceAt=0;owner='';isKitchenMode=false;profile=null;items=[];rows=[];initial=true;lastNew.clear();lastReady.clear();busy=false;token=null;
   panel.classList.add('hidden');panel.classList.remove('ff-burger-panel-collapsed');delete panel.dataset.ffBurgerCashierCollapsed;kitchen.classList.add('hidden');document.body.classList.remove('ff-burger-kitchen-mode');
   $(kitchenNavId)?.remove();
   if(dialog.open)dialog.close();
@@ -107,12 +107,23 @@ function seconds(ticket){
   const begin=Date.parse(ticket.accepted_at),end=ticket.ready_at?Date.parse(ticket.ready_at):Date.now();
   return clock((end-begin)/1000);
 }
+function burgerIsLate(t,now=Date.now()){
+ const sent=Date.parse(t.sent_at||'');return ['sent','preparing'].includes(t.status)&&Number.isFinite(sent)&&now-sent>=25*60000;
+}
+function burgerFilterTickets(list,filter,now=Date.now()){
+ const pending=list.filter(t=>['sent','preparing'].includes(t.status));
+ return pending.filter(t=>filter==='all'||(filter==='late'?burgerIsLate(t,now):t.status===filter)).sort((a,b)=>Number(burgerIsLate(b,now))-Number(burgerIsLate(a,now))||Date.parse(a.sent_at)-Date.parse(b.sent_at));
+}
+kitchen.querySelectorAll('[data-ff-burger-filter]').forEach(b=>b.addEventListener('click',()=>{
+ kitchenFilter=b.dataset.ffBurgerFilter;render();
+}));
 function createTicket(t,view){
  const card=make('article',undefined,'ff-burger-card'+(t.status==='ready'?' ready':''));
  card.append(make('h4',(t.invoice_ref?.trim()?'🧾 فاتورة '+t.invoice_ref:'🍔 طلب برجر بدون رقم فاتورة')+' · '+(t.order_kind==='local'?'محلي':'توصيل')));
  card.append(make('span',({sent:'🆕 وارد',preparing:'⏳ تحت التحضير',ready:'✅ جاهز للاستلام',acknowledged:'✅ تم التخطي'})[t.status]||t.status,'ff-burger-chip'));
  const line=v=>card.append(make('p',v));
  line('📍 '+t.branch_name+' · أُرسل '+time(t.sent_at));
+ if(burgerIsLate(t))card.append(make('p','⚠️ طلب متأخر (25 دقيقة أو أكثر)','ff-burger-urgent-note'));
  line('👤 الكاشير المرسل: '+t.cashier_name);
  line('👨‍🍳 موظف البرجر المستلم: '+(t.kitchen_name||'بانتظار الاستلام'));
  const products=make('section',undefined,'ff-burger-ticket-products');
@@ -131,9 +142,9 @@ function createTicket(t,view){
    notice.setAttribute('role','alert');card.append(notice);
    if(t.notes_confirmed_at)line('✅ تأكيد تنفيذ الملاحظات: '+time(t.notes_confirmed_at));
  }
- const meter=make('p','⏱️ زمن التحضير: ');
- const duration=make('strong',seconds(t),'ff-burger-clock');
- duration.dataset.ffBurgerStart=t.accepted_at||'';duration.dataset.ffBurgerEnd=t.ready_at||'';
+ const meter=make('p',t.status==='sent'?'⏱️ منذ إرسال الطلب: ':'⏱️ زمن التحضير: ');
+ const duration=make('strong',t.status==='sent'?clock((Date.now()-Date.parse(t.sent_at))/1000):seconds(t),'ff-burger-clock');
+ duration.dataset.ffBurgerStart=t.accepted_at||t.sent_at||'';duration.dataset.ffBurgerEnd=t.ready_at||'';
  meter.append(duration);card.append(meter);
  let action=null,label='';
  if(view==='kitchen'&&t.status==='sent'){action='receive';label='📥 استلمت الطلب'}
@@ -171,7 +182,12 @@ function render(){
    $('ffBurgerKitchenBranch').textContent='الفرع: '+(profile.branches?.[0]?.name||'—');
    const ongoing=rows.filter(t=>t.status==='sent'||t.status==='preparing');
    $('ffBurgerKitchenStatus').textContent='الوارد: '+ongoing.filter(t=>t.status==='sent').length+' · تحضير: '+ongoing.filter(t=>t.status==='preparing').length;
-   fill('ffBurgerKitchenActive',ongoing,'kitchen');
+   $('ffBurgerPendingCount').textContent=String(ongoing.length);
+   $('ffBurgerNewCount').textContent=String(ongoing.filter(t=>t.status==='sent').length);
+   $('ffBurgerPrepCount').textContent=String(ongoing.filter(t=>t.status==='preparing').length);
+   $('ffBurgerLateCount').textContent=String(ongoing.filter(t=>burgerIsLate(t)).length);
+   kitchen.querySelectorAll('[data-ff-burger-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ffBurgerFilter===kitchenFilter)));
+   fill('ffBurgerKitchenActive',burgerFilterTickets(ongoing,kitchenFilter),'kitchen');
    const finished=rows.filter(t=>t.status==='ready'||t.status==='acknowledged');
    $('ffBurgerDoneCount').textContent=String(finished.length);
    fill('ffBurgerKitchenFinished',finished,'kitchen');
@@ -226,7 +242,14 @@ async function refresh(force=false){
  if(!authorized()||!identity()||loading||(!force&&Date.now()-fetchAt<5000))return;
  const previous=identity(),request=++seq;fetchAt=Date.now();loading=true;
  try{
-   if(!profile){profile=await rpc('ff_burger_my_branch');items=await rpc('ff_burger_menu')}
+   const scoped=await rpc('ff_burger_my_branch');
+   if(request!==seq||previous!==identity()||!authorized())return;
+   const branchKey=v=>(v?.branches||[]).map(b=>b.id).sort().join(',');
+   if(!profile||branchKey(profile)!==branchKey(scoped)){
+    const menu=await rpc('ff_burger_menu');
+    if(request!==seq||previous!==identity()||!authorized())return;
+    profile=scoped;items=menu;
+   }else profile=scoped;
    const fetched=await rpc('ff_burger_list',{p_limit:150});
    if(request!==seq||previous!==identity()||!authorized())return;
    const list=Array.isArray(fetched)?fetched:[];
@@ -239,9 +262,12 @@ async function refresh(force=false){
    lastNew=newer;lastReady=ready;initial=false;owner=identity();rows=list;render();
    void updateOnline(force);
  }catch(e){
+   if(request!==seq||previous!==identity()||!authorized())return;
+   rows=[];items=[];
+   for(const id of ['ffBurgerKitchenActive','ffBurgerKitchenFinished','ffBurgerCashierReady','ffBurgerCashierActive','ffBurgerCashierFinished'])$(id)?.replaceChildren();
    const element=$(kitchenRole()?'ffBurgerKitchenStatus':'ffBurgerCashierStatus');
    if(element)element.textContent='⚠️ تعذر تحديث قسم البرجر: '+errorText(e)+' — استخدم زر تحديث الأوامر بعد التحقق من الاتصال';
- }finally{loading=false}
+ }finally{if(request===seq)loading=false}
 }
 function heartbeat(){
  if(interval)return;
