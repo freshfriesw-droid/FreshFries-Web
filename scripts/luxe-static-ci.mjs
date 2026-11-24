@@ -295,6 +295,27 @@ const edgeBurger=get('supabase/functions/ff61-employees/index.ts').toString('utf
 assert.match(edgeBurger, /"burger_kitchen"/,'Employee approval endpoint missing kitchen role');
 
 
+// Use the shipped parser with representative catalog entries and check the preview payload.
+const parserSource=html.slice(html.indexOf('function ff49ParseItemsAndNotes('),
+  html.indexOf('// Prevent older create callback'));
+const menuNames=['تشكن فرايز','تشكن استربس','رايس تشكن فرايز','سماش برجر دبل أسمر',
+  'جبن شيدر وذرة','جبن شيدر وهالبينو'];
+const parseQuick=vm.runInNewContext(parserSource+'\nff49ParseItemsAndNotes',{
+  ff49Catalog:menuNames.map((name,id)=>({id:id+1,name,price:1000}))
+});
+const preview=parseQuick(['١ تشكن بدون شطّة','1 استربس','1 رايس','2 برجر اسمر دبل',
+  '1 جبن ذرة','1 هلبينو','٧٧٧١٢٣٤٥٦','شارع القاهرة','0','اسم الموصل: أحمد',
+  '1 صنف مجهول'].join('\n'),{allowPartial:true});
+assert.deepEqual(Array.from(preview.items,item=>item.name),menuNames);
+assert.equal(preview.items[0].item_notes,'بدون شطّة');
+assert.equal(preview.items[3].qty,2);
+assert.equal(preview.meta.phone,'777123456');
+assert.equal(preview.meta.area,'شارع القاهرة');
+assert.equal(preview.meta.fee,0);
+assert.equal(preview.meta.driver,'أحمد');
+assert.equal(preview.errors.length,1);
+assert.equal(preview.errors[0].line,11);
+
 // Operational follow-ups: syntax, shared parser and security regression guards.
 for(const file of [
  'scripts/luxe-burger-kitchen-20261123.js',

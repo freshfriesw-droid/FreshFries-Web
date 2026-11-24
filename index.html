@@ -2682,7 +2682,7 @@ function ff49ParseItemsAndNotes(value, options={}){
    break;
   }
   if(handled)continue;
-  if(/^\+?\d[\d\s-]{6,}$/.test(text)){meta.phone=raw.replace(/[\s-]/g,'');details.push({line,kind:'phone',raw,value:meta.phone});continue}
+  if(/^\+?\d[\d\s-]{6,}$/.test(text)){meta.phone=text.replace(/[\s-]/g,'');details.push({line,kind:'phone',raw,value:meta.phone});continue}
   const m=text.match(/^(\d+(?:\.\d+)?)\s+(.+)$/u);
   if(m){const qty=Number(m[1]);if(!Number.isInteger(qty)||qty<1||qty>100){fail(raw,line,'الكمية يجب أن تكون رقمًا صحيحًا بين 1 و100');continue}
    const after=m[2].split('|');if(after.length>2){fail(raw,line,'اكتب سعر الوحدة مرة واحدة بعد |');continue}
@@ -2691,10 +2691,15 @@ function ff49ParseItemsAndNotes(value, options={}){
    // Longest matching alias wins, so "برجر اسمر دبل" never becomes "برجر اسمر" plus an arbitrary note.
    const matched=uniqueAlias.filter(a=>itemText===a.text||itemText.startsWith(a.text+' ')).sort((a,b)=>b.text.length-a.text.length||Number(b.exact)-Number(a.exact));
    let found=null,suffix='';
-   if(matched.length){const bestLen=matched[0].text.length;const top=[...new Map(matched.filter(a=>a.text.length===bestLen).map(a=>[a.item.id||a.item.name,a.item])).values()];if(top.length>1){fail(raw,line,'اسم الصنف ملتبس؛ اكتب الاسم الكامل أو اختصارًا مميزًا');continue}found=top[0];suffix=itemText.slice(bestLen).trim()}
+   if(matched.length){const bestLen=matched[0].text.length;const top=[...new Map(matched.filter(a=>a.text.length===bestLen).map(a=>[a.item.id||a.item.name,a.item])).values()];if(top.length>1){fail(raw,line,'اسم الصنف ملتبس؛ اكتب الاسم الكامل أو اختصارًا مميزًا');continue}found=top[0];
+    const originalItem=raw.replace(/^\S+\s+/u,'').split('|',1)[0].trim();
+    const aliasWords=matched[0].text.split(' ').length;
+    const words=[...originalItem.matchAll(/\S+/gu)];
+    suffix=words[aliasWords]?originalItem.slice(words[aliasWords].index):''}
    if(!found){if(manualPrice===null){fail(raw,line,'الصنف غير معروف في المنيو؛ تحقق من الاسم أو العرض');continue}found={name:after[0].trim(),price:manualPrice};warnings.push('السطر '+line+': صنف يدوي، تأكد من الاسم والسعر')}
    // Reject combined items, including conjunctions followed by another recognizable alias.
-   if(suffix&&(/(?:^|\s)(?:\d+\s+|\+\s*\d+\s*|و\s+\d+\s+)/u.test(suffix)||/(?:^|\s)و\s+(?:تشكن|استربس|ستربس|رايس|فرايز|بطاطس|برجر|سماش|جبن\s+(?:ذره|هلبينو)|عرض)(?:\s|$)/u.test(suffix))){fail(raw,line,'لا تدمج صنفين في سطر واحد');continue}
+   const normalizedSuffix=norm(suffix);
+   if(suffix&&(/(?:^|\s)(?:\d+\s+|\+\s*\d+\s*|و\s+\d+\s+)/u.test(normalizedSuffix)||/(?:^|\s)و\s+(?:تشكن|استربس|ستربس|رايس|فرايز|بطاطس|برجر|سماش|جبن\s+(?:ذره|هلبينو)|عرض)(?:\s|$)/u.test(normalizedSuffix))){fail(raw,line,'لا تدمج صنفين في سطر واحد');continue}
    const price=manualPrice??Number(found.price);if(!Number.isFinite(price)||price<0){fail(raw,line,'سعر الصنف غير صالح');continue}
    // Distinct item_notes are passed as their own field, never merged into the item name.
    items.push({name:found.name,qty,price,item_notes:suffix});details.push({line,kind:'item',raw,value:found.name,qty,price,suffix});continue;
