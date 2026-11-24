@@ -14,7 +14,7 @@ const make=(tag,value)=>{const x=document.createElement(tag);if(value!=null)x.te
 const mod=document.createElement('dialog');mod.id='ffUnifiedMenuDialog';mod.style.cssText='width:min(95vw,670px);max-height:90vh;overflow:auto;border:2px solid #c72439;border-radius:16px;padding:16px;direction:rtl;background:#fff;color:#111';
 mod.innerHTML='<h2>🍟 المنيو التفاعلي · فريش فرايز</h2><p>اضغط الصنف لإضافة قطعة، وعدّل العدد من + و−. تُضاف الأصناف إلى نفس محلل الطلب المعتمد.</p>'+
 '<input id="ffUnifiedMenuSearch" type="search" placeholder="ابحث عن صنف أو عرض" style="width:100%;padding:10px;margin:5px 0 10px">'+
-'<div id="ffUnifiedMenuStatus" role="status"></div><div id="ffUnifiedMenuList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px"></div>'+
+'<div id="ffUnifiedMenuStatus" role="status"></div><div id="ffUnifiedMenuDraft" aria-label="أسطر السلة"></div><div id="ffUnifiedMenuList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px"></div>'+
 '<div class="actions"><button type="button" id="ffUnifiedMenuReview" class="primary">🔎 تحليل الأصناف ومعاينتها</button><button type="button" id="ffUnifiedMenuUndo" class="outline" disabled>تراجع عن آخر تعديل</button><button type="button" id="ffUnifiedMenuClose" class="outline">إغلاق</button></div>';
 document.body.append(mod);
 const categoryBar=make('div');categoryBar.id='ffUnifiedMenuCategories';categoryBar.className='ffl-picker-categories';
@@ -86,8 +86,19 @@ function render(){
  const term=ui.normalize($('ffUnifiedMenuSearch').value);
  const filtered=catalog.filter(i=>(activeCategory==='الكل'||ui.category(i)===activeCategory)&&(!term||ui.normalize(i.name+' '+(i.category||'')).includes(term)));
  $('ffUnifiedMenuUndo').disabled=!canUndo(active);
- const quantities=new Map();
- for(const row of itemRows(active))quantities.set(row.name,(quantities.get(row.name)||0)+row.qty);
+ const quantities=new Map(),rows=itemRows(active);
+ const draft=$('ffUnifiedMenuDraft');draft.replaceChildren();
+ for(const row of rows){
+  quantities.set(row.name,(quantities.get(row.name)||0)+row.qty);
+  const line=make('div');line.className='ffb-v2-cartline';
+  const title=make('span',row.name+' · '+row.qty+' × '+row.price+' ريال'+(row.notes?' — '+row.notes:''));
+  const minus=make('button','−'),plus=make('button','+');
+  for(const [button,delta,label] of [[minus,-1,'تقليل سطر'],[plus,1,'زيادة سطر']]){
+   button.type='button';button.className='outline';button.setAttribute('aria-label',label+' '+(row.index+1)+' '+row.name);
+   button.onclick=()=>{try{appendText(active,{name:row.name,price:row.price},delta,row.index);render()}catch(e){$('ffUnifiedMenuStatus').textContent=e.message}};
+  }
+  line.append(title,minus,plus);draft.append(line);
+ }
  const total=catalog.reduce((sum,item)=>sum+(quantities.get(item.name)||0),0);
  $('ffUnifiedMenuStatus').textContent=filtered.length+' صنف/عرض · المختار '+total+' قطعة · '+(active.dataset.ffUnifiedLabel||'');
  if(!filtered.length){box.append(make('p','لا توجد أصناف مطابقة للبحث أو القسم'));return}
