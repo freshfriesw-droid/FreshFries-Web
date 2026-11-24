@@ -4,8 +4,25 @@
 const targets={
  'dashboard.title':'#ffx-hero-title','dashboard.new':'#ffx-hero-new','dashboard.reserve':'#ffx-hero-reserve','dashboard.late':'#ffx-hero-overdue',
  'reports.title':'#ff76Center .r-head h2','reports.subtitle':'#ff76Center .r-head p','reports.run':'#ff76Run',
- 'reports.preview':'#ff76Preview','reports.download':'#ff76Download','reports.share':'#ff76Share','reports.csv':'#ff76CSV','reports.close':'#ff76Close'
+ 'reports.preview':'#ff76Preview','reports.download':'#ff76Download','reports.share':'#ff76Share','reports.csv':'#ff76CSV','reports.close':'#ff76Close',
+ 'orders.parse':'#ffbApplyText',
+ 'orders.menu':'#ffbTabMenu',
+ 'orders.text':'#ffbTabText',
+ 'orders.refresh':'#ffbMenuReload',
+ 'orders.save':'#createBtn',
+ 'catalog.refresh':'#ff51CatalogRefresh',
+ 'customers.find':'#ff51CustomerFind',
+ 'customers.note':'#ff51CustomerNoteSave',
+ 'staff.refresh':'#staffAdminRefresh',
+ 'staff.permissions':'#permissionLoad',
+ 'cases.refresh':'#ff41Refresh',
+ 'messages.refresh':'#ff39Refresh',
+ 'archive.find':'#ff51ArchiveRefresh',
+ 'ratings.refresh':'#ff51RatingsRefresh',
+ 'assembly.refresh':'#ffV12Refresh',
+ 'reservations.refresh':'#ff49ReservationsRefresh'
 };
+const screens={dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
 const roles={all:'كل الأدوار',manager:'المدير العام',supervisor:'المشرف',customer_service:'خدمة العملاء',cashier:'الكاشير',driver:'الموصل',assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر'};
 const originalTitles={manager:'إدارة ذكية، ورؤية أوضح لكل فرع',driver:'توصيلاتك... بوضوح وسرعة',cashier:'كل طلب في وقته الصحيح',customer_service:'خدمة سريعة، وتجربة عميل أجمل',supervisor:'متابعة دقيقة في كل لحظة'};
 const actor=()=>typeof user!=='undefined'&&user?.id&&typeof data!=='undefined'&&data?.role?user.id:'';
@@ -37,17 +54,24 @@ function write(key,value){
   if(node.textContent!==(value??fallback))node.textContent=value??fallback;
   return;
  }
- // Preserve SVGs, attributes, handlers, and the original text nodes.
- if(!originals.has(node)){
-  const textNodes=Array.from(node.childNodes).filter(n=>n.nodeType===Node.TEXT_NODE);
-  originals.set(node,textNodes.map(n=>[n,n.data]));
+ // Apply only to live text nodes; never rewrite an operational label that has no override.
+ const current=Array.from(node.childNodes).filter(n=>n.nodeType===Node.TEXT_NODE);
+ let saved=originals.get(node);
+ if(saved&&(!saved.every(([n])=>n.parentNode===node)||current.length!==saved.length)){
+  originals.delete(node);saved=undefined;
  }
- const saved=originals.get(node);
- if(!saved.length)return;
+ if(value==null){
+  if(saved){for(const [text,original,applied] of saved){if(text.data===applied)text.data=original}originals.delete(node)}
+  return;
+ }
+ if(!current.length)return;
+ if(!saved){saved=current.map(n=>[n,n.data,null]);originals.set(node,saved)}
  for(let i=0;i<saved.length;i++){
-  const [text,original]=saved[i];
-  const next=value==null?original:(i===0?' '+value:'');
+  const item=saved[i],text=item[0];
+  if(item[2]!==null&&text.data!==item[2])item[1]=text.data;
+  const next=i===0?' '+value:'';
   if(text.data!==next)text.data=next;
+  item[2]=next;
  }
 }
 function render(){for(const key of Object.keys(targets))write(key,values.get(key)?.body??null)}
@@ -88,8 +112,8 @@ function controls(){
 }
 function setKeys(){
  const term=q('search').value.trim().toLocaleLowerCase('ar'),old=q('key').value;
- const rows=catalog.filter(x=>[x.key,x.screen,x.label,x.original,x.screen==='dashboard'?'لوحة التحكم':'التقارير'].join(' ').toLocaleLowerCase('ar').includes(term));
- q('key').replaceChildren(...rows.map(x=>new Option(x.label+' — '+(x.screen==='dashboard'?'الرئيسية':'التقارير'),x.key)));
+ const rows=catalog.filter(x=>[x.key,x.screen,x.label,x.original,screens[x.screen]||x.screen].join(' ').toLocaleLowerCase('ar').includes(term));
+ q('key').replaceChildren(...rows.map(x=>new Option(x.label+' — '+(screens[x.screen]||x.screen),x.key)));
  if(rows.some(x=>x.key===old))q('key').value=old;
 }
 async function getHistory(token,selectId){
