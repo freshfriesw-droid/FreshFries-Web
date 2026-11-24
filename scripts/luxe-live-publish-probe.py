@@ -1,51 +1,34 @@
-"""Read-only public deployment verification; no auth, no order requests."""
+"""Read-only publication verification for A02. No authentication or data mutation."""
 from hashlib import sha256
 from pathlib import Path
-from urllib.request import Request, urlopen
-from urllib.parse import urljoin, urlparse
-import re
-root = Path(__file__).resolve().parents[1]
-origin = "https://delivery.freshfriesz.com/"
-asset = "scripts/luxe-unified-order-inputs-20261123.js"
-marker = "20261124-a02-cart2"
-def get(relative):
-    target = urljoin(origin, relative)
-    req = Request(target, headers={"Cache-Control": "no-cache", "User-Agent": "FreshFries-LUXE-deployment-QA"})
-    with urlopen(req, timeout=25) as response:
-        if urlparse(response.geturl()).hostname != urlparse(origin).hostname:
-            raise RuntimeError("Unexpected public site redirect")
-        if response.status != 200:
-            raise RuntimeError(f"HTTP {response.status}")
-        return response.read()
-html = get("?qa=a02-cart2").decode("utf-8")
-assert marker in html, "Latest merged cart cache-bust marker absent from public HTML"
-assert 'ff71-customer-phone-otp' in html, "Customer portal missing"
-remote = get(asset+"?v="+marker)
-local = (root / asset).read_bytes()
-print("Public asset SHA256:", sha256(remote).hexdigest())
-print("Repository asset SHA256:", sha256(local).hexdigest())
-assert remote == local, "Public script differs from tested repository asset"
-print("PASS: HTTPS live HTML and exact merged cart asset are publicly served")
-
-# #77: verify the merged customer directory frontend on the public website.
-# Retry briefly for the ordinary Pages publication delay; do not mutate data.
+from urllib.request import Request,urlopen
+from urllib.parse import urljoin,urlparse
 from time import sleep
-customer_asset = "scripts/luxe-order-customer-edit-20261123.js"
-customer_marker = "20261124-customer-note"
-expected_asset = (root / customer_asset).read_bytes()
-for attempt in range(5):
+import re
+root=Path(__file__).resolve().parents[1]
+origin="https://delivery.freshfriesz.com/"
+html=(root/"index.html").read_bytes()
+source=html.decode("utf-8")
+assets=["scripts/luxe-shared-photo-menu-20261123.js","scripts/luxe-unified-order-inputs-20261123.js","scripts/luxe-order-customer-edit-20261123.js"]
+def get(path):
+    req=Request(urljoin(origin,path),headers={"Cache-Control":"no-cache","User-Agent":"FreshFries-LUXE-A02-QA"})
+    with urlopen(req,timeout=15) as response:
+        assert response.status==200 and urlparse(response.geturl()).hostname==urlparse(origin).hostname
+        return response.read()
+for attempt in range(10):
     try:
-        published = get("?qa=" + customer_marker).decode("utf-8")
-        assert customer_asset + "?v=" + customer_marker in published, "Customer note revision not yet served"
-        assert "c.orders_count??0" in published, "Customer order count not served"
-        shipped = get(customer_asset + "?v=" + customer_marker)
-        assert shipped == expected_asset, "Customer edit asset differs from merged source"
-        print("Customer edit published SHA256:", sha256(shipped).hexdigest())
-        print("Customer edit repository SHA256:", sha256(expected_asset).hexdigest())
-        print("PASS #77: customer directory count and exact customer edit/notes asset served via HTTPS")
+        actual=get("?qa=20261125-a02-card-style")
+        assert actual==html,"Deployed HTML does not match merged source"
+        print("Exact deployed index SHA256:",sha256(actual).hexdigest(),flush=True)
+        for asset in assets:
+            m=re.search(re.escape(asset)+r"\?v=([^\"]+)",source)
+            assert m,asset
+            remote=get(asset+"?v="+m.group(1))
+            assert remote==(root/asset).read_bytes(),asset
+            print("Exact deployed asset:",asset,sha256(remote).hexdigest(),flush=True)
+        print("PASS A02: full public HTML and three exact assets match",flush=True)
         break
-    except (AssertionError, OSError) as exc:
-        if attempt == 4:
-            raise
-        print(f"Publish probe attempt {attempt + 1}: {exc}", flush=True)
+    except (AssertionError,OSError,ValueError) as exc:
+        if attempt==9:raise
+        print("Publication attempt",attempt+1,str(exc),flush=True)
         sleep(8)
