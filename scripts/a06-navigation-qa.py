@@ -4,6 +4,7 @@ Records real screenshots and CSS cascade inventory; never submits a real order.
 """
 import json
 import re
+import os
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -61,6 +62,12 @@ collect_css="""()=>{
  return {sheets:sheetRows,declarations:rules.length,important:rules.filter(r=>r.priority==='important').length,duplicates,conflicts};
 }"""
 results=[]
+baseline_path=os.getenv("A06_BASELINE")
+baseline_server=None
+if baseline_path:
+ baseline_server=ThreadingHTTPServer(("127.0.0.1",0),partial(SimpleHTTPRequestHandler,directory=baseline_path))
+ Thread(target=baseline_server.serve_forever,daemon=True).start()
+ baseline_origin=f"http://127.0.0.1:{baseline_server.server_port}/"
 with sync_playwright() as pw:
  browser=pw.chromium.launch(channel="chrome")
  for role in roles:
@@ -74,6 +81,23 @@ with sync_playwright() as pw:
    report=page.evaluate(collect_css)
    (out/"css-cascade.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
    print("CSS cascade:",len(report["sheets"]),"sheets",len(report["duplicates"]),"exact duplicate property pairs",len(report["conflicts"]),"ordered override pairs",flush=True)
+   if baseline_server:
+    old=browser.new_context(viewport={"width":390,"height":850},service_workers="block",reduced_motion="reduce")
+    old.route("**/*",lambda route:route.continue_() if route.request.url.startswith(baseline_origin) else route.abort())
+    before=old.new_page();before.goto(baseline_origin,wait_until="load");before.evaluate(fixture,"manager")
+    old_report=before.evaluate(collect_css)
+    (out/"css-cascade-before.json").write_text(json.dumps(old_report,ensure_ascii=False,indent=2))
+    before.screenshot(path=out/"manager-before-390.png",animations="disabled")
+    before.set_viewport_size({"width":1440,"height":850});before.screenshot(path=out/"manager-before-1440.png",animations="disabled")
+    print("CSS before/after duplicate pairs:",len(old_report["duplicates"]),len(report["duplicates"]),"ordered overrides:",len(old_report["conflicts"]),len(report["conflicts"]),flush=True)
+    # Compare actual computed operational card/status styles, excluding intended new navigation treatment.
+    probe="""()=>{const values={};for(const id of ['cashierOrders','driverTasks','staffOrders']){const p=document.getElementById(id);const n=document.createElement('article');n.className='item';p.append(n);const a=getComputedStyle(n);const normal=[a.borderTopColor,a.borderTopWidth,a.borderRadius];n.classList.add('ff-luxe-cancelled');const b=getComputedStyle(n);values[id]={normal,cancelled:[b.borderTopColor,b.borderTopWidth,b.borderRadius]};n.remove()}return values}"""
+    before.set_viewport_size({"width":390,"height":850})
+    old_cards=before.evaluate(probe);new_cards=page.evaluate(probe)
+    for role_id in ["cashierOrders","driverTasks"]:
+     assert old_cards[role_id]==new_cards[role_id],(role_id,old_cards,new_cards)
+    (out/"card-cascade-parity.json").write_text(json.dumps({"before":old_cards,"after":new_cards},indent=2))
+    old.close()
   for width in widths:
    page.set_viewport_size({"width":width,"height":850})
    page.wait_for_timeout(100)
@@ -87,6 +111,7 @@ with sync_playwright() as pw:
      assert result["bar"][0]>=-1 and result["bar"][1]<=width+1 and result["bar"][2]>0,(role,width,mode,result)
      assert all(x["label"] and x["h"]>=44 and x["w"]>=44 for x in result["items"]),(role,width,mode,result)
      assert any(x["key"]=="more" for x in result["items"]),(role,width,mode)
+     assert not result["overflow"],(role,width,mode,"page horizontal overflow")
      results.append({"role":role,"width":width,"bar":mode,"visible":len(result["items"]),"page_overflow":result["overflow"]})
     page.evaluate("document.body.dataset.ffA06Bar='labels'")
     if width==390:page.screenshot(path=out/f"{role}-390.png",animations="disabled")
@@ -122,6 +147,10 @@ with sync_playwright() as pw:
    assert page.locator('#ffx-nav [data-ffx-group-toggle]').first.get_attribute("aria-expanded")==expanded
    search=page.locator("#ffx-nav-search");search.fill("قيمة غير موجودة");assert page.locator('#ffx-nav .ffx-nav-group:not([hidden])').count()==0
    search.fill("");page.keyboard.press("Escape")
+   if role in ("manager","customer_service","supervisor"):
+    page.locator("#ffx-menu").click();page.locator("#ffx-nav-search").fill("123");assert page.locator('#ffA06OrderSearchResults button[data-ff-a06-result="123"]').count()==1
+    page.locator('#ffA06OrderSearchResults button[data-ff-a06-result="123"]').click();assert page.locator("#orderSearch").input_value()=="123"
+    page.locator("#ffx-menu").click();page.locator("#ffx-nav-search").fill("");page.keyboard.press("Escape")
    if role in ("manager","customer_service"):
     page.evaluate("""()=>{document.querySelector('#newItems').value='1 تشكن بدون شطة';document.querySelector('#newFee').value='500';document.querySelector('#ffbQuickInput').value='مسودة محفوظة'}""")
     page.locator("#ffx-menu").click();page.locator("#ffx-nav-search").fill("طلب جديد")
@@ -136,6 +165,7 @@ with sync_playwright() as pw:
   ctx.close()
  browser.close()
 server.shutdown()
+if baseline_server:baseline_server.shutdown()
 (out/"role-width-bar.json").write_text(json.dumps(results,ensure_ascii=False,indent=2))
 assert len(results)==7*5*5
 print("PASS A06",len(results),"mobile role/width/bar combinations; 14 desktop role/width checks")
