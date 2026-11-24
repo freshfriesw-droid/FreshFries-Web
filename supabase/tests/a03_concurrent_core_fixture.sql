@@ -259,6 +259,8 @@ AS $function$
  AND a.active_count+w.waiting_count<5
  AND w.waiting_count=0
  AND (a.active_count<2 OR a.same_area>0)
+ AND NOT EXISTS(SELECT 1 FROM public.ff38_dispatch_offers old
+ WHERE old.order_id=p_order AND old.driver_id=d.id AND old.status IN ('rejected','expired'))
  ORDER BY
  CASE WHEN public.ff52_is_route_priority(d.id,v_order.branch_id,v_order.area_snapshot) THEN 0 ELSE 1 END ASC,
  CASE WHEN a.same_area>0 THEN 0 ELSE 1 END ASC,
