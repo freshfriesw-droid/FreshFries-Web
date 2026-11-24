@@ -306,8 +306,13 @@ with sync_playwright() as playwright:
                 assert rows.count() == 5
                 editor.locator("[data-card-undo]").click()
                 assert rows.count() == 6
+                editor.locator("[data-card-redo]").click()
+                assert rows.count() == 5
+                editor.locator("[data-card-undo]").click()
+                assert rows.count() == 6
                 editor.locator("[data-card-default]").click()
                 assert rows.count() == 4
+                assert editor.locator("[data-card-redo]").is_disabled()
                 studio.locator("#ffCardEditor summary").click()
                 # DEC-03: verify effective published source against concrete role/device scopes.
                 page.evaluate("""() => {
