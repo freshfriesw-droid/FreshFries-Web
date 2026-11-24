@@ -6,7 +6,7 @@ const safe = value => String(value == null ? '' : value).replace(/[&<>"']/g, c =
 const fmt = value => value === null || value === undefined ? '—' : Number(value).toLocaleString('ar-YE',{maximumFractionDigits:2});
 const cash = value => value === null || value === undefined ? '—' : fmt(value)+' ر.ي';
 const stamp = date => date ? new Date(date).toLocaleString('ar-YE',{timeZone:'Asia/Aden',dateStyle:'short',timeStyle:'short'}) : '—';
-const headings = {summary:'الملخص اليومي',finance:'الإيرادات',orders:'الطلبات والإلغاءات',branches:'الفروع',drivers:'أداء الموصلين',staff:'موظفو خدمة العملاء',areas:'العملاء والمناطق',items:'الأصناف الأكثر مبيعاً',ratings:'التقييمات',cases:'الشكاوى والتظلمات',attendance:'الدوام والاستراحات',analytics:'التحليلات المتقدمة',comparisons:'المقارنات',approval:'اعتماد المدير'};
+const headings = {summary:'الملخص اليومي',finance:'المبالغ المسجلة ورسوم التوصيل',orders:'الطلبات والإلغاءات',branches:'الفروع',drivers:'أداء الموصلين',staff:'موظفو خدمة العملاء',areas:'العملاء والمناطق',items:'الأصناف الأكثر طلباً',ratings:'التقييمات',cases:'الشكاوى والتظلمات',attendance:'الدوام والاستراحات',analytics:'التحليلات المتقدمة',comparisons:'المقارنات',approval:'اعتماد المدير'};
 let result=null,identity='',pdf=null,pdfURL=null,fileName='',pending=false,pdfPromise=null,libPromise=null,previewed=false;
 let reportRequest=0,pdfRevision=0;
 function me(){return typeof user!=='undefined' && user ? user.id : ''}
@@ -25,6 +25,8 @@ root.innerHTML=[
 '<button type="button" id="ff76Preview" class="r-plain" disabled>👁️ معاينة PDF</button>',
 '<button type="button" id="ff76Download" class="r-plain" disabled>⬇️ تصدير PDF</button>',
 '<button type="button" id="ff76Share" class="r-plain" disabled>📤 مشاركة التقرير</button></div>',
+ '<button type="button" id="ff76CSV" class="r-plain" disabled>تصدير الأقسام CSV</button>',
+ '<details><summary>قوالب أقسام التقرير</summary><label>اسم القالب<input id="ff76PresetName" maxlength="80"></label><button id="ff76SavePreset" type="button">حفظ الاختيارات</button><label>قوالبي<select id="ff76PresetList"></select></label><button id="ff76UsePreset" type="button">تطبيق القالب</button><p id="ff76PresetStatus" role="status"></p></details>',
 '<p id="ff76Status" class="r-muted" role="status" aria-live="polite">حدد الفترة واضغط إعداد التقرير.</p>',
 '<div id="ff76Body"></div>',
 '<section id="ff76ApprovalBox" class="r-section" hidden><h3>🖋️ ملاحظات المدير واعتماد التقرير</h3>',
@@ -40,7 +42,7 @@ const previewDialog=document.createElement('dialog');previewDialog.id='ff76PdfDi
 previewDialog.innerHTML='<header class="r-dialoghead"><b>معاينة PDF الكاملة قبل الإرسال</b><div><button id="ff76DlgDownload">حفظ الملف</button> <button id="ff76DlgShare" class="r-primary">مشاركة الملف</button> <button id="ff76DlgClose">✕ إغلاق</button></div></header><iframe id="ff76PDFFrame" title="معاينة PDF"></iframe>';
 document.body.append(previewDialog);
 function clearPDF(){pdfRevision++;pdfPromise=null;if(previewDialog.open)previewDialog.close();if(pdfURL){URL.revokeObjectURL(pdfURL);pdfURL=null}pdf=null;fileName='';previewed=false;el('ff76PDFFrame').removeAttribute('src')}
-function clear(){result=null;identity='';clearPDF();el('ff76Body').textContent='';el('ff76ApprovalBox').hidden=true;['ff76Preview','ff76Download','ff76Share'].forEach(id=>el(id).disabled=true)}
+function clear(){result=null;identity='';clearPDF();el('ff76Body').textContent='';el('ff76ApprovalBox').hidden=true;['ff76Preview','ff76Download','ff76Share','ff76CSV'].forEach(id=>el(id).disabled=true)}
 function day(){if(typeof ff40TodayYemen==='function')return ff40TodayYemen();const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day}
 function changeDay(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
 function period(days,offset){const end=changeDay(day(),offset);el('ff76To').value=end;el('ff76From').value=changeDay(end,-days+1);invalidate()}
@@ -128,7 +130,7 @@ function draw(){if(!result)return;el('ff76Body').innerHTML=compose(selected())||
 const allowedApproval=result.role==='manager'&&el('ff76From').value===el('ff76To').value&&!el('ff76Driver').value;
 el('ff76ApprovalBox').hidden=!allowedApproval;
 if(allowedApproval){el('ff76ManagerName').value=result.approval?.manager_name||'';el('ff76ManagerNotes').value=result.approval?.manager_notes||''}
-['ff76Preview','ff76Download','ff76Share'].forEach(id=>el(id).disabled=!selected().length)}
+['ff76Preview','ff76Download','ff76Share','ff76CSV'].forEach(id=>el(id).disabled=!selected().length)}
 async function load(){
  if(!me()||pending)return;
  const from=el('ff76From').value,to=el('ff76To').value,branch=el('ff76Branch').value||null,driver=el('ff76Driver').value||null;
@@ -143,7 +145,7 @@ async function load(){
  options('ff76Branch',data.branches,'name','id','جميع الفروع المسموحة');if(branch)el('ff76Branch').value=branch;
  options('ff76Driver',data.driver_options,'name','id','جميع الموصلين');if(driver)el('ff76Driver').value=driver;
  el('ff76DriverWrap').hidden=!(data.driver_options||[]).length;
- choices();draw();
+ choices();draw();void refreshPresets(request);
  el('ff76Status').textContent='تقرير '+from+' إلى '+to+' | '+data.scope+' | '+fmt(data.totals.orders)+' طلب. بيانات تشغيلية وليست إقفالات محاسبية.';
  }catch(e){if(request!==reportRequest)return;clear();el('ff76Status').textContent='تعذر إعداد التقرير: '+(e.message||e)}finally{if(request===reportRequest){pending=false;el('ff76Run').disabled=false}}
 }
@@ -159,6 +161,58 @@ const uid=me(),tag=identity;el('ff76SaveApproval').disabled=true;
 try{const res=await rpc('ff76_report_approval_save',{p_day:el('ff76To').value,p_branch:el('ff76Branch').value||null,p_notes:el('ff76ManagerNotes').value,p_manager_name:el('ff76ManagerName').value});
 if(me()!==uid||tag!==identity)throw Error('تغير الحساب أو التقرير');result.approval={...res,manager_notes:res.notes};clearPDF();draw();el('ff76ApprovalStatus').textContent='تم توثيق اعتماد المدير وتاريخ حفظه.'}
 catch(e){el('ff76ApprovalStatus').textContent='فشل الاعتماد: '+e.message}finally{el('ff76SaveApproval').disabled=false}};
+let presets=[];
+async function refreshPresets(request){
+ const viewer=me();
+ try{
+  const rows=await rpc('ff_report_preset_list');
+  if(viewer!==me()||request!==reportRequest)return;
+  presets=rows||[];
+  options('ff76PresetList',presets,'title','title','اختر القالب');
+ }catch(e){if(viewer===me()&&request===reportRequest)el('ff76PresetStatus').textContent=e.message}
+}
+el('ff76SavePreset').onclick=async()=>{
+ const title=el('ff76PresetName').value.trim(),sections=selected(),request=reportRequest,viewer=me();
+ if(!result||!title||!sections.length){el('ff76PresetStatus').textContent='أدخل اسم القالب واختر الأقسام';return}
+ if(presets.some(p=>p.title===title)&&!confirm('تحديث القالب '+title+'؟'))return;
+ try{
+  await rpc('ff_report_preset_save',{p_title:title,p_sections:sections,p_trend:el('ff76Trend').value});
+  if(request!==reportRequest||viewer!==me())return;
+  await refreshPresets(request);
+  if(request===reportRequest&&viewer===me()){el('ff76PresetList').value=title;el('ff76PresetStatus').textContent='حُفظ القالب'}
+ }catch(e){if(request===reportRequest&&viewer===me())el('ff76PresetStatus').textContent=e.message}
+};
+el('ff76UsePreset').onclick=()=>{
+ const preset=presets.find(p=>p.title===el('ff76PresetList').value);
+ if(!result||!preset)return;
+ el('ff76Mode').value='custom';choices();
+ el('ff76Choices').querySelectorAll('input').forEach(box=>box.checked=preset.sections.includes(box.value)&&allowed(box.value));
+ el('ff76Trend').value=preset.trend;
+ el('ff76PresetName').value=preset.title;clearPDF();draw();
+ el('ff76PresetStatus').textContent='عدد الأقسام المتاحة من القالب '+selected().length;
+};
+function csvField(value){
+ let text=String(value??'');
+ if(/^[\s]*[=+@-]/.test(text))text="'"+text;
+ return '"'+text.replace(/"/g,'""')+'"';
+}
+el('ff76CSV').onclick=()=>{
+ if(!result||!selected().length||!identity.startsWith(me()+':'))return;
+ const rows=[['التقرير',result.from,result.to,result.scope]];
+ for(const section of el('ff76Body').querySelectorAll('section')){
+  rows.push([], [section.querySelector('h3')?.textContent]);
+  for(const node of section.querySelectorAll('.r-kpi,tr,p,li,.r-barcol')){
+   if(node.matches('tr,.r-kpi,.r-barcol'))rows.push(Array.from(node.children,x=>x.textContent).filter(Boolean));
+   else rows.push([node.textContent]);
+  }
+ }
+ const blob=new Blob(['\uFEFF',rows.map(row=>row.map(csvField).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+ const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='FreshFries_'+result.from+'_'+result.to+'.csv';
+ link.click();setTimeout(()=>URL.revokeObjectURL(link.href),5000);
+};
+window.addEventListener('ff-luxe-session-reset',()=>{
+ presets=[];el('ff76PresetList').replaceChildren();el('ff76PresetName').value='';el('ff76PresetStatus').textContent='';
+});
 function pdfLibrary(){if(window.html2pdf)return Promise.resolve();if(libPromise)return libPromise;
 libPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js';s.onload=()=>window.html2pdf?resolve():reject(Error('مكتبة PDF غير جاهزة'));s.onerror=()=>reject(Error('مكتبة PDF تحتاج اتصالاً بالإنترنت'));document.head.append(s)}).catch(e=>{libPromise=null;throw e});return libPromise}
 function authorized(uid,tag,revision){if(me()!==uid||identity!==tag||revision!==pdfRevision)throw Error('تغير الحساب أو التقرير')}
