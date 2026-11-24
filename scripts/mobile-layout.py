@@ -212,6 +212,24 @@ with sync_playwright() as playwright:
                 dialog.get_by_role("button", name="عرض ملخص البيانات", exact=False).click()
                 dialog.get_by_text("تمت قراءة الملخص", exact=False).wait_for()
                 dialog.get_by_role("button", name="إغلاق", exact=True).click()
+                # Editing a quick-order draft must invalidate its previous transfer button.
+                page.evaluate("""() => {
+                  ff49Catalog=[{id:'fixture-chicken',name:'تشكن فرايز',price:2000,active:true}];
+                  ff49CatalogAt=Date.now();
+                  document.querySelector('#ffbQuickInput').value='1 تشكن بدون شطة';
+                  document.querySelector('#ffbApplyText').click();
+                }""")
+                page.locator("#ffbQuickCommit").wait_for(state="attached")
+                page.evaluate("""() => {
+                  const old=document.querySelector('#ffbQuickCommit');
+                  const input=document.querySelector('#ffbQuickInput');
+                  input.value='2 تشكن';
+                  input.dispatchEvent(new Event('input',{bubbles:true}));
+                  old.click();
+                }""")
+                assert page.locator("#ffbQuickCommit").count() == 0
+                assert page.locator("#newItems").input_value() == ''
+                assert page.locator("#ffbQuickInput").input_value() == '2 تشكن'
                 # A manager's in-flight settlement report must never appear after session reset.
                 page.evaluate("""() => {
                   rpc=(name,args)=>{

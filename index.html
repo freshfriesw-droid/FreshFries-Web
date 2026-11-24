@@ -3771,15 +3771,28 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
  function syncCart(){const rows=[];let sum=0;for(const item of catalog){const key=item.id||item.name,qty=cart.get(key)||0;if(!qty)continue;rows.push(qty+' '+item.name+' | '+Number(item.price));sum+=qty*Number(item.price)}$('newItems').value=rows.join('\n');renderCart(sum);previewReady=false}
  function renderCart(sumOverride){const panel=$('ffbCart');panel.replaceChildren();let sum=0;let count=0;for(const item of catalog){const qty=cart.get(item.id||item.name)||0;if(!qty)continue;sum+=qty*Number(item.price);count+=qty;const row=document.createElement('div');row.className='ffb-v2-cartline';const name=document.createElement('strong');name.textContent=item.name;const less=document.createElement('button');less.type='button';less.className='outline';less.textContent='−';less.setAttribute('aria-label','تقليل '+item.name);less.onclick=()=>change(item,-1);const more=document.createElement('button');more.type='button';more.className='outline';more.textContent='+';more.setAttribute('aria-label','زيادة '+item.name);more.onclick=()=>change(item,1);const badge=document.createElement('span');badge.textContent=qty;badge.className='ffb-v2-qty';row.append(name,less,badge,more);panel.append(row)}const total=document.createElement('div');total.className='ffb-v2-total';total.innerHTML='<span>الأصناف المختارة <b>'+count+'</b></span><strong>'+Number(sumOverride??sum).toLocaleString('ar-YE')+' ريال</strong>';panel.append(total);if(!count){const note=document.createElement('div');note.className='ffb-v2-empty';note.textContent='اختر صنفًا من المنيو، أو انتقل إلى الكتابة السريعة';panel.prepend(note)}}
  function fillFromParsed(parsed){for(const [id,key]of [['newPhone','phone'],['newArea','area'],['newFee','fee'],['newCustomerName','customer']])if(parsed.meta[key]!==undefined)$(id).value=parsed.meta[key];const previous=$('newNotes').value;if(autoNotes&&previous.includes(autoNotes))$('newNotes').value=previous.replace(autoNotes,'').replace(/^\s*\|\s*|\s*\|\s*$/g,'').trim();autoNotes=[parsed.notes,parsed.meta.driver?'موصل مطلوب: '+parsed.meta.driver:''].filter(Boolean).join(' | ');$('newNotes').value=[$('newNotes').value,autoNotes].filter(Boolean).join(' | ');$('newItems').value=parsed.items.map(i=>i.qty+' '+i.name+(i.item_notes?' '+i.item_notes:'')+' | '+i.price).join('\n');cart.clear();for(const item of parsed.items){const match=catalog.find(x=>x.name===item.name);if(match){const key=match.id||match.name;cart.set(key,(cart.get(key)||0)+item.qty)}}renderCart();render();previewReady=false}
+ let analysisGeneration=0;
+ const quickInput=$('ffbQuickInput');
+ function invalidateAnalysis(){
+  analysisGeneration++;
+  const review=$('ffbQuickReview');
+  review.replaceChildren();review.classList.add('hidden');
+  previewReady=false;
+ }
+ quickInput.addEventListener('input',invalidateAnalysis);
+ window.addEventListener('ff-luxe-session-reset',invalidateAnalysis);
+ window.addEventListener('ff:order-created',invalidateAnalysis);
  async function parseQuick(){
+  const generation=++analysisGeneration,raw=quickInput.value,actor=user?.id;
+  const current=()=>generation===analysisGeneration&&quickInput.value===raw&&user?.id===actor;
   const box=$('ffbQuickReview');box.classList.remove('hidden');box.textContent='جاري قراءة القائمة...';
-  try{await load();await ff49LoadCatalog();const parsed=ff49ParseItemsAndNotes($('ffbQuickInput').value,{allowPartial:true});
+  try{await load();await ff49LoadCatalog();if(!current())return;const parsed=ff49ParseItemsAndNotes(raw,{allowPartial:true});
    box.innerHTML=window.ff75RenderReview(parsed,'الطلب الجديد');
    if(!parsed.errors.length){
     const buttons=document.createElement('div');buttons.className='actions ffb-quick-review-buttons';buttons.style.cssText='display:flex;flex-direction:column;align-items:stretch;gap:11px;margin-top:16px';
     const use=document.createElement('button');use.id='ffbQuickCommit';use.className='primary';use.type='button';use.textContent='نقل البيانات إلى الطلب';
-    use.onclick=()=>{if(parsed.meta.kind==='reservation')return status('هذا حجز استلام وليس طلب توصيل',true);fillFromParsed(parsed);status('تم نقل الأصناف والملاحظات. راجع البيانات قبل الاعتماد.')};buttons.append(use);
-    if(parsed.meta.kind==='reservation'){const booking=document.createElement('button');booking.id='ffbQuickReservation';booking.className='outline';booking.type='button';booking.textContent='فتح حجز الكاشير';booking.onclick=()=>{const trigger=$('ff49ReservationsBtn');if(!trigger||trigger.classList.contains('hidden'))return status('الحجوزات غير متاحة',true);trigger.click();setTimeout(()=>{const target=$('ff49ReserveItems');if(target){target.value=parsed.items.map(i=>i.qty+' '+i.name+' | '+i.price).join('\n');$('ff49ReserveName').value=parsed.meta.customer||$('newCustomerName').value;$('ff49ReservePhone').value=parsed.meta.phone||$('newPhone').value;$('ff49ReserveBranch').value=$('newBranch').value;$('ff49ReserveNotes').value=parsed.notes}},50)};buttons.append(booking)}
+    use.onclick=()=>{if(!current())return;if(parsed.meta.kind==='reservation')return status('هذا حجز استلام وليس طلب توصيل',true);fillFromParsed(parsed);status('تم نقل الأصناف والملاحظات. راجع البيانات قبل الاعتماد.')};buttons.append(use);
+    if(parsed.meta.kind==='reservation'){const booking=document.createElement('button');booking.id='ffbQuickReservation';booking.className='outline';booking.type='button';booking.textContent='فتح حجز الكاشير';booking.onclick=()=>{if(!current())return;const trigger=$('ff49ReservationsBtn');if(!trigger||trigger.classList.contains('hidden'))return status('الحجوزات غير متاحة',true);trigger.click();setTimeout(()=>{const target=$('ff49ReserveItems');if(target&&current()){target.value=parsed.items.map(i=>i.qty+' '+i.name+(i.item_notes?' '+i.item_notes:'')+' | '+i.price).join('\n');$('ff49ReserveName').value=parsed.meta.customer||$('newCustomerName').value;$('ff49ReservePhone').value=parsed.meta.phone||$('newPhone').value;$('ff49ReserveBranch').value=$('newBranch').value;$('ff49ReserveNotes').value=parsed.notes}},50)};buttons.append(booking)}
     // New shortcuts remain in the exact same button group, immediately after Transfer.
     if(parsed.meta.kind!=='reservation'){
       const review=document.createElement('button');
@@ -3787,6 +3800,7 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
       review.textContent='مراجعة الطلب ثم اعتماده';
       review.style.cssText='min-height:52px;width:100%;font-size:15px;font-weight:900';
       review.onclick=()=>{
+        if(!current())return;
         if(parsed.warnings?.length)return status('راجع التحذيرات في المعاينة قبل الاعتماد.',true);
         use.click(); // Transfer exactly as before.
         $('createBtn').click(); // Show the original final confirmation.
@@ -3797,6 +3811,7 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
       pinned.textContent='مراجعة وإسناد للموصل المثبت';
       pinned.style.cssText='min-height:52px;width:100%;font-size:15px;font-weight:900;border:2px solid #cf1732';
       pinned.onclick=()=>{
+        if(!current())return;
         if(parsed.warnings?.length)return status('راجع التحذيرات في المعاينة قبل الإسناد.',true);
         if(!String($('newBranch').selectedOptions[0]?.textContent||'').includes('القاهرة'))
           return status('الإسناد للموصل المثبت متاح لفرع القاهرة فقط.',true);
@@ -3811,7 +3826,7 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
     box.append(buttons);
     status('المعاينة جاهزة؛ راجعها ثم انقل البيانات.');
    }else status('هناك '+parsed.errors.length+' سطر يحتاج مراجعة؛ يمكنك تصحيحه دون إعادة كتابة البقية.',true);
-  }catch(e){box.textContent=e.message;status('تعذر إكمال المعاينة: '+e.message,true)}
+  }catch(e){if(current()){box.textContent=e.message;status('تعذر إكمال المعاينة: '+e.message,true)}}
  }
  $('ffbApplyText').onclick=()=>void parseQuick();$('ffbMenuReload').onclick=()=>void load(true);$('ffbMenuSearch').addEventListener('input',render);
  $('newItems').addEventListener('input',()=>{cart.clear();renderCart();previewReady=false});
