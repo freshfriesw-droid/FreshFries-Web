@@ -132,6 +132,50 @@ class DrawerStyles(HTMLParser):
             self.css[self.current] = self.css.get(self.current, "") + data
 
 
+def compare_manager_shortcuts(page):
+    """Compare computed button and badge styles with the pre-cleanup cascade."""
+    baseline = os.getenv("DRAWER_BASELINE_HTML")
+    if not baseline:
+        return
+    parser = DrawerStyles()
+    parser.ids = {"ff-luxe-header-admin-alert-visibility"}
+    parser.feed(Path(baseline).read_text())
+    if not parser.css:  # Later base revisions already use the linked stylesheet.
+        return
+    page.evaluate("""css => {
+      const baseline = document.createElement('style');
+      baseline.id = 'qa-shortcut-baseline';
+      baseline.textContent = css;
+      document.querySelector('link[href$="luxe-operations.css"]').after(baseline);
+    }""", next(iter(parser.css.values())))
+    try:
+        for hidden in (False, True):
+            differences = page.evaluate("""hidden => {
+              const sheet = document.querySelector('#qa-shortcut-baseline').sheet;
+              const buttons = Array.from(document.querySelectorAll('#ff61ManageShortcut,#ff63NotificationsShortcut'));
+              if (buttons.length !== 2) throw Error('Missing shortcuts');
+              buttons.forEach(button => button.hidden = hidden);
+              const nodes = buttons.flatMap(button => [button, button.querySelector('.pill')]);
+              const sample = () => nodes.map(node => {
+                const style = getComputedStyle(node);
+                return Object.fromEntries(Array.from(style, key => [key, style.getPropertyValue(key)]));
+              });
+              sheet.disabled = false;
+              const before = sample();
+              sheet.disabled = true;
+              return sample().flatMap((style, i) => Object.keys(style)
+                .filter(key => style[key] !== before[i][key])
+                .map(key => [nodes[i].id, key, before[i][key], style[key]]));
+            }""", hidden)
+            assert not differences, differences
+    finally:
+        page.evaluate("""() => {
+          document.querySelector('#qa-shortcut-baseline').remove();
+          for (const id of ['ff61ManageShortcut','ff63NotificationsShortcut'])
+            document.getElementById(id).hidden = false;
+        }""")
+
+
 def compare_drawer_images(page, width):
     baseline = os.getenv("DRAWER_BASELINE_HTML")
     if not baseline or width not in (390, 1280):
@@ -240,6 +284,7 @@ with sync_playwright() as playwright:
             document.getElementById(id).hidden=false;
         }""")
         if width in (390, 1280):
+            compare_manager_shortcuts(page)
             check_version_badge_styles(page)
         check_order_status_colors(page)
         check_legacy_status_feedback(page, width)
