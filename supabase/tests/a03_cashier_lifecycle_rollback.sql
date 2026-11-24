@@ -2,7 +2,7 @@
 DO $qa$
 DECLARE b uuid:=gen_random_uuid(); foreign_b uuid:=gen_random_uuid(); c uuid:=gen_random_uuid(); u uuid:=gen_random_uuid(); other uuid:=gen_random_uuid(); mgr uuid:=gen_random_uuid();
  d uuid:=gen_random_uuid(); d2 uuid:=gen_random_uuid(); o uuid:=gen_random_uuid(); cancelled uuid:=gen_random_uuid(); ref_order uuid:=gen_random_uuid(); oid uuid;
- f uuid; r jsonb; rejected boolean; stage text; phase text; passes int:=0; bad text;
+ f uuid; r jsonb; rejected boolean; stage text; v_phase text; passes int:=0; bad text;
 BEGIN
  BEGIN
  INSERT INTO public.ff_branches(id,code,name) VALUES(b,'qa-'||b,'QA lifecycle'),(foreign_b,'qa-'||foreign_b,'QA foreign');
@@ -49,8 +49,8 @@ BEGIN
  BEGIN PERFORM public.ff38_cashier_set_stage(o,'handed_over');EXCEPTION WHEN raise_exception THEN rejected:=true;END;
  IF NOT rejected THEN RAISE EXCEPTION 'Repeated handover accepted';END IF;passes:=passes+1;
  PERFORM set_config('request.jwt.claim.sub',u::text,true);
- FOREACH phase IN ARRAY ARRAY['on_way','arrived','delivered'] LOOP
- PERFORM public.ff38_driver_progress(o,phase);
+ FOREACH v_phase IN ARRAY ARRAY['on_way','arrived','delivered'] LOOP
+ PERFORM public.ff38_driver_progress(o,v_phase);
  END LOOP;passes:=passes+1;
  rejected:=false;
  BEGIN PERFORM public.ff38_driver_progress(o,'delivered');EXCEPTION WHEN raise_exception THEN rejected:=true;END;
