@@ -1,0 +1,147 @@
+معرف الزر,التسمية,أقرب حاوية بمعرف,النموذج,النوع,حاويات مخفية في HTML الأولي,دليل الربط الساكن,مواضع ربط النقر المباشر,سطر HTML
+,تقديم الطلب,ff28Apply,ff28Apply,submit,ff28Apply,إرسال نموذج,,662
+ff28Refresh,تحديث,ff28Portal,,button,,ربط نقر مباشر في المصدر,index.html:1396,662
+ff28Logout,خروج,ff28Portal,,button,,ربط نقر مباشر في المصدر,index.html:1397,662
+ff52RoutesBtn,📍 توجيه مناطق الجامعات,,,button,ff52RoutesBtn,ربط نقر مباشر في المصدر,index.html:3306,663
+ff51CatalogBtn,🍟 المنيو والعروض,,,button,ff51CatalogBtn,ربط نقر مباشر في المصدر,index.html:3095,663
+ff51CustomersBtn,👥 العملاء,,,button,ff51CustomersBtn,ربط نقر مباشر في المصدر,index.html:3141,663
+ff51ArchiveBtn,📁 الأرشيف,,,button,ff51ArchiveBtn,ربط نقر مباشر في المصدر,index.html:3207,663
+ff51RatingsBtn,⭐ التقييمات,,,button,ff51RatingsBtn,ربط نقر مباشر في المصدر,index.html:3250,663
+ff50ChangesBtn,📝 تعديلات الطلبات,,,button,ff50ChangesBtn,ربط نقر مباشر في المصدر,index.html:2970,663
+ff49ReservationsBtn,📅 الحجوزات,,,button,ff49ReservationsBtn,ربط نقر مباشر في المصدر,index.html:2844,663
+ff49TransferBtn,🔄 نقل الموصل,,,button,ff49TransferBtn,ربط نقر مباشر في المصدر,index.html:2876,663
+ff48DiagnosticsBtn,🩺 تشخيص النسخة,,,button,ff48DiagnosticsBtn,ربط نقر مباشر في المصدر,index.html:2592,663
+ff47QABtn,📋 الاختبار الشامل,,,button,ff47QABtn,ربط نقر مباشر في المصدر,index.html:2500,663
+ff46ReadinessBtn,🧪 جاهزية الإطلاق,,,button,ff46ReadinessBtn,ربط نقر مباشر في المصدر,index.html:2362,663
+ff45AccessBtn,🔐 عزل الفروع,,,button,ff45AccessBtn,ربط نقر مباشر في المصدر,index.html:2299,663
+ff44IntegrityBtn,🔎 سلامة البيانات,,,button,ff44IntegrityBtn,ربط نقر مباشر في المصدر,index.html:2226,663
+ff43SecurityBtn,🛡️ أمان النظام,,,button,ff43SecurityBtn,ربط نقر مباشر في المصدر,index.html:2149,663
+ff42SettlementsBtn,💰 تسويات الموصلين,,,button,ff42SettlementsBtn,ربط نقر مباشر في المصدر,index.html:2087,663
+ff40ReportsBtn,📊 التقارير,,,button,ff40ReportsBtn,ربط نقر مباشر في المصدر,index.html:1779 | scripts/luxe-report-center-20261123.js:191,663
+ff40AlertsBtn,⚠️ متابعة التشغيل 0,,,button,ff40AlertsBtn,ربط نقر مباشر في المصدر,index.html:1784,663
+ff41CasesBtn,📋 الشكاوى والتظلمات 0,,,button,ff41CasesBtn,ربط نقر مباشر في المصدر,index.html:1909,663
+ff39InboxBtn,📨 الرسائل 0,,,button,ff39InboxBtn,ربط نقر مباشر في المصدر,index.html:1648,663
+notificationsBtn,🔔 تفعيل التنبيهات,,,button,notificationsBtn,ربط نقر مباشر في المصدر,index.html:1440 | index.html:4464,663
+refreshBtn,تحديث,,,button,refreshBtn,ربط نقر مباشر في المصدر,index.html:1435,663
+logoutBtn,خروج,,,button,logoutBtn,ربط نقر مباشر في المصدر,index.html:1434 | index.html:4479 | index.html:4520 | index.html:5010 | scripts/luxe-f01-operational-day-20261123.js:70 | scripts/luxe-history-period-20261123.js:76,663
+ff66AssemblySoundSettings,🔔 النغمات,ffV12AssemblyWorkspace,,button,ffV12AssemblyWorkspace,ربط نقر مباشر في المصدر,index.html:3412,665
+ffV12Refresh,تحديث الطلبات,ffV12AssemblyWorkspace,,button,ffV12AssemblyWorkspace,ربط نقر مباشر في المصدر,index.html:1173,665
+ffV12BurgerOpen,🍔 أوامر قسم البرجر,ffV12AssemblyWorkspace,,button,ffV12AssemblyWorkspace,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:1059,665
+ffV12Logout,🚪 تسجيل الخروج,ffV12AssemblyWorkspace,,button,ffV12AssemblyWorkspace,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:1057,665
+,جميع الطلبات,ffV12AssemblyWorkspace,,button,ffV12AssemblyWorkspace,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:1084,676
+,بانتظار التحضير,ffV12AssemblyWorkspace,,button,ffV12AssemblyWorkspace,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:1084,677
+,قيد التحضير,ffV12AssemblyWorkspace,,button,ffV12AssemblyWorkspace,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:1084,678
+,جاهزة للتسليم,ffV12AssemblyWorkspace,,button,ffV12AssemblyWorkspace,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:1084,679
+ff48Refresh,تحديث التشخيص,ff48DiagnosticsPanel,,button,ff48DiagnosticsPanel,ربط نقر مباشر في المصدر,index.html:2599,686
+ff48Export,تصدير CSV,ff48DiagnosticsPanel,,button,ff48DiagnosticsPanel,ربط نقر مباشر في المصدر,index.html:2600,686
+ff48Close,إغلاق,ff48DiagnosticsPanel,,button,ff48DiagnosticsPanel,ربط نقر مباشر في المصدر,index.html:2601,686
+ff47Reload,تحديث النتائج,ff47QAPanel,,button,ff47QAPanel,ربط نقر مباشر في المصدر,index.html:2503,702
+ff47Close,إغلاق,ff47QAPanel,,button,ff47QAPanel,ربط نقر مباشر في المصدر,index.html:2501,702
+ff47Create,إنشاء جولة اختبار,ff47QAPanel,,button,ff47QAPanel,ربط نقر مباشر في المصدر,index.html:2502,707
+ff47Export,تصدير النتائج CSV,ff47QAPanel,,button,ff47QAPanel,ربط نقر مباشر في المصدر,index.html:2508,711
+ff47Finish,اعتماد اكتمال الجولة,ff47QAPanel,,button,ff47QAPanel,ربط نقر مباشر في المصدر,index.html:2509,712
+ff47Reopen,إعادة فتح الجولة,ff47QAPanel,,button,"ff47Reopen, ff47QAPanel",ربط نقر مباشر في المصدر,index.html:2510,713
+ff46Run,فحص جاهزية النسخة,ff46ReadinessPanel,,button,ff46ReadinessPanel,ربط نقر مباشر في المصدر,index.html:2370,728
+ff46Export,تصدير CSV,ff46ReadinessPanel,,button,ff46ReadinessPanel,ربط نقر مباشر في المصدر,index.html:2371,728
+ff46Close,إغلاق,ff46ReadinessPanel,,button,ff46ReadinessPanel,ربط نقر مباشر في المصدر,index.html:2372,728
+ff45Run,فحص الوصول,ff45AccessPanel,,button,ff45AccessPanel,ربط نقر مباشر في المصدر,index.html:2304,741
+ff45Export,تصدير CSV,ff45AccessPanel,,button,ff45AccessPanel,ربط نقر مباشر في المصدر,index.html:2305,741
+ff45Close,إغلاق,ff45AccessPanel,,button,ff45AccessPanel,ربط نقر مباشر في المصدر,index.html:2306,741
+ff44Export,تصدير النتائج CSV,ff44IntegrityPanel,,button,ff44IntegrityPanel,ربط نقر مباشر في المصدر,index.html:2232,755
+ff44Close,إغلاق,ff44IntegrityPanel,,button,ff44IntegrityPanel,ربط نقر مباشر في المصدر,index.html:2233,755
+ff44Run,بدء فحص البيانات,ff44IntegrityPanel,,button,ff44IntegrityPanel,ربط نقر مباشر في المصدر,index.html:2231,757
+ff43Run,فحص الآن,ff43SecurityPanel,,button,ff43SecurityPanel,ربط نقر مباشر في المصدر,index.html:2154,766
+ff43Export,تصدير نتائج CSV,ff43SecurityPanel,,button,ff43SecurityPanel,ربط نقر مباشر في المصدر,index.html:2155,766
+ff43Close,إغلاق,ff43SecurityPanel,,button,ff43SecurityPanel,ربط نقر مباشر في المصدر,index.html:2156,766
+ff42Export,تصدير CSV,ff42Panel,,button,ff42Panel,ربط نقر مباشر في المصدر,index.html:2090,776
+ff42ClosePanel,إغلاق,ff42Panel,,button,ff42Panel,ربط نقر مباشر في المصدر,index.html:2088,776
+ff42Load,عرض التسويات,ff42Panel,,button,ff42Panel,ربط نقر مباشر في المصدر,index.html:2089,778
+ff42Save,حفظ التسوية,ff42Form,,button,"ff42Form, ff42Panel",ربط نقر مباشر في المصدر,index.html:2091,787
+ff42CloseSettlement,🔒 إقفال التسوية,ff42Form,,button,"ff42CloseSettlement, ff42Form, ff42Panel",ربط نقر مباشر في المصدر,index.html:2092,787
+ff42ShowDetail,عرض الطلبات والسجل,ff42Form,,button,"ff42ShowDetail, ff42Form, ff42Panel",ربط نقر مباشر في المصدر,index.html:2093,787
+ff41Refresh,تحديث البلاغات,ff41Panel,,button,ff41Panel,ربط نقر مباشر في المصدر,index.html:1914,793
+ff41Close,إغلاق,ff41Panel,,button,ff41Panel,ربط نقر مباشر في المصدر,index.html:1913,793
+ff41Create,حفظ البلاغ,ff41Panel,,button,ff41Panel,ربط نقر مباشر في المصدر,index.html:1918,805
+ff39Refresh,تحديث الرسائل,ff39Panel,,button,ff39Panel,ربط نقر مباشر في المصدر,index.html:1654,813
+ff39Close,إغلاق,ff39Panel,,button,ff39Panel,ربط نقر مباشر في المصدر,index.html:1653,813
+ff39Send,إرسال التعميم,ff39ManagerArea,,button,"ff39ManagerArea, ff39Panel",ربط نقر مباشر في المصدر,index.html:1662,823
+ff39SentRefresh,سجل الإرسال,ff39ManagerArea,,button,"ff39ManagerArea, ff39Panel",ربط نقر مباشر في المصدر,index.html:1683,823
+ff40AlertRefresh,تحديث التنبيهات,ff40AlertsPanel,,button,ff40AlertsPanel,ربط نقر مباشر في المصدر,index.html:1794,830
+ff40AlertsClose,إغلاق,ff40AlertsPanel,,button,ff40AlertsPanel,ربط نقر مباشر في المصدر,index.html:1790,830
+ff40ExportCSV,تصدير CSV,ff40ReportsPanel,,button,ff40ReportsPanel,ربط نقر مباشر في المصدر,index.html:1793,836
+ff40ReportsClose,إغلاق,ff40ReportsPanel,,button,ff40ReportsPanel,ربط نقر مباشر في المصدر,index.html:1789,836
+ff40RunReport,إعداد التقرير,ff40ReportsPanel,,button,ff40ReportsPanel,ربط نقر مباشر في المصدر,index.html:1791,843
+ff51BreakBtn,☕ بدء استراحة,driverView,,button,driverView,ربط نقر مباشر في المصدر,index.html:3262,855
+clockInBtn,تسجيل حضور / جاهز,driverView,,button,driverView,ربط نقر مباشر في المصدر,index.html:1438,855
+clockOutBtn,إنهاء الدوام,driverView,,button,driverView,ربط نقر مباشر في المصدر,index.html:1439,855
+linkUserBtn,ربط الحساب,managerLinks,,button,"managerLinks, staffView",ربط نقر مباشر في المصدر,index.html:1488,863
+ffEditMyAccount,✏️ تعديل حساب المدير,staffAdminCard,,button,"staffAdminCard, staffView",ربط نقر مباشر في المصدر,index.html:5210,865
+staffAdminRefresh,تحديث الموظفين,staffAdminCard,,button,"staffAdminCard, staffView",ربط نقر مباشر في المصدر,index.html:1444 | index.html:1610 | scripts/luxe-cashier-destinations-20261122.js:107,865
+permissionLoad,عرض صلاحيات الموظف,staffAdminCard,,button,"staffAdminCard, staffView",ربط نقر مباشر في المصدر,index.html:1602,865
+staffAuditRefresh,عرض السجل,staffAdminCard,,button,"staffAdminCard, staffView",ربط نقر مباشر في المصدر,index.html:1467,865
+ffbApplyText,تحليل الأسطر ومعاينتها,ffbTextPanel,,button,"serviceOnly, staffView",ربط نقر مباشر في المصدر,index.html:3937,869
+ffbTabMenu,🍟 المنيو التفاعلي,serviceOnly,,button,"serviceOnly, staffView",ربط نقر مباشر في المصدر,index.html:3864,878
+ffbTabText,🧠 الانتقال إلى المحلّل,serviceOnly,,button,"serviceOnly, staffView",ربط نقر مباشر في المصدر,index.html:3864,878
+ffbMenuReload,تحديث المنيو,ffbMenuPanel,,button,"serviceOnly, staffView",ربط نقر مباشر في المصدر,index.html:3937,879
+createBtn,اعتماد الطلب وحفظه,serviceOnly,,button,"serviceOnly, staffView",ربط نقر مباشر في المصدر,index.html:1441 | index.html:2805,881
+ffReserveBottom,📅 حجز للاستلام,serviceOnly,,button,"serviceOnly, staffView",ربط نقر مباشر في المصدر,index.html:2844,881
+auditRefreshBtn,تحديث السجل,auditCard,,button,staffView,ربط نقر مباشر في المصدر,index.html:1437,885
+ff51CatalogRefresh,تحديث,ff51CatalogPanel,,button,ff51CatalogPanel,ربط نقر مباشر في المصدر,index.html:3096,890
+ff51CatalogClose,إغلاق,ff51CatalogPanel,,button,ff51CatalogPanel,ربط نقر مباشر في المصدر,index.html:3097,890
+ff51ItemSave,حفظ الصنف,ff51CatalogPanel,,button,ff51CatalogPanel,ربط نقر مباشر في المصدر,index.html:3099,893
+ff51ItemReset,إلغاء التعديل,ff51CatalogPanel,,button,ff51CatalogPanel,ربط نقر مباشر في المصدر,index.html:3098,893
+ff51OfferSave,حفظ العرض,ff51CatalogPanel,,button,ff51CatalogPanel,ربط نقر مباشر في المصدر,index.html:3107,896
+ff51OfferReset,إلغاء التعديل,ff51CatalogPanel,,button,ff51CatalogPanel,ربط نقر مباشر في المصدر,index.html:3106,896
+ffAliasSave,حفظ المرادفات,ff51CatalogPanel,,button,ff51CatalogPanel,ربط نقر مباشر في المصدر,index.html:3093,901
+ffAliasDefault,استعادة المرادفات الافتراضية,ff51CatalogPanel,,button,ff51CatalogPanel,ربط نقر مباشر في المصدر,index.html:3094,901
+ff51CustomersClose,إغلاق,ff51CustomersPanel,,button,ff51CustomersPanel,ربط نقر مباشر في المصدر,index.html:3142,905
+ff51CustomerFind,بحث,ff51CustomersPanel,,button,ff51CustomersPanel,ربط نقر مباشر في المصدر,index.html:3143,907
+ff51CustomerNoteSave,حفظ ملاحظة العميل,ff51CustomerNotesSection,,button,"ff51CustomerNotesSection, ff51CustomersPanel",ربط نقر مباشر في المصدر,index.html:3161,911
+ff51ArchiveRefresh,بحث,ff51ArchivePanel,,button,ff51ArchivePanel,ربط نقر مباشر في المصدر,index.html:3216,914
+ff51ArchiveExport,تصدير CSV,ff51ArchivePanel,,button,ff51ArchivePanel,ربط نقر مباشر في المصدر,index.html:3221,914
+ff51ArchiveClose,إغلاق,ff51ArchivePanel,,button,ff51ArchivePanel,ربط نقر مباشر في المصدر,index.html:3210,914
+ff51ArchivePrev,الصفحة السابقة,ff51ArchivePanel,,button,ff51ArchivePanel,ربط نقر مباشر في المصدر,index.html:3219,918
+ff51ArchiveNext,الصفحة التالية,ff51ArchivePanel,,button,ff51ArchivePanel,ربط نقر مباشر في المصدر,index.html:3220,918
+ff51RatingsRefresh,تحديث,ff51RatingsPanel,,button,ff51RatingsPanel,ربط نقر مباشر في المصدر,index.html:3260,921
+ff51RatingsClose,إغلاق,ff51RatingsPanel,,button,ff51RatingsPanel,ربط نقر مباشر في المصدر,index.html:3261,921
+ff50Refresh,تحديث,ff50ChangesPanel,,button,ff50ChangesPanel,ربط نقر مباشر في المصدر,index.html:2971,926
+ff50Close,إغلاق,ff50ChangesPanel,,button,ff50ChangesPanel,ربط نقر مباشر في المصدر,index.html:2972,926
+ff50RequestSave,إرسال طلب التعديل للكاشير,ff50ChangeRequestBox,,button,"ff50ChangeRequestBox, ff50ChangesPanel",ربط نقر مباشر في المصدر,index.html:2974,932
+ff50RequestCancel,إلغاء,ff50ChangeRequestBox,,button,"ff50ChangeRequestBox, ff50ChangesPanel",ربط نقر مباشر في المصدر,index.html:2973,932
+ff49ReservationsRefresh,تحديث,ff49ReservationsPanel,,button,ff49ReservationsPanel,ربط نقر مباشر في المصدر,index.html:2845,937
+ff49ReservationsClose,إغلاق,ff49ReservationsPanel,,button,ff49ReservationsPanel,ربط نقر مباشر في المصدر,index.html:2846,937
+ff49ReserveSave,حفظ الحجز وإرساله لكاشير الفرع,ff49ReservationsCreate,,button,ff49ReservationsPanel,ربط نقر مباشر في المصدر,index.html:2847,943
+ff49TransferRefresh,تحديث,ff49TransferPanel,,button,ff49TransferPanel,ربط نقر مباشر في المصدر,index.html:2877,948
+ff49TransferClose,إغلاق,ff49TransferPanel,,button,ff49TransferPanel,ربط نقر مباشر في المصدر,index.html:2878,948
+ff49ManualClose,إغلاق,ff49ManualPanel,,button,ff49ManualPanel,ربط نقر مباشر في المصدر,index.html:2915,953
+ff49ManualConfirm,تأكيد الإسناد وتوثيق السبب,ff49ManualPanel,,button,ff49ManualPanel,ربط نقر مباشر في المصدر,index.html:2916,957
+ff52LateClose,إغلاق,ff52LatePanel,,button,ff52LatePanel,ربط نقر مباشر في المصدر,index.html:3283,960
+ff75LatePreview,🔎 تحليل ومعاينة الإضافة,ff52LatePanel,,button,ff52LatePanel,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:5152,964
+ff52LateSave,تأكيد إرسال الإضافة إلى الموصل للموافقة,ff52LatePanel,,button,"ff52LateSave, ff52LatePanel",ربط نقر مباشر في المصدر,index.html:3284,964
+ff52RoutesClose,إغلاق,ff52RoutesPanel,,button,ff52RoutesPanel,ربط نقر مباشر في المصدر,index.html:3307,967
+ff52RouteSave,حفظ قاعدة التوجيه,ff52RoutesPanel,,button,ff52RoutesPanel,ربط نقر مباشر في المصدر,index.html:3308,972
+loginBtn,تسجيل الدخول,loginOverlay,,button,,ربط نقر مباشر في المصدر,index.html:1433,977
+ff61ApplyToggle,📝 تقديم طلب انضمام,loginOverlay,,button,,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:4665,978
+ff61StatusToggle,🔎 متابعة طلبي,loginOverlay,,button,,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:4666,978
+ff71CustomerToggle,👤 متابعة طلباتي,loginOverlay,,button,,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:5078,978
+ff71CustomerSend,إرسال رمز التحقق,ff71CustomerPanel,,button,ff71CustomerPanel,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:5082,982
+ff71CustomerVerify,تأكيد الرقم وعرض طلباتي,ff71CustomerPanel,,button,ff71CustomerPanel,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:5095,984
+ff61ApplySend,إرسال طلب الانضمام,ff61ApplyForm,ff61ApplyForm,submit,ff61ApplyPanel,إرسال نموذج,,1001
+ff61TrackSend,عرض الحالة,ff61StatusForm,ff61StatusForm,submit,ff61StatusPanel,إرسال نموذج,,1004
+ff3-close,إغلاق ×,ff3-guide,,button,,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:4056,4038
+ff3-launch,🧭 مراحل الطلب,,,button,,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:4056,4049
+ff4-launch,📊 متابعة التشغيل,,,button,,ربط نقر مباشر في المصدر,index.html:4135,4083
+ff4-refresh,تحديث البيانات,ff4-panel,,button,,ربط نقر مباشر في المصدر,index.html:4137,4086
+ff4-export,تصدير CSV,ff4-panel,,button,,ربط نقر مباشر في المصدر,index.html:4137,4086
+ff4-close,إغلاق ×,ff4-panel,,button,,ربط نقر مباشر في المصدر,index.html:4135,4086
+ff5-launch,🧭 غرفة العمليات,,,button,,ربط نقر مباشر في المصدر,index.html:4191,4150
+ff5-refresh,تحديث مباشر,ff5-modal,,button,,ربط نقر مباشر في المصدر,index.html:4195,4152
+ff5-export,تصدير المتابعة CSV,ff5-modal,,button,,ربط نقر مباشر في المصدر,index.html:4196,4152
+ff5-close,إغلاق,ff5-modal,,button,,ربط نقر مباشر في المصدر,index.html:4191,4152
+ff60-refresh,تحديث البيانات,ff60-panel,,button,,ربط نقر مباشر في المصدر,index.html:4315,4219
+ff60-close,إغلاق,ff60-panel,,button,,ربط نقر مباشر في المصدر,index.html:4315,4219
+ff60-open-old,الواجهة الأصلية,ff60-panel,,button,,ربط نقر مباشر في المصدر,index.html:4315,4226
+ff60-save-policy,حفظ المهل للطلبات الجديدة,ff60-policy-wrap,,button,ff60-policy-wrap,ربط نقر مباشر في المصدر,index.html:4314,4228
+ffEditClose,إغلاق ✕,ffEditDialog,,button,,ربط نقر مباشر في المصدر,index.html:5209,5174
+ffEditSave,💾 حفظ البيانات,ffEditForm,ffEditForm,submit,,إرسال نموذج,,5191
+ffEditShare,📤 مشاركة بيانات الدخول,ffEditForm,ffEditForm,button,,ربط حدث عبر متغير محلي أو مجموعة أزرار,index.html:5232,5191
