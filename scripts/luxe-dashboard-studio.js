@@ -12,8 +12,16 @@
  <label>حزمة التصميم<select name="pack"></select></label><label>شريط الجوال<select name="bar"><option value="labels">أيقونات وتسميات</option><option value="icons">أيقونات فقط</option><option value="wide">أزرار عريضة</option><option value="floating">شريط عائم</option><option value="compact">مختصر مع المزيد</option></select></label>
  <label>وصف الرئيسية<input name="caption" maxlength="180" placeholder="استخدام الوصف الأصلي"></label></div>
  <h3>معاينة بتفاصيل تجريبية</h3><label>عرض المعاينة بالبكسل<select name="viewport"></select></label><div class="ff-preview-scroll" tabindex="0" aria-label="معاينة قابلة للتمرير"><div class="ff-studio-preview"><div class="ff-design-layout"><div data-slot="hero">الرئيسية</div><div data-slot="stats">مؤشرات · ٤ طلبات</div><div data-slot="work">الطلبات والإجراءات السريعة</div><div data-slot="late">المتابعة · طلب متأخر</div></div></div></div>
+ <div class="ff-studio-fields"><label>اسم المسودة<input name="draftName" maxlength="80" required></label>
+ <label>وصف التعديل<textarea name="description" maxlength="400"></textarea></label></div>
  <div class="actions"><button type="submit" class="primary">حفظ مسودة جديدة</button></div>
- <label>سجل الإصدارات<select name="version"></select></label><div class="actions"><button type="button" data-load>معاينة الإصدار</button><button type="button" data-publish>نشر الآن</button><button type="button" data-restore>استعادة كمسودة</button></div><details><summary>مقارنة إصدارين</summary>
+ <label>سجل الإصدارات<select name="version"></select></label><div class="actions"><button type="button" data-load>معاينة الإصدار</button><button type="button" data-publish>نشر الآن</button><button type="button" data-restore>استعادة كمسودة</button><button type="button" data-rollback>استعادة الإصدار السابق الآن</button></div><details><summary>تجربة محدودة لمسودة</summary>
+ <button type="button" data-accounts>عرض الحسابات المؤهلة</button>
+ <label>الحسابات المستهدفة<select name="accounts" multiple></select></label>
+ <label>مدة التجربة<select name="hours"><option value="1">ساعة</option><option value="8">٨ ساعات</option><option value="24">٢٤ ساعة</option></select></label>
+ <button type="button" data-trial>بدء تجربة للحسابات المحددة</button>
+ <button type="button" data-stop>إنهاء تجربة هذه المسودة</button></details>
+ <details><summary>مقارنة إصدارين</summary>
  <label>الإصدار المرجعي<select name="baseline"></select></label>
  <table><thead><tr><th>الخاصية</th><th>المرجعي</th><th>المحدد</th></tr></thead><tbody data-diff></tbody></table></details>
  <p role="status" aria-live="polite"></p></form>`;
@@ -24,7 +32,11 @@
  const actor=()=>typeof user!=='undefined'&&user?.id&&typeof data!=='undefined'&&data?.role?user.id:'';
  const manager=()=>actor()&&data.role==='manager';
  let records=[],context='',last=0,serial=0,session=0,busy=false;
+ const revisionLabel=document.createElement('small');
+ caption.after(revisionLabel);
  function apply(version){
+  revisionLabel.hidden=!version;
+  revisionLabel.textContent=version?'إصدار التصميم '+version.id:'';
   dashboard.classList.toggle('ff-design-layout',!!version);
   if(version){dashboard.dataset.pack=version.pack;document.body.dataset.ffBar=version.bar}
   else{delete dashboard.dataset.pack;delete document.body.dataset.ffBar}
@@ -43,12 +55,12 @@
    if(request===serial&&who===actor()&&branch===scope()&&device===(matchMedia('(max-width:850px)').matches?'mobile':'desktop'))apply(rows?.[0])
   }catch{ /* Keep last confirmed version for this context during network loss. */ }
  }
- function reset(){serial++;session++;context='';last=0;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();compare();form.reset();status.textContent='';if(dlg.open)dlg.close();apply(null)}
+ function reset(){serial++;session++;context='';last=0;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();status.textContent='';if(dlg.open)dlg.close();apply(null)}
  function redraw(){
   preview.parentElement.style.width=field('viewport').value+'px';
   preview.dataset.pack=field('pack').value;preview.querySelector('[data-slot=hero]').textContent=field('caption').value||'الرئيسية'}
  function selectRecord(row){
-  for(const [name,value] of Object.entries({role:row.role_scope,branch:row.branch_id||'',device:row.device,caption:row.layout_text,pack:row.pack,bar:row.bar}))field(name).value=value;
+  for(const [name,value] of Object.entries({draftName:row.draft_name||'',description:row.draft_description||'',role:row.role_scope,branch:row.branch_id||'',device:row.device,caption:row.layout_text,pack:row.pack,bar:row.bar}))field(name).value=value;
   redraw();
  }
  function compare(){
@@ -59,7 +71,7 @@
   if(!left||!right)return;
   const branch=id=>data.branches?.find(item=>item.id===id)?.name||(id?'فرع محدد':'كل الفروع');
   const properties=[
-   ['الدور',row=>roles[row.role_scope]],['الفرع',row=>branch(row.branch_id)],
+   ['اسم المسودة',row=>row.draft_name||'—'],['وصف التعديل',row=>row.draft_description||'—'],['الدور',row=>roles[row.role_scope]],['الفرع',row=>branch(row.branch_id)],
    ['الجهاز',row=>row.device],['الحزمة',row=>row.pack],['شريط الجوال',row=>row.bar],
    ['وصف الرئيسية',row=>row.layout_text||original]
   ];
@@ -77,12 +89,16 @@
   for(const b of form.querySelectorAll('button:not([data-close])'))b.disabled=busy;
   dlg.querySelector('[data-publish]').disabled=busy||!row||!!row.published_at;
   dlg.querySelector('[data-restore]').disabled=busy||!row?.published_at;
+  dlg.querySelector('[data-rollback]').disabled=busy||!row?.published_at||!row.previous_id||records.some(
+   other=>other.published_at&&other.previous_id===row.id
+  );
+  for(const action of ['accounts','stop','trial'])dlg.querySelector('[data-'+action+']').disabled=busy||!row||!!row.published_at;
   dlg.querySelector('[data-load]').disabled=busy||!row;
  }
  async function history(token,selected){
   const rows=await rpc('ff_ui_manager_history');
   if(token!==session||!manager())return;
-  records=rows||[];field('version').replaceChildren(...records.map(r=>new Option('#'+r.id+' · '+(r.published_at?'منشور':'مسودة')+' · '+r.pack+' · '+roles[r.role_scope]+' · '+(data.branches?.find(b=>b.id===r.branch_id)?.name||(r.branch_id?'فرع محدد':'كل الفروع'))+' · '+r.device,r.id)));
+  field('accounts').replaceChildren();records=rows||[];field('version').replaceChildren(...records.map(r=>new Option('#'+r.id+' · '+(r.draft_name||'تصميم')+' · '+new Date(r.created_at).toLocaleDateString('ar-YE')+' · '+(r.published_at?'منشور':'مسودة')+' · '+r.pack+' · '+roles[r.role_scope]+' · '+(data.branches?.find(b=>b.id===r.branch_id)?.name||(r.branch_id?'فرع محدد':'كل الفروع'))+' · '+r.device,r.id)));
   if(selected)field('version').value=selected;
   field('baseline').replaceChildren(...Array.from(field('version').options,option=>option.cloneNode(true)));
   const prior=records.find(row=>String(row.id)===field('version').value)?.previous_id;
@@ -98,24 +114,56 @@
   finally{if(valid(token,who)){busy=false;buttons()}}
  }
  function open(){
-  if(!manager()||dlg.open)return;session++;form.reset();records=[];field('version').replaceChildren();field('baseline').replaceChildren();compare();status.textContent='';field('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));redraw();dlg.showModal();void run(token=>history(token));
+  if(!manager()||dlg.open)return;session++;form.reset();records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();status.textContent='';field('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));redraw();dlg.showModal();void run(token=>history(token));
  }
  for(const width of [320,360,390,430,768,1024,1440]){
   field('viewport').add(new Option(String(width),String(width),width===390,width===390));
  }
  for(const [k,label] of Object.entries(roles))field('role').add(new Option(label,k));
  packs.forEach((name,i)=>{const code='D'+String(i+1).padStart(2,'0');field('pack').add(new Option(code+' · '+name,code))});
- form.oninput=redraw;field('baseline').onchange=compare;field('version').onchange=()=>{buttons();compare()};
+ form.oninput=redraw;field('baseline').onchange=compare;field('version').onchange=()=>{field('accounts').replaceChildren();buttons();compare()};
  form.onsubmit=e=>{e.preventDefault();void run(async(token,who)=>{
-  const id=await rpc('ff_ui_save_draft',{p_role:field('role').value,p_branch:field('branch').value||null,p_device:field('device').value,p_pack:field('pack').value,p_text:field('caption').value,p_bar:field('bar').value});
+  const id=await rpc('ff_ui_named_draft',{p_name:field('draftName').value,p_description:field('description').value,p_role:field('role').value,p_branch:field('branch').value||null,p_device:field('device').value,p_pack:field('pack').value,p_text:field('caption').value,p_bar:field('bar').value});
   if(valid(token,who)){await history(token,id);if(valid(token,who))status.textContent='حُفظت المسودة رقم '+id}
  })};
  const selected=()=>records.find(r=>String(r.id)===field('version').value);
+ dlg.querySelector('[data-accounts]').onclick=()=>void run(async(token,who)=>{
+  const row=selected();if(!row||row.published_at)return;
+  const accounts=await rpc('ff_ui_trial_accounts',{p_id:row.id});
+  if(valid(token,who)&&selected()?.id===row.id){
+   field('accounts').replaceChildren(...accounts.map(a=>new Option(a.account_name,a.account_id)));
+   status.textContent='عدد الحسابات المؤهلة '+accounts.length;
+  }
+ });
+ for(const action of ['trial','stop']){
+  dlg.querySelector('[data-'+action+']').onclick=()=>void run(async(token,who)=>{
+   const row=selected();if(!row||row.published_at)return;
+   const accounts=Array.from(field('accounts').selectedOptions,option=>option.value);
+   const hours=action==='stop'?0:Number(field('hours').value);
+   if(hours&&!accounts.length){status.textContent='اختر حساباً واحداً على الأقل';return}
+   const message=hours?'تطبيق المسودة '+row.id+' على '+accounts.length+' حساب لمدة '+hours+' ساعة؟':'إنهاء التجربة لجميع مستلمي المسودة '+row.id+'؟';
+   if(!confirm(message))return;
+   const count=await rpc('ff_ui_control_trial',{p_id:row.id,p_accounts:accounts,p_hours:hours});
+   if(valid(token,who)){status.textContent=(hours?'بدأت التجربة، عدد الحسابات ':'انتهت التجربة، عدد الحسابات ')+count;void sync(true)}
+  });
+ }
  dlg.querySelector('[data-load]').onclick=()=>{if(selected())selectRecord(selected())};
  dlg.querySelector('[data-restore]').onclick=()=>void run(async(token,who)=>{
   const row=selected();if(!row?.published_at)return;
   const id=await rpc('ff_ui_save_draft',{p_role:row.role_scope,p_branch:row.branch_id,p_device:row.device,p_pack:row.pack,p_text:row.layout_text,p_bar:row.bar,p_restore:row.id});
   if(valid(token,who)){await history(token,id);if(valid(token,who)){selectRecord(row);status.textContent='حُفظ إصدار الاستعادة كمسودة رقم '+id}}
+ });
+ dlg.querySelector('[data-rollback]').onclick=()=>void run(async(token,who)=>{
+  const row=selected();
+  if(!row?.previous_id||!row.published_at)return;
+  selectRecord(row);
+  const scopeLabel=['role','branch','device'].map(name=>field(name).selectedOptions[0]?.textContent).join(' · ');
+  if(!confirm('استعادة التصميم رقم '+row.previous_id+' بدلاً من '+row.id+'؟ '+scopeLabel))return;
+  const id=await rpc('ff_ui_rollback',{p_current:row.id});
+  if(valid(token,who)){
+   await history(token,id);
+   if(valid(token,who)){status.textContent='تمت الاستعادة في الإصدار '+id;void sync(true)}
+  }
  });
  dlg.querySelector('[data-publish]').onclick=()=>void run(async(token,who)=>{
   const row=selected();if(!row||row.published_at)return;
