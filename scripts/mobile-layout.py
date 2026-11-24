@@ -434,7 +434,7 @@ with sync_playwright() as playwright:
                 assert page.evaluate("window.ffContentStudio.notice('notices.unknown','fallback',990001,null)") == "fallback"
                 page.evaluate("window.dispatchEvent(new Event('ff-luxe-session-reset'))")
                 assert page.evaluate("window.ffContentStudio.notice('notices.delayed','fallback',990001,null)") == "fallback"
-                page.evaluate("rpc=window.__noticeOriginalRpc")
+                page.evaluate("() => {rpc=window.__noticeOriginalRpc;}")
                 # DEC-10: manager grant/revoke and staff draft/review; revoked UI closes.
                 page.evaluate("""() => {
                   const old=rpc;window.__qaDelegation=null;window.__qaDelegationCalls=[];
