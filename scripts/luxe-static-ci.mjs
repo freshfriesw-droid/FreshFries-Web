@@ -86,10 +86,13 @@ assert.match(html, /--ffl-drawer-width:278px/, 'Canonical drawer sizing missing'
 assert.match(html, /visibility:hidden;\s*pointer-events:none;/, 'Closed drawer must not accept input');
 assert.doesNotMatch(html, /#ffx-nav-toggle\{display:inline-flex!important\}/, 'Remove dead sidebar toggle rule');
 
-assert.match(html, /#cashierOrders>\.item:not\(\.ff-luxe-cancelled\)/, 'Ordinary cashier cards must exclude cancelled orders');
-assert.match(html, /#driverTasks>\.item:not\(\.ff-luxe-cancelled\)/, 'Ordinary driver cards must exclude cancelled orders');
-assert.doesNotMatch(html, /\.ff60-order,\s*\.ff-luxe-cancelled,/, 'Generic blue cards must not override cancelled orders');
-assert.match(html, /#cashierOrders>\.ff-luxe-cancelled\{[^}]*#b91c1c/, 'Cashier cancellation outline must be red');
+const operationsPath = 'styles/luxe-operations.css';
+assert.ok(html.includes(`href="./${operationsPath}"`));
+const operations = get(operationsPath).toString('utf8');
+assert.match(operations, /#cashierOrders>\.item:not\(\.ff-luxe-cancelled\)/, 'Ordinary cashier cards must exclude cancelled orders');
+assert.match(operations, /#driverTasks>\.item:not\(\.ff-luxe-cancelled\)/, 'Ordinary driver cards must exclude cancelled orders');
+assert.doesNotMatch(html + operations, /\.ff60-order,\s*\.ff-luxe-cancelled,/, 'Generic blue cards must not override cancelled orders');
+assert.match(operations, /#cashierOrders>\.ff-luxe-cancelled\{[^}]*#b91c1c/, 'Cashier cancellation outline must be red');
 
 const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)];
 let validated = 0;
