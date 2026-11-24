@@ -12,7 +12,7 @@ fixture="""async () => {
  document.body.dataset.access='staff';document.body.classList.remove('ff-booting');
  document.getElementById('loginOverlay').classList.add('hidden');
  user={id:'qa-manager'};selfPermissions={create_order:true,edit_order:true,manage_branches:true};
- data={role:'manager',branches:[{id:'b1',name:'القاهرة',code:'cairo'},{id:'b2',name:'سام مول',code:'sam'}],orders:[],drivers:[],offers:[]};
+ data={role:'manager',branches:[{id:'b1',name:'القاهرة',code:'cairo'},{id:'b2',name:'سام مول',code:'sam_mall'}],orders:[],drivers:[],offers:[]};
  window.__calls=[];rpc=async(name,args={})=>{
  window.__calls.push({name,args});
  if(name==='ff38_admin_staff_list')return [{user_id:'one',name:'أحمد محمد',role:'cashier',active:true,branches:['b1']},{user_id:'two',name:'سالم علي',role:'driver',active:false,branches:['b2']}];
