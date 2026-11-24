@@ -26,6 +26,12 @@ let grant=null,context='',last=0,request=0,session=0,busy=false,accounts=[],gran
 function enabled(cap){return !!grant&&grant.capabilities.includes(cap)&&Date.parse(grant.starts_at)<=Date.now()&&Date.parse(grant.ends_at)>Date.now()}
 function status(s){q('status').textContent=s}
 function lines(node,items){node.replaceChildren(...items.map(s=>{const p=document.createElement('p');p.textContent=s;return p}))}
+function grantWindow(g){
+ const now=Date.now();
+ const state=g.revoked_at?'ملغى':now<Date.parse(g.starts_at)?'مجدول':now>=Date.parse(g.ends_at)?'منتهي':'ضمن المدة';
+ const format=t=>new Date(t).toLocaleString('ar-YE');
+ return state+' · من '+format(g.starts_at)+' إلى '+format(g.ends_at);
+}
 function localDate(t){const d=new Date(t);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)}
 function options(el,items){el.replaceChildren(...items.map(([value,label])=>new Option(label,String(value))))}
 function clear(){request++;session++;grant=null;context='';last=0;busy=false;accounts=[];grants=[];catalog=[];history=[];button.hidden=true;if(dialog.open)dialog.close();for(const n of ['account','grants','key','history'])q(n).replaceChildren();for(const n of ['audit','reviews','body','scope','original','sample','status'])q(n).textContent='';for(const n of ['text','note','revision'])q(n).value=''}
@@ -50,7 +56,7 @@ async function managerRefresh(token,who){
  if(!guard(token,who)||!manager())return;
  accounts=a||[];grants=g||[];
  options(q('account'),accounts.map((x,i)=>[i,x.display_name+' · '+(roles[x.role]||x.role)+' · '+x.branch_name]));
- options(q('grants'),grants.map(x=>[x.id,'#'+x.id+' · '+(accounts.find(a=>a.user_id===x.recipient&&a.branch_id===x.branch_id)?.display_name||x.recipient)+' · '+(screens[x.screen]||x.screen)+' · '+(x.revoked_at?'ملغى':Date.parse(x.ends_at)<=Date.now()?'منتهي':'غير ملغى')]));
+ options(q('grants'),grants.map(x=>[x.id,'#'+x.id+' · '+(accounts.find(a=>a.user_id===x.recipient&&a.branch_id===x.branch_id)?.display_name||x.recipient)+' · '+(screens[x.screen]||x.screen)+' · '+grantWindow(x)]));
  lines(q('audit'),(audit||[]).map(x=>'#'+x.id+' · '+new Date(x.created_at).toLocaleString('ar-YE')+' · '+x.action+' · '+x.outcome+' · '+x.reason+' · '+x.actor_id));
 }
 function selection(){return history.find(x=>String(x.id)===q('history').value)}
