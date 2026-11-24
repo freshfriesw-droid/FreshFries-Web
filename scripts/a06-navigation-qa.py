@@ -111,6 +111,8 @@ with sync_playwright() as pw:
      assert result["bar"][0]>=-1 and result["bar"][1]<=width+1 and result["bar"][2]>0,(role,width,mode,result)
      assert all(x["label"] and x["h"]>=44 and x["w"]>=44 for x in result["items"]),(role,width,mode,result)
      assert any(x["key"]=="more" for x in result["items"]),(role,width,mode)
+     if result["overflow"]:
+      print("OVERFLOW",role,width,mode,page.evaluate("""()=>({viewport:innerWidth,document:document.documentElement.scrollWidth,nodes:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return r.width>0&&r.height>0&&s.visibility!=='hidden'&&(r.left< -2||r.right>innerWidth+2)&&!e.closest('[aria-hidden="true"]')}).map(e=>({tag:e.tagName,id:e.id,cls:String(e.className).slice(0,100),left:Math.round(e.getBoundingClientRect().left),right:Math.round(e.getBoundingClientRect().right),width:e.scrollWidth,display:getComputedStyle(e).display})).slice(0,45)})"""),flush=True)
      assert not result["overflow"],(role,width,mode,"page horizontal overflow")
      results.append({"role":role,"width":width,"bar":mode,"visible":len(result["items"]),"page_overflow":result["overflow"]})
     page.evaluate("document.body.dataset.ffA06Bar='labels'")
