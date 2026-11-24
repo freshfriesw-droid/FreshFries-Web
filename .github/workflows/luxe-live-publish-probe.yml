@@ -1,0 +1,17 @@
+name: LUXE public deployment probe
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/luxe-live-publish-probe.yml'
+      - 'scripts/luxe-live-publish-probe.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify public HTML and exact shipped cart asset
+        run: python3 scripts/luxe-live-publish-probe.py
