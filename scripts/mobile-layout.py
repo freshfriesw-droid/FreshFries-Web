@@ -286,6 +286,25 @@ with sync_playwright() as playwright:
                         previews.add(layout.evaluate("el => getComputedStyle(el).gridTemplateAreas"))
                     assert len(previews) == 16, (preview_width, previews)
                 studio.locator("select[name=viewport]").select_option("390")
+                # DEC-07: all five non-interactive bar previews at each approved phone width.
+                for preview_width in (320, 360, 390, 430):
+                    studio.locator("select[name=viewport]").select_option(str(preview_width))
+                    for bar in ("labels", "icons", "wide", "floating", "compact"):
+                        studio.locator("select[name=bar]").select_option(bar)
+                        nav = studio.locator(".ff-studio-bar")
+                        assert nav.is_visible()
+                        assert nav.get_attribute("data-bar") == bar
+                        assert nav.locator("button,a,input").count() == 0
+                        assert nav.locator(".ff-studio-bar-item:visible").count() >= 2
+                        assert nav.locator(".ff-studio-bar-item:visible").evaluate_all(
+                            "items => items.every(item => item.getBoundingClientRect().height >= 44)"
+                        )
+                        assert studio.locator("[data-impact-scope]").is_visible()
+                        assert f"{preview_width}px" in studio.locator("[data-impact-scope]").inner_text()
+                studio.locator("select[name=bar]").select_option("labels")
+                studio.locator("select[name=viewport]").select_option("1440")
+                assert studio.locator(".ff-studio-bar").is_hidden()
+                studio.locator("select[name=viewport]").select_option("390")
                 studio.get_by_role("button", name="إغلاق", exact=True).click()
                 page.locator("#ffx-menu").click()
                 search.fill("إدارة نقطة التجميع")
