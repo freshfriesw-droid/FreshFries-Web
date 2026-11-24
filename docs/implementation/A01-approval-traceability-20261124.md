@@ -6,7 +6,7 @@
 
 | الرمز | المطلب | حزمة الاستكمال | دليل التطوير/مرجع | الحالة | المطلوب للإغلاق |
 |---|---|---|---|---|---|
-| FIX-01 | تثبيت المصدر وخريطة الإصدارات | A01 | [#22](https://github.com/freshfriesw-droid/FreshFries-Web/pull/22)، [#57](https://github.com/freshfriesw-droid/FreshFries-Web/pull/57) | PARTIAL / OPEN | مطابقة 53 ملفًا؛ فرق كامل A01-source-diff؛ إعادة بناء الأرشيف واختبار النشر قيد التحقق |
+| FIX-01 | تثبيت المصدر وخريطة الإصدارات | A01 | [#58 / CI 259](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45460560801)، [نشر #58](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45461298530) | PASS | مطابقة 53 ملفًا وبصماتها وإعادة بناء أرشيفي الأساس و#57 وسجل الفروق؛ لا يعني جاهزية الإطلاق |
 | FIX-02 | إغلاق فشل اختبار كمية البرجر | A02 | [#22](https://github.com/freshfriesw-droid/FreshFries-Web/pull/22)، [#23](https://github.com/freshfriesw-droid/FreshFries-Web/pull/23)، [#56](https://github.com/freshfriesw-droid/FreshFries-Web/pull/56) | PARTIAL / OPEN | Chrome ناجح؛ إغلاق معيار السلة والتراجع ومطابقة قاعدة البيانات |
 | FIX-03 | جرد التنقل الديناميكي والأزرار المخفية | A06 | [#25](https://github.com/freshfriesw-droid/FreshFries-Web/pull/25)، [#26](https://github.com/freshfriesw-droid/FreshFries-Web/pull/26)، [#31](https://github.com/freshfriesw-droid/FreshFries-Web/pull/31)، [#34](https://github.com/freshfriesw-droid/FreshFries-Web/pull/34)، [#35](https://github.com/freshfriesw-droid/FreshFries-Web/pull/35) | PARTIAL / OPEN | خريطة FIX-03 جزئية؛ استكمال كل إجراء ودور وفرع |
 | FIX-04 | التعامل مع 37 كتلة CSS والتعارضات | A06 | [#5](https://github.com/freshfriesw-droid/FreshFries-Web/pull/5)، [#7](https://github.com/freshfriesw-droid/FreshFries-Web/pull/7)، [#27](https://github.com/freshfriesw-droid/FreshFries-Web/pull/27)، [#54](https://github.com/freshfriesw-droid/FreshFries-Web/pull/54)، [#56](https://github.com/freshfriesw-droid/FreshFries-Web/pull/56) | PARTIAL / OPEN | توحيد الدرج و7 كتل؛ باقي القواعد والمكونات واللقطات |
@@ -58,7 +58,7 @@
 | UI-15 | الفروع وأوقات العمل والأسعار | A05 | [#15](https://github.com/freshfriesw-droid/FreshFries-Web/pull/15)، [#30](https://github.com/freshfriesw-droid/FreshFries-Web/pull/30) | PARTIAL / OPEN | اختبار الإعدادات والتأريخ وعزل الفروع |
 | UI-16 | الأمان والفحوصات والنسخ والتصفير | A12 | [#4](https://github.com/freshfriesw-droid/FreshFries-Web/pull/4)، [#12](https://github.com/freshfriesw-droid/FreshFries-Web/pull/12) | PARTIAL / OPEN | استرجاع وفحص الأدوار |
 | QA-01 | كل أزرار التنقل بلا وظائف يتيمة | A06 | [#25](https://github.com/freshfriesw-droid/FreshFries-Web/pull/25)، [#26](https://github.com/freshfriesw-droid/FreshFries-Web/pull/26)، [#31](https://github.com/freshfriesw-droid/FreshFries-Web/pull/31)، [#34](https://github.com/freshfriesw-droid/FreshFries-Web/pull/34)، [#35](https://github.com/freshfriesw-droid/FreshFries-Web/pull/35)، [#54](https://github.com/freshfriesw-droid/FreshFries-Web/pull/54) | PARTIAL / OPEN | جرد كامل لكل دور |
-| QA-02 | نجاح CI كمية البرجر وبقية الواجهة الثابتة | A02 | [#22](https://github.com/freshfriesw-droid/FreshFries-Web/pull/22)، [#23](https://github.com/freshfriesw-droid/FreshFries-Web/pull/23)، [#56](https://github.com/freshfriesw-droid/FreshFries-Web/pull/56)، [#57](https://github.com/freshfriesw-droid/FreshFries-Web/pull/57) | PASS (CI فقط) | اختبار 257 ناجح؛ QA-26 مستقل |
+| QA-02 | نجاح CI كمية البرجر وبقية الواجهة الثابتة | A02 | [CI #261](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45462100403)، [اختبار main #59](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45463213295) | PASS (CI فقط) | معيار CI مجتاز؛ QA-26 وFIX-02 مستقلان ولا يغلقان به وحده |
 | QA-03 | Create/edit/cancel/add item والمحلل والمعاينة | A02 | [#30](https://github.com/freshfriesw-droid/FreshFries-Web/pull/30)، [#32](https://github.com/freshfriesw-droid/FreshFries-Web/pull/32)، [#33](https://github.com/freshfriesw-droid/FreshFries-Web/pull/33) | PARTIAL / OPEN | دورة شاملة |
 | QA-04 | المعاينة لا تنفذ فعلًا تشغيليًا | A07 | [#37](https://github.com/freshfriesw-droid/FreshFries-Web/pull/37)، [#38](https://github.com/freshfriesw-droid/FreshFries-Web/pull/38)، [#41](https://github.com/freshfriesw-droid/FreshFries-Web/pull/41) | PARTIAL / OPEN | كل معاينات الرسائل والتصميم |
 | QA-05 | حفظ الثيم بعد إعادة الفتح والتزامن | A07 | [#37](https://github.com/freshfriesw-droid/FreshFries-Web/pull/37)، [#38](https://github.com/freshfriesw-droid/FreshFries-Web/pull/38) | PARTIAL / OPEN | حسابان وأجهزة فعلية |
@@ -155,6 +155,10 @@
 | P5 | شاشة المدير العام | A07–A09 | DEC-03,04,06,09,10 | OPEN | محرر شامل وتفويض ونشر |
 | P6 | مركز التقارير والجودة | A10–A11 | FIX-18,19 | OPEN | مطابقة وتقارير وأجهزة |
 | P7 | اختبار الجاهزية | A12 | QA-01–45 | OPEN | بوابة نهائية مستقلة |
+
+## تحديث أدلة A01
+
+نُشر #57 و#58 و#59 واجتازت النسخة الرئيسية #59 اختباراتها. [نشر #59](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45463211891)، [اختبار main](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45463213295). انظر سجل الحالة الرسمي المنفصل وفق §0.4 في `A01-approval-status-20261124.json`؛ حالة قبول المتطلبات غير المختبرة بالكامل تبقى معلقة.
 
 ## قرار A01
 لا يبدأ A02 تلقائيًا. لا يدمج PR #2 أو #20 القديمان لمجرد التشابه؛ يلزم مقارنة الفرق وإثبات جميع المتطلبات التي لم تغطها الإصدارات اللاحقة. A01 لا يغير بيانات التشغيل ولا يطلق النظام.
