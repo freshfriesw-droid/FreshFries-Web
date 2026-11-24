@@ -295,6 +295,14 @@ const edgeBurger=get('supabase/functions/ff61-employees/index.ts').toString('utf
 assert.match(edgeBurger, /"burger_kitchen"/,'Employee approval endpoint missing kitchen role');
 
 
+const offerSeconds=vm.runInNewContext(html.slice(html.indexOf('function ffOfferSecondsLeft'),
+  html.indexOf('function drawDriver()'))+'\nffOfferSecondsLeft');
+const offerStart=Date.parse('2026-11-24T05:00:00Z');
+assert.equal(offerSeconds('2026-11-24T05:03:00Z',offerStart),180);
+assert.equal(offerSeconds('2026-11-24T05:10:00Z',offerStart),600);
+assert.equal(offerSeconds('2026-11-24T04:59:59Z',offerStart),0);
+assert.equal(offerSeconds('',offerStart),'—');
+
 // Use the shipped parser with representative catalog entries and check the preview payload.
 const parserSource=html.slice(html.indexOf('function ff49ParseItemsAndNotes('),
   html.indexOf('// Prevent older create callback'));
