@@ -669,7 +669,7 @@ with sync_playwright() as playwright:
                 # Editing a quick-order draft must invalidate its previous transfer button.
                 page.evaluate("""() => {
                   ff49Catalog=[{id:'fixture-chicken',name:'تشكن فرايز',price:2000,active:true}];
-                  ff49CatalogAt=Date.now();
+                  ff49CatalogActor=user.id;ff49CatalogAt=Date.now();
                   document.querySelector('#ffbQuickInput').value='1 تشكن بدون شطة';
                   document.querySelector('#ffbApplyText').click();
                 }""")
