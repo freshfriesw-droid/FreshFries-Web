@@ -304,7 +304,7 @@ assert.equal(offerSeconds('2026-11-24T04:59:59Z',offerStart),0);
 assert.equal(offerSeconds('',offerStart),'—');
 
 // Use the shipped parser with representative catalog entries and check the preview payload.
-const parserSource=html.slice(html.indexOf('function ff49ParseItemsAndNotes('),
+const parserSource=html.slice(html.indexOf('const ff49NormalizeInput='),
   html.indexOf('// Prevent older create callback'));
 const menuNames=['تشكن فرايز','تشكن استربس','رايس تشكن فرايز','سماش برجر دبل أسمر',
   'جبن شيدر وذرة','جبن شيدر وهالبينو'];
@@ -323,6 +323,13 @@ assert.equal(preview.meta.fee,0);
 assert.equal(preview.meta.driver,'أحمد');
 assert.equal(preview.errors.length,1);
 assert.equal(preview.errors[0].line,11);
+const customParse=vm.runInNewContext(parserSource+'\nff49ParseItemsAndNotes',{
+ ff49Catalog:[{id:1,name:'تشكن فرايز',price:2000,parser_aliases:['وجبة الدجاج']},
+ {id:2,name:'عرض الأسرة',price:3000,parser_aliases:['عائلي']}]});
+assert.equal(customParse('1 وجبة الدجاج بدون شطّة').items[0].item_notes,'بدون شطّة');
+assert.equal(customParse('2 عائلي').items[0].name,'عرض الأسرة');
+assert.throws(()=>customParse('1 تشكن'));
+
 
 // Operational follow-ups: syntax, shared parser and security regression guards.
 for(const file of [
