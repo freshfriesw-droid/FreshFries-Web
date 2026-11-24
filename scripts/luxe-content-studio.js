@@ -23,7 +23,30 @@ const targets={
  'reservations.refresh':'#ff49ReservationsRefresh'
 };
 const templates=new Set(['notices.delayed','notices.reminder']);
-const known=k=>Object.hasOwn(targets,k)||templates.has(k);
+const guides={'orders.guidance':{parent:'#ffbTextPanel',original:'راجع الأصناف والكميات في المعاينة قبل الاعتماد.'},'reports.guidance':{parent:'#ff76Center .r-head',original:'اختر الفترة والأقسام المطلوبة، ثم اضغط إعداد التقرير.'}};
+const known=k=>Object.hasOwn(targets,k)||templates.has(k)||Object.hasOwn(guides,k);
+function isGuide(k){return Object.hasOwn(guides,k)}
+function appendInline(node,line){
+ for(const part of line.split(/(\*\*[^*\n]+\*\*)/g)){
+  if(part.startsWith('**')&&part.endsWith('**')&&part.length>4){const strong=document.createElement('strong');strong.textContent=part.slice(2,-2);node.append(strong)}
+  else node.append(document.createTextNode(part));
+ }
+}
+function formatGuide(root,text){
+ root.replaceChildren();let list=null;
+ for(const line of String(text||'').split('\n')){
+  if(!line.trim()){list=null;continue}
+  if(line.startsWith('- ')){if(!list){list=document.createElement('ul');root.append(list)}const li=document.createElement('li');appendInline(li,line.slice(2));list.append(li)}
+  else{list=null;const p=document.createElement('p');appendInline(p,line);root.append(p)}
+ }
+}
+function renderGuide(key,value){
+ const guide=guides[key],parent=document.querySelector(guide.parent);if(!parent)return;
+ let node=parent.querySelector('[data-ff-guidance="'+key+'"]');
+ if(!node){node=document.createElement('div');node.className='ff-safe-guidance';node.dataset.ffGuidance=key;node.setAttribute('aria-label','إرشادات إضافية');parent.append(node)}
+ const body=actor()&&typeof value==='string'&&validText(value,key)?value:guide.original;
+ if(node.dataset.source!==body){node.dataset.source=body;formatGuide(node,body)}
+}
 const screens={notices:'التنبيهات التشغيلية',dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
 const roles={all:'كل الأدوار',manager:'المدير العام',supervisor:'المشرف',customer_service:'خدمة العملاء',cashier:'الكاشير',driver:'الموصل',assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر'};
 const originalTitles={manager:'إدارة ذكية، ورؤية أوضح لكل فرع',driver:'توصيلاتك... بوضوح وسرعة',cashier:'كل طلب في وقته الصحيح',customer_service:'خدمة سريعة، وتجربة عميل أجمل',supervisor:'متابعة دقيقة في كل لحظة'};
@@ -38,8 +61,9 @@ dialog.innerHTML='<div class="sectionbar"><h2 id="ffContentHeading">استودي
  '<label>بحث في النصوص<input data-content-search type="search" placeholder="اسم الشاشة أو العنصر"></label>'+
  '<label>العنصر<select data-content-key></select></label><label>الدور<select data-content-role></select></label><label>الفرع<select data-content-branch></select></label>'+
  '<label>النص الجديد<textarea data-content-body maxlength="180" rows="3"></textarea></label>'+
+ '<div data-content-tools hidden class="actions"><button type="button" data-content-bold>خط عريض</button><button type="button" data-content-bullet>نقطة قائمة</button><small>تنسيق موثوق فقط؛ لا يسمح بالروابط أو HTML.</small></div>'+
  '<p data-content-vars hidden>المتغير المتاح: {order_number} — المعاينة تستخدم رقمًا تجريبيًا فقط.</p>'+
- '<section class="ff-content-preview"><h3>معاينة قبل / بعد</h3><p>الأصل: <b data-content-original></b></p><p>المسودة: <b data-content-preview></b></p></section>'+
+ '<section class="ff-content-preview"><h3>معاينة قبل / بعد</h3><p>الأصل: <b data-content-original></b></p><p>المسودة: <b data-content-preview></b></p><div data-content-rich-preview hidden></div></section>'+
  '<div class="actions"><button type="button" data-content-save>حفظ مسودة</button><button type="button" data-content-restore>استعادة الأصل كمسودة</button></div>'+
  '<label>الإصدارات<select data-content-history></select></label><p data-content-audit></p>'+
  '<div class="actions"><button type="button" data-content-load>معاينة الإصدار</button><button type="button" data-content-publish>نشر الإصدار المحدد</button></div>'+
@@ -77,11 +101,11 @@ function write(key,value){
   item[2]=next;
  }
 }
-function render(){for(const key of Object.keys(targets))write(key,values.get(key)?.body??null)}
+function render(){for(const key of Object.keys(targets))write(key,values.get(key)?.body??null);for(const key of Object.keys(guides))renderGuide(key,values.get(key)?.body??null)}
 function reset(){
  serial++;session++;context='';last=0;values.clear();catalog=[];history=[];busy=false;
  if(dialog.open)dialog.close();for(const name of ['key','history','branch'])q(name).replaceChildren();
- for(const name of ['search','body'])q(name).value='';for(const name of ['status','audit','original','preview'])q(name).textContent='';
+ for(const name of ['search','body'])q(name).value='';for(const name of ['status','audit','original','preview','rich-preview'])q(name).textContent='';
  render();
 }
 async function sync(force=false){
@@ -97,9 +121,11 @@ async function sync(force=false){
   values=new Map((rows||[]).filter(r=>known(r.content_key)).map(r=>[r.content_key,r]));render();
  }catch{/* Old database or network loss: keep confirmed values within the same account/scope only. */}
 }
-function validText(s,key){const clean=templates.has(key)?s.replaceAll('{order_number}',''):s;return !!s.trim()&&s.length<=180&&!/[<>{}\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/u.test(clean)&&!/(https?:\/\/|www\.|javascript:|data:|vbscript:|\/\/)/i.test(s)}
+function validText(s,key){const clean=templates.has(key)?s.replaceAll('{order_number}',''):isGuide(key)?s.replaceAll('\n',''):s;return !!clean.trim()&&s.length<=(isGuide(key)?1000:180)&&!/[<>{}\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/u.test(clean)&&!/(https?:\/\/|www\.|javascript:|data:|vbscript:|\/\/)/i.test(s)}
 function preview(){
  const key=q('key').value,original=originalText(key,q('role').value);
+ const rich=isGuide(key);q('body').maxLength=rich?1000:180;q('tools').hidden=!rich;q('rich-preview').hidden=!rich;q('preview').parentElement.hidden=rich;
+ if(rich)formatGuide(q('rich-preview'),q('body').value||'—');else q('rich-preview').replaceChildren();
  q('vars').hidden=!templates.has(key);
  q('original').textContent=original;
  q('preview').textContent=(templates.has(key)?q('body').value.replaceAll('{order_number}','990001 (تجريبي)'):q('body').value)||'—';
@@ -110,7 +136,7 @@ function audit(){
  q('publish').disabled=busy||!row||!!row.published_at;q('load').disabled=busy||!row;
 }
 function controls(){
- for(const name of ['search','key','role','branch','body','history'])q(name).disabled=busy;
+ for(const name of ['search','key','role','branch','body','history','bold','bullet'])q(name).disabled=busy;
  for(const name of ['save','restore'])q(name).disabled=busy||!q('key').value;
  audit();
 }
@@ -148,6 +174,15 @@ async function open(){
 }
 function selectKey(){q('body').value='';preview();void run(token=>getHistory(token))}
 let searchTimer;q('search').oninput=()=>{clearTimeout(searchTimer);const token=session;searchTimer=setTimeout(()=>{if(token!==session||!dialog.open||busy)return;const old=q('key').value;setKeys();if(old!==q('key').value)selectKey();else controls()},220)};
+function insertFormat(prefix,suffix){
+ const area=q('body');if(busy||!isGuide(q('key').value))return;
+ const from=area.selectionStart,to=area.selectionEnd,chosen=area.value.slice(from,to)||'نص';
+ const before=area.value.slice(0,from),after=area.value.slice(to);
+ const next=before+prefix+chosen+suffix+after;if(next.length>1000)return;
+ area.value=next;area.focus();area.setSelectionRange(from+prefix.length,from+prefix.length+chosen.length);preview()
+}
+q('bold').onclick=()=>insertFormat('**','**');
+q('bullet').onclick=()=>insertFormat(q('body').selectionStart===0||q('body').value[q('body').selectionStart-1]==='\n'?'- ':'\n- ','');
 q('key').onchange=selectKey;q('role').onchange=preview;q('body').oninput=preview;q('history').onchange=audit;
 q('load').onclick=()=>{const row=selected();if(!row)return;q('role').value=row.role_scope;q('branch').value=row.branch_id||'';q('body').value=row.body??originalText(row.content_key,row.role_scope);preview()};
 async function draft(restore){
@@ -168,7 +203,7 @@ q('publish').onclick=()=>void run(async(token,who)=>{
  if(token!==session||who!==actor()||!manager())return;
  await getHistory(token,row.id);if(token===session){q('status').textContent='تم نشر النص #'+row.id;void sync(true)}
 });
-q('close').onclick=()=>dialog.close();dialog.onclose=()=>{session++;busy=false};
+q('close').onclick=()=>dialog.close();dialog.onclose=()=>{session++;busy=false;q('rich-preview').replaceChildren();q('body').value=''};
 const studio=document.querySelector('#ffStudio form');
 if(studio){
  const button=document.createElement('button');button.type='button';button.textContent='استوديو المحتوى والمسميات';button.id='ffContentOpen';
