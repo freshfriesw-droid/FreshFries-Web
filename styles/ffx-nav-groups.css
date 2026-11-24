@@ -21,3 +21,6 @@
 @media(prefers-reduced-motion:reduce){
  #ffx-nav .ffx-accordion-arrow{transition:none}
 }
+
+#ffx-nav-search{width:100%;min-width:0;margin:0 0 8px;padding:8px 12px}
+#ffx-nav .ffx-nav-group[hidden],#ffx-nav .ffx-side-link[hidden],#ffx-nav p[hidden]{display:none!important}
