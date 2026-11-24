@@ -399,3 +399,36 @@ assert.match(voucherPatch,/redeem_token/,'Voucher idempotency token missing');
 assert.match(voucherPatch,/ff_reward_issue/,'Manager issue function missing');
 assert.match(voucherPatch,/ff_reward_redeem/,'Voucher redemption function missing');
 assert.match(get('scripts/luxe-unified-order-inputs-20261123.js').toString('utf8'),/ff49ParseItemsAndNotes/, 'Approved FF75 parser must be shared');
+
+
+// A02: real parser + shared picker quantity logic, with no database mutations.
+const unifiedSource=get('scripts/luxe-unified-order-inputs-20261123.js').toString('utf8');
+const pickerSource=unifiedSource.slice(unifiedSource.indexOf('function itemRows('),unifiedSource.indexOf('async function loadMenu('));
+const a02Picker=vm.runInNewContext(parserSource+'\n'+pickerSource+'\n({itemRows,appendText})',{
+ ff49Catalog:menuNames.map((name,id)=>({id:id+1,name,price:1000})),
+ Event:class {constructor(type){this.type=type}}
+});
+let a02Events=0;
+const a02Area={isConnected:true,value:'٣ برجر اسمر دبل بدون شطة | 1000\n1 تشكن\nملاحظة: لا تتصل',
+ dispatchEvent(event){assert.equal(event.type,'input');a02Events++}};
+const a02Burger=menuNames[3];
+assert.equal(a02Picker.itemRows(a02Area)[0].qty,3);
+for(const [delta,expected] of [[-1,2],[-1,1],[1,2],[1,3]]){
+ a02Picker.appendText(a02Area,a02Burger,delta);
+ const parsed=parseQuick(a02Area.value);
+ assert.equal(parsed.items[0].qty,expected);
+ assert.equal(parsed.items[0].item_notes,'بدون شطة');
+ assert.equal(parsed.items[0].price,1000);
+ assert.equal(parsed.notes,'لا تتصل');
+ assert.equal(parsed.items[1].qty,1);
+}
+for(let i=0;i<3;i++)a02Picker.appendText(a02Area,a02Burger,-1);
+assert.equal(a02Area.value,'1 تشكن\nملاحظة: لا تتصل');
+assert.equal(a02Events,7);
+a02Area.value='98 تشكن\n1 تشكن فرايز بدون شطة';
+a02Picker.appendText(a02Area,menuNames[0],1);
+assert.equal(a02Area.value,'98 تشكن\n1 تشكن فرايز بدون شطة');
+assert.equal(a02Picker.itemRows(a02Area).reduce((sum,row)=>sum+row.qty,0),99);
+a02Picker.appendText(a02Area,menuNames[0],-1);
+assert.equal(a02Area.value,'98 تشكن');
+console.log('PASS A02: shared picker, aliases, notes, price, decrement/restore, removal and quantity cap');

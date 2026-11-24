@@ -23,38 +23,45 @@ menuList.before(categoryBar);
 
 let catalog=[],active=null,request=0,activeCategory='الكل';
 const drafts=new WeakMap();
+// Resolve quantity lines with the same parser used by submission.
+// Preserve original notes, aliases, whitespace and explicit prices.
+function itemRows(area){
+ const rows=[];
+ for(const [index,raw] of area.value.split(/\r?\n/).entries()){
+  if(!/^\s*[0-9٠-٩۰-۹]+\s+/u.test(raw))continue;
+  const parsed=ff49ParseItemsAndNotes(raw,{allowPartial:true});
+  if(parsed.errors.length||parsed.items.length!==1)continue;
+  const item=parsed.items[0];
+  rows.push({index,name:item.name,qty:item.qty});
+ }
+ return rows;
+}
 function appendText(area,name,delta){
  if(!area?.isConnected)return;
  const lines=area.value.split(/\r?\n/);
- const nameLower=name.trim().toLowerCase();
- let found=-1;
- for(let i=lines.length-1;i>=0;i--){
-  const match=lines[i].match(/^(\d+)\s+(.+?)\s*$/);
-  if(match&&match[2].trim().toLowerCase()===nameLower){found=i;break}
- }
+ const matches=itemRows(area).filter(row=>row.name===name);
+ const total=matches.reduce((sum,row)=>sum+row.qty,0);
+ const last=matches.at(-1);
  if(delta>0){
-  if(found>=0){const current=Number(lines[found].match(/^\d+/)[0]);if(current>=99)return;lines[found]=(current+1)+' '+name;}
+  if(total>=99)return;
+  if(last)lines[last.index]=lines[last.index].replace(/^(\s*)[0-9٠-٩۰-۹]+/u,(_,space)=>space+String(last.qty+1));
   else lines.push('1 '+name);
- }else if(found>=0){
-  const current=Number(lines[found].match(/^\d+/)[0]);
-  if(current<=1)lines.splice(found,1);else lines[found]=(current-1)+' '+name;
+ }else if(last){
+  if(last.qty===1)lines.splice(last.index,1);
+  else lines[last.index]=lines[last.index].replace(/^(\s*)[0-9٠-٩۰-۹]+/u,(_,space)=>space+String(last.qty-1));
  }else return;
  area.value=lines.join('\n').replace(/^\n+/,'').trimEnd();
  area.dispatchEvent(new Event('input',{bubbles:true}));
- return;
 }
 async function loadMenu(){
- if(catalog.length)return catalog;
+ const token=++request,actor=typeof user!=='undefined'?user?.id:null;
+ if(!actor)throw Error('سجل الدخول أولًا');
  const rows=await rpc('ff49_catalog');
+ if(token!==request||actor!==user?.id)throw Error('تغيرت جلسة أو عملية تحميل المنيو');
  if(!Array.isArray(rows))throw Error('تعذر قراءة أصناف المنيو');
- catalog=rows.filter(x=>x?.name&&x?.id);
+ ff49Catalog=rows;ff49CatalogAt=Date.now();
+ catalog=rows.filter(x=>x?.name&&x?.id&&x.active!==false);
  return catalog;
-}
-function count(area,name){
- const regex=/^(\d+)\s+(.+?)\s*$/;
- return area.value.split(/\r?\n/).reduce((n,line)=>{
-  const match=line.match(regex);return match&&match[2].trim()===name?n+Number(match[1]):n;
- },0);
 }
 function render(){
  const box=$('ffUnifiedMenuList');box.replaceChildren();
@@ -65,11 +72,13 @@ function render(){
  ui.categories(tabs,catalog,activeCategory,value=>{activeCategory=value;render()});tabs.scrollLeft=oldScroll;
  const term=ui.normalize($('ffUnifiedMenuSearch').value);
  const filtered=catalog.filter(i=>(activeCategory==='الكل'||ui.category(i)===activeCategory)&&(!term||ui.normalize(i.name+' '+(i.category||'')).includes(term)));
- const total=catalog.reduce((sum,item)=>sum+count(active,item.name),0);
+ const quantities=new Map();
+ for(const row of itemRows(active))quantities.set(row.name,(quantities.get(row.name)||0)+row.qty);
+ const total=catalog.reduce((sum,item)=>sum+(quantities.get(item.name)||0),0);
  $('ffUnifiedMenuStatus').textContent=filtered.length+' صنف/عرض · المختار '+total+' قطعة · '+(active.dataset.ffUnifiedLabel||'');
  if(!filtered.length){box.append(make('p','لا توجد أصناف مطابقة للبحث أو القسم'));return}
  for(const item of filtered){
-  const quantity=count(active,item.name);
+  const quantity=quantities.get(item.name)||0;
   const change=delta=>{appendText(active,item.name,delta);render()};
   const picker=ui.createTile(item,{quantity,onAdd:()=>change(1),onRemove:()=>change(-1)});
   box.append(picker.element);
@@ -87,7 +96,6 @@ async function preview(area){
  block.hidden=false;block.textContent='جاري التحليل والمعاينة...';
  try{
   await loadMenu();
-  if(typeof ff49LoadCatalog==='function')await ff49LoadCatalog();
   if(typeof ff49ParseItemsAndNotes!=='function'||typeof window.ff75RenderReview!=='function')throw Error('محلل FF75 غير متاح');
   const content=area.value;
   const parsed=ff49ParseItemsAndNotes(content,{allowPartial:true});
@@ -133,5 +141,5 @@ document.addEventListener('click',event=>{
   });
  }
 },true);
-window.addEventListener('ff-luxe-session-reset',()=>{active=null;catalog=[];if(mod.open)mod.close()});
+window.addEventListener('ff-luxe-session-reset',()=>{request++;active=null;catalog=[];if(mod.open)mod.close()});
 })();
