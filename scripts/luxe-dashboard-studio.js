@@ -95,9 +95,8 @@
   if(key!==context){apply(null);context=key;last=0}
   if(!force&&Date.now()-last<30000)return;
   last=Date.now();const request=++serial;
-  try{const rows=await rpc('ff_ui_effective',{p_branch:branch,p_device:device});
-   const version=rows?.[0];
-   const cardLayout=version?await rpc('ff81_effective_cards',{p_branch:branch,p_device:device,p_revision:version.id}):null;
+  try{const version=await rpc('ff81_effective_design',{p_branch:branch,p_device:device});
+   const cardLayout=version?.card_layout??null;
    if(request===serial&&who===actor()&&data?.role===role&&branch===scope()&&device===(matchMedia('(max-width:850px)').matches?'mobile':'desktop'))apply(version,cardLayout)
   }catch{ /* Keep last confirmed version for this context during network loss. */ }
  }
