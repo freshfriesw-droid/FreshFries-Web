@@ -252,6 +252,7 @@ with sync_playwright() as playwright:
                   data={role:'manager', orders:[], branches:[], drivers:[], offers:[]};
                   rpc=async name=>{
                     if(name==='ff_ui_manager_history'||name==='ff_ui_effective')return [];
+                    if(name==='ff81_effective_design')return null;
                     if(name==='ff62_manager_data_overview')return {mode:'read_only',orders:7};
                     throw Error('Unconfigured test fixture');
                   };
@@ -287,6 +288,27 @@ with sync_playwright() as playwright:
                 page.locator("#ffx-nav [data-key=studio]").click()
                 studio = page.locator("#ffStudio")
                 assert studio.is_visible()
+                # DEC-06: edit, duplicate, order, remove, undo, and reset the four real metric types.
+                studio.locator("#ffCardEditor summary").click()
+                editor = studio.locator("#ffCardEditor")
+                rows = editor.locator(".ff-card-edit-row")
+                assert rows.count() == 4
+                editor.locator("[data-card-add]").click()
+                assert rows.count() == 5
+                rows.nth(4).locator("select").nth(0).select_option("completed_today")
+                rows.nth(4).locator("select").nth(1).select_option("full")
+                rows.nth(4).locator("select").nth(2).select_option("black")
+                assert editor.locator("[data-card-preview] .ff-card-sample").nth(4).get_attribute("data-card-size") == "full"
+                rows.nth(4).get_by_role("button", name="نسخ", exact=True).click()
+                assert rows.count() == 6
+                rows.nth(5).get_by_role("button", name="تقديم", exact=True).click()
+                rows.nth(4).get_by_role("button", name="حذف", exact=True).click()
+                assert rows.count() == 5
+                editor.locator("[data-card-undo]").click()
+                assert rows.count() == 6
+                editor.locator("[data-card-default]").click()
+                assert rows.count() == 4
+                studio.locator("#ffCardEditor summary").click()
                 # DEC-03: verify effective published source against concrete role/device scopes.
                 page.evaluate("""() => {
                   const before=rpc;

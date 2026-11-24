@@ -95,3 +95,24 @@ body[data-ff-bar=compact] #ffx-mobile-nav button:not(:first-child):not(.active):
  body[data-ff-bar=wide] #ffx-mobile-nav button{flex-wrap:wrap;justify-content:center;align-content:center;gap:2px}
  body[data-ff-bar=floating] main,body[data-ff-bar=wide] main{padding-bottom:calc(128px + env(safe-area-inset-bottom,0px))}
 }
+
+
+/* DEC-06: bounded card styles; no fixed count limit, wrap naturally at every viewport. */
+#ffCardEditor [data-card-list]{display:grid;gap:8px}
+#ffCardEditor .ff-card-edit-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));gap:8px;padding:8px;border:1px solid var(--ffx-line,#888);border-radius:8px;min-width:0}
+#ffCardEditor .ff-card-edit-row input,#ffCardEditor .ff-card-edit-row select{min-width:0;width:100%;box-sizing:border-box;min-height:44px}
+#ffCardEditor .ff-card-edit-row .actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
+#ffCardEditor button{min-height:44px;white-space:normal}
+#ffCardEditor [data-card-preview]{display:grid;grid-template-columns:repeat(var(--ff-card-columns,2),minmax(0,1fr));gap:8px}
+#ffCardEditor .ff-card-sample{display:grid;gap:8px;border:1px solid #777;border-radius:9px;padding:8px;background:#fff;color:#181818;min-width:0;overflow-wrap:anywhere}
+#ffCardEditor .ff-card-sample span{font-size:18px}
+#ffCardEditor [data-card-size=wide],#ffx-kpis [data-card-size=wide]{grid-column:span 2}
+#ffCardEditor [data-card-size=full],#ffx-kpis [data-card-size=full]{grid-column:1/-1}
+#ffx-kpis [data-card-tone=red]{--kpi-color:#a01726!important;--kpi-wash:#ffeced!important}
+#ffx-kpis [data-card-tone=black]{--kpi-color:#171717!important;--kpi-wash:#ececec!important}
+#ffx-kpis [data-card-tone=neutral]{--kpi-color:#333!important;--kpi-wash:#f0f0f0!important}
+#ffCardEditor [data-card-tone=red]{border-color:#a01726;background:#ffeced;color:#5f0d17}
+#ffCardEditor [data-card-tone=black]{background:#171717;color:#fff}
+#ffCardEditor [data-card-tone=neutral]{background:#f0f0f0;color:#333}
+#ffx-kpis .ffx-kpi-label{overflow-wrap:anywhere}
+@media(max-width:360px){#ffx-kpis [data-card-size=wide]{grid-column:1/-1}}
