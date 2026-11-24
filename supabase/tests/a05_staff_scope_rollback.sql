@@ -99,6 +99,7 @@ BEGIN
  RESET ROLE;
  IF (SELECT count(*) FROM public.ff_audit_log WHERE action IN('ff61_application_approved','ff61_application_rejected') AND entity_id IN(app::text,app2::text))<>2 THEN RAISE EXCEPTION 'Decision audit missing';END IF;passes:=passes+1;
  IF EXISTS(SELECT 1 FROM public.ff_profiles WHERE user_id=reject_ap) THEN RAISE EXCEPTION 'Rejected account exists';END IF;passes:=passes+1;
+ IF EXISTS(SELECT 1 FROM public.ff61_employee_applications WHERE id IN(app,app2) AND decision_reason IS NULL) THEN RAISE EXCEPTION 'Decision reason missing';END IF;passes:=passes+1;
  RAISE EXCEPTION 'QA rollback sentinel' USING ERRCODE='ZQ001';
  EXCEPTION WHEN SQLSTATE 'ZQ001' THEN NULL;END;
  IF passes<>30 OR EXISTS(SELECT 1 FROM public.ff_branches WHERE id IN(b1,b2)) OR EXISTS(SELECT 1 FROM auth.users WHERE id IN(m,c,cs,duser,su,ap,reject_ap)) OR EXISTS(SELECT 1 FROM public.ff61_employee_applications WHERE id IN(app,app2)) THEN RAISE EXCEPTION 'Incomplete QA or rollback: %',passes;END IF;
