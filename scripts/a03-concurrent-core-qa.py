@@ -83,3 +83,48 @@ race(f"insert into ff38_delivery_tasks(order_id,driver_id) values ('{orders[4]}'
 assert scalar(f"select ff_private.special_courier_load('{special}')")=="5"
 assert scalar(f"select count(*) from ff38_delivery_tasks where order_id='{orders[5]}'")=="0"
 print("PASS A03 concurrent core: one offer, one acceptance, fifth succeeds and sixth fails",flush=True)
+
+
+# QA-14: load actual cashier/courier RPC definitions and guards into the same isolated DB.
+subprocess.run(["psql","-X","-v","ON_ERROR_STOP=1","-f",str(root/"supabase/tests/a03_concurrent_lifecycle_fixture.sql")],check=True,timeout=30)
+cashier=uid()
+query(f"insert into ff_profiles(user_id,role) values ('{cashier}','cashier'); insert into ff_user_branches values ('{cashier}','{branch}')")
+def as_actor(actor,sql):
+    return f"select set_config('request.jwt.claim.sub','{actor}',true); {sql}"
+def cash(sql):
+    return as_actor(cashier,sql)
+def courier(sql):
+    return as_actor(user,sql)
+# Repeated receive is idempotent; repeated invoice can never replace the recorded reference.
+receive=cash(f"select public.ff49_cashier_receive('{order}')")
+race(receive,receive)
+assert scalar(f"select count(*) from ff49_cashier_receipts where order_id='{order}'")=="1"
+race(cash(f"select public.ff49_cashier_invoice('{order}','QA-FIRST')"),
+     cash(f"select public.ff49_cashier_invoice('{order}','QA-SECOND')"),"لا يمكن اعتماد القطع")
+assert scalar(f"select invoice_ref from ff49_cashier_receipts where order_id='{order}'")=="QA-FIRST"
+assert scalar(f"select cashier_stage from ff38_delivery_tasks where order_id='{order}'")=="printed"
+prepare=cash(f"select public.ff38_cashier_set_stage('{order}','preparing')")
+race(prepare,prepare,"يجب تحديث مراحل الكاشير بالترتيب")
+query(cash(f"select public.ff38_cashier_set_stage('{order}','ready')"))
+# Pending addition must stop handover; no state change.
+aid=uid()
+query(f"insert into ff38_order_additions values ('{aid}','{order}','pending')")
+handoff=cash(f"select public.ff38_cashier_set_stage('{order}','handed_over')")
+blocked=query(handoff,check=False)
+assert blocked.returncode!=0 and "إضافات بدون اعتماد فاتورة" in blocked.stderr,blocked.stderr
+assert scalar(f"select cashier_stage from ff38_delivery_tasks where order_id='{order}'")=="ready"
+query(f"update ff38_order_additions set status='invoiced' where id='{aid}'")
+depart=courier(f"select public.ff38_driver_progress('{order}','on_way')")
+# The courier's concurrent request waits for the cashier's handover commit.
+race(handoff,depart)
+assert scalar(f"select cashier_stage||':'||phase from ff38_delivery_tasks where order_id='{order}'")=="handed_over:on_way"
+arrive=courier(f"select public.ff38_driver_progress('{order}','arrived')")
+race(arrive,arrive,"خطوة غير متاحة")
+# Exclude spare capacity fixtures from the delivery-triggered redispatch sweep.
+query(f"update ff_orders set status='cancelled' where id='{orders[5]}'")
+deliver=courier(f"select public.ff38_driver_progress('{order}','delivered')")
+race(deliver,deliver,"الطلب ملغي أو منته")
+assert scalar(f"select status from ff_orders where id='{order}'")=="delivered"
+assert scalar(f"select count(*) from ff60_workflow_events where order_id='{order}' and event_type='cashier' and actor_id='{cashier}'")=="4"
+assert scalar(f"select count(*) from ff60_workflow_events where order_id='{order}' and event_type='courier' and actor_id='{user}'")=="3"
+print("PASS A03 lifecycle concurrency: idempotent receipt, immutable invoice, single transitions, pending addition guard, handoff before departure, audited completion",flush=True)
