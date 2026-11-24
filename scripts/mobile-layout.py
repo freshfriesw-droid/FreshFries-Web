@@ -469,6 +469,7 @@ with sync_playwright() as playwright:
                 delegation.locator("[data-d-grant]").click()
                 page.wait_for_function("document.querySelector('[data-d-status]').textContent.includes('#82')")
                 assert page.evaluate("window.__qaDelegationCalls[0].p_capabilities.length") == 4
+                assert delegation.locator("[data-d-screen] option[value=notices]").count() == 1
                 delegation.locator("[data-d-close]").click()
                 page.evaluate("""async () => {
                   user={id:'fixture-delegate'};data.role='cashier';
@@ -478,6 +479,8 @@ with sync_playwright() as playwright:
                 delegation.locator("[data-d-key] option").wait_for(state="attached")
                 assert delegation.locator("[data-d-manager]").is_hidden()
                 assert delegation.locator("[data-d-edit]").is_visible()
+                assert delegation.locator("[data-d-text]").get_attribute("maxlength") == "180"
+                assert delegation.locator("[data-d-format-help]").is_hidden()
                 delegation.locator("[data-d-text]").fill("مسودة موظف")
                 delegation.locator("[data-d-save]").click()
                 page.wait_for_function("document.querySelector('[data-d-status]').textContent.includes('#84')")
