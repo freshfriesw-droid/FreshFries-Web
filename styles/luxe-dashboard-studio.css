@@ -26,9 +26,9 @@ body[data-ff-bar=compact] #ffx-mobile-nav button:not(:first-child):not(.active):
 .ff-design-layout[data-pack=D01]{--pack-bg:#ffffff;--pack-ink:#231e20;--pack-radius:14px;grid-template-columns:2fr 1fr;grid-template-areas:"heading heading" "hero hero" "stats stats" "work late"}
 @media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D01]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "stats" "work" "late"}}
 .ff-design-layout[data-pack=D02]{--pack-bg:#242127;--pack-ink:#ffffff;--pack-radius:6px;grid-template-columns:1fr 1fr;grid-template-areas:"heading heading" "hero stats" "work work" "late late"}
-@media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D02]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "stats" "work" "late"}}
+@media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D02]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "hero" "work" "late"}}
 .ff-design-layout[data-pack=D03]{--pack-bg:#302e31;--pack-ink:#ffffff;--pack-radius:18px;grid-template-columns:1fr 1fr 1fr;grid-template-areas:"heading heading heading" "hero hero stats" "work work stats" "late late late"}
-@media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D03]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "stats" "work" "late"}}
+@media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D03]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "work" "late" "hero"}}
 .ff-design-layout[data-pack=D04]{--pack-bg:#ffffff;--pack-ink:#211e20;--pack-radius:4px;grid-template-columns:3fr 2fr;grid-template-areas:"heading heading" "hero hero" "work stats" "work late"}
 @media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D04]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "work" "stats" "late"}}
 .ff-design-layout[data-pack=D05]{--pack-bg:#353638;--pack-ink:#ffffff;--pack-radius:2px;grid-template-columns:2fr 1fr;grid-template-areas:"heading heading" "stats stats" "hero late" "work work"}
@@ -36,13 +36,13 @@ body[data-ff-bar=compact] #ffx-mobile-nav button:not(:first-child):not(.active):
 .ff-design-layout[data-pack=D06]{--pack-bg:#8d1630;--pack-ink:#ffffff;--pack-radius:8px;grid-template-columns:2fr 1fr;grid-template-areas:"heading heading" "hero late" "stats late" "work work"}
 @media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D06]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "late" "stats" "work"}}
 .ff-design-layout[data-pack=D07]{--pack-bg:#faf2e6;--pack-ink:#392d23;--pack-radius:20px;grid-template-columns:3fr 2fr;grid-template-areas:"heading heading" "hero hero" "work work" "stats late"}
-@media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D07]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "work" "stats" "late"}}
+@media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D07]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "work" "hero" "late" "stats"}}
 .ff-design-layout[data-pack=D08]{--pack-bg:#101010;--pack-ink:#ffffff;--pack-radius:0px;grid-template-columns:1fr 1fr;grid-template-areas:"heading heading" "stats stats" "hero hero" "late late" "work work"}
-@media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D08]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "hero" "late" "work"}}
+@media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D08]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "late" "hero" "work"}}
 .ff-design-layout[data-pack=D09]{--pack-bg:#fff6f6;--pack-ink:#281b22;--pack-radius:22px;grid-template-columns:1fr 1fr;grid-template-areas:"heading heading" "hero hero" "late late" "work work" "stats stats"}
 @media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D09]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "late" "work" "stats"}}
 .ff-design-layout[data-pack=D10]{--pack-bg:#f1f3f3;--pack-ink:#1a2125;--pack-radius:3px;grid-template-columns:2fr 3fr;grid-template-areas:"heading heading" "stats hero" "late work"}
-@media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D10]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "hero" "late" "work"}}
+@media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D10]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "late" "work" "hero"}}
 .ff-design-layout[data-pack=D11]{--pack-bg:#f1f4fa;--pack-ink:#18243a;--pack-radius:10px;grid-template-columns:1fr 1fr;grid-template-areas:"heading heading" "hero stats" "late work"}
 @media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D11]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "stats" "late" "work"}}
 .ff-design-layout[data-pack=D12]{--pack-bg:#fff5ec;--pack-ink:#372820;--pack-radius:24px;grid-template-columns:3fr 2fr;grid-template-areas:"heading heading" "work hero" "work stats" "late late"}
@@ -54,24 +54,26 @@ body[data-ff-bar=compact] #ffx-mobile-nav button:not(:first-child):not(.active):
 .ff-design-layout[data-pack=D15]{--pack-bg:#ffffff;--pack-ink:#101010;--pack-radius:0px;grid-template-columns:1fr 1fr;grid-template-areas:"heading heading" "stats stats" "work work" "hero late"}
 @media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D15]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "work" "hero" "late"}}
 .ff-design-layout[data-pack=D16]{--pack-bg:#f8f0e8;--pack-ink:#302322;--pack-radius:12px;grid-template-columns:2fr 3fr;grid-template-areas:"heading heading" "hero work" "stats work" "late late"}
-@media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D16]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "work" "stats" "late"}}
+@media(max-width:850px){#ffx-dashboard.ff-design-layout[data-pack=D16]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "work" "late" "stats"}}
 .ff-design-layout>.ffx-section-head{grid-area:heading}.ff-design-layout[data-pack=D08]{font-size:1.12em}.ff-design-layout[data-pack=D16] h1{font-family:Georgia,serif}
 
 .ff-preview-scroll{max-width:100%;min-width:0;overflow:auto}
 .ff-studio-preview{box-sizing:border-box}
 @container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D01]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "stats" "work" "late"}}
-@container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D02]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "stats" "work" "late"}}
-@container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D03]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "stats" "work" "late"}}
+@container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D02]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "hero" "work" "late"}}
+@container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D03]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "work" "late" "hero"}}
 @container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D04]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "work" "stats" "late"}}
 @container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D05]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "hero" "late" "work"}}
 @container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D06]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "late" "stats" "work"}}
-@container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D07]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "work" "stats" "late"}}
-@container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D08]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "hero" "late" "work"}}
+@container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D07]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "work" "hero" "late" "stats"}}
+@container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D08]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "late" "hero" "work"}}
 @container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D09]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "late" "work" "stats"}}
-@container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D10]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "hero" "late" "work"}}
+@container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D10]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "late" "work" "hero"}}
 @container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D11]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "stats" "late" "work"}}
 @container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D12]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "work" "hero" "stats" "late"}}
 @container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D13]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "late" "stats" "work" "hero"}}
 @container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D14]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "work" "stats" "late" "hero"}}
 @container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D15]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "stats" "work" "hero" "late"}}
-@container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D16]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "work" "stats" "late"}}
+@container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D16]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "work" "late" "stats"}}
+
+.ff-studio-preview .ffx-section-head{margin:0;padding:0;color:inherit;font-size:1.1rem;min-width:0}
