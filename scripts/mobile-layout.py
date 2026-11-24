@@ -462,7 +462,7 @@ with sync_playwright() as playwright:
                 page.evaluate("() => {rpc=window.__orderContentRpc;}")
                 # DEC-10: manager grant/revoke and staff draft/review; revoked UI closes.
                 page.evaluate("""() => {
-                  const old=rpc;window.__qaDelegation=null;window.__qaDelegationCalls=[];
+                  const old=rpc;window.__qaDelegationOriginalRpc=old;window.__qaDelegation=null;window.__qaDelegationCalls=[];
                   rpc=async(name,args)=>{
                     if(name==='ff82_manager_accounts')return [{user_id:'fixture-delegate',role:'cashier',display_name:'موظف اختبار',branch_id:'qa-branch',branch_name:'القاهرة'}];
                     if(name==='ff82_manager_grants')return window.__qaDelegation?[window.__qaDelegation]:[];
@@ -513,7 +513,7 @@ with sync_playwright() as playwright:
                 page.evaluate("""async () => {window.__qaDelegation=null;await window.ffContentDelegation.sync(true)}""")
                 assert delegation.is_hidden()
                 assert page.locator("#ff82Open").is_hidden()
-                page.evaluate("""() => {user={id:'fixture-manager'};data.role='manager';window.ffContentDelegation.sync(true)}""")
+                page.evaluate("""() => {user={id:'fixture-manager'};data.role='manager';rpc=window.__qaDelegationOriginalRpc;window.ffContentDelegation.sync(true)}""")
                 page.evaluate("data.role='manager'")
                 page.evaluate("""async () => {
                   window.__noticeOriginalRpc=rpc;
@@ -529,60 +529,13 @@ with sync_playwright() as playwright:
                 page.evaluate("window.dispatchEvent(new Event('ff-luxe-session-reset'))")
                 assert page.evaluate("window.ffContentStudio.notice('notices.delayed','fallback',990001,null)") == "fallback"
                 page.evaluate("() => {rpc=window.__noticeOriginalRpc;}")
-                # DEC-10: manager grant/revoke and staff draft/review; revoked UI closes.
-                page.evaluate("""() => {
-                  const old=rpc;window.__qaDelegation=null;window.__qaDelegationCalls=[];
-                  rpc=async(name,args)=>{
-                    if(name==='ff82_manager_accounts')return [{user_id:'fixture-delegate',role:'cashier',display_name:'موظف اختبار',branch_id:'qa-branch',branch_name:'القاهرة'}];
-                    if(name==='ff82_manager_grants')return window.__qaDelegation?[window.__qaDelegation]:[];
-                    if(name==='ff82_manager_audit')return [];
-                    if(name==='ff82_set_grant'){
-                      window.__qaDelegationCalls.push(args);
-                      window.__qaDelegation={id:82,recipient:args.p_recipient,role_scope:'cashier',branch_id:args.p_branch,screen:args.p_screen,capabilities:args.p_capabilities,starts_at:args.p_start,ends_at:args.p_end};
-                      return 82;
-                    }
-                    if(name==='ff82_revoke_grant'){window.__qaDelegation=null;return true}
-                    if(name==='ff82_my_grant')return window.__qaDelegation?[window.__qaDelegation]:[];
-                    if(name==='ff82_delegate_catalog')return [{key:'dashboard.new',label:'طلب جديد',original:'طلب جديد',screen:'dashboard'}];
-                    if(name==='ff82_delegate_history')return [{id:83,body:'مسودة مراجعة',published_at:null}];
-                    if(name==='ff82_delegate_draft'){window.__qaDelegationCalls.push(args);return {ok:true,revision:84}}
-                    if(name==='ff82_delegate_review'){window.__qaDelegationCalls.push(args);return {ok:true}}
-                    return old(name,args);
-                  };
-                  data.role='manager';window.ffContentDelegation.sync(true);
-                }""")
-                page.locator("#ff82Open").click()
-                delegation=page.locator("#ff82Delegation")
-                delegation.locator("[data-d-account] option").wait_for(state="attached")
-                check_width(page,width,"#ff82Delegation")
-                for capability in ("edit","preview","review"):
-                    delegation.locator(f"[data-d-caps] input[value={capability}]").check()
-                page.once("dialog",lambda prompt:prompt.accept())
-                delegation.locator("[data-d-grant]").click()
-                page.wait_for_function("document.querySelector('[data-d-status]').textContent.includes('#82')")
-                assert page.evaluate("window.__qaDelegationCalls[0].p_capabilities.length") == 4
-                delegation.locator("[data-d-close]").click()
-                page.evaluate("""async () => {
-                  user={id:'fixture-delegate'};data.role='cashier';
-                  await window.ffContentDelegation.sync(true);
-                }""")
-                page.locator("#ff82Open").click()
-                delegation.locator("[data-d-key] option").wait_for(state="attached")
-                assert delegation.locator("[data-d-manager]").is_hidden()
-                assert delegation.locator("[data-d-edit]").is_visible()
-                delegation.locator("[data-d-text]").fill("مسودة موظف")
-                delegation.locator("[data-d-save]").click()
-                page.wait_for_function("document.querySelector('[data-d-status]').textContent.includes('#84')")
-                delegation.locator("[data-d-note]").fill("مراجعة اختبارية")
-                delegation.locator("[data-d-send-review]").click()
-                page.wait_for_function("document.querySelector('[data-d-status]').textContent.includes('تم إرسال المراجعة')")
-                page.evaluate("""async () => {window.__qaDelegation=null;await window.ffContentDelegation.sync(true)}""")
-                assert delegation.is_hidden()
-                assert page.locator("#ff82Open").is_hidden()
-                page.evaluate("""() => {user={id:'fixture-manager'};data.role='manager';window.ffContentDelegation.sync(true)}""")
-                page.evaluate("data.role='manager'")
-                page.locator("#ffx-menu").click()
+                # Wait for the manager navigation rebuild after the fixture account swap.
+                page.locator("#ffx-nav [data-key=assembly_admin]").wait_for(state="attached")
+                if page.locator("#ffx-sidebar").is_hidden():
+                    page.locator("#ffx-menu").click()
+                search = page.locator("#ffx-nav-search")
                 search.fill("إدارة نقطة التجميع")
+                page.locator("#ffx-nav [data-key=assembly_admin]").wait_for(state="visible")
                 page.locator("#ffx-nav [data-key=assembly_admin]").click()
                 assert page.locator("#staffAdminCard > .ffl-fold-toggle").get_attribute("aria-expanded") == "true"
                 assert page.locator("#staffAdminList").is_visible()
