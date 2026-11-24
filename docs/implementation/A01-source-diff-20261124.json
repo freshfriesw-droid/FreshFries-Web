@@ -1,0 +1,1178 @@
+{
+  "document": "FreshFries_LUXE_Final_Approval_v2_2026-11-24(1).pdf",
+  "document_sha256": "18820bbd27e2939f21c617d5d34aafeccd491e4346c1f6f0b4a2d96288a6fc62",
+  "baseline_commit": "57ab198888f259acad0a09d813eceb132a795eec",
+  "reviewed_commit": "f49085db1776c356611b8a072b8f33334c0a14bb",
+  "source_files": 53,
+  "reviewed_files": 95,
+  "counts": {
+    "unchanged": 45,
+    "modified": 8,
+    "added": 42,
+    "removed": 0
+  },
+  "files": [
+    {
+      "path": ".github/workflows/brand-icon-sync.yml",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "f3f4812a733e3e8785c8c995bf892fb416b34e74",
+        "bytes": 2522,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "f3f4812a733e3e8785c8c995bf892fb416b34e74",
+        "bytes": 2522,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": ".github/workflows/ff-optional-email-once.yml",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "42151ab0bfd5ef8ffc6f908090c6c8f03d8eccde",
+        "bytes": 2431,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "42151ab0bfd5ef8ffc6f908090c6c8f03d8eccde",
+        "bytes": 2431,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": ".github/workflows/luxe-static-qa.yml",
+      "status": "modified",
+      "baseline": {
+        "sha": "62ae42b51e099ec058b570ff26a045950848c322",
+        "bytes": 690,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "a2ab99c0b5eebd2468a954143b30de41ce2643ee",
+        "bytes": 1518,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "CNAME",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "389baa3cfcb84a0278c96430b0357dc70e689e89",
+        "bytes": 24,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "389baa3cfcb84a0278c96430b0357dc70e689e89",
+        "bytes": 24,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "README.md",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "a47e059920ef6fa2d6214376360173275c7fd06f",
+        "bytes": 8862,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "a47e059920ef6fa2d6214376360173275c7fd06f",
+        "bytes": 8862,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "9111c11a453e1d777fcafd8769dfba2acf162077",
+        "bytes": 9784,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "9111c11a453e1d777fcafd8769dfba2acf162077",
+        "bytes": 9784,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "assets/ff-icon-192.png",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "71cd0734349817ccc3be4dc08555589584ba42f1",
+        "bytes": 10864,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "71cd0734349817ccc3be4dc08555589584ba42f1",
+        "bytes": 10864,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "assets/ff-icon-512.png",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "566f3bb425ca6e4240ad42aaba70660b696e0aac",
+        "bytes": 40685,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "566f3bb425ca6e4240ad42aaba70660b696e0aac",
+        "bytes": 40685,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "assets/ff-official-logo.png",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "dc36c9fc7e89f65ac5340b9fa9d487b6b9a5bec3",
+        "bytes": 1512844,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "dc36c9fc7e89f65ac5340b9fa9d487b6b9a5bec3",
+        "bytes": 1512844,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "assets/ff-pinned-cairo-v38-37.js",
+      "status": "modified",
+      "baseline": {
+        "sha": "a1a9b268361f62ccd366e228d3c724c0b4b67967",
+        "bytes": 7326,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "0f5297352a01d3b54d346dd87972db1d7bb8099f",
+        "bytes": 12159,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "assets/luxe-report-center-20261123.css",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "34eebe027b41eb5db89f284eea135121d2085a0d",
+        "bytes": 4305,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "34eebe027b41eb5db89f284eea135121d2085a0d",
+        "bytes": 4305,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "docs/ALERT_RING_BEHAVIOR_2026-11-22.md",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "7e358fb0a35427ea45e4530edbbfcf4da78f8a9b",
+        "bytes": 3435,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "7e358fb0a35427ea45e4530edbbfcf4da78f8a9b",
+        "bytes": 3435,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "docs/implementation/20261124-qa-pr55-57.md",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "98deb017683edcb0401eedead7dff6537928cbb3",
+        "bytes": 2422,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "docs/implementation/20261124-qa-through-pr31.md",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "1ca7a836b5787b77397e0206c126d4d68f056594",
+        "bytes": 4554,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "docs/implementation/FIX-03-authored-buttons.csv",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "c14df7ebe14f3140d010c3e875a788f10e41e724",
+        "bytes": 21014,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "docs/implementation/FIX-03-navigation-map.md",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "c97f0bb99c94f4aa9aa1c0f0ece91cc3cdc2bc29",
+        "bytes": 7294,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "docs/implementation/FIX-04-css-inventory.json",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "254df71d2eff4b836e87b1fc9b64ca6afeed9897",
+        "bytes": 41391,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "docs/implementation/P0_BASELINE_v38.38.0_manifest.json",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "b239ee9e13a5348026e5222be316b3627d03c989",
+        "bytes": 8784,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "favicon.ico",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "759809aad5cf4762a9a76d2f7a68cdbc964b4d2c",
+        "bytes": 27916,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "759809aad5cf4762a9a76d2f7a68cdbc964b4d2c",
+        "bytes": 27916,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "index.html",
+      "status": "modified",
+      "baseline": {
+        "sha": "c8646d0ffecaa5039173ccb7126afd29ee3d26a9",
+        "bytes": 595333,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "d049a3037bf53ea0552a76c8bace830ebec1ce73",
+        "bytes": 600640,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "manifest.webmanifest",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "6b091c19a3edbd184a66f413a8a2cb438e36ab83",
+        "bytes": 631,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "6b091c19a3edbd184a66f413a8a2cb438e36ab83",
+        "bytes": 631,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "offline.html",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "806777fd6bb508f1d73ec78f41502f9b99f3f067",
+        "bytes": 851,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "806777fd6bb508f1d73ec78f41502f9b99f3f067",
+        "bytes": 851,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-all-menus-fold-20261123.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "3d546eb6e64fbfdab54eebaa7b370682de72c163",
+        "bytes": 6355,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "3d546eb6e64fbfdab54eebaa7b370682de72c163",
+        "bytes": 6355,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-burger-kitchen-20261123.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "42bd978706844810574cd76b328b2380af3ae502",
+        "bytes": 31255,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "42bd978706844810574cd76b328b2380af3ae502",
+        "bytes": 31255,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-burger-picker-qa.py",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "34e0b80e65fa56679c35f0441bc8cc8abecc14d5",
+        "bytes": 7541,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-case-alerts-20261123.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "5cefd99f5699d16411dd698bba71eb8375af8646",
+        "bytes": 5747,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "5cefd99f5699d16411dd698bba71eb8375af8646",
+        "bytes": 5747,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-cashier-destinations-20261122.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "7c15673f0e16bb9496d95cf050d4090ab286ba89",
+        "bytes": 7091,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "7c15673f0e16bb9496d95cf050d4090ab286ba89",
+        "bytes": 7091,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-cashier-finished-20261123.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "2b786e563ca9878477d0f5143ccd6a872bbd045e",
+        "bytes": 20465,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "2b786e563ca9878477d0f5143ccd6a872bbd045e",
+        "bytes": 20465,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-collapsible-sections-manager-create-20261123.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "f29914c9628ff02841e64befb125c8d219f28335",
+        "bytes": 14029,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "f29914c9628ff02841e64befb125c8d219f28335",
+        "bytes": 14029,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-completed-detail-popup-20261123.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "c7a91649f4e2b274e7c33875c9843b395a612d9d",
+        "bytes": 2413,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "c7a91649f4e2b274e7c33875c9843b395a612d9d",
+        "bytes": 2413,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-completed-universal-20261123.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "81e52a3fd7750906df3b251533c5632e4110e97d",
+        "bytes": 26396,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "81e52a3fd7750906df3b251533c5632e4110e97d",
+        "bytes": 26396,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-content-delegation.js",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "f59151f1231c98269ed099ce86d8f98d7996f94d",
+        "bytes": 13172,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-content-studio.js",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "d141f5837beb0a2a158708b5825d69630c19eba3",
+        "bytes": 20713,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-dashboard-studio.js",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "531e08a84c5323fc4d87e83bd1a954a60d7bf51f",
+        "bytes": 28732,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-driver-cancel-20261122.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "7c346dc840ef08eb13609a9ef7bdf2d71ee8f4d3",
+        "bytes": 6430,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "7c346dc840ef08eb13609a9ef7bdf2d71ee8f4d3",
+        "bytes": 6430,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-f01-operational-day-20261123.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "9d968dcdadd66ac0949b1d7e91ce135dd2b8d347",
+        "bytes": 8714,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "9d968dcdadd66ac0949b1d7e91ce135dd2b8d347",
+        "bytes": 8714,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-foreground-ring-20261122.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "94824963cb0384d1aef0963e1d5d85da61e160e6",
+        "bytes": 5504,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "94824963cb0384d1aef0963e1d5d85da61e160e6",
+        "bytes": 5504,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-history-period-20261123.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "e3a0242261d97fd55c0b2d1d9fdca303f02ad0e2",
+        "bytes": 7961,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "e3a0242261d97fd55c0b2d1d9fdca303f02ad0e2",
+        "bytes": 7961,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-one-time-rewards-20261123.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "60495629a951e18193c297579519f93e23351235",
+        "bytes": 14202,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "60495629a951e18193c297579519f93e23351235",
+        "bytes": 14202,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-operational-fixes-20261121.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "bcd842951ca887851cdc296d024a263aca4ba40d",
+        "bytes": 13044,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "bcd842951ca887851cdc296d024a263aca4ba40d",
+        "bytes": 13044,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-operational-polish-20261121.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "43e5eefa393a1141fd46e04c770381938d007888",
+        "bytes": 10503,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "43e5eefa393a1141fd46e04c770381938d007888",
+        "bytes": 10503,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-order-customer-edit-20261123.js",
+      "status": "modified",
+      "baseline": {
+        "sha": "6a7756c5d26f6ecdc3457f81506397112cf7436b",
+        "bytes": 5696,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "949fe2d58274db022b1cf0ebd07f49b2e945e310",
+        "bytes": 6252,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-report-center-20261123.js",
+      "status": "modified",
+      "baseline": {
+        "sha": "1afd1d7910038d6b0cf6baf4dbe4ea359dd8c2be",
+        "bytes": 30092,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "ec5e66a7f2d65735be0592e8513c0a556ed7ec6a",
+        "bytes": 35660,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-shared-photo-menu-20261123.js",
+      "status": "modified",
+      "baseline": {
+        "sha": "4d33a7f032b4f13a020ad218dc81f2b2a42379a0",
+        "bytes": 8467,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "6d9bd6523807474d46ce6e615079dcdf27617c36",
+        "bytes": 8618,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-static-ci.mjs",
+      "status": "modified",
+      "baseline": {
+        "sha": "5db6d64cdd7e8c55df8d2b0e4190677d1d520d48",
+        "bytes": 21909,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "639a43fef5ee7d30063f84214cc8655eff53a090",
+        "bytes": 27211,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/luxe-unified-order-inputs-20261123.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "c562c504ef12077dd5ac28a7fc94c5a8dfc86912",
+        "bytes": 8303,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "c562c504ef12077dd5ac28a7fc94c5a8dfc86912",
+        "bytes": 8303,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "scripts/mobile-layout.py",
+      "status": "modified",
+      "baseline": {
+        "sha": "e84fc5e72390677d100824a943a6ddd449210c94",
+        "bytes": 25708,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "61e845076adae7f4f88fe5f5dae8d10cf5826b71",
+        "bytes": 67624,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "styles/ffx-nav-groups.css",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "8aad841f054773de819a2a1d3e3ef7259dad44c1",
+        "bytes": 1623,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "styles/luxe-content-delegation.css",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "efc4b7a55184996df80149997c18a88f6422ec03",
+        "bytes": 842,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "styles/luxe-content-studio.css",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "8972c8a4fe1ed3abaf59229baa6ceacd36803439",
+        "bytes": 1849,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "styles/luxe-dashboard-studio.css",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "005394c9bd519f5ef06cd1eb25905dfb2c732d47",
+        "bytes": 14637,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "styles/luxe-operations.css",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "6df928ed624219a100865d7a7a4dc290ee3a6f2c",
+        "bytes": 8105,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff76-report-foundation.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "09b9e7be6f3423a56a207c0e2a6a90cdbe51c01f",
+        "bytes": 4984,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "09b9e7be6f3423a56a207c0e2a6a90cdbe51c01f",
+        "bytes": 4984,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff76-unified-reports-center.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "bbd251c57f02aad0304b5af31761b6fd8dd6fd81",
+        "bytes": 22757,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "bbd251c57f02aad0304b5af31761b6fd8dd6fd81",
+        "bytes": 22757,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff77-content-studio.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "69dc390c2275b28f06ff49e134dc4cf3acf40afd",
+        "bytes": 6721,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff78-content-catalog-expansion.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "05483c7841ed2ba3fa016d7d6b296d3d9e937220",
+        "bytes": 1645,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff79-design-effective-source.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "3b60215b7a894152bda72176eae458e33061622d",
+        "bytes": 1832,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff80-daily-dashboard-metrics.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "c1d4ef3885c4270f13628d2e1466f246cdbcad8f",
+        "bytes": 3425,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff81-atomic-effective-design.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "2b09273c1b62952ef646270e6cf348fb156a0e3d",
+        "bytes": 580,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff81-card-layout-revisions.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "ad9ae09c23e8b861d5af258b23234cc06e693759",
+        "bytes": 3607,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff82-content-delegation.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "77d24787e1d614fada6b6bcac0d3fa82118fd571",
+        "bytes": 11236,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff83-notification-templates.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "619db01a381a65e7ca0f4411fd09cdee87ba610d",
+        "bytes": 1415,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff84-formatted-guidance.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "af2562639ed4b364c10ec2c573452530ccbe76f1",
+        "bytes": 1291,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff85-order-content-library.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "8f4aa577fb012ad5e88ed27da96af0bf56c14606",
+        "bytes": 2722,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff86-content-history-scoped.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "ccd34f55577dfa35e78117c1fdc24ffedd1ad611",
+        "bytes": 998,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/ff87-delegation-window.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "84e2adc6cf6b5775e5a5d38c05ea2be95fd6a671",
+        "bytes": 766,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/functions/ff-push/index.ts",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "7e75c12bb2a699069f4d4ddba31df857e8acc11c",
+        "bytes": 7380,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "7e75c12bb2a699069f4d4ddba31df857e8acc11c",
+        "bytes": 7380,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/functions/ff61-employees/index.ts",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "d218d12e75f5f5361290ba3ea6c4a9a74c5e617f",
+        "bytes": 22350,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "d218d12e75f5f5361290ba3ea6c4a9a74c5e617f",
+        "bytes": 22350,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261123_burger_kitchen_staff_roles.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "77a099194383215b96449944e63d63c8e7a7cbe4",
+        "bytes": 61028,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "77a099194383215b96449944e63d63c8e7a7cbe4",
+        "bytes": 61028,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261123_burger_kitchen_workflow.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "3ce58865b17f7932122be62de52239b27fd49c5b",
+        "bytes": 15787,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "3ce58865b17f7932122be62de52239b27fd49c5b",
+        "bytes": 15787,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261123_burger_notes_presence.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "c977507b4e8da38b922da5c50eb9cfd64489db03",
+        "bytes": 6301,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "c977507b4e8da38b922da5c50eb9cfd64489db03",
+        "bytes": 6301,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261123_burger_optional_invoice.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "e7f67419852686f077afaad61128eefba0634aa9",
+        "bytes": 2401,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "e7f67419852686f077afaad61128eefba0634aa9",
+        "bytes": 2401,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261123_customer_live_correction.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "c2be6a4c980f59381b8b952c1999e80d45684ffd",
+        "bytes": 8584,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "c2be6a4c980f59381b8b952c1999e80d45684ffd",
+        "bytes": 8584,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261123_f01_business_reports.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "57e81d2f8329cd76f7e0b981080b52aaf947438c",
+        "bytes": 37922,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "57e81d2f8329cd76f7e0b981080b52aaf947438c",
+        "bytes": 37922,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261123_f01_operational_day.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "8401e6fb2eb618dcc4c0f3686b8eb0f650b58684",
+        "bytes": 7828,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "8401e6fb2eb618dcc4c0f3686b8eb0f650b58684",
+        "bytes": 7828,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261123_one_time_customer_rewards.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "4b1e7d35559e829ece885e984a709e3a08d5e2d9",
+        "bytes": 13200,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "4b1e7d35559e829ece885e984a709e3a08d5e2d9",
+        "bytes": 13200,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261123_order_case_notifications.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "693c1ffba20c9bd7538d81a5b34ff31b440a0f4d",
+        "bytes": 4787,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "693c1ffba20c9bd7538d81a5b34ff31b440a0f4d",
+        "bytes": 4787,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261123_reservations_unscheduled.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "0a89774e54aafd742842e4685d548933f73374e8",
+        "bytes": 2293,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "0a89774e54aafd742842e4685d548933f73374e8",
+        "bytes": 2293,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261124_atomic_delivery_details.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "d5ed4dc9c9267dc7da00d14edb1e4695b82da1a9",
+        "bytes": 3032,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261124_catalog_parser_aliases.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "101fff958e2bf7e368e8300e273a6a059ee5b259",
+        "bytes": 2821,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261124_customer_edit_reason.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "55b307f3e5961598ef628c05c5339f4fad7eeb3f",
+        "bytes": 226,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261124_dashboard_design_releases.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "50b92b2943fd9e4ef04bb7f6945aa18bc643cf8b",
+        "bytes": 4834,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261124_dashboard_release_controls.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "632fc5bb462203902f40fcc7b820e5c77a81ed2b",
+        "bytes": 6763,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261124_optional_delivery_contact.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "3e2cdcb5f64132fe1b7ae105da9e763302fd8ad8",
+        "bytes": 1892,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261124_report_presets.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "f11c54ba89c7ec09690f21b07a44dc0a7e5a1f7e",
+        "bytes": 1681,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/migrations/20261124_special_courier_capacity.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "4df6dd622ff8698db1da337c7a2f66d1d21219ad",
+        "bytes": 9655,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/tests/assigned_order_addition.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "4e1386ac4415e4b32a474730c7938ae5006372a4",
+        "bytes": 3148,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/tests/atomic_delivery_details.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "5d8b08e88f50c57872e14e5ab35d75c86c88c4e2",
+        "bytes": 4458,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/tests/catalog_parser_aliases.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "309e5abd2fa50a599befaf5f13c4dd2ce41e13f8",
+        "bytes": 2244,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/tests/customer_contact_correction.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "480b2ede87bcec92b2ffd90759932b314bac7e8a",
+        "bytes": 3238,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/tests/dashboard_design_releases.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "ecc35c81e49166ab813e63c47ec14200fb1b46a2",
+        "bytes": 1985,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/tests/delegation_window.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "89779d420314b370a3e2cd4c669c34146c79dfb8",
+        "bytes": 2139,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/tests/f01_business_date.sql",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "af14f47b5874bda03263071d3182203a9d7eed49",
+        "bytes": 2211,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "af14f47b5874bda03263071d3182203a9d7eed49",
+        "bytes": 2211,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "supabase/tests/special_courier_capacity.sql",
+      "status": "added",
+      "baseline": null,
+      "reviewed": {
+        "sha": "fd8588c754afc467f3c6787063617842ba5ad5db",
+        "bytes": 3637,
+        "mode": "100644"
+      }
+    },
+    {
+      "path": "sw.js",
+      "status": "unchanged",
+      "baseline": {
+        "sha": "6317c7491947be2072d998d6222cd3237c5271f5",
+        "bytes": 4247,
+        "mode": "100644"
+      },
+      "reviewed": {
+        "sha": "6317c7491947be2072d998d6222cd3237c5271f5",
+        "bytes": 4247,
+        "mode": "100644"
+      }
+    }
+  ]
+}
