@@ -192,6 +192,15 @@ with sync_playwright() as playwright:
                 mode = page.get_by_role("combobox", name="طريقة عرض القائمة")
                 mode.select_option("flat")
                 assert page.locator("#ffx-group-links-system").is_visible()
+                # Crossing the breakpoint in the same session must load each device's preference.
+                for viewport_width, expected_mode in [(1024, "accordion"), (390, "flat")]:
+                    page.set_viewport_size({"width": viewport_width, "height": 800})
+                    page.wait_for_function(
+                        "expected => document.querySelector('#ffx-nav select')?.value === expected",
+                        arg=expected_mode,
+                    )
+                    if page.locator("#ffx-sidebar").is_hidden():
+                        page.locator("#ffx-menu").click()
                 mode.select_option("accordion")
                 assert page.locator("#ffx-group-links-system").is_hidden()
                 search.fill("التصفير")

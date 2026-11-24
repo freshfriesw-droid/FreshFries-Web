@@ -3389,7 +3389,7 @@ navToggle.setAttribute('aria-expanded','false');
 navToggle.onclick=openNav;
 drawerClose.onclick=closeNav;
 dimmer.onclick=()=>{closeNav();closePrefs()};
-mobileNav.addEventListener('change',closeNav);
+mobileNav.addEventListener('change',()=>{closeNav();setSidebarNav()});
 doc.addEventListener('keydown',event=>{
   if (event.key==='Escape') {
     if (prefPanel.classList.contains('open')) closePrefs();
@@ -3617,7 +3617,8 @@ function getNavExpansion(){
 function setSidebarNav(){
  const actor=typeof user!=='undefined'&&user?.id?String(user.id):'';
  const role=userLogged()?data.role:'';
- const sig=[actor,role,groups.map(g=>g.items.filter(i=>roleAllowed(i[2])).map(i=>i[2]).join(',')).join(';')].join('|');
+ const device=mobileNav.matches?'mobile':'desktop';
+ const sig=[actor,role,device,groups.map(g=>g.items.filter(i=>roleAllowed(i[2])).map(i=>i[2]).join(',')).join(';')].join('|');
  if(sig===navSig){
   updateNavAlertBadge();
   return;
@@ -3633,7 +3634,7 @@ function setSidebarNav(){
   const option=S('option',{value});
   option.textContent=label;mode.append(option);
  }
- const modeKey=navStorageKey()+':mode:'+(window.matchMedia('(max-width:850px)').matches?'mobile':'desktop');
+ const modeKey=navStorageKey()+':mode:'+device;
  try{if(localStorage.getItem(modeKey)==='flat')mode.value='flat'}catch{}
  if(role)root.append(search,mode);
  const sections=[];
