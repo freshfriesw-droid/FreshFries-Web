@@ -32,7 +32,7 @@ function itemRows(area){
   const parsed=ff49ParseItemsAndNotes(raw,{allowPartial:true});
   if(parsed.errors.length||parsed.items.length!==1)continue;
   const item=parsed.items[0];
-  rows.push({index,name:item.name,qty:item.qty});
+  rows.push({index,name:item.name,qty:item.qty,price:Number(item.price),notes:item.item_notes||''});
  }
  return rows;
 }
@@ -53,6 +53,7 @@ function appendText(area,name,delta){
  area.value=lines.join('\n').replace(/^\n+/,'').trimEnd();
  area.dispatchEvent(new Event('input',{bubbles:true}));
 }
+window.ffLuxeOrderText=Object.freeze({itemRows,appendText});
 async function loadMenu(){
  const token=++request,actor=typeof user!=='undefined'?user?.id:null;
  if(!actor)throw Error('سجل الدخول أولًا');
