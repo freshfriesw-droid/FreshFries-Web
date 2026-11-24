@@ -2,7 +2,7 @@
 -- Synthetic auth fixture is rolled back; no SMS or employee/account changes.
 DO $qa$
 DECLARE u uuid:=gen_random_uuid(); branch uuid; missing uuid:=gen_random_uuid();
- cs uuid; v_phone text; stmt text; code text; count_pass int:=0; prev text;
+ cs uuid; v_phone text; stmt text; v_sqlstate text; count_pass int:=0; prev text;
 BEGIN
  SELECT id INTO STRICT branch FROM public.ff_branches WHERE code='cairo' AND active;
  SELECT user_id INTO cs FROM public.ff_profiles WHERE active AND role='customer_service' LIMIT 1;
@@ -36,11 +36,11 @@ BEGIN
    'select public.ff_reward_check(''QA-NOT-A-CODE'')',
    format('select public.ff_reward_redeem(''QA-NOT-A-CODE'',%L::uuid,''cashier_pickup'','''',0,'''',%L::uuid,true)',branch,missing)
   ] LOOP
-   code:=NULL;
+   v_sqlstate:=NULL;
    BEGIN EXECUTE stmt;
-   EXCEPTION WHEN SQLSTATE '42501' THEN code:=SQLSTATE;
+   EXCEPTION WHEN SQLSTATE '42501' THEN v_sqlstate:=SQLSTATE;
    END;
-   IF code IS DISTINCT FROM '42501' THEN RAISE EXCEPTION 'Staff boundary bypass: %',stmt; END IF;
+   IF v_sqlstate IS DISTINCT FROM '42501' THEN RAISE EXCEPTION 'Staff boundary bypass: %',stmt; END IF;
    count_pass:=count_pass+1;
   END LOOP;
   -- Preserve existing CS access, without returning private data.
