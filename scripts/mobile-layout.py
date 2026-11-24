@@ -223,6 +223,20 @@ with sync_playwright() as playwright:
             assert page.locator("#ffx-preferences").is_hidden()
             if width == 390:
                 page.evaluate("""() => {
+                  user={id:'fixture-cashier'};
+                  data={role:'cashier',orders:[],branches:[],drivers:[],offers:[]};
+                }""")
+                cashier_link = page.locator("#ffx-mobile-nav [data-key=cashier]")
+                cashier_link.wait_for()
+                cashier_link.click()
+                assert cashier_link.evaluate("el => el.classList.contains('active')")
+                assert page.locator("#ffx-kpis button[data-ffx-kpi=cashier]").count() == 3
+                assert page.locator("#ffx-kpis button[data-ffx-kpi=drivers]").count() == 0
+                page.evaluate("data.role='driver'")
+                page.locator("#ffx-mobile-nav [data-key=driver]").wait_for()
+                assert cashier_link.count() == 0
+                assert page.locator("#ffx-kpis button[data-ffx-kpi=driver]").count() == 4
+                page.evaluate("""() => {
                   user={id:'fixture-manager'};
                   data={role:'manager', orders:[], branches:[], drivers:[], offers:[]};
                   rpc=async name=>{
