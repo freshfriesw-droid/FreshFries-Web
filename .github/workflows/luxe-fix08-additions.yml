@@ -1,0 +1,19 @@
+name: LUXE FIX-08 addition workflow QA
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'scripts/luxe-unified-order-inputs-20261123.js'
+      - 'scripts/luxe-fix08-additions-qa.py'
+      - '.github/workflows/luxe-fix08-additions.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  additions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install playwright==1.51.0
+      - run: python scripts/luxe-fix08-additions-qa.py
