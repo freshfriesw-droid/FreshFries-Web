@@ -120,7 +120,7 @@ def wait_for_open_drawer(page, width):
 
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(channel="chrome")
-    for width in (320, 344, 360, 390, 430, 768, 850, 851, 1280):
+    for width in (320, 344, 360, 390, 430, 768, 850, 851, 1024, 1280, 1440):
         context = browser.new_context(viewport={"width": width, "height": 800},
                                       is_mobile=width <= 850, service_workers="block")
         context.route("**/*", lambda route: route.continue_() if route.request.url.startswith(origin) else route.abort())
@@ -192,6 +192,15 @@ with sync_playwright() as playwright:
                 mode = page.get_by_role("combobox", name="طريقة عرض القائمة")
                 mode.select_option("flat")
                 assert page.locator("#ffx-group-links-system").is_visible()
+                # Crossing the breakpoint in the same session must load each device's preference.
+                for viewport_width, expected_mode in [(1024, "accordion"), (390, "flat")]:
+                    page.set_viewport_size({"width": viewport_width, "height": 800})
+                    page.wait_for_function(
+                        "expected => document.querySelector('#ffx-nav select')?.value === expected",
+                        arg=expected_mode,
+                    )
+                    if page.locator("#ffx-sidebar").is_hidden():
+                        page.locator("#ffx-menu").click()
                 mode.select_option("accordion")
                 assert page.locator("#ffx-group-links-system").is_hidden()
                 search.fill("التصفير")
