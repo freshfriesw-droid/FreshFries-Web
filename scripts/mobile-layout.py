@@ -276,11 +276,16 @@ with sync_playwright() as playwright:
                 page.locator("#ffx-nav [data-key=studio]").click()
                 studio = page.locator("#ffStudio")
                 assert studio.is_visible()
-                previews = set()
-                for number in range(1, 17):
-                    studio.locator("select[name=pack]").select_option(f"D{number:02d}")
-                    previews.add(studio.locator(".ff-design-layout").evaluate("el => getComputedStyle(el).gridTemplateAreas"))
-                assert len(previews) == 16, previews
+                # Exercise all approved preview widths, including desktop in a mobile browser.
+                for preview_width in (320, 360, 390, 430, 768, 1024, 1440):
+                    studio.locator("select[name=viewport]").select_option(str(preview_width))
+                    previews = set()
+                    for number in range(1, 17):
+                        studio.locator("select[name=pack]").select_option(f"D{number:02d}")
+                        layout = studio.locator(".ff-design-layout")
+                        previews.add(layout.evaluate("el => getComputedStyle(el).gridTemplateAreas"))
+                    assert len(previews) == 16, (preview_width, previews)
+                studio.locator("select[name=viewport]").select_option("390")
                 studio.get_by_role("button", name="إغلاق", exact=True).click()
                 page.locator("#ffx-menu").click()
                 search.fill("إدارة نقطة التجميع")
