@@ -50,7 +50,7 @@ BEGIN
     WHERE l.driver_id=v_driver AND f.active AND f.role='driver';
   END IF;
   PERFORM set_config('request.jwt.claim.sub',v_actor::text,true);
-  FOR v_case IN SELECT value FROM jsonb_array_elements('[null,{},[],[{"item_name":"QA","quantity":"NaN","unit_price":100}],[{"item_name":"QA","quantity":1,"unit_price":"Infinity"}]]'::jsonb) LOOP
+  FOR v_case IN SELECT value FROM jsonb_array_elements('[null,{},[],[{"item_name":"QA","quantity":"NaN","unit_price":100}],[{"item_name":"QA","quantity":1,"unit_price":"Infinity"}],[{"item_name":"QA","quantity":1.5,"unit_price":100}],[{"item_name":"QA","quantity":101,"unit_price":100}],[{"item_name":"QA","quantity":1,"unit_price":1.001}],[{"item_name":"QA","quantity":1,"unit_price":0}],[{"item_name":"QA","quantity":100,"unit_price":999999999999.99}],[{"item_name":"QA","quantity":1,"unit_price":100,"item_notes":{}}]]'::jsonb) LOOP
    v_error:=NULL;
    BEGIN
     PERFORM public.ff52_regular_addition_create(v_order,v_case);
@@ -111,7 +111,7 @@ BEGIN
   PERFORM set_config('request.jwt.claim.sub',v_driver_user::text,true);
   PERFORM public.ff38_driver_progress(v_order,'on_way');
   PERFORM set_config('request.jwt.claim.sub',v_actor::text,true);
-  FOR v_case IN SELECT value FROM jsonb_array_elements('[null,{},[],[{"item_name":"QA","quantity":"NaN","unit_price":100}],[{"item_name":"QA","quantity":1,"unit_price":"Infinity"}]]'::jsonb) LOOP
+  FOR v_case IN SELECT value FROM jsonb_array_elements('[null,{},[],[{"item_name":"QA","quantity":"NaN","unit_price":100}],[{"item_name":"QA","quantity":1,"unit_price":"Infinity"}],[{"item_name":"QA","quantity":1.5,"unit_price":100}],[{"item_name":"QA","quantity":101,"unit_price":100}],[{"item_name":"QA","quantity":1,"unit_price":1.001}],[{"item_name":"QA","quantity":1,"unit_price":0}],[{"item_name":"QA","quantity":100,"unit_price":999999999999.99}],[{"item_name":"QA","quantity":1,"unit_price":100,"item_notes":{}}]]'::jsonb) LOOP
    v_error:=NULL;
    BEGIN
     PERFORM public.ff52_late_addition_create(v_order,v_case);
