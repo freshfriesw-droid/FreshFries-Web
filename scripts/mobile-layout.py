@@ -377,6 +377,7 @@ with sync_playwright() as playwright:
                   rpc=async(name,args)=>{
                     if(name==='ff_content_catalog_list')return [{key:'dashboard.new',screen:'dashboard',label:'زر طلب جديد',original:'طلب جديد'}];
                     if(name==='ff_content_history')return window.__contentHistory;
+                    if(name==='ff86_content_history_scoped')return window.__contentHistory.filter(r=>(!args.p_role||r.role_scope===args.p_role)&&(args.p_global_branch?!r.branch_id:(!args.p_branch||r.branch_id===args.p_branch)));
                     if(name==='ff_content_effective')return window.__contentEffective;
                     if(name==='ff_content_create_draft'){
                       window.__contentCalls.push(args);
@@ -404,6 +405,8 @@ with sync_playwright() as playwright:
                 content.locator("[data-content-save]").click()
                 content.locator("[data-content-history] option").wait_for(state="attached")
                 assert content.locator("[data-content-history]").is_visible()
+                assert content.locator("[data-content-history-role]").input_value() == "all"
+                assert content.locator("[data-content-history-branch]").input_value() == "__global__"
                 assert content.locator("[data-content-preview]").inner_text() == "طلب جديد تجريبي"
                 assert "طلب جديد تجريبي" not in page.locator("#ffx-hero-new").text_content()
                 page.once("dialog", lambda prompt: prompt.accept())
