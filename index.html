@@ -3325,8 +3325,8 @@ $x('ffx-volume-label').textContent=prefs.volume+'%';populateThemes();storePrefs(
 for(const [id,k] of [['ffx-density','density'],['ffx-auto','auto'],['ffx-volume','volume'],['ffx-repeat','repeat'],['ffx-audio','audio'],['ffx-visual','visual'],['ffx-delay','delay'],['ffx-motion','motion'],['ffx-fast','fast']]){$x(id).addEventListener(id==='ffx-volume'?'input':'change',e=>{prefs[k]=e.target.type==='checkbox'?e.target.checked:['volume','repeat'].includes(k)?Number(e.target.value):e.target.value;applyPrefs()})}
 $x('ffx-reset').onclick=()=>{const tones={sound:prefs.sound,delaySound:prefs.delaySound};prefs={...defaults,...tones};applyPrefs();ff74Controls();showToast('تمت استعادة إعدادات التصميم دون تغيير النغمات المركزية')};
 $x('ffx-theme-toggle').onclick=()=>{const isDark=doc.body.classList.contains('ffx-dark');prefs.theme=isDark?'classic':'dark';prefs.auto='manual';applyPrefs()};
-function openPrefs(){closeNav();prefPanel.classList.add('open');dimmer.style.display='block';void ff66Load(true);void ff74Refresh(true);ff74Controls()}
-function closePrefs(){prefPanel.classList.remove('open');dimmer.style.display='';if(!doc.body.classList.contains('ffx-menu-open'))dimmer.style.display=''}
+let prefsOpener;prefPanel.setAttribute('role','dialog');prefPanel.setAttribute('aria-modal','true');function openPrefs(){closeNav();prefsOpener=doc.activeElement;prefPanel.classList.add('open');dimmer.style.display='block';$x('ffx-pref-close').focus({preventScroll:true});void ff66Load(true);void ff74Refresh(true);ff74Controls()}
+function closePrefs(){const open=prefPanel.classList.contains('open');prefPanel.classList.remove('open');dimmer.style.display='';if(open&&prefsOpener?.isConnected)prefsOpener.focus({preventScroll:true});prefsOpener=null}
 $x('ffx-options').onclick=openPrefs;$x('ffx-pref-close').onclick=closePrefs;
 $x('ff66AssemblySoundSettings')?.addEventListener('click',openPrefs);
 const mobileNav = window.matchMedia('(max-width:850px)');
@@ -3359,9 +3359,11 @@ doc.addEventListener('keydown',event=>{
     if (prefPanel.classList.contains('open')) closePrefs();
     else closeNav();
   }
-  if (event.key!=='Tab' || !doc.body.classList.contains('ffx-menu-open')) return;
-  const buttons=[...sidebar.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),a[href],[tabindex="0"]')].filter(b=>b.getClientRects().length&&!b.closest('[hidden],.hidden'));
-  const first=buttons[0], last=buttons.at(-1);
+  if(event.key!=='Tab'||(!doc.body.classList.contains('ffx-menu-open')&&!prefPanel.classList.contains('open')))return;
+  if(doc.querySelector('dialog[open]'))return;
+  const focusRoot=prefPanel.classList.contains('open')?prefPanel:sidebar;
+  const buttons=[...focusRoot.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),a[href],[tabindex="0"]')].filter(b=>b.getClientRects().length&&!b.closest('[hidden],.hidden'));
+  const first=buttons[0], last=buttons.at(-1);if(!first)return;if(!focusRoot.contains(doc.activeElement)){event.preventDefault();(event.shiftKey?last:first).focus();return;}
   if (event.shiftKey && doc.activeElement===first) {event.preventDefault();last.focus()}
   if (!event.shiftKey && doc.activeElement===last) {event.preventDefault();first.focus()}
 });
@@ -3575,7 +3577,7 @@ function navStorageKey(){
  return 'ffx-nav-expanded-v2:'+uid+':'+role+':'+($x('ffx-branch')?.value||'all')+':'+(mobileNav.matches?'mobile':'desktop');
 }
 function getNavExpansion(){
- try{const v=JSON.parse(localStorage.getItem(navStorageKey())||'{}');
+ try{const oldKey='ffx-nav-expanded-v1:'+String(user?.id||'guest')+':'+String(data?.role||'anonymous');const v=JSON.parse(localStorage.getItem(navStorageKey())||localStorage.getItem(oldKey)||'{}');
   return v&&typeof v==='object'&&!Array.isArray(v)?v:{};}catch(_){return {}}
 }
 function setSidebarNav(){
@@ -3594,14 +3596,14 @@ function setSidebarNav(){
  const empty=S('p',{role:'status',class:'ffx-section-label'});
  empty.textContent='لا توجد أقسام مطابقة';
  const mode=S('select',{'aria-label':'طريقة عرض القائمة'});
- for(const [value,label] of [['accordion','مجموعات قابلة للطي'],['flat','قائمة مفتوحة']]){
+ for(const [value,label] of [['default','وفق إعداد الإدارة'],['accordion','مجموعات قابلة للطي'],['flat','قائمة مفتوحة']]){
   const option=S('option',{value});
   option.textContent=label;mode.append(option);
  }
  const modeKey=navStorageKey()+':mode:'+device;
- const central=window.ffA06NavConfig?.mode||'accordion';mode.value=central;try{const own=localStorage.getItem(modeKey);if(['flat','accordion'].includes(own))mode.value=own}catch{};search.value=oldSearch;
+ const central=window.ffA06NavConfig?.mode||'accordion';mode.value='default';try{const own=localStorage.getItem(modeKey)||localStorage.getItem('ffx-nav-expanded-v1:'+actor+':'+role+':mode:'+device);if(['flat','accordion','default'].includes(own))mode.value=own}catch{};search.value=oldSearch;const effectiveMode=()=>mode.value==='default'?central:mode.value;
  if(role)root.append(search,mode);
- const sections=[];
+ const sections=[];const orderResults=S('div',{id:'ffA06OrderSearchResults','aria-label':'نتائج الطلبات الظاهرة'});
  const normalize=value=>value.normalize('NFKC').replace(/[َ-ْـ]/g,'').replace(/[أإآ]/g,'ا').trim().toLowerCase();
  function filterSections(){
   const query=normalize(search.value);
@@ -3616,11 +3618,14 @@ function setSidebarNav(){
    matches+=count;
    section.hidden=count===0;
    const expanded=saved[group.key]??['home','operations'].includes(group.key);
-   const open=Boolean(query)||mode.value==='flat'||expanded;
+   const open=Boolean(query)||effectiveMode()==='flat'||expanded;
    links.hidden=!open;
    title.setAttribute('aria-expanded',String(open));
-   title.disabled=Boolean(query)||mode.value==='flat';
+   title.disabled=Boolean(query)||effectiveMode()==='flat';
   }
+  orderResults.replaceChildren();orderResults.hidden=true;
+  if(query.length>=2&&userLogged()){const rows=visibleOrders().filter(o=>!['delivered','cancelled','canceled','closed'].includes(String(o.status))&&o.phase!=='delivered'&&[o.number,o.area].some(v=>normalize(String(v??'')).includes(query))).slice(0,8);
+   if(rows.length){orderResults.hidden=false;const title=S('p',{class:'ffx-section-label'});title.textContent='الطلبات الظاهرة لحسابك';orderResults.append(title);for(const o of rows){const b=S('button',{type:'button',class:'ffx-side-link','data-ff-a06-result':String(o.number)});b.textContent='طلب #'+o.number+' · '+String(o.area||'');b.onclick=()=>focusOrder(String(o.number));orderResults.append(b)}matches+=rows.length}}
   empty.hidden=!query||matches>0;
  }
  search.addEventListener('input',filterSections);
@@ -3662,7 +3667,7 @@ function setSidebarNav(){
   section.append(title,links);
   root.append(section);
  });
- root.append(empty);filterSections();
+ root.append(orderResults,empty);filterSections();
  const footer=S('div',{class:'ffx-section-label'});footer.textContent='التفضيلات والحساب';root.append(footer);
  [['تخصيص المظهر والأصوات','settings','settings'],['تحديث البيانات','refresh','refresh'],['تسجيل الخروج','logout','logout']].forEach(([txt,ic,key])=>{
   if(key==='logout'&&!userLogged())return;
