@@ -457,3 +457,33 @@ a02Area.value='1 صنف مجهول';assert.throws(()=>a02Picker.appendText(a02Ar
 const exactParser=vm.runInNewContext(parserSource+'\nff49ParseItemsAndNotes',{ff49Catalog:[{id:1,name:menuNames[0],price:1000,parser_aliases:[menuNames[0]]},{id:2,name:'عرض الأسرة',price:2000,parser_aliases:[menuNames[0]]}]});
 assert.equal(exactParser('1 تشكن فرايز').items[0].name,menuNames[0]);
 console.log('PASS A02: exact names, line-specific prices and notes, reversible edits, ambiguous draft guard');
+
+
+ // A03: exercise the production CS offer-list renderer and tick, including a replacement offer.
+ const a03Clock=Date.parse('2026-11-25T00:00:00Z');
+ let a03Now=a03Clock;
+ const a03Root={innerHTML:''};
+ const a03Node={dataset:{exp:'2026-11-25T00:03:00Z'},textContent:'',hasAttribute:k=>k==='data-ff-cs-offer-id'};
+ const a03Data={offers:[{id:'old',order_number:1,driver_id:'d1',area:'QA',status:'offered',expires_at:a03Node.dataset.exp}]};
+ const a03Context=vm.createContext({data:a03Data,$:()=>a03Root,esc:v=>String(v??''),driverName:id=>id==='d1'?'الموصل الأول':'الموصل الثاني',time:v=>v,
+ Date:class extends Date{static now(){return a03Now;}},document:{querySelectorAll:s=>s==='[data-exp]'?[a03Node]:[]}});
+ vm.runInContext(html.slice(html.indexOf('function ffOfferSecondsLeft'),html.indexOf('function drawDriver()')),a03Context);
+ const a03Line=html.slice(html.indexOf('function drawOffers()'),html.indexOf('function drawOffers()')+2500);
+ const a03Render=a03Line.slice(0,a03Line.indexOf('\n}',1)+2);
+ vm.runInContext(a03Render,a03Context);
+ const a03Tick=html.match(/function tick\(\)\{[^\n]+/)[0];
+ vm.runInContext(a03Tick,a03Context);
+ vm.runInContext('drawOffers();tick()',a03Context);
+ assert.match(a03Root.innerHTML,/الموصل الأول/);
+ assert.match(a03Root.innerHTML,/data-ff-cs-offer-id="old">180 ثانية/);
+ assert.equal(a03Node.textContent,'180 ثانية');
+ a03Now=a03Clock+179000;vm.runInContext('tick()',a03Context);assert.equal(a03Node.textContent,'1 ثانية');
+ a03Now=a03Clock+180000;vm.runInContext('tick()',a03Context);assert.equal(a03Node.textContent,'انتهت المهلة');
+ a03Data.offers=[{id:'replacement',order_number:1,driver_id:'d2',area:'QA',status:'offered',expires_at:'2026-11-25T00:13:00Z'}];
+ a03Node.dataset.exp=a03Data.offers[0].expires_at;
+ vm.runInContext('drawOffers();tick()',a03Context);
+ assert.match(a03Root.innerHTML,/الموصل الثاني/);assert.match(a03Root.innerHTML,/data-ff-cs-offer-id="replacement">600 ثانية/);
+ assert.equal(a03Node.textContent,'600 ثانية');
+ a03Data.offers[0].status='accepted';vm.runInContext('drawOffers()',a03Context);assert.doesNotMatch(a03Root.innerHTML,/data-exp=/);
+ a03Data.offers=[];vm.runInContext('drawOffers()',a03Context);assert.doesNotMatch(a03Root.innerHTML,/data-exp=/);
+ console.log('PASS A03: production CS countdown, expiry, new offer and acceptance removal');
