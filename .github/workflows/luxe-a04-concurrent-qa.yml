@@ -1,0 +1,41 @@
+name: LUXE A04 assembly and kitchen concurrency QA
+on:
+  pull_request:
+    paths:
+      - 'supabase/tests/a04_concurrent_fixture.sql'
+      - 'scripts/a04-concurrent-qa.py'
+      - '.github/workflows/luxe-a04-concurrent-qa.yml'
+      - 'supabase/migrations/20261125_a04_*.sql'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  concurrency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: local-ci-only
+          POSTGRES_DB: a04_qa
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d a04_qa"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: local-ci-only
+      PGDATABASE: a04_qa
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify PostgreSQL client
+        run: psql --version
+      - name: Prove simultaneous assembly, cashier and burger stages
+        run: python3 scripts/a04-concurrent-qa.py
