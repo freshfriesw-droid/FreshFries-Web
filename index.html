@@ -870,7 +870,11 @@ body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{
  <div class="row"><div><label>هاتف العميل</label><input id="newPhone" inputmode="tel" placeholder="77xxxxxxx"></div><div><label>المنطقة</label><input id="newArea" placeholder="اسم المنطقة بالتحديد"></div></div>
  <div id="ff-fee-history" class="ff-fee-history hidden" role="status" aria-live="polite"></div>
  <div class="row"><div><label>رسوم التوصيل</label><input id="newFee" type="number" min="0" step="0.01" placeholder="اكتب الأجرة أو 0 للمجاني"></div><div><label>ملاحظات الطلب</label><input id="newNotes" placeholder="ملاحظة العميل"></div></div>
- <div id="ffbRequiredMore" hidden><input type="hidden" id="newCustomerName" value=""><select id="newChannel" hidden><option value="phone">اتصال هاتفي</option></select><input type="hidden" id="newFullAddress" value=""></div>
+ <div id="ffbRequiredMore">
+  <div class="row"><div><label for="newCustomerName">اسم العميل (اختياري)</label><input id="newCustomerName" maxlength="100"></div>
+  <div><label for="newChannel">مصدر الطلب</label><select id="newChannel"><option value="phone">اتصال هاتفي</option><option value="whatsapp">واتساب</option></select></div></div>
+  <label for="newFullAddress">العنوان التفصيلي (اختياري)</label><input id="newFullAddress" maxlength="500">
+ </div>
  <div class="ff-step-label">02 <span>أصناف الطلب</span></div><div class="ffb-order-tabs"><button type="button" class="primary" id="ffbTabMenu">🍟 المنيو التفاعلي</button><button type="button" class="outline" id="ffbTabText">🧠 الانتقال إلى المحلّل</button></div>
  <div id="ffbMenuPanel"><div class="ffb-menu-head"><input id="ffbMenuSearch" placeholder="🔎 ابحث عن صنف أو عرض" aria-label="بحث في المنيو"><button type="button" id="ffbMenuReload" class="outline">تحديث المنيو</button></div><div id="ffbCategories" class="ffb-categories" aria-label="أقسام المنيو"></div><div class="ffb-order-layout"><div id="ffbMenuGrid" class="ffb-menu-grid"></div><div class="ffb-v2-cart"><h3>🧾 سلة الطلب</h3><div id="ffbCart"></div><p class="muted">اضغط الصنف لزيادة الكمية، واستخدم + أو − للتعديل. رفع الصور المركزي يعمل بعد تطبيق ملف ترقية الوسائط.</p></div></div></div>
  <div class="ff-step-label">03 <span>المراجعة والاعتماد</span></div><label for="newItems">الأصناف النهائية (يمكن تعديلها يدويًا)</label><textarea id="newItems" rows="4" placeholder="1 تشكن&#10;2 استربس&#10;ملاحظة بدون شطة"></textarea><div id="ffbParseStatus" class="muted" role="status"></div>

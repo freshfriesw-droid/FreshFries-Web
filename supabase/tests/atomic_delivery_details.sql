@@ -47,4 +47,30 @@ begin
   if (select array_agg(item_notes order by item_notes collate "C") from public.ff_order_items where order_id=target)
       is distinct from array['بدون شطّة','شطة إضافية'] then raise exception 'Incorrect per-line notes'; end if;
 end $check$;
+set local role authenticated;
+do $compat$
+declare
+  payload jsonb := jsonb_build_object('p_branch',current_setting('ff_qa.branch'),'p_phone','000000002',
+    'p_area','منطقة اختبار','p_items','[{"name":"اختبار","qty":1,"price":75}]'::jsonb);
+  request_id uuid := gen_random_uuid();
+  result jsonb;
+begin
+  result := public.ff27_submit(request_id,'delivery',payload);
+  if result->>'order_id' is null or public.ff27_submit(request_id,'delivery',payload) is distinct from result then
+    raise exception 'Legacy delivery retry failed'; end if;
+  payload := payload||jsonb_build_object('p_customer_name','عميل اختبار');
+  result := public.ff27_submit(gen_random_uuid(),'delivery',payload);
+  perform set_config('ff_qa.partial_order',result->>'order_id',true);
+  request_id := gen_random_uuid();
+  result := public.ff27_submit(request_id,'reservation',payload);
+  if result->>'reservation_id' is null or public.ff27_submit(request_id,'reservation',payload) is distinct from result then
+    raise exception 'Reservation retry failed'; end if;
+end $compat$;
+reset role;
+do $partial$
+begin
+  if not exists(select 1 from public.ff49_order_details where order_id=current_setting('ff_qa.partial_order')::uuid
+      and customer_name='عميل اختبار' and channel is null and full_address is null) then
+    raise exception 'Partial contact details were lost or invented'; end if;
+end $partial$;
 rollback;
