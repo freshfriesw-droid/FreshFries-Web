@@ -92,6 +92,10 @@ async function show(area){
 }
 async function preview(area){
  if(!area?.isConnected)return false;
+ if(['additionItemsInput','ff52LateItems'].includes(area.id)){
+  if(typeof window.ff75ReviewAddition!=='function'){if(typeof toast==='function')toast('تعذر تحميل معاينة الإضافة؛ حدث الصفحة');return false}
+  return window.ff75ReviewAddition(area);
+ }
  const block=area.closest('.ff-unified-wrapper')?.querySelector('.ff-unified-review');
  if(!block)return false;
  block.hidden=false;block.textContent='جاري التحليل والمعاينة...';
@@ -116,7 +120,7 @@ function attach(area,info){
  const menu=make('button','🍟 المنيو التفاعلي');menu.type='button';menu.className='outline';
  const analyze=make('button','🔎 تحليل ومعاينة موحدة');analyze.type='button';analyze.className='outline';
  menu.onclick=()=>void show(area);analyze.onclick=()=>void preview(area);
- actions.append(menu,analyze);
+ actions.append(menu);if(!['additionItemsInput','ff52LateItems'].includes(info.id))actions.append(analyze);
  const review=make('div');review.className='ff-unified-review';review.setAttribute('role','status');review.hidden=true;
  wrapper.append(actions,review);
  area.insertAdjacentElement('afterend',wrapper);
