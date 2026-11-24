@@ -77,3 +77,21 @@ body[data-ff-bar=compact] #ffx-mobile-nav button:not(:first-child):not(.active):
 @container (max-width:828px){.ff-studio-preview>.ff-design-layout[data-pack=D16]{grid-template-columns:minmax(0,1fr);grid-template-areas:"heading" "hero" "work" "late" "stats"}}
 
 .ff-studio-preview .ffx-section-head{margin:0;padding:0;color:inherit;font-size:1.1rem;min-width:0}
+
+/* DEC-07: touch-safe mobile bars and a non-interactive studio sample. */
+.ff-studio-bar{display:flex;align-items:stretch;justify-content:space-around;gap:3px;padding:6px;background:#1c1c1f;color:#fff;border-radius:8px;margin-top:12px;min-width:0}
+.ff-studio-bar[hidden]{display:none!important}
+.ff-studio-bar-item{display:flex;flex:1;min-width:0;min-height:44px;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;text-align:center;overflow-wrap:anywhere}
+.ff-studio-bar-item>span:first-child{font-size:20px;line-height:1}
+.ff-studio-bar[data-bar=icons] .ff-studio-bar-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.ff-studio-bar[data-bar=wide] .ff-studio-bar-item{flex-direction:row;flex-wrap:wrap}
+.ff-studio-bar[data-bar=floating]{margin-inline:8px;border-radius:18px}
+.ff-studio-bar[data-bar=compact] .ff-studio-bar-item:not(:first-child):not(:last-child){display:none}
+.ff-studio-impact{padding:12px;border:1px solid currentColor;border-radius:10px;min-width:0;overflow-wrap:anywhere}
+.ff-studio-impact p{margin:6px 0}
+@media(max-width:850px){
+ #ffx-mobile-nav button{min-width:0;min-height:44px;overflow-wrap:anywhere;text-align:center;line-height:1.25}
+ #ffx-mobile-nav button:focus-visible{outline:2px solid #fff;outline-offset:-3px}
+ body[data-ff-bar=wide] #ffx-mobile-nav button{flex-wrap:wrap;justify-content:center;align-content:center;gap:2px}
+ body[data-ff-bar=floating] main,body[data-ff-bar=wide] main{padding-bottom:calc(128px + env(safe-area-inset-bottom,0px))}
+}
