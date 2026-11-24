@@ -26,3 +26,26 @@ print("Public asset SHA256:", sha256(remote).hexdigest())
 print("Repository asset SHA256:", sha256(local).hexdigest())
 assert remote == local, "Public script differs from tested repository asset"
 print("PASS: HTTPS live HTML and exact merged cart asset are publicly served")
+
+# #77: verify the merged customer directory frontend on the public website.
+# Retry briefly for the ordinary Pages publication delay; do not mutate data.
+from time import sleep
+customer_asset = "scripts/luxe-order-customer-edit-20261123.js"
+customer_marker = "20261124-customer-note"
+expected_asset = (root / customer_asset).read_bytes()
+for attempt in range(5):
+    try:
+        published = get("?qa=" + customer_marker).decode("utf-8")
+        assert customer_asset + "?v=" + customer_marker in published, "Customer note revision not yet served"
+        assert "c.orders_count??0" in published, "Customer order count not served"
+        shipped = get(customer_asset + "?v=" + customer_marker)
+        assert shipped == expected_asset, "Customer edit asset differs from merged source"
+        print("Customer edit published SHA256:", sha256(shipped).hexdigest())
+        print("Customer edit repository SHA256:", sha256(expected_asset).hexdigest())
+        print("PASS #77: customer directory count and exact customer edit/notes asset served via HTTPS")
+        break
+    except (AssertionError, OSError) as exc:
+        if attempt == 4:
+            raise
+        print(f"Publish probe attempt {attempt + 1}: {exc}", flush=True)
+        sleep(8)
