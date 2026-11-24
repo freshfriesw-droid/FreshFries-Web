@@ -437,6 +437,29 @@ with sync_playwright() as playwright:
                 assert guide.locator("strong").count() == 0
                 assert "راجع الأصناف" in guide.text_content()
                 page.evaluate("() => {rpc=window.__guideOriginalRpc;}")
+                # DEC-09: update field label/hint without changing the order value or element.
+                page.evaluate("""async () => {
+                  window.__orderContentRpc=rpc;
+                  const field=document.getElementById('newFee');
+                  window.__orderContentField=field;
+                  field.value='500';
+                  rpc=async(name,args)=>{
+                    if(name==='ff_content_effective')return [
+                      {content_key:'orders.field.fee',body:'أجرة التوصيل الاختبارية',revision:101},
+                      {content_key:'orders.hint.fee',body:'أدخل المبلغ بالريال',revision:102}
+                    ];
+                    return window.__orderContentRpc(name,args);
+                  };
+                  await window.ffContentStudio.sync(true);
+                }""")
+                assert page.locator('label[for="newFee"]').text_content().strip() == "أجرة التوصيل الاختبارية"
+                assert page.locator("#newFee").get_attribute("placeholder") == "أدخل المبلغ بالريال"
+                assert page.locator("#newFee").input_value() == "500"
+                assert page.evaluate("window.__orderContentField === document.getElementById('newFee')")
+                page.evaluate("window.dispatchEvent(new Event('ff-luxe-session-reset'))")
+                assert page.locator('label[for="newFee"]').text_content().strip() == "رسوم التوصيل"
+                assert page.locator("#newFee").get_attribute("placeholder") == "اكتب الأجرة أو 0 للمجاني"
+                page.evaluate("() => {rpc=window.__orderContentRpc;}")
                 # DEC-10: manager grant/revoke and staff draft/review; revoked UI closes.
                 page.evaluate("""() => {
                   const old=rpc;window.__qaDelegation=null;window.__qaDelegationCalls=[];
@@ -469,6 +492,7 @@ with sync_playwright() as playwright:
                 delegation.locator("[data-d-grant]").click()
                 page.wait_for_function("document.querySelector('[data-d-status]').textContent.includes('#82')")
                 assert page.evaluate("window.__qaDelegationCalls[0].p_capabilities.length") == 4
+                assert delegation.locator("[data-d-screen] option[value=notices]").count() == 1
                 delegation.locator("[data-d-close]").click()
                 page.evaluate("""async () => {
                   user={id:'fixture-delegate'};data.role='cashier';
@@ -478,6 +502,8 @@ with sync_playwright() as playwright:
                 delegation.locator("[data-d-key] option").wait_for(state="attached")
                 assert delegation.locator("[data-d-manager]").is_hidden()
                 assert delegation.locator("[data-d-edit]").is_visible()
+                assert delegation.locator("[data-d-text]").get_attribute("maxlength") == "180"
+                assert delegation.locator("[data-d-format-help]").is_hidden()
                 delegation.locator("[data-d-text]").fill("مسودة موظف")
                 delegation.locator("[data-d-save]").click()
                 page.wait_for_function("document.querySelector('[data-d-status]').textContent.includes('#84')")
