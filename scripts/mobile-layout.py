@@ -1,4 +1,6 @@
 """Exercise the real RTL shell with local display fixtures and no remote traffic."""
+import os
+from html.parser import HTMLParser
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from threading import Thread
@@ -108,7 +110,58 @@ def check_width(page, width, selector):
     assert box and box["x"] >= -1 and box["x"] + box["width"] <= width + 1, (width, selector, box)
 
 
+class DrawerStyles(HTMLParser):
+    """Read the three static sheets affected by the drawer consolidation."""
+    ids = {"ffx-luxe-style", "ff-mobile-shell", "ff-luxe-collapse-all-menus"}
+
+    def __init__(self):
+        super().__init__()
+        self.current = None
+        self.css = {}
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "style":
+            self.current = dict(attrs).get("id")
+
+    def handle_endtag(self, tag):
+        if tag == "style":
+            self.current = None
+
+    def handle_data(self, data):
+        if self.current in self.ids:
+            self.css[self.current] = self.css.get(self.current, "") + data
+
+
+def compare_drawer_images(page, width):
+    baseline = os.getenv("DRAWER_BASELINE_HTML")
+    if not baseline or width not in (390, 1280):
+        return
+    styles = DrawerStyles()
+    styles.feed(Path(baseline).read_text())
+    assert styles.css.keys() == styles.ids
+    output = Path("drawer-evidence")
+    output.mkdir(exist_ok=True)
+    drawer = page.locator("#ffx-sidebar")
+    swap = """styles => Object.fromEntries(Object.entries(styles).map(([id, css]) => {
+        const element = document.getElementById(id);
+        const previous = element.textContent;
+        element.textContent = css;
+        return [id, previous];
+    }))"""
+    current = page.evaluate(swap, styles.css)
+    try:
+        before = drawer.screenshot(path=output / f"{width}-before.png", animations="disabled")
+    finally:
+        page.evaluate(swap, current)
+    after = drawer.screenshot(path=output / f"{width}-after.png", animations="disabled")
+    assert before == after, f"Drawer changed appearance at {width}px"
+
+
 def wait_for_open_drawer(page, width):
+    if page.evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches"):
+        assert page.locator("#ffx-sidebar").evaluate(
+            "el => getComputedStyle(el).transitionDuration"
+        ) == "0s", "Drawer must respect reduced motion while open"
     # Measure after the slide animation, including the 851px desktop breakpoint.
     page.wait_for_function("""w => {
       const el = document.querySelector('#ffx-sidebar');
@@ -172,6 +225,7 @@ with sync_playwright() as playwright:
     check_delivery_review(browser)
     for width in (320, 344, 360, 390, 430, 768, 850, 851, 1024, 1280, 1440):
         context = browser.new_context(viewport={"width": width, "height": 800},
+                                      reduced_motion="reduce" if width in (344, 1024) else "no-preference",
                                       is_mobile=width <= 850, service_workers="block")
         context.route("**/*", lambda route: route.continue_() if route.request.url.startswith(origin) else route.abort())
         page = context.new_page()
@@ -207,6 +261,7 @@ with sync_playwright() as playwright:
                 page.locator(trigger).click()
                 wait_for_open_drawer(page, width)
                 check_width(page, width, "#ffx-sidebar")
+                compare_drawer_images(page, width)
                 assert page.locator("#ffx-sidebar").get_attribute("aria-hidden") is None
                 assert page.evaluate("document.querySelector('#ffx-sidebar').inert") is False
                 assert page.locator("#ffx-menu").get_attribute("aria-expanded") == "true"
@@ -931,6 +986,7 @@ with sync_playwright() as playwright:
             page.locator("#ffx-menu").click()
             wait_for_open_drawer(page, width)
             check_width(page, width, "#ffx-sidebar")
+            compare_drawer_images(page, width)
             assert page.locator("#ffx-sidebar").get_attribute("aria-hidden") is None
             assert page.evaluate("document.querySelector('#ffx-sidebar').inert") is False
             page.locator("#ffx-drawer-close").click()
