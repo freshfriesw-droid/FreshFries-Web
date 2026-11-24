@@ -891,6 +891,11 @@ body:has(#cashierView:not(.hidden)) main,body:has(#staffView:not(.hidden)) main{
  <h3>العروض</h3><div class="row"><div><label>اسم العرض</label><input id="ff51OfferName"></div><div><label>سعر العرض</label><input id="ff51OfferPrice" type="number" min="0"></div></div>
  <input id="ff51EditingOffer" type="hidden"><div class="actions"><button id="ff51OfferSave" class="primary">حفظ العرض</button><button id="ff51OfferReset" class="outline">إلغاء التعديل</button></div>
  <div id="ff51OffersList" class="ff49-items"></div>
+ <details><summary>مرادفات محلّل الطلب</summary>
+ <label>الصنف أو العرض<select id="ffAliasTarget"></select></label>
+ <label>المرادفات، كل مرادف في سطر<textarea id="ffAliasNames" rows="4"></textarea></label>
+ <div class="actions"><button type="button" id="ffAliasSave" class="primary">حفظ المرادفات</button><button type="button" id="ffAliasDefault" class="outline">استعادة المرادفات الافتراضية</button></div>
+ <p id="ffAliasStatus" role="status"></p></details>
 </section>
 <section id="ff51CustomersPanel" class="card hidden">
  <div class="sectionbar"><h2>👥 دليل العملاء وملاحظاتهم</h2><button id="ff51CustomersClose" class="outline">إغلاق</button></div>
@@ -2621,12 +2626,8 @@ async function ff49LoadCatalog(){
  try{let rows=await rpc('ff49_catalog');if(Array.isArray(rows)){ff49Catalog=rows;ff49CatalogAt=Date.now()}}catch(e){console.warn('menu catalog not loaded',e.message)}
 }
 // Fresh Fries v38.24 UX stage 1: shared parser used by orders, additions, and reservations.
-function ff49ParseItemsAndNotes(value, options={}){
- const items=[],notes=[],meta={},details=[],warnings=[],errors=[];
- const allowPartial=options?.allowPartial===true;
- const lines=String(value||'').split(/\r?\n/);
- const norm=x=>String(x||'').toLowerCase().replace(/[\u064b-\u065f\u0670\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[٠-٩۰-۹]/g,d=>String('٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹'.indexOf(d)%10)).replace(/\s+/g,' ').trim();
- const groups=[
+const ff49NormalizeInput=x=>String(x||'').toLowerCase().replace(/[\u064b-\u065f\u0670\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[٠-٩۰-۹]/g,d=>String('٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹'.indexOf(d)%10)).replace(/\s+/g,' ').trim();
+const ff49DefaultGroups=[
   {name:'تشكن فرايز',syn:['تشكن','تشكين','تشيكن','تشكن فرايز','دجاج فرايز']},
   {name:'فرايز',syn:['فرايز','بطاطس','بطاطا','بطاطا فرايز']},
   {name:'سماش فرايز',syn:['سماش فرايز','سماش بطاطس']},
@@ -2658,10 +2659,31 @@ function ff49ParseItemsAndNotes(value, options={}){
   {name:'عرض محبوب الجماهير',syn:['محبوب الجماهير','عرض محبوب الجماهير','عرض الجماهير']},
   {name:'عرض الدبل',syn:['عرض الدبل','الدبل عرض','عرض دبل']}
  ];
+function ff49AliasGroups(catalog){
+ const norm=ff49NormalizeInput;
+ const result=new Map(catalog.map(item=>[item,Array.isArray(item.parser_aliases)?item.parser_aliases.slice():[]]));
+ for(const group of ff49DefaultGroups){
+  const target=norm(group.name);
+  const exact=catalog.filter(item=>norm(item.name)===target);
+  const matches=exact.length?exact:catalog.filter(item=>{
+   const name=norm(item.name);
+   return name.startsWith(target+' ')||(target.startsWith(name+' ')&&name.length>=7);
+  });
+  if(matches.length===1&&!Array.isArray(matches[0].parser_aliases))result.get(matches[0]).push(...group.syn);
+ }
+ return result;
+}
+function ff49ParseItemsAndNotes(value, options={}){
+ const items=[],notes=[],meta={},details=[],warnings=[],errors=[];
+ const allowPartial=options?.allowPartial===true;
+ const lines=String(value||'').split(/\r?\n/);
+ const norm=ff49NormalizeInput;
  const catalog=(Array.isArray(ff49Catalog)?ff49Catalog:[]).filter(i=>i&&i.active!==false&&i.name&&Number.isFinite(Number(i.price)));
  const aliases=[];
  for(const item of catalog)aliases.push({text:norm(item.name),item,exact:true});
- for(const g of groups){const target=norm(g.name);const matching=catalog.filter(i=>{const n=norm(i.name);return n===target||n.startsWith(target+' ')||n.startsWith(target+' (')||target.startsWith(n+' ')&&n.length>=7});if(matching.length===1)for(const text of g.syn)aliases.push({text:norm(text),item:matching[0],exact:false})}
+ for(const [item,names] of ff49AliasGroups(catalog)){
+  for(const name of names)if(norm(name))aliases.push({text:norm(name),item,exact:false});
+ }
  const uniqueAlias=[...new Map(aliases.map(a=>[a.text+'|'+(a.item.id||a.item.name),a])).values()];
  const fail=(raw,line,reason)=>{const e={line,text:raw,reason};errors.push(e);details.push({line,kind:'error',raw,reason})};
  for(let k=0;k<lines.length;k++){
@@ -2982,6 +3004,7 @@ async function ff51LoadCatalog(){
   const catalog=await rpc('ff51_manager_catalog');
   if(!current())return;
   ff51CatalogInfo=catalog;
+  ff51PopulateAliases();
   const groups=ff51CatalogInfo.categories||[],items=ff51CatalogInfo.items||[];
   box.innerHTML=items.length?items.map(i=>{
    const cat=groups.find(c=>c.id===i.category_id)?.name||'بدون قسم';
@@ -2991,6 +3014,39 @@ async function ff51LoadCatalog(){
   ff49CatalogAt=0;void ff49LoadCatalog();
  }catch(e){if(current())box.textContent='تعذر تحميل المنيو: '+e.message;}
 }
+function ff51AliasRows(){
+ return [...(ff51CatalogInfo?.items||[]).map(item=>({...item,kind:'item'})),
+  ...(ff51CatalogInfo?.offers||[]).map(item=>({...item,kind:'offer'}))];
+}
+function ff51AliasChoice(rows){return rows.find(x=>x.kind+':'+x.id===$('ffAliasTarget').value)}
+function ff51ShowAliases(){
+ const rows=ff51AliasRows(),item=ff51AliasChoice(rows);
+ const active=rows.filter(x=>x===item||x.active);
+ $('ffAliasNames').value=item?(ff49AliasGroups(active).get(item)||[]).join('\n'):'';
+ $('ffAliasStatus').textContent='';
+}
+function ff51PopulateAliases(){
+ const select=$('ffAliasTarget'),previous=select.value;
+ select.replaceChildren(...ff51AliasRows().map(x=>new Option(x.name,x.kind+':'+x.id)));
+ if([...select.options].some(x=>x.value===previous))select.value=previous;
+ ff51ShowAliases();
+}
+$('ffAliasTarget').onchange=ff51ShowAliases;
+async function ff51SaveAliases(reset){
+ const item=ff51AliasChoice(ff51AliasRows()),actor=ff51Viewer(['manager']);
+ if(!actor||!item)return;
+ const names=reset?null:[...new Set($('ffAliasNames').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean))];
+ const buttons=[$('ffAliasSave'),$('ffAliasDefault')];buttons.forEach(b=>b.disabled=true);
+ try{
+  await rpc('ff_save_catalog_parser_aliases',{p_kind:item.kind,p_id:item.id,p_expected:item.parser_aliases??null,p_aliases:names});
+  if(ff51Viewer(['manager'])!==actor)return;
+  await ff51LoadCatalog();
+  $('ffAliasStatus').textContent='تم حفظ مرادفات '+item.name;
+ }catch(e){if(ff51Viewer(['manager'])===actor)$('ffAliasStatus').textContent=e.message}
+ finally{buttons.forEach(b=>b.disabled=false)}
+}
+$('ffAliasSave').onclick=()=>void ff51SaveAliases(false);
+$('ffAliasDefault').onclick=()=>void ff51SaveAliases(true);
 $('ff51CatalogBtn').onclick=()=>{if(!ff51Viewer(['manager']))return;ff51Open('ff51CatalogPanel');void ff51LoadCatalog()};
 $('ff51CatalogRefresh').onclick=ff51LoadCatalog;
 $('ff51CatalogClose').onclick=()=>{ff51CatalogSeq++;$('ff51CatalogPanel').classList.add('hidden');ff51CatalogInfo=null;$('ff51CatalogItems').replaceChildren();$('ff51OffersList').replaceChildren()};
