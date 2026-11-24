@@ -23,6 +23,7 @@ BEGIN
  INSERT INTO public.ff_branches(id,code,name) VALUES(bs[j],'qa-'||bs[j],'QA branch '||j);
  INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(ks[j],bs[j]);
  INSERT INTO public.ff_drivers(id,name,branch_id) VALUES(ds[j],'QA driver',bs[j]);
+ INSERT INTO public.ff38_driver_presence(driver_id,state,checked_in_at,last_seen_at) VALUES(ds[j],'busy',now(),now()) ON CONFLICT(driver_id) DO UPDATE SET state='busy',checked_in_at=now(),last_seen_at=now();
  INSERT INTO public.ff_orders(id,order_number,branch_id,phone_snapshot,business_date,area_snapshot,driver_id,status)
  VALUES(os[j],-(1+floor(random()*1e12)::bigint),bs[j],'000000000',public.ff_business_date(now()),'QA',ds[j],'sent');
  INSERT INTO public.ff38_delivery_tasks(order_id,driver_id) VALUES(os[j],ds[j]);
