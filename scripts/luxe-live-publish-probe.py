@@ -31,7 +31,7 @@ print("PASS: HTTPS live HTML and exact merged cart asset are publicly served")
 # Retry briefly for the ordinary Pages publication delay; do not mutate data.
 from time import sleep
 customer_asset = "scripts/luxe-order-customer-edit-20261123.js"
-customer_marker = "20261124-customer-note"
+customer_marker = "20261124-first-edit-alert"
 expected_asset = (root / customer_asset).read_bytes()
 for attempt in range(5):
     try:
@@ -42,7 +42,7 @@ for attempt in range(5):
         assert shipped == expected_asset, "Customer edit asset differs from merged source"
         print("Customer edit published SHA256:", sha256(shipped).hexdigest())
         print("Customer edit repository SHA256:", sha256(expected_asset).hexdigest())
-        print("PASS #77: customer directory count and exact customer edit/notes asset served via HTTPS")
+        print("PASS FIX-07 #79: exact merged first-edit alert asset and customer directory served via HTTPS")
         break
     except (AssertionError, OSError) as exc:
         if attempt == 4:
