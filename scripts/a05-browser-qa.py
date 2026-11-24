@@ -37,7 +37,7 @@ try:
    page.locator("#ffA05StaffSearch").evaluate("(e)=>{e.value='';e.dispatchEvent(new Event('input'))}")
    page.locator("#ffA05StaffActive").evaluate("(e)=>{e.value='false';e.dispatchEvent(new Event('change'))}")
    assert "سالم" in page.locator("[data-ff-a05-staff]:not([hidden])").inner_text()
-   assert page.evaluate("""()=>{const e=document.querySelector('#newBranch');e.value='b2';const node=e.options[0];fillBranchSelects();return e.value==='b2'&&e.options[0]===node}""")
+   assert page.evaluate("""()=>{const e=document.querySelector('#newBranch');e.value='b2';e.dispatchEvent(new Event('change',{bubbles:true}));const node=e.options[0];fillBranchSelects();return e.value==='b2'&&e.options[0]===node}""")
    page.evaluate("""()=>{document.querySelector('#newFee').value='321';const a=document.querySelector('#newArea');a.value='QA area';a.dispatchEvent(new Event('input'));}""")
    page.wait_for_function("document.getElementById('ffA05FeeHint').textContent.includes('500')")
    assert page.locator("#newFee").input_value()=="321"
