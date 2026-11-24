@@ -2682,7 +2682,7 @@ function ff49ParseItemsAndNotes(value, options={}){
    break;
   }
   if(handled)continue;
-  if(/^\+?\d[\d\s-]{6,}$/.test(text)){meta.phone=raw.replace(/[\s-]/g,'');details.push({line,kind:'phone',raw,value:meta.phone});continue}
+  if(/^\+?\d[\d\s-]{6,}$/.test(text)){meta.phone=text.replace(/[\s-]/g,'');details.push({line,kind:'phone',raw,value:meta.phone});continue}
   const m=text.match(/^(\d+(?:\.\d+)?)\s+(.+)$/u);
   if(m){const qty=Number(m[1]);if(!Number.isInteger(qty)||qty<1||qty>100){fail(raw,line,'الكمية يجب أن تكون رقمًا صحيحًا بين 1 و100');continue}
    const after=m[2].split('|');if(after.length>2){fail(raw,line,'اكتب سعر الوحدة مرة واحدة بعد |');continue}
@@ -2691,10 +2691,15 @@ function ff49ParseItemsAndNotes(value, options={}){
    // Longest matching alias wins, so "برجر اسمر دبل" never becomes "برجر اسمر" plus an arbitrary note.
    const matched=uniqueAlias.filter(a=>itemText===a.text||itemText.startsWith(a.text+' ')).sort((a,b)=>b.text.length-a.text.length||Number(b.exact)-Number(a.exact));
    let found=null,suffix='';
-   if(matched.length){const bestLen=matched[0].text.length;const top=[...new Map(matched.filter(a=>a.text.length===bestLen).map(a=>[a.item.id||a.item.name,a.item])).values()];if(top.length>1){fail(raw,line,'اسم الصنف ملتبس؛ اكتب الاسم الكامل أو اختصارًا مميزًا');continue}found=top[0];suffix=itemText.slice(bestLen).trim()}
+   if(matched.length){const bestLen=matched[0].text.length;const top=[...new Map(matched.filter(a=>a.text.length===bestLen).map(a=>[a.item.id||a.item.name,a.item])).values()];if(top.length>1){fail(raw,line,'اسم الصنف ملتبس؛ اكتب الاسم الكامل أو اختصارًا مميزًا');continue}found=top[0];
+    const originalItem=raw.replace(/^\S+\s+/u,'').split('|',1)[0].trim();
+    const aliasWords=matched[0].text.split(' ').length;
+    const words=[...originalItem.matchAll(/\S+/gu)];
+    suffix=words[aliasWords]?originalItem.slice(words[aliasWords].index):''}
    if(!found){if(manualPrice===null){fail(raw,line,'الصنف غير معروف في المنيو؛ تحقق من الاسم أو العرض');continue}found={name:after[0].trim(),price:manualPrice};warnings.push('السطر '+line+': صنف يدوي، تأكد من الاسم والسعر')}
    // Reject combined items, including conjunctions followed by another recognizable alias.
-   if(suffix&&(/(?:^|\s)(?:\d+\s+|\+\s*\d+\s*|و\s+\d+\s+)/u.test(suffix)||/(?:^|\s)و\s+(?:تشكن|استربس|ستربس|رايس|فرايز|بطاطس|برجر|سماش|جبن\s+(?:ذره|هلبينو)|عرض)(?:\s|$)/u.test(suffix))){fail(raw,line,'لا تدمج صنفين في سطر واحد');continue}
+   const normalizedSuffix=norm(suffix);
+   if(suffix&&(/(?:^|\s)(?:\d+\s+|\+\s*\d+\s*|و\s+\d+\s+)/u.test(normalizedSuffix)||/(?:^|\s)و\s+(?:تشكن|استربس|ستربس|رايس|فرايز|بطاطس|برجر|سماش|جبن\s+(?:ذره|هلبينو)|عرض)(?:\s|$)/u.test(normalizedSuffix))){fail(raw,line,'لا تدمج صنفين في سطر واحد');continue}
    const price=manualPrice??Number(found.price);if(!Number.isFinite(price)||price<0){fail(raw,line,'سعر الصنف غير صالح');continue}
    // Distinct item_notes are passed as their own field, never merged into the item name.
    items.push({name:found.name,qty,price,item_notes:suffix});details.push({line,kind:'item',raw,value:found.name,qty,price,suffix});continue;
@@ -3555,11 +3560,52 @@ function getNavExpansion(){
 function setSidebarNav(){
  const actor=typeof user!=='undefined'&&user?.id?String(user.id):'';
  const role=userLogged()?data.role:'';
- const sig=[actor,role,groups.map(g=>g.items.filter(i=>roleAllowed(i[2])).map(i=>i[2]).join(',')).join(';'),$x('ffx-alert-num').textContent].join('|');
- if(sig===navSig)return;
+ const sig=[actor,role,groups.map(g=>g.items.filter(i=>roleAllowed(i[2])).map(i=>i[2]).join(',')).join(';')].join('|');
+ if(sig===navSig){
+  updateNavAlertBadge();
+  return;
+ }
  navSig=sig;
  const root=$x('ffx-nav');root.replaceChildren();
  const saved=getNavExpansion();
+ const search=S('input',{type:'search',id:'ffx-nav-search',placeholder:'ابحث في أقسام القائمة','aria-label':'ابحث في أقسام القائمة'});
+ const empty=S('p',{role:'status',class:'ffx-section-label'});
+ empty.textContent='لا توجد أقسام مطابقة';
+ const mode=S('select',{'aria-label':'طريقة عرض القائمة'});
+ for(const [value,label] of [['accordion','مجموعات قابلة للطي'],['flat','قائمة مفتوحة']]){
+  const option=S('option',{value});
+  option.textContent=label;mode.append(option);
+ }
+ const modeKey=navStorageKey()+':mode:'+(window.matchMedia('(max-width:850px)').matches?'mobile':'desktop');
+ try{if(localStorage.getItem(modeKey)==='flat')mode.value='flat'}catch{}
+ if(role)root.append(search,mode);
+ const sections=[];
+ const normalize=value=>value.normalize('NFKC').replace(/[َ-ْـ]/g,'').replace(/[أإآ]/g,'ا').trim().toLowerCase();
+ function filterSections(){
+  const query=normalize(search.value);
+  let matches=0;
+  for(const {group,section,title,links} of sections){
+   const groupMatch=normalize(group.title).includes(query);
+   let count=0;
+   for(const button of links.querySelectorAll('[data-key]')){
+    button.hidden=!(groupMatch||normalize(button.querySelector('span').textContent).includes(query));
+    if(!button.hidden)count++;
+   }
+   matches+=count;
+   section.hidden=count===0;
+   const expanded=saved[group.key]??['home','operations'].includes(group.key);
+   const open=Boolean(query)||mode.value==='flat'||expanded;
+   links.hidden=!open;
+   title.setAttribute('aria-expanded',String(open));
+   title.disabled=Boolean(query)||mode.value==='flat';
+  }
+  empty.hidden=!query||matches>0;
+ }
+ search.addEventListener('input',filterSections);
+ mode.addEventListener('change',()=>{
+  try{localStorage.setItem(modeKey,mode.value)}catch{}
+  filterSections();
+ });
  const write=()=>{try{localStorage.setItem(navStorageKey(),JSON.stringify(saved))}catch(_){}};
  groups.forEach(group=>{
   const shown=group.items.filter(item=>roleAllowed(item[2]));
@@ -3585,9 +3631,16 @@ function setSidebarNav(){
     b.addEventListener('click',()=>navigate(key));
     links.append(b);
   }
+  if(group.key==='finance'){
+   const note=S('p',{class:'ffx-section-label'});
+   note.textContent='متابعة تشغيلية ورقابية لقيمة الطلبات ورسوم التوصيل والتسويات. المحاسبة في MicroPOS.';
+   links.prepend(note);
+  }
+  sections.push({group,section,title,links});
   section.append(title,links);
   root.append(section);
  });
+ root.append(empty);filterSections();
  const footer=S('div',{class:'ffx-section-label'});footer.textContent='التفضيلات والحساب';root.append(footer);
  [['تخصيص المظهر والأصوات','settings','settings'],['تحديث البيانات','refresh','refresh'],['تسجيل الخروج','logout','logout']].forEach(([txt,ic,key])=>{
   if(key==='logout'&&!userLogged())return;
@@ -3595,10 +3648,13 @@ function setSidebarNav(){
   b.innerHTML=`${icon(ic)}<span>${txt}</span>`;
   b.onclick=()=>navigate(key);root.append(b);
  });
- const count=$x('ffx-alert-num').textContent;
- const badge=root.querySelector('[data-ffx-badge="late"]');
- if(badge&&count&&Number(count)>0){badge.textContent=count;badge.style.display='inline-block'}
+ updateNavAlertBadge();
  markActive();
+}
+function updateNavAlertBadge(){
+ const count=$x('ffx-alert-num').textContent;
+ const badge=$x('ffx-nav').querySelector('[data-ffx-badge="late"]');
+ if(badge){badge.textContent=count;badge.style.display=Number(count)>0?'inline-block':'none'}
 }
 function userLogged(){return typeof user!=='undefined'&&!!user&&typeof data!=='undefined'&&!!data}
 function originalButton(key){const el=$x(targets[key]);return el&&roleAllowed(key)?el:null}

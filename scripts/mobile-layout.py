@@ -156,6 +156,19 @@ with sync_playwright() as playwright:
                 assert nav_groups.count() == 6, nav_groups.count()
                 system_group = page.locator("#ffx-nav [data-ffx-group-toggle=system]")
                 assert system_group.get_attribute("aria-expanded") == "false"
+                search = page.locator("#ffx-nav-search")
+                mode = page.get_by_role("combobox", name="طريقة عرض القائمة")
+                mode.select_option("flat")
+                assert page.locator("#ffx-group-links-system").is_visible()
+                mode.select_option("accordion")
+                assert page.locator("#ffx-group-links-system").is_hidden()
+                search.fill("التصفير")
+                assert page.locator("#ffx-nav [data-key=data_center]").is_visible()
+                assert page.locator("#ffx-nav [data-key=home]").is_hidden()
+                search.fill("xyz123")
+                assert page.get_by_text("لا توجد أقسام مطابقة").is_visible()
+                search.fill("")
+                assert system_group.get_attribute("aria-expanded") == "false"
                 system_group.focus()
                 page.keyboard.press("Enter")
                 assert system_group.get_attribute("aria-expanded") == "true"
