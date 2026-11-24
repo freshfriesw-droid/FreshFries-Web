@@ -37,7 +37,7 @@ async function sync(force=false){
  if(grant&&!enabled(grant.capabilities[0])){grant=null;button.hidden=true;if(dialog.open)dialog.close()}
  if(!force&&Date.now()-last<15000)return;
  last=Date.now();const seq=++request;
- try{const rows=await rpc('ff82_my_grant');if(seq!==request||key()!==k)return;grant=rows?.[0]||null;button.hidden=!grant;if(dialog.open&&!grant)dialog.close()}
+ try{const rows=await rpc('ff82_my_grant');if(seq!==request||key()!==k)return;const next=rows?.[0]||null;const changed=grant?.id!==next?.id;grant=next;button.hidden=!grant;if(dialog.open&&(!grant||changed))dialog.close()}
  catch{if(seq===request&&key()===k){grant=null;button.hidden=true;if(dialog.open)dialog.close()}}
 }
 function guard(token,who){return dialog.open&&token===session&&who===actor()}
