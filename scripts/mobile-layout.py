@@ -240,6 +240,7 @@ with sync_playwright() as playwright:
                   user={id:'fixture-manager'};
                   data={role:'manager', orders:[], branches:[], drivers:[], offers:[]};
                   rpc=async name=>{
+                    if(name==='ff_ui_manager_history'||name==='ff_ui_effective')return [];
                     if(name==='ff62_manager_data_overview')return {mode:'read_only',orders:7};
                     throw Error('Unconfigured test fixture');
                   };
@@ -271,6 +272,17 @@ with sync_playwright() as playwright:
                   document.getElementById('staffView').classList.remove('hidden');
                   document.getElementById('staffAdminCard').hidden=false;
                 }""")
+                search.fill("شاشة تحكم المدير العام")
+                page.locator("#ffx-nav [data-key=studio]").click()
+                studio = page.locator("#ffStudio")
+                assert studio.is_visible()
+                previews = set()
+                for number in range(1, 17):
+                    studio.locator("select[name=pack]").select_option(f"D{number:02d}")
+                    previews.add(studio.locator(".ff-design-layout").evaluate("el => getComputedStyle(el).gridTemplateAreas"))
+                assert len(previews) == 16, previews
+                studio.get_by_role("button", name="إغلاق", exact=True).click()
+                page.locator("#ffx-menu").click()
                 search.fill("إدارة نقطة التجميع")
                 page.locator("#ffx-nav [data-key=assembly_admin]").click()
                 assert page.locator("#staffAdminCard > .ffl-fold-toggle").get_attribute("aria-expanded") == "true"
