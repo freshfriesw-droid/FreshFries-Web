@@ -8,6 +8,7 @@ const cash = value => value === null || value === undefined ? '—' : fmt(value)
 const stamp = date => date ? new Date(date).toLocaleString('ar-YE',{timeZone:'Asia/Aden',dateStyle:'short',timeStyle:'short'}) : '—';
 const headings = {summary:'الملخص اليومي',finance:'الإيرادات',orders:'الطلبات والإلغاءات',branches:'الفروع',drivers:'أداء الموصلين',staff:'موظفو خدمة العملاء',areas:'العملاء والمناطق',items:'الأصناف الأكثر مبيعاً',ratings:'التقييمات',cases:'الشكاوى والتظلمات',attendance:'الدوام والاستراحات',analytics:'التحليلات المتقدمة',comparisons:'المقارنات',approval:'اعتماد المدير'};
 let result=null,identity='',pdf=null,pdfURL=null,fileName='',pending=false,pdfPromise=null,libPromise=null,previewed=false;
+let reportRequest=0,pdfRevision=0;
 function me(){return typeof user!=='undefined' && user ? user.id : ''}
 const root=document.createElement('section');root.id='ff76Center';root.dir='rtl';root.className='ff76-hidden';
 root.innerHTML=[
@@ -38,12 +39,12 @@ if(anchor)anchor.after(root);else document.querySelector('main')?.append(root);
 const previewDialog=document.createElement('dialog');previewDialog.id='ff76PdfDialog';previewDialog.dir='rtl';
 previewDialog.innerHTML='<header class="r-dialoghead"><b>معاينة PDF الكاملة قبل الإرسال</b><div><button id="ff76DlgDownload">حفظ الملف</button> <button id="ff76DlgShare" class="r-primary">مشاركة الملف</button> <button id="ff76DlgClose">✕ إغلاق</button></div></header><iframe id="ff76PDFFrame" title="معاينة PDF"></iframe>';
 document.body.append(previewDialog);
-function clearPDF(){if(pdfURL){URL.revokeObjectURL(pdfURL);pdfURL=null}pdf=null;fileName='';previewed=false;el('ff76PDFFrame').removeAttribute('src')}
+function clearPDF(){pdfRevision++;pdfPromise=null;if(previewDialog.open)previewDialog.close();if(pdfURL){URL.revokeObjectURL(pdfURL);pdfURL=null}pdf=null;fileName='';previewed=false;el('ff76PDFFrame').removeAttribute('src')}
 function clear(){result=null;identity='';clearPDF();el('ff76Body').textContent='';el('ff76ApprovalBox').hidden=true;['ff76Preview','ff76Download','ff76Share'].forEach(id=>el(id).disabled=true)}
 function day(){if(typeof ff40TodayYemen==='function')return ff40TodayYemen();const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day}
 function changeDay(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
 function period(days,offset){const end=changeDay(day(),offset);el('ff76To').value=end;el('ff76From').value=changeDay(end,-days+1);invalidate()}
-function invalidate(){if(result){clear();el('ff76Status').textContent='تغيّر فلتر التقرير. اضغط إعداد التقرير من جديد.'}}
+function invalidate(){reportRequest++;pending=false;el('ff76Run').disabled=false;if(result||!root.classList.contains('ff76-hidden')){clear();el('ff76Status').textContent='تغيّر فلتر التقرير. اضغط إعداد التقرير من جديد.'}}
 function options(id,rows,text,field,placeholder){const select=el(id),old=select.value;select.replaceChildren(new Option(placeholder,''));(rows||[]).forEach(row=>select.append(new Option(row[text]||'غير محدد',row[field])));if(Array.from(select.options).some(o=>o.value===old))select.value=old}
 function allowed(section){return (result?.available_sections||[]).includes(section)}
 function selected(){if(!result)return[];if(el('ff76Mode').value==='full')return result.available_sections;return Array.from(el('ff76Choices').querySelectorAll('input:checked')).map(c=>c.value).filter(allowed)}
@@ -133,10 +134,10 @@ async function load(){
  const from=el('ff76From').value,to=el('ff76To').value,branch=el('ff76Branch').value||null,driver=el('ff76Driver').value||null;
  const days=(new Date(to+'T12:00:00Z')-new Date(from+'T12:00:00Z'))/86400000;
  if(!from||!to||from>to||to>day()||days>89){el('ff76Status').textContent='فترة غير صحيحة؛ يجب ألا تتجاوز 90 يوماً ولا تشمل المستقبل.';return}
- const viewer=me();pending=true;el('ff76Run').disabled=true;clear();el('ff76Status').textContent='جاري جمع البيانات بحسب صلاحيات المستخدم...';
+ const viewer=me(),request=++reportRequest;pending=true;el('ff76Run').disabled=true;clear();el('ff76Status').textContent='جاري جمع البيانات بحسب صلاحيات المستخدم...';
  try{
  const data=await rpc('ff76_reporting_center',{p_from:from,p_to:to,p_branch:branch,p_driver:driver});
- if(me()!==viewer)throw Error('تغير الحساب');
+ if(request!==reportRequest||me()!==viewer)return;
  if(!data?.totals||!Array.isArray(data.available_sections))throw Error('استجابة التقرير غير صالحة');
  result=data;identity=viewer+':'+from+':'+to+':'+String(branch)+':'+String(driver);
  options('ff76Branch',data.branches,'name','id','جميع الفروع المسموحة');if(branch)el('ff76Branch').value=branch;
@@ -144,7 +145,7 @@ async function load(){
  el('ff76DriverWrap').hidden=!(data.driver_options||[]).length;
  choices();draw();
  el('ff76Status').textContent='تقرير '+from+' إلى '+to+' | '+data.scope+' | '+fmt(data.totals.orders)+' طلب. بيانات تشغيلية وليست إقفالات محاسبية.';
- }catch(e){clear();el('ff76Status').textContent='تعذر إعداد التقرير: '+(e.message||e)}finally{pending=false;el('ff76Run').disabled=false}
+ }catch(e){if(request!==reportRequest)return;clear();el('ff76Status').textContent='تعذر إعداد التقرير: '+(e.message||e)}finally{if(request===reportRequest){pending=false;el('ff76Run').disabled=false}}
 }
 function open(){if(!me()){typeof toast==='function'&&toast('سجّل الدخول أولاً');return}el('ff40ReportsPanel')?.classList.add('hidden');root.classList.remove('ff76-hidden');
 if(!el('ff76From').value)period(1,0);root.scrollIntoView({behavior:'smooth',block:'start'});if(!result)void load()}
@@ -160,10 +161,10 @@ if(me()!==uid||tag!==identity)throw Error('تغير الحساب أو التقر
 catch(e){el('ff76ApprovalStatus').textContent='فشل الاعتماد: '+e.message}finally{el('ff76SaveApproval').disabled=false}};
 function pdfLibrary(){if(window.html2pdf)return Promise.resolve();if(libPromise)return libPromise;
 libPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js';s.onload=()=>window.html2pdf?resolve():reject(Error('مكتبة PDF غير جاهزة'));s.onerror=()=>reject(Error('مكتبة PDF تحتاج اتصالاً بالإنترنت'));document.head.append(s)}).catch(e=>{libPromise=null;throw e});return libPromise}
-function authorized(uid,tag){if(me()!==uid||identity!==tag)throw Error('تغير الحساب أو التقرير')}
+function authorized(uid,tag,revision){if(me()!==uid||identity!==tag||revision!==pdfRevision)throw Error('تغير الحساب أو التقرير')}
 async function producePDF(){if(pdf)return pdf;if(pdfPromise)return pdfPromise;if(!result||!selected().length)throw Error('أعد التقرير وحدد أقسامه');
-const uid=me(),tag=identity;pdfPromise=(async()=>{
- await pdfLibrary();authorized(uid,tag);
+const uid=me(),tag=identity,revision=pdfRevision;pdfPromise=(async()=>{
+ await pdfLibrary();authorized(uid,tag,revision);
  const page=document.createElement('div');page.dir='rtl';page.lang='ar';
  page.style.cssText='width:720px;background:#fff;color:#181818;padding:25px;font:14px Tahoma,Arial,sans-serif;line-height:1.7;position:absolute;left:-99999px;top:0';
  page.innerHTML='<div style="border-bottom:4px solid #c51b30;padding:10px 0;margin-bottom:15px"><h1>FRESH FRIES LUXE — مركز التقارير</h1><b>'+safe(result.from)+' إلى '+safe(result.to)+'</b><p>'+safe(result.scope)+'</p></div>'+
@@ -173,9 +174,9 @@ const uid=me(),tag=identity;pdfPromise=(async()=>{
  try{const blob=await window.html2pdf().set({margin:8,filename:'FreshFries_LUXE_'+result.from+'_'+result.to+'.pdf',
  html2canvas:{scale:1.25,logging:false,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
  pagebreak:{mode:['css','legacy'],avoid:['tr','.r-kpi']}}).from(page).outputPdf('blob');
- authorized(uid,tag);if(!(blob instanceof Blob)||blob.size<500)throw Error('ملف PDF غير صالح');
+ authorized(uid,tag,revision);if(!(blob instanceof Blob)||blob.size<500)throw Error('ملف PDF غير صالح');
  pdf=blob;fileName='FreshFries_LUXE_Report_'+result.from+'_'+result.to+'.pdf';return blob}finally{page.remove()}})();
- try{return await pdfPromise}finally{pdfPromise=null}}
+ try{return await pdfPromise}finally{if(revision===pdfRevision)pdfPromise=null}}
 function download(){if(!pdf)return;const url=pdfURL||URL.createObjectURL(pdf),a=document.createElement('a');a.href=url;a.download=fileName;a.click();if(!pdfURL)setTimeout(()=>URL.revokeObjectURL(url),5000)}
 async function preview(){el('ff76Preview').disabled=true;el('ff76Status').textContent='إعداد ملف PDF للمعاينة...';
 try{await producePDF();if(!pdfURL)pdfURL=URL.createObjectURL(pdf);el('ff76PDFFrame').src=pdfURL;previewDialog.showModal();previewed=true;el('ff76Status').textContent='راجع ملف PDF قبل الإرسال.'}
@@ -187,7 +188,7 @@ el('ff76Preview').onclick=preview;el('ff76Download').onclick=async()=>{try{await
 el('ff76Share').onclick=share;
 el('ff76DlgDownload').onclick=download;el('ff76DlgShare').onclick=share;el('ff76DlgClose').onclick=()=>previewDialog.close();
 previewDialog.addEventListener('close',()=>el('ff76PDFFrame').removeAttribute('src'));
-document.addEventListener('ff-luxe-session-reset',()=>{if(previewDialog.open)previewDialog.close();clear();root.classList.add('ff76-hidden');options('ff76Branch',[],'name','id','كل الفروع');options('ff76Driver',[],'name','id','كل الموصلين')});
+window.addEventListener('ff-luxe-session-reset',()=>{reportRequest++;pending=false;el('ff76Run').disabled=false;el('ff76ManagerNotes').value='';el('ff76ManagerName').value='';el('ff76Choices').replaceChildren();el('ff76ApprovalStatus').textContent='';el('ff76Status').textContent='حدد الفترة واضغط إعداد التقرير.';if(previewDialog.open)previewDialog.close();clear();root.classList.add('ff76-hidden');options('ff76Branch',[],'name','id','كل الفروع');options('ff76Driver',[],'name','id','كل الموصلين')});
 el('ff40ReportsBtn')?.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();open()},true);
 for(const id of ['ffV12AssemblyWorkspace','ffBurgerKitchenWorkspace']){
  const host=el(id);if(!host)continue;const b=document.createElement('button');b.type='button';b.className='outline';b.textContent='📊 تقرير التشغيل';b.onclick=open;host.prepend(b)
