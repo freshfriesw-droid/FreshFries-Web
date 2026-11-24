@@ -2795,8 +2795,8 @@ async function ff50Refresh(){
   const states={requested:'بانتظار الكاشير',approved:'وافق الكاشير',rejected:'رفض الكاشير',service_confirmed:'بانتظار تحديث MicroPOS',completed:'تم التعديل',cancelled:'ملغى'};
   box.innerHTML=ff50Changes.length?ff50Changes.map(c=>{
    const order=data?.orders?.find(o=>o.id===c.order_id);
-   const old=(c.old_items||[]).map(i=>`${esc(i.qty)} × ${esc(i.name)} — ${amount(i.price)}`).join('<br>');
-   const fresh=(c.new_items||[]).map(i=>`${esc(i.qty)} × ${esc(i.name)} — ${amount(i.price)}`).join('<br>');
+   const old=(c.old_items||[]).map(i=>`${esc(i.qty)} × ${esc(i.name)} — ${amount(i.price)}${i.item_notes?' · ملاحظة: '+esc(i.item_notes):''}`).join('<br>');
+   const fresh=(c.new_items||[]).map(i=>`${esc(i.qty)} × ${esc(i.name)} — ${amount(i.price)}${i.item_notes?' · ملاحظة: '+esc(i.item_notes):''}`).join('<br>');
    const cashier=['manager','cashier'].includes(data.role),service=['manager','customer_service'].includes(data.role)&&canAction('edit_order');
    const buttons=c.status==='requested'&&cashier?`<button data-ff50-approve="${esc(c.id)}" class="good">السماح بالتعديل</button><button data-ff50-reject="${esc(c.id)}" class="outline">رفض التعديل</button>`:c.status==='approved'&&service?`<button data-ff50-service="${esc(c.id)}" class="primary">اعتماد التعديل من خدمة العملاء</button>`:c.status==='service_confirmed'&&cashier?`<button data-ff50-pos="${esc(c.id)}" class="primary">تم تعديل الفاتورة في MicroPOS</button>`:'';
    return `<div class="ff49-reservation"><div class="item-top"><b>طلب #${esc(order?.number||String(c.order_id).slice(0,8))}</b><span class="tag ${c.status==='completed'?'ready':'busy'}">${esc(states[c.status]||c.status)}</span></div><p class="muted">السبب: ${esc(c.reason)} · ${time(c.requested_at)}</p><div class="split"><div class="note"><b>قبل (${amount(c.old_total)} ريال)</b><br>${old}</div><div class="note"><b>بعد (${amount(c.new_total)} ريال)</b><br>${fresh}</div></div><p class="muted">فرق الأصناف: <b>${amount(Number(c.new_total)-Number(c.old_total))} ريال</b>${c.external_invoice_ref?' · MicroPOS: '+esc(c.external_invoice_ref):''}</p><div class="actions">${buttons}</div></div>`;
@@ -2825,7 +2825,7 @@ document.addEventListener('click',async e=>{
  const b=e.target.closest('[data-ff50-change],[data-ff50-approve],[data-ff50-reject],[data-ff50-service],[data-ff50-pos]');if(!b)return;
  if(b.dataset.ff50Change){const o=data?.orders?.find(x=>x.id===b.dataset.ff50Change);if(!o)return;
   ff50RequestOrderId=o.id;$('ff50RequestOrderTitle').textContent='طلب تعديل أصناف الطلب #'+o.number;
-  $('ff50RequestItems').value=(o.items||[]).map(i=>`${i.qty} ${i.name} | ${i.price}`).join('\n');
+  $('ff50RequestItems').value=(o.items||[]).map(i=>`${i.qty} ${i.name}${i.item_notes?' '+i.item_notes:''} | ${i.price}`).join('\n');
   $('ff50RequestReason').value='';ff50Open();$('ff50ChangeRequestBox').classList.remove('hidden');return;
  }
  b.disabled=true;try{
