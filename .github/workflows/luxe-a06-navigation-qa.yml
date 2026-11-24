@@ -1,0 +1,26 @@
+name: LUXE A06 navigation QA
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  navigation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: git worktree add --detach ../a06-baseline c984793f4eb711d6ae7995150d2d7210d5a15d5a
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright
+      - run: python scripts/a06-navigation-qa.py
+        env:
+          A06_BASELINE: ../a06-baseline
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: A06-navigation-and-cascade
+          path: a06-evidence/

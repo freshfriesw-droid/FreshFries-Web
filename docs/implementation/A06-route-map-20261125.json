@@ -1,0 +1,717 @@
+{
+  "source": "Final Approval v2 2026-11-24; FIX-03/04 DEC-05/07 QA-01/21/23/27/32/39",
+  "scope": "Inventory of navigation routes, not a proof of each business mutation; action acceptance belongs to its respective stage",
+  "routes": [
+    {
+      "group": "الرئيسية",
+      "label": "لوحة التحكم",
+      "key": "home",
+      "handler": "navigate(home)",
+      "target": "window.scrollTo",
+      "visibility": "كل حساب له دور",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "mobile bar",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الرئيسية",
+      "label": "طلب جديد",
+      "key": "new",
+      "handler": "navigate(new)",
+      "target": "ffbTextPanel + ff:open-order (preserves draft); ffA06DiscardDraft separate confirmed reset",
+      "visibility": "manager/customer_service + canAction(create_order)",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "quick action",
+        "mobile bar",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الرئيسية",
+      "label": "الطلبات والمتابعة",
+      "key": "orders",
+      "handler": "navigate(orders)",
+      "target": "staffOrders",
+      "visibility": "manager/customer_service/supervisor",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "quick action",
+        "mobile bar",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الرئيسية",
+      "label": "الطلبات المتأخرة",
+      "key": "late",
+      "handler": "navigate(late)",
+      "target": "ffx-overdue / updateOverdue",
+      "visibility": "ff40AlertsBtn غير مخفي",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "quick action",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "الموصلون",
+      "key": "drivers",
+      "handler": "navigate(drivers)",
+      "target": "driversRoster",
+      "visibility": "manager/customer_service/supervisor",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "quick action",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "بوابة الموصل",
+      "key": "driver",
+      "handler": "navigate(driver)",
+      "target": "driverView",
+      "visibility": "driver",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "quick action",
+        "mobile bar",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "شاشة الكاشير",
+      "key": "cashier",
+      "handler": "navigate(cashier)",
+      "target": "cashierView",
+      "visibility": "cashier",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "quick action",
+        "mobile bar",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "الحجوزات",
+      "key": "reservations",
+      "handler": "navigate(reservations)",
+      "target": "ff49ReservationsBtn",
+      "visibility": "originalButton present and not hidden: ff49ReservationsBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "نقل الموصل",
+      "key": "transfer",
+      "handler": "navigate(transfer)",
+      "target": "ff49TransferBtn",
+      "visibility": "originalButton present and not hidden: ff49TransferBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "توجيه مناطق الجامعات",
+      "key": "routes",
+      "handler": "navigate(routes)",
+      "target": "ff52RoutesBtn",
+      "visibility": "originalButton present and not hidden: ff52RoutesBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "الرسائل",
+      "key": "messages",
+      "handler": "navigate(messages)",
+      "target": "ff39InboxBtn",
+      "visibility": "originalButton present and not hidden: ff39InboxBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "quick action",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "الشكاوى والتظلمات",
+      "key": "cases",
+      "handler": "navigate(cases)",
+      "target": "ff41CasesBtn",
+      "visibility": "originalButton present and not hidden: ff41CasesBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التقارير",
+      "label": "مركز التقارير الإداري",
+      "key": "reports",
+      "handler": "navigate(reports)",
+      "target": "ff76OpenReports",
+      "visibility": "manager and personal role reports; CS/supervisor require view_reports; server scope authoritative",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "quick action",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التقارير",
+      "label": "الأرشيف",
+      "key": "archive",
+      "handler": "navigate(archive)",
+      "target": "ff51ArchiveBtn",
+      "visibility": "originalButton present and not hidden: ff51ArchiveBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التقارير",
+      "label": "التقييمات",
+      "key": "ratings",
+      "handler": "navigate(ratings)",
+      "target": "ff51RatingsBtn",
+      "visibility": "originalButton present and not hidden: ff51RatingsBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "المالية",
+      "label": "تسويات الموصلين",
+      "key": "settlements",
+      "handler": "navigate(settlements)",
+      "target": "ff42SettlementsBtn",
+      "visibility": "originalButton present and not hidden: ff42SettlementsBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "المالية",
+      "label": "🎟️ أكواد التعويض والجوائز",
+      "key": "rewards",
+      "handler": "navigate(rewards)",
+      "target": "ffRewardManager",
+      "visibility": "manager",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "quick action",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "المنيو والعروض",
+      "key": "catalog",
+      "handler": "navigate(catalog)",
+      "target": "ff51CatalogBtn",
+      "visibility": "originalButton present and not hidden: ff51CatalogBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "العملاء",
+      "key": "customers",
+      "handler": "navigate(customers)",
+      "target": "ff51CustomersBtn",
+      "visibility": "originalButton present and not hidden: ff51CustomersBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "تعديل الطلبات",
+      "key": "changes",
+      "handler": "navigate(changes)",
+      "target": "ff50ChangesBtn",
+      "visibility": "originalButton present and not hidden: ff50ChangesBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "الموظفون والصلاحيات",
+      "key": "team",
+      "handler": "navigate(team)",
+      "target": "staffAdminCard",
+      "visibility": "manager",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "إدارة نقطة التجميع",
+      "key": "assembly_admin",
+      "handler": "navigate(assembly_admin)",
+      "target": "staffAdminList",
+      "visibility": "manager",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "quick action",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "شاشة تحكم المدير العام",
+      "key": "studio",
+      "handler": "navigate(studio)",
+      "target": "ffDashboardStudio.open",
+      "visibility": "manager",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "mobile bar",
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "إدارة البيانات والتصفير",
+      "key": "data_center",
+      "handler": "navigate(data_center)",
+      "target": "ff62DataCenter.showModal",
+      "visibility": "manager",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "أمان النظام",
+      "key": "security",
+      "handler": "navigate(security)",
+      "target": "ff43SecurityBtn",
+      "visibility": "originalButton present and not hidden: ff43SecurityBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "تدقيق سلامة البيانات",
+      "key": "integrity",
+      "handler": "navigate(integrity)",
+      "target": "ff44IntegrityBtn",
+      "visibility": "originalButton present and not hidden: ff44IntegrityBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "عزل الفروع",
+      "key": "access",
+      "handler": "navigate(access)",
+      "target": "ff45AccessBtn",
+      "visibility": "originalButton present and not hidden: ff45AccessBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "جاهزية الإطلاق",
+      "key": "readiness",
+      "handler": "navigate(readiness)",
+      "target": "ff46ReadinessBtn",
+      "visibility": "originalButton present and not hidden: ff46ReadinessBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "الاختبار الشامل",
+      "key": "qa",
+      "handler": "navigate(qa)",
+      "target": "ff47QABtn",
+      "visibility": "originalButton present and not hidden: ff47QABtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "تشخيص النسخة",
+      "key": "diagnostics",
+      "handler": "navigate(diagnostics)",
+      "target": "ff48DiagnosticsBtn",
+      "visibility": "originalButton present and not hidden: ff48DiagnosticsBtn",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "sidebar search (when permitted)"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "عروض الإسناد",
+      "key": "offers",
+      "handler": "navigate(offers)",
+      "target": "driverOffers or openOffers",
+      "visibility": "driver/manager/customer_service/supervisor",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "mobile driver",
+        "drawer"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "دوامي",
+      "key": "attendance",
+      "handler": "navigate(attendance)",
+      "target": "clockInBtn",
+      "visibility": "driver",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "mobile driver",
+        "drawer"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "أوامر البرجر",
+      "key": "burger",
+      "handler": "navigate(burger)",
+      "target": "ffBurgerPanelToggle / ffBurgerCashierPanel",
+      "visibility": "cashier",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "mobile cashier",
+        "drawer"
+      ]
+    },
+    {
+      "group": "التشغيل",
+      "label": "الطلبات المنتهية",
+      "key": "cashier_finished",
+      "handler": "navigate(cashier_finished)",
+      "target": "fflCashierFinishedToggle",
+      "visibility": "cashier",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "drawer",
+        "cashier workspace"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "طلبات الانضمام",
+      "key": "applications",
+      "handler": "navigate(applications)",
+      "target": "ff61ManageShortcut",
+      "visibility": "only visible authorized application launcher",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "drawer",
+        "topbar"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "إشعارات الانضمام",
+      "key": "application_alerts",
+      "handler": "navigate(application_alerts)",
+      "target": "ff63NotificationsShortcut",
+      "visibility": "only visible authorized notification launcher",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "drawer",
+        "topbar"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "الفروع وساعات العمل والرسوم",
+      "key": "branch_policy",
+      "handler": "navigate(branch_policy)",
+      "target": "ffA05BranchPolicyBtn",
+      "visibility": "manager/CS/cashier/supervisor; scoped RPC",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "drawer",
+        "workspace"
+      ]
+    },
+    {
+      "group": "الإدارة",
+      "label": "إعادة ربط موظف معتمد",
+      "key": "staff_link",
+      "handler": "navigate(staff_link)",
+      "target": "managerLinks",
+      "visibility": "manager",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "drawer",
+        "employee section"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "الإعدادات والنغمات",
+      "key": "settings",
+      "handler": "navigate(settings)",
+      "target": "ffx-preferences",
+      "visibility": "staff",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "topbar",
+        "drawer footer"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "تحديث",
+      "key": "refresh",
+      "handler": "navigate(refresh)",
+      "target": "reload",
+      "visibility": "staff",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "topbar",
+        "drawer footer"
+      ]
+    },
+    {
+      "group": "النظام",
+      "label": "تسجيل الخروج",
+      "key": "logout",
+      "handler": "navigate(logout)",
+      "target": "logoutBtn",
+      "visibility": "staff",
+      "branch": "Authorized snapshot / guarded RPC; no new permission from UI",
+      "alternative": [
+        "drawer footer"
+      ]
+    }
+  ],
+  "legacyHeader": [
+    {
+      "id": "ff52RoutesBtn",
+      "label": "📍 توجيه مناطق الجامعات",
+      "path": "routes"
+    },
+    {
+      "id": "ff51CatalogBtn",
+      "label": "🍟 المنيو والعروض",
+      "path": "catalog"
+    },
+    {
+      "id": "ff51CustomersBtn",
+      "label": "👥 العملاء",
+      "path": "customers"
+    },
+    {
+      "id": "ff51ArchiveBtn",
+      "label": "📁 الأرشيف",
+      "path": "archive"
+    },
+    {
+      "id": "ff51RatingsBtn",
+      "label": "⭐ التقييمات",
+      "path": "ratings"
+    },
+    {
+      "id": "ff50ChangesBtn",
+      "label": "📝 تعديلات الطلبات",
+      "path": "changes"
+    },
+    {
+      "id": "ff49ReservationsBtn",
+      "label": "📅 الحجوزات",
+      "path": "reservations"
+    },
+    {
+      "id": "ff49TransferBtn",
+      "label": "🔄 نقل الموصل",
+      "path": "transfer"
+    },
+    {
+      "id": "ff48DiagnosticsBtn",
+      "label": "🩺 تشخيص النسخة",
+      "path": "diagnostics"
+    },
+    {
+      "id": "ff47QABtn",
+      "label": "📋 الاختبار الشامل",
+      "path": "qa"
+    },
+    {
+      "id": "ff46ReadinessBtn",
+      "label": "🧪 جاهزية الإطلاق",
+      "path": "readiness"
+    },
+    {
+      "id": "ff45AccessBtn",
+      "label": "🔐 عزل الفروع",
+      "path": "access"
+    },
+    {
+      "id": "ff44IntegrityBtn",
+      "label": "🔎 سلامة البيانات",
+      "path": "integrity"
+    },
+    {
+      "id": "ff43SecurityBtn",
+      "label": "🛡️ أمان النظام",
+      "path": "security"
+    },
+    {
+      "id": "ff42SettlementsBtn",
+      "label": "💰 تسويات الموصلين",
+      "path": "settlements"
+    },
+    {
+      "id": "ff40ReportsBtn",
+      "label": "📊 التقارير",
+      "path": "reports (unified report center)"
+    },
+    {
+      "id": "ff40AlertsBtn",
+      "label": "⚠️ متابعة التشغيل 0",
+      "path": "late / center follow-up"
+    },
+    {
+      "id": "ff41CasesBtn",
+      "label": "📋 الشكاوى والتظلمات 0",
+      "path": "cases"
+    },
+    {
+      "id": "ff39InboxBtn",
+      "label": "📨 الرسائل 0",
+      "path": "messages"
+    },
+    {
+      "id": "notificationsBtn",
+      "label": "🔔 تفعيل التنبيهات",
+      "path": "settings / background notification permission"
+    },
+    {
+      "id": "refreshBtn",
+      "label": "تحديث",
+      "path": "refresh"
+    },
+    {
+      "id": "logoutBtn",
+      "label": "خروج",
+      "path": "logout"
+    }
+  ],
+  "special": [
+    {
+      "role": "assembly",
+      "key": "all",
+      "target": "ffV12Toggle + [data-assembly-filter=all]",
+      "alternative": "assembly workspace filters"
+    },
+    {
+      "role": "assembly",
+      "key": "preparing",
+      "target": "[data-assembly-filter=preparing]",
+      "alternative": "assembly workspace filters"
+    },
+    {
+      "role": "assembly",
+      "key": "ready",
+      "target": "[data-assembly-filter=ready]",
+      "alternative": "assembly workspace filters"
+    },
+    {
+      "role": "assembly",
+      "key": "delivery",
+      "target": "[data-assembly-filter=ready] (handover action remains in ready card)",
+      "alternative": "ready card"
+    },
+    {
+      "role": "assembly",
+      "key": "more",
+      "target": "ffA06SpecialMore (toggle/refresh/burger/tones/logout)",
+      "alternative": "assembly header"
+    },
+    {
+      "role": "burger_kitchen",
+      "key": "sent",
+      "target": "[data-ff-burger-filter=sent]",
+      "alternative": "kitchen filters"
+    },
+    {
+      "role": "burger_kitchen",
+      "key": "preparing",
+      "target": "[data-ff-burger-filter=preparing]",
+      "alternative": "kitchen filters"
+    },
+    {
+      "role": "burger_kitchen",
+      "key": "finished",
+      "target": "ffBurgerViewFinished",
+      "alternative": "finished details"
+    },
+    {
+      "role": "burger_kitchen",
+      "key": "late",
+      "target": "[data-ff-burger-filter=late]",
+      "alternative": "kitchen filter"
+    },
+    {
+      "role": "burger_kitchen",
+      "key": "more",
+      "target": "ffA06SpecialMore (all/refresh/notifications/logout)",
+      "alternative": "kitchen header"
+    }
+  ],
+  "publicRoutes": [
+    {
+      "role": "login",
+      "id": "loginBtn"
+    },
+    {
+      "role": "login",
+      "id": "ff61ApplyToggle"
+    },
+    {
+      "role": "customer/applicant",
+      "id": "ff28Rows"
+    }
+  ],
+  "css": {
+    "baselineInlineStyles": 31,
+    "baselineInlineImportant": 168,
+    "note": "Browser CSSOM inventory retains ordered source, selector, scope, property, exact duplicates and override pairs. A06 artifacts retain actual before/after screenshots. Specialized card semantics preserved; do not remove all overrides blindly."
+  }
+}
