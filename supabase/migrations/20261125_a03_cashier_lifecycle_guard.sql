@@ -9,7 +9,7 @@ begin
  'public.ff38_cashier_set_stage(uuid,text)'::regprocedure
  ] loop
   src:=pg_get_functiondef(f);
-  needle:='FOR UPDATE OF t';
+  needle:='FOR UPDATE OF T';
   if strpos(upper(src),needle)=0 then raise exception 'Unexpected cashier lock definition: %',f;end if;
   -- The earlier SELECT joins both records; explicitly lock the order before locking the task.
   if f='public.ff38_cashier_set_stage(uuid,text)'::regprocedure then
