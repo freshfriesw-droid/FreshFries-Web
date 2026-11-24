@@ -711,7 +711,7 @@ body.ffx-menu-open .ffx-screen-dimmer{display:block!important}
  <div class="row"><div><label for="newBranch">الفرع</label><select id="newBranch"></select></div></div>
  <div id="ffbTextPanel" class="ff75-analyzer"><h3>🧠 محلّل بيانات الطلب</h3><p class="muted">كل صنف في سطر مستقل مع الكمية، مثل 1 تشكن أو 1 برجر اسمر دبل أو 1 جبن ذرة. يمكن كتابة ملاحظة الصنف بجانبه: 1 تشكن بدون شطة. رقم العميل والمنطقة وأجرة التوصيل واسم الموصل، كل معلومة في سطر مستقل، ثم الملاحظات بكلمة «ملاحظة» أو بدونها. لا تدمج صنفين في سطر واحد.</p><label for="ffbQuickInput">ألصق بيانات الطلب هنا ثم عاينها قبل الاعتماد</label><textarea id="ffbQuickInput" rows="8" placeholder="1 تشكن بدون شطة&#10;1 استربس&#10;رقم العميل 77xxxxxxx&#10;المنطقة شارع القاهرة&#10;أجرة التوصيل 500&#10;اسم الموصل أحمد&#10;ملاحظة الاتصال قبل الوصول"></textarea><div class="actions"><button id="ffbApplyText" type="button" class="primary">تحليل الأسطر ومعاينتها</button></div><div id="ffbQuickReview" class="ffb-v2-quickreview hidden" role="status"></div></div>
  <div class="row"><div><label for="newPhone">هاتف العميل</label><input id="newPhone" inputmode="tel" placeholder="77xxxxxxx"></div><div><label for="newArea">المنطقة</label><input id="newArea" placeholder="اسم المنطقة بالتحديد"></div></div>
- <div id="ff-fee-history" class="ff-fee-history hidden" role="status" aria-live="polite"></div>
+ <div id="ff-fee-history" class="ff-fee-history hidden" role="status" aria-live="polite"></div><div id="ffA05FeeHint" class="muted hidden" role="status"></div>
  <div class="row"><div><label for="newFee">رسوم التوصيل</label><input id="newFee" type="number" min="0" step="0.01" placeholder="اكتب الأجرة أو 0 للمجاني"></div><div><label for="newNotes">ملاحظات الطلب</label><input id="newNotes" placeholder="ملاحظة العميل"></div></div>
  <div id="ffbRequiredMore">
   <div class="row"><div><label for="newCustomerName">اسم العميل (اختياري)</label><input id="newCustomerName" maxlength="100"></div>
@@ -816,7 +816,7 @@ body.ffx-menu-open .ffx-screen-dimmer{display:block!important}
  <h3>القواعد المحفوظة</h3><div id="ff52RoutesList" class="ff49-items"></div>
 </section>
 <footer>Fresh Fries v38.32 — نظام التشغيل الذكي. تسجيل الدخول بالهوية المركزية Supabase. لا يتم حفظ كلمات المرور في واجهة المطعم.</footer>
-</main>
+<section id="ffA05BranchCard" class="card hidden"><div class="sectionbar"><h3>إعدادات الفروع والأسعار</h3><button id="ffA05BranchPolicyBtn" class="outline" type="button">ساعات العمل والرسوم وسجل الأسعار</button></div></section></main>
 <div id="loginOverlay" class="login"><div class="loginbox"><h2>🔐 دخول نظام Fresh Fries</h2><p class="muted">أدخل بيانات حسابك لتظهر واجهتك بحسب صلاحياتك وفرعك.</p><label for="email">اسم المستخدم</label><input id="email" type="text" autocomplete="username" placeholder="اسم المستخدم أو البريد أو رقم الجوال"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" placeholder="••••••••"><div class="actions"><button id="loginBtn" class="primary" style="width:100%">تسجيل الدخول</button></div><div class="statusbar" id="loginStatus">في أول تجربة، ادخل بحساب المدير الحالي.</div>
  <div class="ff61-login-actions"><button id="ff61ApplyToggle" class="primary" type="button">📝 تقديم طلب انضمام</button><button id="ff61StatusToggle" class="outline" type="button">🔎 متابعة طلبي</button><button id="ff71CustomerToggle" class="outline" type="button">👤 متابعة طلباتي</button></div>
  <div id="ff71CustomerPanel" class="ff61-public-panel hidden" aria-label="تسجيل دخول العميل">
@@ -5240,30 +5240,31 @@ async function invoke(action,payload){
  if(!res.ok||!result.ok)throw Error(result.error||'تعذر تنفيذ العملية');
  return result;
 }
-function reset(){selected='';saved=null;form.reset();share.disabled=true;status.textContent='';}
+let editEpoch=0;function reset(){editEpoch++;selected='';saved=null;form.reset();share.disabled=true;status.textContent='';document.getElementById('ffEditSave').disabled=false;}
+window.addEventListener('ff-luxe-session-reset',()=>{if(dlg.open)dlg.close();reset();});
 function close(){dlg.close();reset();}
 document.getElementById('ffEditClose').onclick=close;
 document.getElementById('ffEditMyAccount')?.addEventListener('click',()=>{if(typeof ff28AccountId!=='undefined'&&ff28AccountId)void open(ff28AccountId)});
 dlg.addEventListener('cancel',()=>reset());
 async function open(id){
  if(typeof data==='undefined'||data?.role!=='manager')return;
- reset();selected=id;dlg.showModal();status.textContent='جاري تحميل بيانات الموظف...';
- try{const r=await invoke('staff_details',{user_id:id});for(const [k,v] of Object.entries(r.employee||{})){const f=form.elements.namedItem(k);if(f&&'value' in f)f.value=v==null?'':String(v)}status.textContent='';}
- catch(e){status.textContent='تعذر التحميل: '+e.message}
+ reset();selected=id;const epoch=editEpoch,actor=user?.id;dlg.showModal();status.textContent='جاري تحميل بيانات الموظف...';
+ try{const r=await invoke('staff_details',{user_id:id});if(epoch!==editEpoch||user?.id!==actor||!dlg.open)return;for(const [k,v] of Object.entries(r.employee||{})){const f=form.elements.namedItem(k);if(f&&'value' in f)f.value=v==null?'':String(v)}status.textContent='';}
+ catch(e){if(epoch===editEpoch)status.textContent='تعذر التحميل: '+e.message}
 }
 document.addEventListener('click',e=>{const btn=e.target.closest('[data-ffedit]');if(btn)void open(btn.dataset.ffedit)});
 form.addEventListener('submit',async e=>{
  e.preventDefault();if(!selected||typeof data==='undefined'||data?.role!=='manager')return;
  const v=Object.fromEntries(new FormData(form).entries());
  if(v.password&&Array.from(v.password).length!==8){status.textContent='كلمة المرور يجب أن تكون 8 خانات بالضبط';return}
- const saveBtn=document.getElementById('ffEditSave');saveBtn.disabled=true;status.textContent='جاري الحفظ...';saved=null;share.disabled=true;
- try{const r=await invoke('staff_update',{user_id:selected,employee:v});
+ const epoch=editEpoch,actor=user?.id;const saveBtn=document.getElementById('ffEditSave');saveBtn.disabled=true;status.textContent='جاري الحفظ...';saved=null;share.disabled=true;
+ try{const r=await invoke('staff_update',{user_id:selected,employee:v});if(epoch!==editEpoch||user?.id!==actor||!dlg.open)return;
   if(v.password)saved={login:r.login_username||v.username||v.email||v.phone};
   share.disabled=!saved;form.elements.namedItem('password').value='';
   status.textContent=saved?'تم الحفظ. شارك اسم الدخول فقط وسلم كلمة المرور للموظف شخصيًا.':'تم حفظ بيانات الموظف بنجاح.';
   if(typeof loadStaffAdmin==='function')void loadStaffAdmin();
- }catch(err){status.textContent='تعذر الحفظ: '+err.message}
- finally{saveBtn.disabled=false}
+ }catch(err){if(epoch===editEpoch)status.textContent='تعذر الحفظ: '+err.message}
+ finally{if(epoch===editEpoch)saveBtn.disabled=false}
 });
 share.onclick=async()=>{
  if(!saved)return;
@@ -5470,4 +5471,4 @@ run.title='يجب تحميل المعاينة والتحقق من النسخة �
 status.textContent='جارٍ تهيئة أدوات المعاينة الآمنة…';
 center.append(box);
 })();
-</script><script src="./scripts/luxe-dashboard-studio.js" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script></body></html>
+</script><script src="./scripts/luxe-dashboard-studio.js" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script><script defer src="scripts/luxe-a05-branch-policy.js"></script></body></html>
