@@ -1,9 +1,12 @@
--- FIX-12/13: branch-only realtime hints; payload holds no order/customer/financial data.
+-- FIX-12/13: branch-scoped realtime hints with opaque order key only; no customer/financial data.
+-- One row per order avoids a new cross-order branch lock during dispatch.
 CREATE TABLE IF NOT EXISTS public.ff27_branch_updates(
- branch_id uuid PRIMARY KEY REFERENCES public.ff_branches(id) ON DELETE CASCADE,
+ order_id uuid PRIMARY KEY REFERENCES public.ff_orders(id) ON DELETE CASCADE,
+ branch_id uuid NOT NULL REFERENCES public.ff_branches(id) ON DELETE CASCADE,
  revision bigint NOT NULL DEFAULT 0,
  updated_at timestamptz NOT NULL DEFAULT clock_timestamp()
 );
+CREATE INDEX IF NOT EXISTS ff27_branch_updates_branch_idx ON public.ff27_branch_updates(branch_id);
 ALTER TABLE public.ff27_branch_updates ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.ff27_branch_updates FROM PUBLIC,anon,authenticated;
 GRANT SELECT ON public.ff27_branch_updates TO authenticated;
@@ -22,8 +25,8 @@ BEGIN
  AND NEW.driver_id IS NOT DISTINCT FROM OLD.driver_id AND NEW.phase IS NOT DISTINCT FROM OLD.phase THEN RETURN NEW; END IF;
  SELECT branch_id INTO b FROM public.ff_orders WHERE id=NEW.order_id;
  IF b IS NOT NULL THEN
- INSERT INTO public.ff27_branch_updates(branch_id,revision,updated_at) VALUES(b,1,clock_timestamp())
- ON CONFLICT(branch_id) DO UPDATE SET revision=public.ff27_branch_updates.revision+1,updated_at=clock_timestamp();
+ INSERT INTO public.ff27_branch_updates(order_id,branch_id,revision,updated_at) VALUES(NEW.order_id,b,1,clock_timestamp())
+ ON CONFLICT(order_id) DO UPDATE SET branch_id=EXCLUDED.branch_id,revision=public.ff27_branch_updates.revision+1,updated_at=clock_timestamp();
  END IF;
  RETURN NEW;
 END $body$;
