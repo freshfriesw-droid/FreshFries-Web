@@ -125,7 +125,7 @@ function validText(s,key){const clean=templates.has(key)?s.replaceAll('{order_nu
 function preview(){
  const key=q('key').value,original=originalText(key,q('role').value);
  const rich=isGuide(key);q('body').maxLength=rich?1000:180;q('tools').hidden=!rich;q('rich-preview').hidden=!rich;q('preview').parentElement.hidden=rich;
- if(rich)formatGuide(q('rich-preview'),q('body').value||'—');else q('rich-preview').replaceChildren();
+ if(rich){const draft=q('body').value;formatGuide(q('rich-preview'),draft?(validText(draft,key)?draft:'النص غير صالح للمعاينة — أزل الرموز أو الروابط غير المسموح بها.'):'—')}else q('rich-preview').replaceChildren();
  q('vars').hidden=!templates.has(key);
  q('original').textContent=original;
  q('preview').textContent=(templates.has(key)?q('body').value.replaceAll('{order_number}','990001 (تجريبي)'):q('body').value)||'—';
