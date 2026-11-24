@@ -360,6 +360,35 @@ assert.equal(customParse('2 عائلي').items[0].name,'عرض الأسرة');
 assert.throws(()=>customParse('1 تشكن'));
 
 
+// A02 regression: actual parser and shared cart editor, with Arabic notes and manual prices.
+const draftApi=vm.runInNewContext(parserSource+'\n({parse:ff49ParseItemsAndNotes,edit:ff49EditDraftQuantity})',{
+ ff49Catalog:[{id:1,name:'تشكن فرايز',price:1500,parser_aliases:['تشكن']},
+ {id:2,name:'عرض الأسرة',price:3000,parser_aliases:['عائلي','تشكن فرايز']},
+ {id:3,name:'سماش برجر دبل أسمر',price:2000,parser_aliases:['برجر اسمر دبل']}]});
+const raw='١ تشكن بدون شطّة | 1200\n2 عرض الأسرة\nملاحظة: الاتصال قبل الوصول';
+const chicken={name:'تشكن فرايز',price:1500};
+assert.equal(draftApi.parse('1 تشكن فرايز').items[0].name,chicken.name,'Exact product name beats conflicting alias');
+let changed=draftApi.edit(raw,chicken,1);
+assert.equal(changed,raw+'\n1 تشكن فرايز','Plain addition must preserve note and custom price');
+changed=draftApi.edit(changed,chicken,1);
+assert.ok(changed.endsWith('2 تشكن فرايز'));
+changed=draftApi.edit(changed,chicken,-1);
+assert.ok(changed.endsWith('1 تشكن فرايز'));
+changed=draftApi.edit(changed,chicken,-1);
+assert.equal(changed,raw);
+changed=draftApi.edit(raw,chicken,1,1);
+assert.equal(changed,'2 تشكن بدون شطّة | 1200\n2 عرض الأسرة\nملاحظة: الاتصال قبل الوصول');
+assert.equal(draftApi.parse(changed).items[0].item_notes,'بدون شطّة');
+assert.equal(draftApi.parse(changed).items[0].price,1200);
+assert.equal(draftApi.edit(raw,chicken,-1,1),'2 عرض الأسرة\nملاحظة: الاتصال قبل الوصول');
+assert.equal(draftApi.edit('1 تشكن',chicken,-1),'');
+assert.equal(draftApi.edit('',chicken,1),'1 تشكن فرايز');
+assert.throws(()=>draftApi.edit('1 غير معروف',chicken,1));
+assert.throws(()=>draftApi.edit('100 تشكن',chicken,1));
+assert.throws(()=>draftApi.edit(raw,chicken,1,99));
+assert.equal(draftApi.parse(raw).notes,'الاتصال قبل الوصول');
+console.log('PASS A02 source line quantity/notes/price preservation, delete and ambiguity guards');
+
 // Operational follow-ups: syntax, shared parser and security regression guards.
 for(const file of [
  'scripts/luxe-burger-kitchen-20261123.js',
