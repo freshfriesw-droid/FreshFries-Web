@@ -234,7 +234,7 @@ begin
  select * into b from ff_private.a12_legacy_batches where id=p_batch for update;
  if not found or b.restored_at is not null then raise exception 'النسخة غير موجودة أو سبق استرجاعها';end if;
  if b.schema_hash<>ff_private.a12_legacy_schema_hash() then raise exception 'تغيرت بنية البيانات؛ يلزم تحقق فني قبل الاسترجاع';end if;
- if exists(select 1 from public.ff_orders where id=any(b.ids)) or exists(select 1 from unnest(b.ids) id where not exists(select 1 from ff_private.a12_legacy_registry t where t.id=id))
+ if exists(select 1 from public.ff_orders where id=any(b.ids)) or exists(select 1 from unnest(b.ids) u(id) where not exists(select 1 from ff_private.a12_legacy_registry t where t.id=u.id))
  then raise exception 'تعارض في هوية الطلبات';end if;
  modes:=ff_private.a12_legacy_trigger_modes();perform ff_private.a12_legacy_set_modes(modes,false);
  for r in select * from ff_private.a12_legacy_plan() order by step loop
