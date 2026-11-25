@@ -8,7 +8,7 @@ const cash = value => value === null || value === undefined ? '—' : fmt(value)
 const stamp = date => date ? new Date(date).toLocaleString('ar-YE',{timeZone:'Asia/Aden',dateStyle:'short',timeStyle:'short'}) : '—';
 const headings = {summary:'الملخص اليومي',finance:'المبالغ المسجلة ورسوم التوصيل',orders:'الطلبات والإلغاءات',branches:'الفروع',drivers:'أداء الموصلين',staff:'موظفو خدمة العملاء',areas:'العملاء والمناطق',items:'الأصناف الأكثر طلباً',ratings:'التقييمات',cases:'الشكاوى والتظلمات',attendance:'الدوام والاستراحات',analytics:'التحليلات المتقدمة',comparisons:'المقارنات',approval:'اعتماد المدير'};
 let result=null,identity='',pdf=null,pdfURL=null,fileName='',pending=false,pdfPromise=null,libPromise=null,previewed=false;
-let reportRequest=0,pdfRevision=0,choiceInitialized=false;
+let reportRequest=0,pdfRevision=0,choiceInitialized=false,snapshotArgs=null;
 function me(){return typeof user!=='undefined' && user ? user.id : ''}
 const root=document.createElement('section');root.id='ff76Center';root.dir='rtl';root.className='ff76-hidden';
 root.innerHTML=[
@@ -47,12 +47,12 @@ const previewDialog=document.createElement('dialog');previewDialog.id='ff76PdfDi
 previewDialog.innerHTML='<header class="r-dialoghead"><b>معاينة PDF الكاملة قبل الإرسال</b><div><button id="ff76DlgDownload">حفظ الملف</button> <button id="ff76DlgShare" class="r-primary">مشاركة الملف</button> <button id="ff76DlgClose">✕ إغلاق</button></div></header><iframe id="ff76PDFFrame" title="معاينة PDF"></iframe>';
 document.body.append(previewDialog);
 function clearPDF(){pdfRevision++;pdfPromise=null;if(previewDialog.open)previewDialog.close();if(pdfURL){URL.revokeObjectURL(pdfURL);pdfURL=null}pdf=null;fileName='';previewed=false;el('ff76PDFFrame').removeAttribute('src')}
-function clear(){el('ffA10Grants').hidden=true;result=null;identity='';clearPDF();el('ff76ManagerName').value='';el('ff76ManagerNotes').value='';el('ff76ApprovalStatus').textContent='';el('ff76Body').textContent='';el('ff76ApprovalBox').hidden=true;el('ff76SaveApproval').disabled=false;['ff76Preview','ff76Download','ff76Share','ff76CSV'].forEach(id=>el(id).disabled=true)}
+function clear(){snapshotArgs=null;el('ffA10Grants').hidden=true;result=null;identity='';clearPDF();el('ff76ManagerName').value='';el('ff76ManagerNotes').value='';el('ff76ApprovalStatus').textContent='';el('ff76Body').textContent='';el('ff76ApprovalBox').hidden=true;el('ff76SaveApproval').disabled=false;['ff76Preview','ff76Download','ff76Share','ff76CSV'].forEach(id=>el(id).disabled=true)}
 function day(){if(typeof ff40TodayYemen==='function')return ff40TodayYemen();const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day}
 function changeDay(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
 function period(days,offset){const end=changeDay(day(),offset);el('ff76To').value=end;el('ff76From').value=changeDay(end,-days+1);invalidate()}
 function invalidate(){reportRequest++;pending=false;el('ff76Run').disabled=false;if(result||!root.classList.contains('ff76-hidden')){clear();el('ff76Status').textContent='تغيّر فلتر التقرير. اضغط إعداد التقرير من جديد.'}}
-function options(id,rows,text,field,placeholder){const select=el(id),old=select.value;select.replaceChildren(new Option(placeholder,''));(rows||[]).forEach(row=>select.append(new Option(row[text]||'غير محدد',row[field])));if(Array.from(select.options).some(o=>o.value===old))select.value=old}
+function options(id,rows,text,field,placeholder){const select=el(id),old=select.value,oldLabel=select.selectedOptions[0]?.textContent;select.replaceChildren(new Option(placeholder,''));(rows||[]).forEach(row=>select.append(new Option(row[text]||'غير محدد',row[field])));if(old&&['ff76Branch','ff76Driver','ffA10Staff','ffA10Area','ffA10Item'].includes(id)&&!Array.from(select.options).some(o=>o.value===old)&&snapshotArgs)select.add(new Option(oldLabel||'الفلتر السابق',old));if(Array.from(select.options).some(o=>o.value===old))select.value=old}
 function args(){return {p_from:el('ff76From').value,p_to:el('ff76To').value,p_branch:el('ff76Branch').value||null,p_driver:el('ff76Driver').value||null,p_staff:el('ffA10Staff').value||null,p_area:el('ffA10Area').value||null,p_item:el('ffA10Item').value||null,p_status:el('ffA10Status').value||null}}
 function partial(){const a=args();return !!(a.p_staff||a.p_area||a.p_item||a.p_status)}
 function allowed(section){return (result?.available_sections||[]).includes(section)}
@@ -65,7 +65,7 @@ function table(cols,rows){if(!rows?.length)return '<p class="r-muted">لا تو�
 return '<div class="r-scroll"><table><thead><tr>'+cols.map(c=>'<th>'+safe(c[0])+'</th>').join('')+'</tr></thead><tbody>'+
 rows.map(x=>'<tr>'+cols.map(c=>'<td>'+safe(c[1](x)??'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
 function cards(rows){return '<div class="r-kpis">'+rows.map(x=>'<div class="r-kpi"><small>'+safe(x[0])+'</small><b>'+safe(x[1])+'</b></div>').join('')+'</div>'}
-function section(key,html){return '<section class="r-section"><h3>'+safe(headings[key])+'</h3>'+html+'</section>'}
+function section(key,html){return '<section class="r-section" data-report-section="'+safe(key)+'"><h3>'+safe(headings[key])+'</h3>'+html+'</section>'}
 function weekly(date){const x=new Date(date+'T12:00:00Z');x.setUTCDate(x.getUTCDate()-((x.getUTCDay()+6)%7));return x.toISOString().slice(0,10)}
 function trend(){const groups=new Map();(result.days||[]).forEach(row=>{const name=el('ff76Trend').value==='monthly'?row.work_day.slice(0,7):el('ff76Trend').value==='weekly'?weekly(row.work_day):row.work_day;const x=groups.get(name)||{label:name,orders:0,net:0};x.orders+=Number(row.orders||0);x.net+=Number(row.net||0);groups.set(name,x)});return Array.from(groups.values()).sort((a,b)=>a.label.localeCompare(b.label))}
 function barChart(rows,key){if(!rows.length)return '<p class="r-muted">بيانات الرسم غير متوفرة.</p>';const max=Math.max(1,...rows.map(x=>Number(x[key]||0)));
@@ -75,7 +75,7 @@ function recommendations(t){const n=[];if(Number(t.cancellation_rate||0)>10)n.pu
 if(Number(t.late||0)>0)n.push('مراجعة الطلبات التي تجاوزت 60 دقيقة، خاصة ساعات الذروة.');
 if(Number(t.low_ratings||0)>0)n.push('متابعة التقييمات المنخفضة وتعليقاتها واتخاذ إجراء تصحيحي.');
 if(Number(t.free_delivery||0)>0)n.push('مراجعة حالات التوصيل المجاني مقابل العروض المعتمدة.');
-if(!(result.attendance||[]).length)n.push('تفعيل توثيق فترات الدوام لمعرفة ساعات العمل الصافية.');
+if(allowed('attendance')&&!(result.attendance||[]).length)n.push('تفعيل توثيق فترات الدوام لمعرفة ساعات العمل الصافية.');
 if(!n.length)n.push('لا تظهر مؤشرات استثنائية في القواعد الحالية؛ واصل المتابعة.');
 return n}
 function compose(keys){
@@ -131,13 +131,13 @@ if(selectedSet.has('cases'))html.push(section('cases','<h4>الشكاوى الم
  '<h4>تظلمات الموصلين</h4>'+table([['التصنيف',x=>x.category],['التفاصيل',x=>x.details],['الحالة',x=>x.status]],r.grievances)+'<h4>تظلمات الموظفين الخاصة</h4>'+table([['الموضوع',x=>x.subject],['الحالة',x=>x.status],['الوقت',x=>stamp(x.created_at)]],r.staff_grievances)));
 if(selectedSet.has('attendance'))html.push(section('attendance','<p class="r-muted">صافي الحضور = مجموع فترات الحضور في اليوم التشغيلي بعد طرح الاستراحات. البيانات القديمة غير الموثقة لا يمكن استرجاعها.</p>'+
  table([['اليوم',x=>x.report_day],['الموصل',x=>x.driver_name],['فترات الحضور',x=>fmt(x.sessions)],['الحضور الفعلي',x=>stamp(x.first_checkin)],['آخر خروج',x=>stamp(x.last_checkout)],['صافي الساعات',x=>fmt(x.work_hours)]],r.attendance)));
-if(selectedSet.has('analytics'))html.push(section('analytics','<h4>الطلبات '+safe(el('ff76Trend').selectedOptions[0]?.textContent)+'</h4>'+barChart(trend(),'orders')+'<h4>الفواتير المسلّمة</h4>'+barChart(trend(),'net')+
+if(selectedSet.has('analytics'))html.push(section('analytics','<h4>الطلبات '+safe(el('ff76Trend').selectedOptions[0]?.textContent)+'</h4>'+barChart(trend(),'orders')+(allowed('finance')?'<h4>الفواتير المسلّمة</h4>'+barChart(trend(),'net'):'')+
 '<h4>أوقات الذروة</h4>'+barChart((r.hourly||[]).map(x=>({label:String(x.hour_of_day).padStart(2,'0')+':00',orders:Number(x.orders)})),'orders')+
 '<p class="r-muted">نسبة الطلبات «المؤجلة» لا تُحسب دون حالة تأجيل مستقلة موثقة في قاعدة البيانات.</p>'));
 if(selectedSet.has('comparisons')){
  const c=r.comparison||{},today=c.today||{},old=c.yesterday||{},week=c.last_week||{},avgWeek=c.previous_week_average||{};
- html.push(section('comparisons',table([['الفترة',x=>x.label],['الطلبات',x=>fmt(x.orders)],['المسلّمة',x=>fmt(x.delivered)],['القيمة',x=>cash(x.net)]],[{label:'نهاية الفترة',...today},{label:'اليوم السابق',...old},{label:'نفس اليوم الأسبوع الماضي',...week},{label:'متوسط السبعة أيام السابقة',...avgWeek}])+
- cards([['تغيير الطلبات عن أمس',percentage(today.orders,old.orders)],['تغيير قيمة الفواتير عن أمس',percentage(today.net,old.net)],['الفرق عن الأسبوع الماضي',percentage(today.orders,week.orders)],['الفرق عن متوسط الأسبوع',percentage(today.orders,avgWeek.orders)]])+
+ html.push(section('comparisons',table([['الفترة',x=>x.label],['الطلبات',x=>fmt(x.orders)],['المسلّمة',x=>fmt(x.delivered)],...(allowed('finance')?[['القيمة',x=>cash(x.net)]]:[])],[{label:'نهاية الفترة',...today},{label:'اليوم السابق',...old},{label:'نفس اليوم الأسبوع الماضي',...week},{label:'متوسط السبعة أيام السابقة',...avgWeek}])+
+ cards([['تغيير الطلبات عن أمس',percentage(today.orders,old.orders)],...(allowed('finance')?[['تغيير قيمة الفواتير عن أمس',percentage(today.net,old.net)]]:[]),['الفرق عن الأسبوع الماضي',percentage(today.orders,week.orders)],['الفرق عن متوسط الأسبوع',percentage(today.orders,avgWeek.orders)]])+
  '<p class="r-muted">المقارنة تخص تاريخ نهاية الفترة المختارة فقط.</p>'))}
 if(selectedSet.has('approval'))html.push(section('approval',r.approval?.approved_at?
  '<div class="r-stamp"><b>اعتماد إداري: '+safe(r.approval.manager_name||'المدير')+'</b><div>تاريخ الاعتماد '+safe(stamp(r.approval.approved_at))+'</div><p>'+safe(r.approval.manager_notes)+'</p></div>':
@@ -145,7 +145,7 @@ if(selectedSet.has('approval'))html.push(section('approval',r.approval?.approved
 if(selectedSet.has('summary')||selectedSet.has('comparisons'))html.push('<section class="r-section"><h3>المؤشر الإداري والخاتمة والتوصيات</h3><p class="r-muted">توصيات تشغيلية للمدير والمشرف وخدمة العملاء بحسب المؤشرات، وتحتاج مراجعة مسؤول معتمد.</p><ul>'+recommendations(t).map(x=>'<li>'+safe(x)+'</li>').join('')+'</ul></section>');
 return html.join('')}
 function draw(){if(!result)return;el('ff76Body').innerHTML=compose(selected())||'<p class="r-muted">حدد قسماً واحداً على الأقل.</p>';
-const allowedApproval=result.role==='manager'&&el('ff76From').value===el('ff76To').value&&!el('ff76Driver').value&&!partial();
+const allowedApproval=allowed('approval')&&result.role==='manager'&&el('ff76From').value===el('ff76To').value&&!el('ff76Driver').value&&!partial();
  el('ffA10Grants').hidden=result.role!=='manager';
  if(result.role==='manager'&&selected().includes('ratings')&&(result.internal_low_ratings||[]).some(x=>x.rating_id)){const box=document.createElement('div');box.className='r-actions';box.dataset.a10Action='quality';const label=document.createElement('label');label.textContent='تصعيد يدوي لتقييم منخفض (لا يصدّر)';const select=document.createElement('select');select.id='ffA10RatingEscalate';for(const r of result.internal_low_ratings.filter(x=>x.rating_id))select.add(new Option('#'+r.order_number+' — '+r.stars+' نجوم · '+r.rater_role,r.rating_id));label.append(select);const btn=document.createElement('button');btn.type='button';btn.textContent='إنشاء متابعة جودة';btn.onclick=async()=>{const note=prompt('اكتب سبب المتابعة التشغيلية دون نقل الملاحظة الخاصة');if(note===null)return;const who=me(),tag=identity;btn.disabled=true;try{const v=await rpc('ff_a10_escalate_rating',{p_rating:select.value,p_note:note});if(who===me()&&tag===identity){el('ff76Status').textContent=v.already_exists?'توجد متابعة سابقة':'تم إنشاء متابعة جودة في مركز الشكاوى';}}catch(e){if(who===me()&&tag===identity)el('ff76Status').textContent=e.message}finally{btn.disabled=false}};box.append(label,btn);el('ff76Body').append(box)}
 el('ff76ApprovalBox').hidden=!allowedApproval;
@@ -157,10 +157,10 @@ async function load(){
  if(!from||!to||from>to||to>day()||days>89){el('ff76Status').textContent='فترة غير صحيحة؛ يجب ألا تتجاوز 90 يوماً ولا تشمل المستقبل.';return}
  const viewer=me(),request=++reportRequest;pending=true;el('ff76Run').disabled=true;clear();el('ff76Status').textContent='جاري جمع البيانات بحسب صلاحيات المستخدم...';
  try{
- const data=await rpc('ff_a10_reporting_center',args());
+ const requested=args(),data=await rpc('ff_a10_reporting_center',requested);
  if(request!==reportRequest||me()!==viewer)return;
  if(!data?.totals||!Array.isArray(data.available_sections))throw Error('استجابة التقرير غير صالحة');
- result=data;identity=viewer+':'+request+':'+from+':'+to+':'+String(branch)+':'+String(driver);
+ snapshotArgs=requested;result=data;identity=viewer+':'+request+':'+from+':'+to+':'+String(branch)+':'+String(driver);
  el('ff76ManagerName').value=data.approval?.manager_name||'';el('ff76ManagerNotes').value=data.approval?.manager_notes||'';
  options('ff76Branch',data.branches,'name','id','جميع الفروع المسموحة');if(branch)el('ff76Branch').value=branch;
  options('ff76Driver',(data.driver_options||[]).filter(x=>!branch||x.branch_id===branch),'name','id','جميع الموصلين');if(driver)el('ff76Driver').value=driver;
@@ -178,7 +178,7 @@ el('ff76Close').onclick=()=>{root.classList.add('ff76-hidden');reportRequest++;p
 [['ff76Today',1,0],['ff76Yesterday',1,-1],['ff76Seven',7,0],['ff76Thirty',30,0]].forEach(x=>el(x[0]).onclick=()=>{period(x[1],x[2]);void load()});
 el('ff76Run').onclick=load;['ff76From','ff76To','ff76Branch','ff76Driver','ffA10Staff','ffA10Area','ffA10Item','ffA10Status'].forEach(id=>el(id).addEventListener('change',()=>{if(id==='ff76Branch'){el('ff76Driver').value='';for(const key of ['ffA10Staff','ffA10Area','ffA10Item'])el(key).value=''}invalidate()}));
 el('ff76Mode').onchange=()=>{choices();clearPDF();draw()};el('ff76Trend').onchange=()=>{clearPDF();draw()};
-el('ff76SaveApproval').onclick=async()=>{if(!result||result.role!=='manager'||el('ff76From').value!==el('ff76To').value||el('ff76Driver').value||partial())return;
+el('ff76SaveApproval').onclick=async()=>{if(!result||!allowed('approval')||result.role!=='manager'||el('ff76From').value!==el('ff76To').value||el('ff76Driver').value||partial())return;
 const uid=me(),tag=identity;el('ff76SaveApproval').disabled=true;
 try{const res=await rpc('ff76_report_approval_save',{p_day:el('ff76To').value,p_branch:el('ff76Branch').value||null,p_notes:el('ff76ManagerNotes').value,p_manager_name:el('ff76ManagerName').value});
 if(me()!==uid||tag!==identity)return;result.approval={...res,manager_notes:res.notes};el('ff76ManagerName').value=result.approval.manager_name||'';el('ff76ManagerNotes').value=result.approval.manager_notes||'';clearPDF();draw();el('ff76ApprovalStatus').textContent='تم توثيق اعتماد المدير وتاريخ حفظه.'}
@@ -245,7 +245,7 @@ window.addEventListener('ff-luxe-session-reset',()=>{
 function pdfLibrary(){if(window.html2pdf)return Promise.resolve();if(libPromise)return libPromise;
 libPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js';s.onload=()=>window.html2pdf?resolve():reject(Error('مكتبة PDF غير جاهزة'));s.onerror=()=>reject(Error('مكتبة PDF تحتاج اتصالاً بالإنترنت'));document.head.append(s)}).catch(e=>{libPromise=null;throw e});return libPromise}
 function filterText(){const labels=['ff76Branch','ff76Driver','ffA10Staff','ffA10Area','ffA10Item','ffA10Status'];return labels.filter(id=>el(id).value).map(id=>el(id).selectedOptions[0]?.textContent).filter(Boolean).join(' · ')||'جميع النطاقات المسموحة'}
- async function verifyExport(uid,tag,revision){authorized(uid,tag,revision);if(!result||!identity.startsWith(uid+':'))throw Error('أعد التقرير');const prior=result;let check;try{check=await rpc('ff_a10_reporting_center',args())}catch(e){if(me()===uid&&identity===tag){clear();el('ff76Status').textContent='تغيرت الصلاحيات؛ أعد التقرير'}throw e}authorized(uid,tag,revision);if(!check||check.role!==prior.role||check.access_key!==prior.access_key||JSON.stringify(check.available_sections)!==JSON.stringify(prior.available_sections)){clear();throw Error('تغيرت الصلاحيات أو النطاق؛ أعد إعداد التقرير قبل التصدير')}return true}
+ async function verifyExport(uid,tag,revision){authorized(uid,tag,revision);if(!result||!identity.startsWith(uid+':'))throw Error('أعد التقرير');if(JSON.stringify(args())!==JSON.stringify(snapshotArgs)){clear();throw Error('تغيرت عوامل التصفية؛ أعد إعداد التقرير')}const prior=result;let check;try{check=await rpc('ff_a10_reporting_center',args())}catch(e){if(me()===uid&&identity===tag){clear();el('ff76Status').textContent='تغيرت الصلاحيات؛ أعد التقرير'}throw e}authorized(uid,tag,revision);if(!check||check.role!==prior.role||check.access_key!==prior.access_key||JSON.stringify(check.available_sections)!==JSON.stringify(prior.available_sections)){clear();throw Error('تغيرت الصلاحيات أو النطاق؛ أعد إعداد التقرير قبل التصدير')}return true}
  function authorized(uid,tag,revision){if(me()!==uid||identity!==tag||revision!==pdfRevision)throw Error('تغير الحساب أو التقرير')}
 async function producePDF(){if(pdf)return pdf;if(pdfPromise)return pdfPromise;if(!result||!me()||!identity.startsWith(me()+':')||!selected().length)throw Error('أعد التقرير وحدد أقسامه');
 const uid=me(),tag=identity,revision=pdfRevision;pdfPromise=(async()=>{
