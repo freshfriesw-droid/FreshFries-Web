@@ -24,6 +24,8 @@ BEGIN
  IF res->>'ok'<>'true' THEN RAISE EXCEPTION 'Element draft %',res;END IF;checks:=checks+1;
  res:=public.ff_a09_design_draft('mobile',jsonb_build_object('elements',jsonb_set(normal,'{driver_actions,0,shape}','"pill"')),'QA invalid shape',NULL);
  IF res->>'ok'<>'false' THEN RAISE EXCEPTION 'Unauthorized shape';END IF;checks:=checks+1;
+ IF NOT EXISTS(SELECT FROM public.ff_a09_grant_events WHERE recipient=u) OR EXISTS(SELECT FROM public.ff_a09_grant_events WHERE recipient<>u) THEN RAISE EXCEPTION 'Grant event read scope';END IF;checks:=checks+1;
+ IF has_table_privilege('authenticated','public.ff_a09_grant_events','INSERT') OR has_table_privilege('authenticated','public.ff_a09_grant_events','UPDATE') OR has_table_privilege('anon','public.ff_a09_grant_events','SELECT') THEN RAISE EXCEPTION 'Event writes/anon allowed';END IF;checks:=checks+1;
  IF public.ff_a09_design_context('mobile')->>'screen'<>'driver' THEN RAISE EXCEPTION 'Missing safe context';END IF;checks:=checks+1;
  RESET ROLE;UPDATE public.ff82_content_grants SET ends_at=clock_timestamp()+interval '100 milliseconds' WHERE id=gid;PERFORM pg_sleep(0.15);
  SET LOCAL ROLE authenticated;
@@ -32,6 +34,6 @@ BEGIN
  IF NOT EXISTS(SELECT FROM public.ff82_content_audit WHERE actor_id=u AND action='design_draft' AND outcome='denied' AND reason='outside_edit_scope') THEN RAISE EXCEPTION 'Expired denial audit';END IF;checks:=checks+1;
  RAISE EXCEPTION 'QA rollback' USING ERRCODE='ZQ029';
  EXCEPTION WHEN SQLSTATE 'ZQ029' THEN NULL;END;
- IF checks<>13 OR EXISTS(SELECT FROM public.ff_branches WHERE id IN(b,b2)) THEN RAISE EXCEPTION 'Incomplete rollback %',checks;END IF;
+ IF checks<>15 OR EXISTS(SELECT FROM public.ff_branches WHERE id IN(b,b2)) THEN RAISE EXCEPTION 'Incomplete rollback %',checks;END IF;
 END $qa$;
-SELECT 'PASS A09: 13 content validation, branch, granular element, expiry and rollback assertions' result;
+SELECT 'PASS A09: 15 content validation, branch, granular element, expiry and rollback assertions' result;
