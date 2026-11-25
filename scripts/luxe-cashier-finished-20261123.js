@@ -130,6 +130,7 @@
     '<div class="ffl-finished-actions">'+
     (summary.canInvoice?'<button type="button" class="primary" data-ffl-show="invoice">🧾 إضافة رقم الفاتورة</button>':'')+
     (summary.canRate?'<button type="button" class="outline" data-ffl-show="rating">⭐ إضافة تقييم الموصل</button>':'')+
+    (o.can_rate_coordination?'<button type="button" class="outline" data-ffl-show="coordination">⭐ تقييم التنسيق مع التحضير (اختياري)</button>':o.coordination_stars?'<span>تقييم التنسيق: '+esc(o.coordination_stars)+'/5</span>':'')+
     '<button type="button" class="outline" data-ffl-show="report">📢 بلاغ / شكوى للإدارة</button>'+
     '</div>'+
     (summary.cancellation?'<p class="muted">الطلب ملغي؛ لا يمكن إضافة فاتورة جديدة أو تقييم موصل له من الأرشيف.</p>':'')+
@@ -143,6 +144,7 @@
       [1,2,3,4,5].map(n=>'<option value="'+n+'">'+n+' من 5 ⭐</option>').join('')+
       '</select><label>ملاحظة التقييم (اختيارية)</label><textarea name="note" maxlength="500" placeholder="ملاحظات أداء الموصل"></textarea>'+
       '<button type="submit" class="primary">حفظ التقييم</button></form>':'')+
+    (o.can_rate_coordination?'<form class="ffl-finished-form" data-ffl-action="coordination" hidden><label>التنسيق مع التحضير</label><select name="rating" required><option value="">اختر التقييم</option>'+[1,2,3,4,5].map(n=>'<option value="'+n+'">'+n+' من 5</option>').join('')+'</select><label>ملاحظة اختيارية</label><textarea name="note" maxlength="500"></textarea><button type="submit" class="primary">حفظ التقييم</button></form>':'')+
     '<form class="ffl-finished-form" data-ffl-action="report" hidden>'+
     '<label>نوع البلاغ</label><select name="category" required>'+
     '<option value="operational">بلاغ تشغيلي متعلق بالطلب</option><option value="management_complaint">شكوى للإدارة مرتبطة بالطلب</option></select>'+
@@ -218,7 +220,8 @@
   const action=form.dataset.fflAction,infoNow=info(o);
   if(action==='invoice'&&!infoNow.canInvoice)return toast('رقم الفاتورة مسجل أو الطلب غير قابل للاستكمال');
   if(action==='rating'&&!infoNow.canRate)return toast('تم تسجيل التقييم مسبقًا أو الطلب غير مؤهل');
-  if(!['invoice','rating','report'].includes(action))return;
+  if(action==='coordination'&&!o.can_rate_coordination)return;
+  if(!['invoice','rating','report','coordination'].includes(action))return;
   if(activeAction)return toast('هناك عملية أخرى جارٍ تنفيذها');
   const current=String(user.id),submit=form.querySelector('button[type=submit]');
   activeAction=orderId;submit.disabled=true;
@@ -234,6 +237,8 @@
     result=await rpc('ff_luxe_cashier_completed_rating',{
       p_order:orderId,p_stars:stars,p_note:form.elements.namedItem('note').value.trim()
     });
+   }else if(action==='coordination'){
+    const saved=await rpc('ff_a10_cashier_coordination',{p_order:orderId,p_stars:Number(form.elements.namedItem('rating').value),p_note:form.elements.namedItem('note').value.trim()});result={saved:saved===true};
    }else{
     const title=form.elements.namedItem('subject').value.trim(),description=form.elements.namedItem('description').value.trim();
     result=await rpc('ff_luxe_cashier_completed_report',{
@@ -243,7 +248,7 @@
    }
    if(!result?.saved&&!result?.case_id)throw Error('لم يؤكد الخادم حفظ الإجراء');
    if(current!==String(user?.id||''))return;
-   const message={invoice:'تم حفظ رقم الفاتورة وتوثيق الاستكمال',rating:'تم إرسال تقييم الكاشير',report:'تم إرسال البلاغ وربطه بالطلب'};
+   const message={invoice:'تم حفظ رقم الفاتورة وتوثيق الاستكمال',rating:'تم إرسال تقييم الكاشير',report:'تم إرسال البلاغ وربطه بالطلب',coordination:'تم حفظ تقييم التنسيق مع التحضير'};
    toast('✅ '+message[action]);
    openCards.add(orderId);
    await load(true);
