@@ -1,0 +1,33 @@
+name: STEP03 official domain verification
+on:
+  pull_request:
+    paths: ['.github/workflows/step03-public-domain-proof.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe official HTTPS addresses without credentials
+        shell: bash
+        run: |
+          set +e
+          for domain in freshfriesz.com delivery.freshfriesz.com; do
+            echo "DOMAIN: $domain"
+            curl --proto '=https' --proto-redir '=https' --location --max-redirs 5 --connect-timeout 10 --max-time 30 --silent --show-error --output "$RUNNER_TEMP/$domain.html" --write-out 'STATUS=%{http_code} FINAL=%{url_effective}\n' "https://$domain/"
+            echo "CURL_EXIT=$?"
+          done
+          python - <<'PY'
+          import hashlib, os, pathlib, re
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])
+          hashes={}
+          for d in ('freshfriesz.com','delivery.freshfriesz.com'):
+              p=root/(d+'.html')
+              if p.exists():
+                  b=p.read_bytes()
+                  b=re.sub(rb'<script[^>]+(?:static.cloudflareinsights.com/beacon.min.js)[^>]*></script>',b'',b)
+                  hashes[d]=hashlib.sha256(b).hexdigest()
+                  print(d, 'HTML_SHA256='+hashes[d])
+          print('SAME_HTML='+str(len(hashes)==2 and len(set(hashes.values()))==1))
+          PY
