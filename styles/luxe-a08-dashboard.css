@@ -6,23 +6,23 @@
 #ffA08ShortcutsHeading[hidden],#ffx-shortcuts[hidden],#ffA08Activity[hidden],#ffA08Branches[hidden],#ffA08Panels[hidden],#ffA08Panels [hidden],#ffA08Detail [hidden]{display:none!important}
 .ff-a08-panel{grid-column:1/-1;min-width:0;margin-block:12px;padding:14px}
 .ff-a08-panel h3{margin:0 0 10px}
-.ff-a08-panel-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(245px,100%),1fr));gap:8px}
-.ff-a08-data-row{display:flex;flex-direction:column;gap:5px;padding:10px;border:1px solid var(--ffx-line,#aaa);border-radius:10px;min-width:0;overflow-wrap:anywhere;line-height:1.6}
+.ff-a08-panel-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(245px,100%),1fr));gap:var(--ff-p2-space-2,8px)}
+.ff-a08-data-row{display:flex;flex-direction:column;gap:5px;padding:10px;border:1px solid var(--ffx-line,#aaa);border-radius:var(--ff-p2-radius-control,10px);min-width:0;overflow-wrap:anywhere;line-height:1.6}
 .ff-a08-data-row span{color:inherit;font-size:.9em}
-#ffA08Detail{box-sizing:border-box;width:min(92vw,740px);max-height:90vh;overflow:auto;border:1px solid var(--ffx-line,#aaa);border-radius:14px;padding:16px;color:var(--ffx-ink,#222);background:var(--ffx-surface,#fff)}
+#ffA08Detail{box-sizing:border-box;width:min(92vw,740px);max-height:90vh;overflow:auto;border:1px solid var(--ffx-line,#aaa);border-radius:var(--ff-p2-radius-card,14px);padding:16px;color:var(--ffx-ink,#222);background:var(--ffx-surface,#fff)}
 #ffA08Detail::backdrop{background:#0009}
-#ffA08Detail [data-a08-rows]{display:grid;gap:8px;margin-block:10px}
-#ffA08Detail button,#ffA08Panels button{min-height:44px;min-width:44px}
-#ffA08Detail .actions{display:flex;flex-wrap:wrap;gap:8px}
-#ffA08Panels{padding:10px;border:1px solid var(--ffx-line,#aaa);border-radius:10px;min-width:0}
+#ffA08Detail [data-a08-rows]{display:grid;gap:var(--ff-p2-space-2,8px);margin-block:10px}
+#ffA08Detail button,#ffA08Panels button{min-height:var(--ff-p2-touch,44px);min-width:44px}
+#ffA08Detail .actions{display:flex;flex-wrap:wrap;gap:var(--ff-p2-space-2,8px)}
+#ffA08Panels{padding:10px;border:1px solid var(--ffx-line,#aaa);border-radius:var(--ff-p2-radius-control,10px);min-width:0}
 #ffA08Panels [data-a08-panels]{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:10px;margin-block:8px}
-#ffA08Panels select{max-width:100%;width:100%;min-height:44px}
+#ffA08Panels select{max-width:100%;width:100%;min-height:var(--ff-p2-touch,44px)}
 .ff-a08-action-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px;border-bottom:1px solid var(--ffx-line,#aaa)}
 .ff-a08-action-row b{flex:1 1 140px}
-#ffCardEditor .ff-a08-card-access{grid-column:1/-1;min-width:0;border:1px solid var(--ffx-line,#aaa);border-radius:8px;padding:8px}
-#ffCardEditor .ff-a08-card-access fieldset{min-width:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(135px,100%),1fr));gap:4px;margin:8px 0;padding:6px}
-#ffCardEditor .ff-a08-card-access fieldset label{display:flex;align-items:center;gap:6px;min-height:44px}
+#ffCardEditor .ff-a08-card-access{grid-column:1/-1;min-width:0;border:1px solid var(--ffx-line,#aaa);border-radius:var(--ff-p2-radius-sm,8px);padding:8px}
+#ffCardEditor .ff-a08-card-access fieldset{min-width:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(135px,100%),1fr));gap:var(--ff-p2-space-1,4px);margin:8px 0;padding:6px}
+#ffCardEditor .ff-a08-card-access fieldset label{display:flex;align-items:center;gap:6px;min-height:var(--ff-p2-touch,44px)}
 #ffCardEditor .ff-a08-card-access input[type="checkbox"],#ffA08Panels input[type="checkbox"],#ffCardEditor [data-a08-inherit-cards]{width:20px;min-height:20px;height:20px;flex:none}
-.ff-a08-panel-preview{padding:8px;border:1px dashed currentColor;border-radius:8px;margin-block:8px;line-height:1.6;overflow-wrap:anywhere}
+.ff-a08-panel-preview{padding:8px;border:1px dashed currentColor;border-radius:var(--ff-p2-radius-sm,8px);margin-block:8px;line-height:1.6;overflow-wrap:anywhere}
 @media(max-width:850px){#ffx-kpis[data-a08-cols="triple"]{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:360px){#ffx-kpis[data-a08-cols="double"],#ffx-kpis[data-a08-cols="triple"]{grid-template-columns:minmax(0,1fr)}#ffx-kpis [data-card-size="wide"]{grid-column:1/-1}}

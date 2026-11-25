@@ -2,8 +2,8 @@
 #ffx-nav .ffx-nav-group{margin:2px 0 8px;min-width:0}
 #ffx-nav .ffx-section-toggle{
  display:flex;align-items:center;justify-content:space-between;gap:10px;
- width:100%;min-height:44px;margin:0;padding:10px 12px;
- border:1px solid transparent;border-radius:12px;
+ width:100%;min-height:var(--ff-p2-touch,44px);margin:0;padding:10px 12px;
+ border:1px solid transparent;border-radius:var(--ff-p2-radius-md,12px);
  background:transparent;color:#e6e6e9;cursor:pointer;
  text-align:right;font:800 13px/1.6 'Cairo',Tahoma,Arial,sans-serif;
 }
@@ -17,7 +17,7 @@
 #ffx-nav .ffx-section-toggle[aria-expanded="false"] .ffx-accordion-arrow{transform:rotate(90deg)}
 #ffx-nav .ffx-nav-group-links{padding:4px 8px 6px 0;border-right:2px solid #ffffff1c;margin-right:10px}
 #ffx-nav .ffx-nav-group-links[hidden]{display:none!important}
-#ffx-nav .ffx-nav-group-links .ffx-side-link{min-height:44px}
+#ffx-nav .ffx-nav-group-links .ffx-side-link{min-height:var(--ff-p2-touch,44px)}
 @media(prefers-reduced-motion:reduce){
  #ffx-nav .ffx-accordion-arrow{transition:none}
 }
