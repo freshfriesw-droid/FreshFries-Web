@@ -6,13 +6,14 @@ const screens={
  all:'جميع الشاشات',dashboard:'الرئيسية',orders:'الطلبات وخدمة العملاء',cashier:'الكاشير',driver:'الموصل',
  assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر',catalog:'المنيو والعروض',customers:'العملاء',
  reports:'التقارير',staff:'الموظفون والصلاحيات',archive:'الأرشيف',ratings:'التقييمات',cases:'الشكاوى والتظلمات',
- messages:'الرسائل',reservations:'الحجوزات',system:'النظام والأمان'
+ messages:'الرسائل',reservations:'الحجوزات',system:'النظام والأمان',finance:'التسويات النقدية',branches:'الفروع وساعات العمل والأسعار',login:'الدخول وطلب الانضمام',customer_portal:'بوابة العميل'
 };
 const selectors={
  dashboard:'#ffx-dashboard',orders:'#serviceOnly,#staffOrders',cashier:'#cashierView,#ffBurgerCashierPanel',driver:'#driverView',
  assembly:'#ffV12AssemblyWorkspace',burger_kitchen:'#ffBurgerKitchenWorkspace',
  catalog:'#ff51CatalogPanel',customers:'#ff51CustomersPanel',reports:'#ff76Center',staff:'#staffAdminCard',
  archive:'#ff51ArchivePanel',ratings:'#ff51RatingsPanel',cases:'#ff41Panel,#ff41Dialog',messages:'#ff39Panel,#ff39Dialog',
+ finance:'#ff42Panel',branches:'#ffA05BranchCard,#ffA05BranchDialog',login:'#loginOverlay .loginbox',customer_portal:'#ff28Portal',
  reservations:'#ff49ReservationsPanel',system:'#ff48DiagnosticsPanel,#ff47QAPanel,#ff46ReadinessPanel,#ff44IntegrityPanel,#ff43SecurityPanel,#ff62DataCenter'
 };
 const tokens={
@@ -41,7 +42,18 @@ const tokens={
 const roleScreens={manager:'dashboard',supervisor:'dashboard',customer_service:'orders',cashier:'cashier',driver:'driver',assembly:'assembly',burger_kitchen:'burger_kitchen'};
 const packOK=p=>/^D[0-9]{2,}$/.test(p||'');
 const cfgOf=v=>v&&typeof v==='object'&&!Array.isArray(v)?v:{};
-let current={},owned=new Set(),ownedDialogs=new Set();
+const publicScreen=s=>s==='login'||s==='customer_portal';
+const extendedScreen=s=>publicScreen(s)||s==='finance'||s==='branches';
+const visiblePublicScreen=()=>['customer','applicant'].includes(document.body.dataset.access)?'customer_portal':document.body.dataset.access==='locked'?'login':null;
+let current={},publicRows={},publicKey='',publicAt=0,publicSerial=0,owned=new Set(),ownedDialogs=new Set();
+async function syncPublic(force=false){
+ const screen=visiblePublicScreen(),device=innerWidth<=850?'mobile':'desktop',key=screen?screen+'|'+device:'';
+ if(key!==publicKey){publicKey=key;publicRows={};publicAt=0;publicSerial++;refresh()}
+ if(!screen||(!force&&Date.now()-publicAt<30000))return;
+ if(typeof client==='undefined'||!client)return;
+ publicAt=Date.now();const request=++publicSerial;
+ try{const row=await rpc('ff_a07_public_appearance',{p_screen:screen,p_device:device});if(request!==publicSerial||visiblePublicScreen()!==screen||publicKey!==key)return;publicRows=packOK(row?.pack)?{[screen]:row}:{};refresh()}catch{/* Keep only the last published public design for this exact device and screen. */}
+}
 const LOGO='./assets/ff-official-logo.png',FALLBACK='./assets/ff-icon-192.png';
 const logoPaths={brand:LOGO,mark:FALLBACK},logoOrigins=new WeakMap();
 function imageFallback(img){
@@ -51,9 +63,9 @@ function imageFallback(img){
 }
 function addLogo(root,screen){
  if(screen==='dashboard'||screen==='assembly'||root.id==='ffBurgerCashierPanel'||root.id==='staffOrders')return;
- const title=root.querySelector('h2,h3');
+ const title=root.querySelector('h1,h2,h3');
  if(!title||title.closest('button')||root.querySelector('.ff-a07-logo-inline'))return;
- const img=document.createElement('img');img.className='ff-a07-logo-inline';img.src=LOGO;img.alt='شعار فريش فرايز';img.loading='lazy';img.width=40;img.height=40;imageFallback(img);
+ const img=document.createElement('img');img.className='ff-a07-logo-inline';if(extendedScreen(screen))img.dataset.ffStep03ExtendedLogo='1';img.src=LOGO;img.alt='شعار فريش فرايز';img.loading='lazy';img.width=40;img.height=40;imageFallback(img);
  title.prepend(img);
 }
 function applyLogo(root){
@@ -66,7 +78,7 @@ function applyLogo(root){
   const src=logoPaths[choice]||o.src;
   if(src&&src!==o.desired){o.desired=src;delete img.dataset.ffA07Tried;if(img.getAttribute('src')!==src)img.src=src}
   let cover=root.querySelector(':scope > .ff-a07-logo-cover');
-  if(root.dataset.a07LogoPosition==='cover'||(root.classList.contains('ff-a07-demo')&&root.dataset.a07LogoPosition==='menu')){
+  if(root.dataset.a07LogoPosition==='cover'||((root.classList.contains('ff-a07-demo')||publicScreen(root.dataset.ffA07Screen))&&root.dataset.a07LogoPosition==='menu')){
    if(!cover){cover=document.createElement('div');cover.className='ff-a07-logo-cover';root.prepend(cover)}
    if(img.parentNode!==cover)cover.append(img);cover.dataset.logoPlacement=root.dataset.a07LogoPosition;if(root.classList.contains('ff-a07-demo')&&root.dataset.a07LogoPosition==='menu')cover.setAttribute('aria-label','معاينة موضع الشعار في القائمة');else cover.removeAttribute('aria-label')
   }else if(cover?.contains(img)&&o.parent?.isConnected){
@@ -78,7 +90,7 @@ function applyCaption(root,row,screen){
  if(screen==='dashboard'||root.id==='staffOrders')return;
  let node=root.querySelector(':scope > [data-ff-a07-caption]');
  if(!row?.layout_text){node?.remove();return}
- const title=root.querySelector('h2,h3');
+ const title=root.querySelector('h1,h2,h3');
  if(!title||title.closest('button'))return;
  if(!node){node=document.createElement('p');node.dataset.ffA07Caption='1';node.className='ff-a07-caption';root.prepend(node)}
  node.textContent=row.layout_text;
@@ -96,7 +108,7 @@ function decorate(root,row){
  }
 }
 
-const navScreens={home:'dashboard',new:'orders',orders:'orders',late:'dashboard',cashier:'cashier',attendance:'driver',driver:'driver',offers:'driver',burger:'burger_kitchen',cashier_finished:'cashier',catalog:'catalog',customers:'customers',reports:'reports',team:'staff',staff_link:'staff',applications:'staff',application_alerts:'staff',archive:'archive',ratings:'ratings',cases:'cases',messages:'messages',reservations:'reservations',studio:'system',data_center:'system',security:'system',integrity:'system',access:'system',readiness:'system',qa:'system',diagnostics:'system'};
+const navScreens={home:'dashboard',new:'orders',orders:'orders',late:'dashboard',cashier:'cashier',attendance:'driver',driver:'driver',offers:'driver',burger:'burger_kitchen',cashier_finished:'cashier',catalog:'catalog',customers:'customers',reports:'reports',team:'staff',staff_link:'staff',applications:'staff',application_alerts:'staff',archive:'archive',ratings:'ratings',cases:'cases',messages:'messages',reservations:'reservations',settlements:'finance',branch_policy:'branches',studio:'system',data_center:'system',security:'system',integrity:'system',access:'system',readiness:'system',qa:'system',diagnostics:'system'};
 function activeScreen(){
  if(typeof ffV12AssemblyActive!=='undefined'&&ffV12AssemblyActive)return 'assembly';
  if(window.ffBurgerActive?.())return 'burger_kitchen';
@@ -139,8 +151,10 @@ function refresh(){
   for(const root of document.querySelectorAll(selector)){
    if(seen.has(root))continue;seen.add(root);
    root.dataset.ffA07Screen=screen;
-   addLogo(root,screen);
-   const row=current[screen], signature=JSON.stringify([row?.id,row?.pack,row?.style_config,row?.layout_text]);
+   const row=publicScreen(screen)?publicRows[screen]:current[screen];
+   if(!extendedScreen(screen)||row)addLogo(root,screen);
+   else{root.querySelectorAll('[data-ff-step03-extended-logo]').forEach(n=>n.remove());root.querySelectorAll(':scope > .ff-a07-logo-cover').forEach(n=>{if(!n.children.length)n.remove()});}
+   const signature=JSON.stringify([row?.id,row?.pack,row?.style_config,row?.layout_text]);
    if(root.dataset.ffA07Signature!==signature){decorate(root,row);applyCaption(root,row,screen);root.dataset.ffA07Signature=signature}
   }
  }
@@ -148,11 +162,11 @@ function refresh(){
  owned=seen;
  for(const root of seen)applyLogo(root);
  dialogStyle();menuLogo();
- window.ffA07Elements?.refresh(seen,current);
+ window.ffA07Elements?.refresh(seen,{...current,...publicRows});
  for(const img of document.querySelectorAll('img[src$="/ff-official-logo.png"],img[src$="/ff-icon-192.png"]'))imageFallback(img);
 }
 function apply(rows){current=cfgOf(rows);refresh()}
-function clear(){current={};refresh()}
+function clear(){current={};publicRows={};publicKey='';publicAt=0;publicSerial++;refresh();void syncPublic()}
 function selectFields(form){
  const section=document.createElement('details');section.id='ffA07StyleFields';
  const heading=document.createElement('summary');heading.textContent='تخصيص الهوية والمظهر';section.append(heading);
@@ -186,6 +200,10 @@ const demo={
  cases:['الشكاوى','بلاغ تجريبي','قيد المراجعة','متابعة'],
  messages:['الرسائل','رسالة تجريبية','غير مقروءة','فتح الرسالة'],
  reservations:['الحجوزات','حجز تجريبي','استلام لاحق','مراجعة'],
+ finance:['التسويات النقدية','تسوية تجريبية','المبلغ والفرق','حفظ — معاينة'],
+ branches:['إعدادات الفروع','ساعات عمل تجريبية','الأسعار والرسوم','حفظ — معاينة'],
+ login:['الدخول والانضمام','حساب تجريبي','طلب انضمام تجريبي','دخول — معاينة'],
+ customer_portal:['بوابة العميل','طلب تجريبي','الحالة والتقييم','تحديث — معاينة'],
  system:['أمان النظام','فحص تجريبي','لا تغييرات فعلية','عرض الفحص']
 };
 function demoCard(screen,pack,style,compact=false,select=null){
@@ -233,8 +251,8 @@ function gallery(form,packs){
  }
  details.addEventListener('toggle',redraw);select.addEventListener('change',redraw);return redraw;
 }
-window.ffA07Design={screens,roleScreens,tokens,selectFields,readStyle,setStyle,gallery,demoCard,decorate,apply,clear,refresh};
+window.ffA07Design={screens,roleScreens,tokens,selectFields,readStyle,setStyle,gallery,demoCard,decorate,apply,clear,refresh,syncPublic,publicScreen};
 window.addEventListener('ff-luxe-session-reset',clear);
-setInterval(refresh,1500);
+setInterval(refresh,1500);setInterval(()=>void syncPublic(),1500);
 refresh();
 })();

@@ -169,3 +169,8 @@
 [data-a07-dialog-padding="normal"]{padding:12px!important}[data-a07-dialog-padding="wide"]{padding:20px!important}
 [data-a07-rating-scale="normal"] .ff-luxe-stars button{font-size:30px!important}[data-a07-rating-scale="large"] .ff-luxe-stars button{font-size:40px!important}
 .ff-step03-dialog-example{display:grid;gap:8px;border:2px solid #a71729;padding:12px;margin-block:8px}.ff-step03-rating-example{font-size:24px;color:#8e5900;letter-spacing:3px}[data-a07-rating-scale="large"] .ff-step03-rating-example{font-size:32px}
+
+/* STEP03: public screens receive only their published, dedicated design; no layout or authorization changes. */
+[data-ff-a07-screen="login"][data-ff-a07-pack],[data-ff-a07-screen="customer_portal"][data-ff-a07-pack]{background:var(--a07-bg)!important;color:var(--a07-ink)!important;border-color:var(--a07-accent);border-radius:var(--a07-radius);box-shadow:var(--a07-shadow);}
+[data-ff-a07-screen="login"][data-ff-a07-pack] :is(h1,h2,h3,label,.muted),[data-ff-a07-screen="customer_portal"][data-ff-a07-pack] :is(h1,h2,h3,label,.muted){color:var(--a07-ink)!important;}
+[data-ff-a07-screen="login"][data-ff-a07-pack] :is(input,select,textarea),[data-ff-a07-screen="customer_portal"][data-ff-a07-pack] :is(input,select,textarea){max-width:100%;box-sizing:border-box;}

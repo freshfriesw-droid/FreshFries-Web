@@ -117,8 +117,16 @@ with sync_playwright() as pw:
    assert page.locator("#ffbQuickInput").input_value()=="نص محفوظ"
    assert page.locator("#cashierView").get_attribute("data-ff-a07-pack") is None
   if role=="manager":
+   page.evaluate("""async()=>{window.__a07Rows={finance:{id:721,pack:'D07',style_config:{density:'compact'}},branches:{id:722,pack:'D08',style_config:{radius:'round'}}};await ffDashboardStudio.sync(true)}""")
+   assert page.locator("#ff42Panel").get_attribute("data-ff-a07-pack")=="D07"
+   assert page.locator("#ffA05BranchCard").get_attribute("data-ff-a07-pack")=="D08"
+   assert page.locator("#loginOverlay .loginbox").get_attribute("data-ff-a07-pack") is None
    page.evaluate("()=>window.ffDashboardStudio.open()")
    dlg=page.locator("#ffStudio");assert dlg.is_visible()
+   dlg.locator("select[name=screen]").select_option("login")
+   assert dlg.locator("select[name=role]").input_value()=="all"
+   assert dlg.locator("select[name=role]").is_disabled()
+   assert dlg.locator("select[name=branch]").is_disabled()
    dlg.locator("select[name=screen]").select_option("cashier")
    dlg.locator("select[name=role]").select_option("cashier")
    dlg.locator("#ffA07Gallery summary").click()
@@ -191,6 +199,19 @@ with sync_playwright() as pw:
   assert page.locator(selector).get_attribute("data-ff-a07-pack") is None
   print("PASS A07",role,47,"role/width/pack checks",flush=True)
   ctx.close()
+ ctx=browser.new_context(viewport={"width":390,"height":850},service_workers="block",reduced_motion="reduce")
+ ctx.route("**/*",lambda route:route.continue_() if route.request.url.startswith(origin) else route.abort())
+ page=ctx.new_page();page.goto(origin,wait_until="load")
+ page.wait_for_function("()=>!!window.ffA07Design")
+ page.evaluate("""async()=>{client={};user=null;data=null;document.body.dataset.access='locked';document.getElementById('loginOverlay').classList.remove('hidden');rpc=async(name,args)=>name==='ff_a07_public_appearance'?{pack:'D05',layout_text:'PUBLIC QA',style_config:{logoAsset:'mark'}}:null;await ffA07Design.syncPublic(true)}""")
+ assert page.locator("#loginOverlay .loginbox").get_attribute("data-ff-a07-pack")=="D05"
+ assert page.locator("#loginOverlay .loginbox").get_by_text("PUBLIC QA").count()==1
+ assert page.locator("#password").get_attribute("type")=="password"
+ page.evaluate("""async()=>{document.body.dataset.access='customer';await ffA07Design.syncPublic(true)}""")
+ assert page.locator("#loginOverlay .loginbox").get_attribute("data-ff-a07-pack") is None
+ assert page.locator("#ff28Portal").get_attribute("data-ff-a07-pack")=="D05"
+ ctx.close()
+ print("PASS STEP03 independent finance, branch, login and customer scopes",flush=True)
  browser.close()
 server.shutdown()
 (out/"role-pack-matrix.json").write_text(json.dumps(results,ensure_ascii=False,indent=2))
