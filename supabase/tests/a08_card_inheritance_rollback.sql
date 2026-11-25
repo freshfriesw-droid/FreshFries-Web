@@ -9,11 +9,12 @@ BEGIN
  INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(c,b1),(s,b1);
  PERFORM set_config('request.jwt.claim.sub',m::text,true);SET LOCAL ROLE authenticated;
  a:=public.ff_a07_named_design('all','all',b1,'all','D01','','labels','QA base cards','',cfg,'{"dashboardPanels":{"branches":true}}');PERFORM public.ff_ui_publish(a);
- b:=public.ff_a07_named_design('dashboard','cashier',b1,'mobile','D05','','labels','QA visual only','',NULL,'{}');PERFORM public.ff_ui_publish(b);
+ b:=public.ff_a07_named_design('dashboard','cashier',b1,'mobile','D05','','labels','QA visual only','',NULL,'{"dashboardPanels":{"activity":false}}');PERFORM public.ff_ui_publish(b);
  IF (SELECT revision FROM public.ff_a08_manager_card_source('cashier',b1,'mobile'))<>a THEN RAISE EXCEPTION 'Incorrect inherited card source';END IF;passes:=passes+1;
  RESET ROLE;PERFORM set_config('request.jwt.claim.sub',c::text,true);SET LOCAL ROLE authenticated;
  r:=public.ff_a07_effective_designs(b1,'mobile');
  IF (r->'dashboard'->>'id')::bigint<>b OR r->'dashboard'->'card_layout'<>cfg OR (r->'dashboard'->>'card_layout_source')::bigint<>a THEN RAISE EXCEPTION 'Inherited cards lost %',r;END IF;passes:=passes+1;
+ IF r->'dashboard'->'style_config'->'dashboardPanels' IS DISTINCT FROM '{"branches":true,"activity":false}'::jsonb THEN RAISE EXCEPTION 'Panel inheritance %',r;END IF;passes:=passes+1;
  denied:=false;BEGIN PERFORM public.ff_a08_manager_card_source('cashier',b1,'mobile');EXCEPTION WHEN SQLSTATE '42501' THEN denied:=true;END;IF NOT denied THEN RAISE EXCEPTION 'Card source manager-only boundary';END IF;passes:=passes+1;
  RESET ROLE;PERFORM set_config('request.jwt.claim.sub',m::text,true);SET LOCAL ROLE authenticated;
  e:=public.ff_a07_named_design('dashboard','cashier',b1,'mobile','D06','','labels','QA explicit empty','', '[]','{}');PERFORM public.ff_ui_publish(e);
@@ -29,6 +30,6 @@ BEGIN
  RESET ROLE;
  RAISE EXCEPTION 'QA rollback' USING ERRCODE='ZQ009';
  EXCEPTION WHEN SQLSTATE 'ZQ009' THEN NULL;END;
- IF passes<>8 OR EXISTS(SELECT FROM public.ff_branches WHERE id IN(b1,b2)) THEN RAISE EXCEPTION 'Incomplete rollback %',passes;END IF;
+ IF passes<>9 OR EXISTS(SELECT FROM public.ff_branches WHERE id IN(b1,b2)) THEN RAISE EXCEPTION 'Incomplete rollback %',passes;END IF;
 END $qa$;
-SELECT 'PASS A08: 8 inherited-card, explicit-empty, device and central branch authorization assertions; rollback' AS result;
+SELECT 'PASS A08: 9 inherited-card, explicit-empty, device and central branch authorization assertions; rollback' AS result;
