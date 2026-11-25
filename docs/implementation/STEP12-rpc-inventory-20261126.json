@@ -1989,7 +1989,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "2533aba1d98804bc05114cb8cf04f875"
+      "definition_md5": "75ebb2bf647dec244d03673eb35ac97f",
+      "scope_test": "20261125225351: 9 rollback assertions including read/action branch isolation and central access"
     },
     {
       "name": "ff_luxe_completed_universal_action",
@@ -1998,7 +1999,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "8c70ae34c71b806f14aa9d02daca6855"
+      "definition_md5": "8c70ae34c71b806f14aa9d02daca6855",
+      "scope_test": "Shared private guard verified for foreign-branch rejection; positive action matrix remains separate"
     },
     {
       "name": "ff_luxe_create_delivery_order_in_desk",
@@ -2443,5 +2445,5 @@
       "definition_md5": "e36ad6176fc8e89141933210b87fd9c8"
     }
   ],
-  "last_update": "2026-11-26: staff session lifecycle guard"
+  "last_update": "2026-11-26: completed supervisor scope"
 }
