@@ -138,22 +138,33 @@ with sync_playwright() as pw:
     if width in (390,1440) and theme in ('classic','dark'):
      # Stable component panel image comparison; actual workspace images recorded separately.
      paths=[out/f'{role}-{width}-{theme}-{side}-components.png' for side in ('before','after')]
-     for p,path in zip((old,new),paths):
-      rect=p.locator('#p2-probe').bounding_box()
-      assert rect and rect['y']>=0 and rect['y']+rect['height']<=850,(role,width,theme,rect)
-      # Clip a viewport screenshot in memory rather than locator screenshot,
-      # which may itself scroll the document to bring the fixed element into view.
-      from io import BytesIO
-      shot=Image.open(BytesIO(p.screenshot(animations='disabled')))
-      x,y,w,h=(round(rect[k]) for k in ('x','y','width','height'))
-      shot.crop((x,y,x+w,y+h)).save(path)
-     im1,im2=[Image.open(path).convert('RGB') for path in paths]
-     assert im1.size==im2.size,(role,width,theme,'panel geometry',im1.size,im2.size)
-     difference=ImageChops.difference(im1,im2)
-     bounds=difference.getbbox()
-     if bounds is not None:
-      difference.save(out/f'{role}-{width}-{theme}-pixel-difference.png')
-      print('PIXEL DIAGNOSTIC',role,width,theme,bounds,'channel extrema',difference.getextrema(),'changed pixels',sum(1 for pixel in difference.getdata() if any(pixel)),flush=True)
+     for attempt in range(1,4):
+      for p,path in zip((old,new),paths):
+       rect=p.locator('#p2-probe').bounding_box()
+       assert rect and rect['y']>=0 and rect['y']+rect['height']<=850,(role,width,theme,rect)
+       # Clip a viewport screenshot in memory rather than locator screenshot,
+       # which may itself scroll the document to bring the fixed element into view.
+       from io import BytesIO
+       shot=Image.open(BytesIO(p.screenshot(animations='disabled')))
+       x,y,w,h=(round(rect[k]) for k in ('x','y','width','height'))
+       shot.crop((x,y,x+w,y+h)).save(path)
+      im1,im2=[Image.open(path).convert('RGB') for path in paths]
+      assert im1.size==im2.size,(role,width,theme,'panel geometry',im1.size,im2.size)
+      difference=ImageChops.difference(im1,im2)
+      bounds=difference.getbbox()
+      if bounds is None:break
+      count=sum(1 for pixel in difference.getdata() if any(pixel))
+      extrema=difference.getextrema()
+      stem=f'{role}-{width}-{theme}-attempt-{attempt}'
+      difference.save(out/f'{stem}-pixel-difference.png')
+      im1.save(out/f'{stem}-before.png');im2.save(out/f'{stem}-after.png')
+      print('PIXEL DIAGNOSTIC',role,width,theme,bounds,'channel extrema',extrema,'changed pixels',count,'attempt',attempt,flush=True)
+      # Never accept an approximate image. Retry only the previously observed
+      # renderer rounding jitter (one channel level, <=100 pixels), preserving
+      # every failed image. A substantive or persistent difference fails.
+      if any(v[1]>1 for v in extrema) or count>100:break
+      for p in (old,new):p.evaluate("()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
+      compare(old.evaluate(probe),new.evaluate(probe),(role,width,theme,'recapture'))
      assert bounds is None,(role,width,theme,'component pixels differ',bounds)
     for p in (old,new):p.locator('#p2-probe').evaluate('e=>e.remove()')
     if width in (390,1440) and theme in ('classic','dark'):
