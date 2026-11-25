@@ -13,7 +13,7 @@ assert b'luxe-p2-components.css?v=20261125-p2' in html
 assets=sorted(set(re.findall(rb'href="([^"]+\.css)(?:\?[^"]*)?"',html)))
 assets=[x.decode().removeprefix('./') for x in assets if not x.startswith((b'http:',b'https:',b'//'))]
 assert 'styles/luxe-p2-components.css' in assets
-scripts=sorted(set(x.decode().removeprefix('./') for x in re.findall(rb'<script[^>]+src="([^"?]+\\.js)(?:\\?[^\"]*)?"',html) if not x.startswith((b'http:',b'https:',b'//'))))
+scripts=sorted(set(x.decode().removeprefix('./') for x in re.findall(rb'<script[^>]+src="([^"?]+\.js)(?:\?[^"]*)?"',html) if not x.startswith((b'http:',b'https:',b'//'))))
 assert {'scripts/luxe-a07-elements.js','scripts/luxe-a07-design.js','scripts/luxe-dashboard-studio.js'}<=set(scripts)
 
 def get(path):
