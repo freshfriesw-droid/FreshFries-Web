@@ -28,9 +28,9 @@ const cases=`
  const a=tone('a'),b=tone('b'),c=tone('c');
  client=reply([a,b],Promise.resolve({data:[signedRow('b'),signedRow('a'),signedRow('unrelated')]}));
  await ff66Load(true);assert.equal(ff66Urls.get('a'),'https://example.invalid/a');assert.equal(ff66Urls.get('b'),'https://example.invalid/b');assert.equal(ff66Urls.size,2);
- let release;client=reply([a],new Promise(r=>release=r));const old=ff66Load(true);await tick();
+ let release,entered;const gated=new Promise(r=>release=r);client=reply([a],gated);const signing=client.storage.from;client.storage.from=()=>({createSignedUrls:()=>{entered=true;return signing().createSignedUrls()}});const old=ff66Load(true);while(!entered)await tick();
  user={id:'B'};data={role:'cashier'};events.get('ff-luxe-session-reset')();
- client=reply([c],Promise.resolve({data:[signedRow('c')]}));await ff66Load(true);release({data:[signedRow('a')]});await old;assert.deepEqual([...ff66Urls.keys()],['c']);assert.equal(ff66User,'B');
+ client=reply([c],Promise.resolve({data:[signedRow('c')]}));await ff66Load(true);release({data:[signedRow('a')]});await old;assert.equal([...ff66Urls.keys()].join(','),'c');assert.equal(ff66User,'B');
  assert.ok(ff66PlayTone('tone:c'));const player=ffLuxeTonePlayers.get('c');const staleReject=rejectPlay;
  user={id:'C'};events.get('ff-luxe-session-reset')();staleReject(Error('old playback'));await tick();assert.equal(fallbacks.length,0);assert.equal(player.src,'');assert.equal(ffLuxeTonePlayers.size,0);
  client=reply([c],Promise.resolve({data:[signedRow('c')]}));await ff66Load(true);

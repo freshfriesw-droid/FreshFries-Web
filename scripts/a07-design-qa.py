@@ -77,7 +77,7 @@ with sync_playwright() as pw:
   if role in ("driver","cashier","customer_service"):
    key={"driver":"attendance","cashier":"cashier","customer_service":"new"}[role]
    page.locator('#ffx-mobile-nav button[data-key="'+key+'"]').click()
-  signatures=set();noncolor_signatures=set()
+  signatures=set();noncolor_signatures=set();actual_signatures=set()
   if role in ('cashier','driver'):
    holder='#cashierOrders' if role=='cashier' else '#driverTasks'
    status_probe=page.locator(holder).evaluate('e=>{const n=document.createElement("article");n.className="item ff-luxe-cancelled";n.id="a07-status-probe";e.append(n);return getComputedStyle(n).borderTopColor}')
@@ -94,9 +94,16 @@ with sync_playwright() as pw:
     if width==1440:
      noncolor=page.locator(selector).evaluate("""e=>{const s=getComputedStyle(e);return ['radius','gap','cols','pad','font','shadow','scale','border','button-radius'].map(k=>s.getPropertyValue('--a07-'+k).trim()).join('|')}""")
      noncolor_signatures.add(noncolor)
-    if i in (1,16) and width in (390,1440):page.screenshot(path=out/f"{role}-{width}-{pack}.png",animations="disabled")
+     if role in ('manager','cashier'):
+      actual=page.locator(selector).evaluate("""e=>{const main=getComputedStyle(e),card=e.querySelector('.ffx-hero,.card'),s=getComputedStyle(card),grid=e.querySelector('#cashierOrders,#ffx-kpis'),g=grid?getComputedStyle(grid):null;return [main.fontSize,main.fontFamily,s.borderTopLeftRadius,s.borderTopWidth,s.paddingTop,s.gap,s.boxShadow,g?.gridTemplateColumns,g?.gap].join('|')}""")
+      actual_signatures.add(actual)
+    if width in (390,1440) and (i in (1,16) or (role in ('manager','cashier') and not alternate)):
+     page.screenshot(path=out/f"{role}-{width}-{pack}.png",animations="disabled")
   assert len(signatures)==16,(role,"distinct packs",len(signatures))
   assert len(noncolor_signatures)==16,(role,"non-color design distinction",len(noncolor_signatures))
+  if role in ('manager','cashier'):
+   assert len(actual_signatures)==16,(role,"actual computed component geometries",len(actual_signatures))
+   print("PASS STEP05 16 distinct actual component geometries",role,flush=True)
   if role in ("cashier","driver"):
    assert page.locator("#a07-status-probe").evaluate("n=>getComputedStyle(n).borderTopColor")==status_probe
   if alternate: page.set_viewport_size({"width":390,"height":850})

@@ -34,7 +34,7 @@ with sync_playwright() as pw:
   result=page.evaluate("""async origin=>{
    client.storage={from:()=>({getPublicUrl:()=>({data:{publicUrl:origin+'missing-step05-image.png'}})})};
    const item={id:'qa',name:'تشكن',price:1500,image_path:'menu/12345678-1234-1234-1234-123456789abc.png',image_version:'2'};
-   let added=0;const tile=ffLuxePhotoMenu.createTile(item,{quantity:1,onAdd:()=>added++});document.body.append(tile.element);
+   let added=0;const tile=ffLuxePhotoMenu.createTile(item,{quantity:1,onAdd:()=>added++});document.body.append(tile.element);tile.element.querySelector('img').loading='eager';tile.element.scrollIntoView({block:'center'});
    await new Promise((resolve,reject)=>{const start=performance.now();const poll=()=>{if(tile.element.querySelector('.ffb-placeholder'))resolve();else if(performance.now()-start>5000)reject(Error('image fallback timed out'));else setTimeout(poll,50)};poll()});
    tile.element.querySelector('.ffl-picker-product').click();
    const result={fallback:true,added,quantity:tile.quantityNode.textContent,versioned:ffLuxePhotoMenu.imageUrl(item).endsWith('?v=2')};tile.element.remove();return result
