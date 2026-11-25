@@ -1,0 +1,6090 @@
+{
+  "base": "a4d579a6b2e1f100c24922be1bc0dc522eb9c26a",
+  "existing": 125,
+  "added": 318,
+  "total": 443,
+  "registered": [
+    {
+      "key": "orders.control.ffa06discarddraft",
+      "screen": "orders",
+      "label": "نص: بدء مسودة فارغة",
+      "original": "بدء مسودة فارغة",
+      "selector": "#ffA06DiscardDraft",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ffreservebottom",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: 📅 حجز للاستلام",
+      "original": "📅 حجز للاستلام",
+      "selector": "#ffReserveBottom",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "assembly.control.ffv12logout",
+      "screen": "assembly",
+      "label": "توضيح يحفظ النص الأصلي: 🚪 تسجيل الخروج",
+      "original": "🚪 تسجيل الخروج",
+      "selector": "#ffV12Logout",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "burger_kitchen.control.ffburgerkitchenlogout",
+      "screen": "burger_kitchen",
+      "label": "توضيح يحفظ النص الأصلي: 🚪 تسجيل الخروج",
+      "original": "🚪 تسجيل الخروج",
+      "selector": "#ffBurgerKitchenLogout",
+      "mode": "protected",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "catalog.control.ff51itemreset",
+      "screen": "catalog",
+      "label": "توضيح يحفظ النص الأصلي: إلغاء التعديل",
+      "original": "إلغاء التعديل",
+      "selector": "#ff51ItemReset",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.control.ff51offerreset",
+      "screen": "catalog",
+      "label": "توضيح يحفظ النص الأصلي: إلغاء التعديل",
+      "original": "إلغاء التعديل",
+      "selector": "#ff51OfferReset",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "archive.control.ff51archiveclose",
+      "screen": "archive",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff51ArchiveClose",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "ratings.control.ff51ratingsclose",
+      "screen": "ratings",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff51RatingsClose",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "reservations.control.ff49reservationsclose",
+      "screen": "reservations",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff49ReservationsClose",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.control.ff41close",
+      "screen": "cases",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff41Close",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "messages.control.ff39close",
+      "screen": "messages",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff39Close",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff48close",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff48Close",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.control.staffauditrefresh",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: عرض السجل",
+      "original": "عرض السجل",
+      "selector": "#staffAuditRefresh",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.hint.ffbquickinput",
+      "screen": "orders",
+      "label": "تلميح: 1 تشكن بدون شطة 1 استربس رقم العميل 77xxxxxxx المنطقة شارع القاهرة أجرة التوصيل 500 اسم الموصل أحمد ملاحظة الاتصال قبل الوصول",
+      "original": "1 تشكن بدون شطة 1 استربس رقم العميل 77xxxxxxx المنطقة شارع القاهرة أجرة التوصيل 500 اسم الموصل أحمد ملاحظة الاتصال قبل الوصول",
+      "selector": "#ffbQuickInput",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.hint.newitems",
+      "screen": "orders",
+      "label": "تلميح: 1 تشكن 2 استربس ملاحظة بدون شطة",
+      "original": "1 تشكن 2 استربس ملاحظة بدون شطة",
+      "selector": "#newItems",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.field.ff51catname",
+      "screen": "catalog",
+      "label": "حقل: القسم",
+      "original": "القسم",
+      "selector": "label:has(+ #ff51CatName)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.hint.ff51catname",
+      "screen": "catalog",
+      "label": "تلميح: الوجبات الرئيسية",
+      "original": "الوجبات الرئيسية",
+      "selector": "#ff51CatName",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.field.ff51itemname",
+      "screen": "catalog",
+      "label": "حقل: اسم الصنف",
+      "original": "اسم الصنف",
+      "selector": "label:has(+ #ff51ItemName)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.field.ff51itemprice",
+      "screen": "catalog",
+      "label": "حقل: السعر بالريال",
+      "original": "السعر بالريال",
+      "selector": "label:has(+ #ff51ItemPrice)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.field.ff51offername",
+      "screen": "catalog",
+      "label": "حقل: اسم العرض",
+      "original": "اسم العرض",
+      "selector": "label:has(+ #ff51OfferName)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.field.ff51offerprice",
+      "screen": "catalog",
+      "label": "حقل: سعر العرض",
+      "original": "سعر العرض",
+      "selector": "label:has(+ #ff51OfferPrice)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "customers.hint.ff51customersearch",
+      "screen": "customers",
+      "label": "تلميح: ابحث برقم الهاتف أو اسم العميل",
+      "original": "ابحث برقم الهاتف أو اسم العميل",
+      "selector": "#ff51CustomerSearch",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "customers.field.ff51customernotetext",
+      "screen": "customers",
+      "label": "حقل: إضافة ملاحظة",
+      "original": "إضافة ملاحظة",
+      "selector": "label:has(+ #ff51CustomerNoteText)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "reports.field.ff76from",
+      "screen": "reports",
+      "label": "حقل: من تاريخ",
+      "original": "من تاريخ",
+      "selector": "label:has(> #ff76From)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ff76to",
+      "screen": "reports",
+      "label": "حقل: إلى تاريخ",
+      "original": "إلى تاريخ",
+      "selector": "label:has(> #ff76To)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ff76branch",
+      "screen": "reports",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(> #ff76Branch)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ff76driver",
+      "screen": "reports",
+      "label": "حقل: موصل محدد",
+      "original": "موصل محدد",
+      "selector": "label:has(> #ff76Driver)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ffa10staff",
+      "screen": "reports",
+      "label": "حقل: الموظف",
+      "original": "الموظف",
+      "selector": "label:has(> #ffA10Staff)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ffa10area",
+      "screen": "reports",
+      "label": "حقل: المنطقة",
+      "original": "المنطقة",
+      "selector": "label:has(> #ffA10Area)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ffa10item",
+      "screen": "reports",
+      "label": "حقل: الصنف (طلبات تحتويه)",
+      "original": "الصنف (طلبات تحتويه)",
+      "selector": "label:has(> #ffA10Item)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ffa10status",
+      "screen": "reports",
+      "label": "حقل: حالة الطلب",
+      "original": "حالة الطلب",
+      "selector": "label:has(> #ffA10Status)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ff76mode",
+      "screen": "reports",
+      "label": "حقل: محتوى التقرير",
+      "original": "محتوى التقرير",
+      "selector": "label:has(> #ff76Mode)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ff76trend",
+      "screen": "reports",
+      "label": "حقل: تجميع الرسم البياني",
+      "original": "تجميع الرسم البياني",
+      "selector": "label:has(> #ff76Trend)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "archive.field.ff51archivefrom",
+      "screen": "archive",
+      "label": "حقل: من تاريخ",
+      "original": "من تاريخ",
+      "selector": "label:has(+ #ff51ArchiveFrom)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "archive.field.ff51archiveto",
+      "screen": "archive",
+      "label": "حقل: إلى تاريخ",
+      "original": "إلى تاريخ",
+      "selector": "label:has(+ #ff51ArchiveTo)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "archive.field.ff51archivestatus",
+      "screen": "archive",
+      "label": "حقل: الحالة",
+      "original": "الحالة",
+      "selector": "label:has(+ #ff51ArchiveStatus)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "archive.field.ff51archivebranch",
+      "screen": "archive",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(+ #ff51ArchiveBranch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "ratings.field.ff51ratingbranch",
+      "screen": "ratings",
+      "label": "حقل: فرع تقييمات الموصلين",
+      "original": "فرع تقييمات الموصلين",
+      "selector": "label:has(+ #ff51RatingBranch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "reservations.field.ff49reservebranch",
+      "screen": "reservations",
+      "label": "حقل: فرع الاستلام",
+      "original": "فرع الاستلام",
+      "selector": "label:has(+ #ff49ReserveBranch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "reservations.field.ff49reservename",
+      "screen": "reservations",
+      "label": "حقل: اسم العميل",
+      "original": "اسم العميل",
+      "selector": "label:has(+ #ff49ReserveName)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "reservations.field.ff49reservephone",
+      "screen": "reservations",
+      "label": "حقل: الهاتف",
+      "original": "الهاتف",
+      "selector": "label:has(+ #ff49ReservePhone)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "reservations.field.ff49reservenotes",
+      "screen": "reservations",
+      "label": "حقل: ملاحظات الحجز",
+      "original": "ملاحظات الحجز",
+      "selector": "label:has(+ #ff49ReserveNotes)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "reservations.field.ff49reservepickup",
+      "screen": "reservations",
+      "label": "حقل: موعد الاستلام بتوقيت اليمن (اختياري)",
+      "original": "موعد الاستلام بتوقيت اليمن (اختياري)",
+      "selector": "label:has(+ #ff49ReservePickup)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "reservations.field.ff49reserveitems",
+      "screen": "reservations",
+      "label": "حقل: الأصناف — كل صنف بسطر ويبدأ بالعدد",
+      "original": "الأصناف — كل صنف بسطر ويبدأ بالعدد",
+      "selector": "label:has(+ #ff49ReserveItems)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "reservations.hint.ff49reserveitems",
+      "screen": "reservations",
+      "label": "تلميح: 1 تشكن | 1500 2 استربس | 900",
+      "original": "1 تشكن | 1500 2 استربس | 900",
+      "selector": "#ff49ReserveItems",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41kind",
+      "screen": "cases",
+      "label": "حقل: نوع البلاغ",
+      "original": "نوع البلاغ",
+      "selector": "label:has(+ #ff41Kind)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41branch",
+      "screen": "cases",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(+ #ff41Branch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41priority",
+      "screen": "cases",
+      "label": "حقل: الأولوية",
+      "original": "الأولوية",
+      "selector": "label:has(+ #ff41Priority)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41subject",
+      "screen": "cases",
+      "label": "حقل: عنوان البلاغ",
+      "original": "عنوان البلاغ",
+      "selector": "label:has(+ #ff41Subject)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.hint.ff41subject",
+      "screen": "cases",
+      "label": "تلميح: عنوان واضح ومختصر",
+      "original": "عنوان واضح ومختصر",
+      "selector": "#ff41Subject",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41description",
+      "screen": "cases",
+      "label": "حقل: التفاصيل",
+      "original": "التفاصيل",
+      "selector": "label:has(+ #ff41Description)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.hint.ff41description",
+      "screen": "cases",
+      "label": "تلميح: اكتب المشكلة أو التظلم بوضوح، دون إدخال معلومات غير ضرورية",
+      "original": "اكتب المشكلة أو التظلم بوضوح، دون إدخال معلومات غير ضرورية",
+      "selector": "#ff41Description",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41filterkind",
+      "screen": "cases",
+      "label": "حقل: النوع",
+      "original": "النوع",
+      "selector": "label:has(+ #ff41FilterKind)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41filterstatus",
+      "screen": "cases",
+      "label": "حقل: الحالة",
+      "original": "الحالة",
+      "selector": "label:has(+ #ff41FilterStatus)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "messages.field.ff39title",
+      "screen": "messages",
+      "label": "حقل: عنوان الرسالة",
+      "original": "عنوان الرسالة",
+      "selector": "label:has(+ #ff39Title)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "messages.field.ff39role",
+      "screen": "messages",
+      "label": "حقل: المستلمون",
+      "original": "المستلمون",
+      "selector": "label:has(+ #ff39Role)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "messages.field.ff39branch",
+      "screen": "messages",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(+ #ff39Branch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "messages.field.ff39body",
+      "screen": "messages",
+      "label": "حقل: نص الرسالة",
+      "original": "نص الرسالة",
+      "selector": "label:has(+ #ff39Body)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "messages.hint.ff39body",
+      "screen": "messages",
+      "label": "تلميح: اكتب التعليمات أو التنبيه الإداري...",
+      "original": "اكتب التعليمات أو التنبيه الإداري...",
+      "selector": "#ff39Body",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.control.ff42load",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: عرض التسويات",
+      "original": "عرض التسويات",
+      "selector": "#ff42Load",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.control.ff42export",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: تصدير CSV",
+      "original": "تصدير CSV",
+      "selector": "#ff42Export",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.control.ff42closepanel",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff42ClosePanel",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.control.ff42save",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: حفظ التسوية",
+      "original": "حفظ التسوية",
+      "selector": "#ff42Save",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.control.ff42closesettlement",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: 🔒 إقفال التسوية",
+      "original": "🔒 إقفال التسوية",
+      "selector": "#ff42CloseSettlement",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.control.ff42showdetail",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: عرض الطلبات والسجل",
+      "original": "عرض الطلبات والسجل",
+      "selector": "#ff42ShowDetail",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.field.ff42day",
+      "screen": "finance",
+      "label": "حقل: تاريخ التسليم",
+      "original": "تاريخ التسليم",
+      "selector": "label:has(+ #ff42Day)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.field.ff42branch",
+      "screen": "finance",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(+ #ff42Branch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.field.ff42cashdue",
+      "screen": "finance",
+      "label": "حقل: النقد الواجب توريده (ريال يمني)",
+      "original": "النقد الواجب توريده (ريال يمني)",
+      "selector": "label:has(+ #ff42CashDue)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.hint.ff42cashdue",
+      "screen": "finance",
+      "label": "تلميح: أدخل الرقم المعتمد يدويًا",
+      "original": "أدخل الرقم المعتمد يدويًا",
+      "selector": "#ff42CashDue",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.field.ff42cashreceived",
+      "screen": "finance",
+      "label": "حقل: النقد المستلم فعليًا (ريال يمني)",
+      "original": "النقد المستلم فعليًا (ريال يمني)",
+      "selector": "label:has(+ #ff42CashReceived)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.hint.ff42cashreceived",
+      "screen": "finance",
+      "label": "تلميح: أدخل المستلم فعليًا",
+      "original": "أدخل المستلم فعليًا",
+      "selector": "#ff42CashReceived",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.field.ff42notes",
+      "screen": "finance",
+      "label": "حقل: توضيح المدفوعات غير النقدية أو فروقات التوريد",
+      "original": "توضيح المدفوعات غير النقدية أو فروقات التوريد",
+      "selector": "label:has(+ #ff42Notes)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.hint.ff42notes",
+      "screen": "finance",
+      "label": "تلميح: مثلاً: طلبات على حساب شركة توصيل / دفع إلكتروني / مبلغ لم يستلم بعد",
+      "original": "مثلاً: طلبات على حساب شركة توصيل / دفع إلكتروني / مبلغ لم يستلم بعد",
+      "selector": "#ff42Notes",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "branches.control.ffa05branchpolicybtn",
+      "screen": "branches",
+      "label": "توضيح يحفظ النص الأصلي: ساعات العمل والرسوم وسجل الأسعار",
+      "original": "ساعات العمل والرسوم وسجل الأسعار",
+      "selector": "#ffA05BranchPolicyBtn",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "branches.control.ffa05close",
+      "screen": "branches",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ffA05Close",
+      "mode": "protected",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.control.ffa05savehours",
+      "screen": "branches",
+      "label": "توضيح يحفظ النص الأصلي: حفظ ساعات اليوم",
+      "original": "حفظ ساعات اليوم",
+      "selector": "#ffA05SaveHours",
+      "mode": "protected",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.control.ffa05savetariff",
+      "screen": "branches",
+      "label": "توضيح يحفظ النص الأصلي: حفظ الرسم",
+      "original": "حفظ الرسم",
+      "selector": "#ffA05SaveTariff",
+      "mode": "protected",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.control.ffa05pricehistory",
+      "screen": "branches",
+      "label": "توضيح يحفظ النص الأصلي: سجل أسعار الأصناف والعروض",
+      "original": "سجل أسعار الأصناف والعروض",
+      "selector": "#ffA05PriceHistory",
+      "mode": "protected",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.field.ffa05policybranch",
+      "screen": "branches",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(> #ffA05PolicyBranch)",
+      "mode": "label",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.field.ffa05effective",
+      "screen": "branches",
+      "label": "حقل: وقت السريان (اختياري)",
+      "original": "وقت السريان (اختياري)",
+      "selector": "label:has(> #ffA05Effective)",
+      "mode": "label",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.field.ffa05reason",
+      "screen": "branches",
+      "label": "حقل: سبب التغيير",
+      "original": "سبب التغيير",
+      "selector": "label:has(> #ffA05Reason)",
+      "mode": "label",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.hint.ffa05reason",
+      "screen": "branches",
+      "label": "تلميح: سبب معتمد من الإدارة",
+      "original": "سبب معتمد من الإدارة",
+      "selector": "#ffA05Reason",
+      "mode": "hint",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.field.ffa05day",
+      "screen": "branches",
+      "label": "حقل: اليوم",
+      "original": "اليوم",
+      "selector": "label:has(> #ffA05Day)",
+      "mode": "label",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.field.ffa05open",
+      "screen": "branches",
+      "label": "حقل: فتح",
+      "original": "فتح",
+      "selector": "label:has(> #ffA05Open)",
+      "mode": "label",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.field.ffa05closetime",
+      "screen": "branches",
+      "label": "حقل: إغلاق",
+      "original": "إغلاق",
+      "selector": "label:has(> #ffA05CloseTime)",
+      "mode": "label",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.field.ffa05shift",
+      "screen": "branches",
+      "label": "حقل: تبديل الوردية (اختياري)",
+      "original": "تبديل الوردية (اختياري)",
+      "selector": "label:has(> #ffA05Shift)",
+      "mode": "label",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.field.ffa05area",
+      "screen": "branches",
+      "label": "حقل: المنطقة",
+      "original": "المنطقة",
+      "selector": "label:has(> #ffA05Area)",
+      "mode": "label",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "branches.field.ffa05tariff",
+      "screen": "branches",
+      "label": "حقل: الرسم بالريال",
+      "original": "الرسم بالريال",
+      "selector": "label:has(> #ffA05Tariff)",
+      "mode": "label",
+      "source": "scripts/luxe-a05-branch-policy.js"
+    },
+    {
+      "key": "system.control.ff47reload",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: تحديث النتائج",
+      "original": "تحديث النتائج",
+      "selector": "#ff47Reload",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff47close",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff47Close",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ff47version",
+      "screen": "system",
+      "label": "حقل: رقم النسخة",
+      "original": "رقم النسخة",
+      "selector": "label:has(> #ff47Version)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ff47title",
+      "screen": "system",
+      "label": "حقل: عنوان الجولة",
+      "original": "عنوان الجولة",
+      "selector": "label:has(> #ff47Title)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff47create",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: إنشاء جولة اختبار",
+      "original": "إنشاء جولة اختبار",
+      "selector": "#ff47Create",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ff47runs",
+      "screen": "system",
+      "label": "حقل: الجولات المحفوظة",
+      "original": "الجولات المحفوظة",
+      "selector": "label:has(> #ff47Runs)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff47export",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: تصدير النتائج CSV",
+      "original": "تصدير النتائج CSV",
+      "selector": "#ff47Export",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff47finish",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: اعتماد اكتمال الجولة",
+      "original": "اعتماد اكتمال الجولة",
+      "selector": "#ff47Finish",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff47reopen",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: إعادة فتح الجولة",
+      "original": "إعادة فتح الجولة",
+      "selector": "#ff47Reopen",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ff47category",
+      "screen": "system",
+      "label": "حقل: القسم",
+      "original": "القسم",
+      "selector": "label:has(> #ff47Category)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ff47filter",
+      "screen": "system",
+      "label": "حقل: النتيجة",
+      "original": "النتيجة",
+      "selector": "label:has(> #ff47Filter)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff46run",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: فحص جاهزية النسخة",
+      "original": "فحص جاهزية النسخة",
+      "selector": "#ff46Run",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff46export",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: تصدير CSV",
+      "original": "تصدير CSV",
+      "selector": "#ff46Export",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff46close",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff46Close",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff45run",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: فحص الوصول",
+      "original": "فحص الوصول",
+      "selector": "#ff45Run",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff45export",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: تصدير CSV",
+      "original": "تصدير CSV",
+      "selector": "#ff45Export",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff45close",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff45Close",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff44export",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: تصدير النتائج CSV",
+      "original": "تصدير النتائج CSV",
+      "selector": "#ff44Export",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff44close",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff44Close",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ff44from",
+      "screen": "system",
+      "label": "حقل: من تاريخ",
+      "original": "من تاريخ",
+      "selector": "label:has(+ #ff44From)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ff44to",
+      "screen": "system",
+      "label": "حقل: إلى تاريخ",
+      "original": "إلى تاريخ",
+      "selector": "label:has(+ #ff44To)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff44run",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: بدء فحص البيانات",
+      "original": "بدء فحص البيانات",
+      "selector": "#ff44Run",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff43run",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: فحص الآن",
+      "original": "فحص الآن",
+      "selector": "#ff43Run",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff43export",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: تصدير نتائج CSV",
+      "original": "تصدير نتائج CSV",
+      "selector": "#ff43Export",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff43close",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff43Close",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41order",
+      "screen": "cases",
+      "label": "حقل: الطلب المرتبط (اختياري)",
+      "original": "الطلب المرتبط (اختياري)",
+      "selector": "label:has(+ #ff41Order)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41customername",
+      "screen": "cases",
+      "label": "حقل: اسم العميل (اختياري)",
+      "original": "اسم العميل (اختياري)",
+      "selector": "label:has(+ #ff41CustomerName)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.hint.ff41customername",
+      "screen": "cases",
+      "label": "تلميح: اسم العميل",
+      "original": "اسم العميل",
+      "selector": "#ff41CustomerName",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41customerphone",
+      "screen": "cases",
+      "label": "حقل: رقم التواصل (اختياري)",
+      "original": "رقم التواصل (اختياري)",
+      "selector": "label:has(+ #ff41CustomerPhone)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41channel",
+      "screen": "cases",
+      "label": "حقل: مصدر الشكوى",
+      "original": "مصدر الشكوى",
+      "selector": "label:has(+ #ff41Channel)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.control.ff41create",
+      "screen": "cases",
+      "label": "نص: حفظ البلاغ",
+      "original": "حفظ البلاغ",
+      "selector": "#ff41Create",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "messages.control.ff39send",
+      "screen": "messages",
+      "label": "توضيح يحفظ النص الأصلي: إرسال التعميم",
+      "original": "إرسال التعميم",
+      "selector": "#ff39Send",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "messages.control.ff39sentrefresh",
+      "screen": "messages",
+      "label": "توضيح يحفظ النص الأصلي: سجل الإرسال",
+      "original": "سجل الإرسال",
+      "selector": "#ff39SentRefresh",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff40alertrefresh",
+      "screen": "dashboard",
+      "label": "نص: تحديث التنبيهات",
+      "original": "تحديث التنبيهات",
+      "selector": "#ff40AlertRefresh",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff40alertsclose",
+      "screen": "dashboard",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff40AlertsClose",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff40alertbranch",
+      "screen": "dashboard",
+      "label": "حقل: فلتر الفرع",
+      "original": "فلتر الفرع",
+      "selector": "label:has(+ #ff40AlertBranch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.control.ffeditmyaccount",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: ✏️ تعديل حساب المدير",
+      "original": "✏️ تعديل حساب المدير",
+      "selector": "#ffEditMyAccount",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.ffa05staffsearch",
+      "screen": "staff",
+      "label": "حقل: بحث الموظفين",
+      "original": "بحث الموظفين",
+      "selector": "label:has(> #ffA05StaffSearch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.ffa05staffrole",
+      "screen": "staff",
+      "label": "حقل: الدور",
+      "original": "الدور",
+      "selector": "label:has(> #ffA05StaffRole)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.ffa05staffactive",
+      "screen": "staff",
+      "label": "حقل: الحالة",
+      "original": "الحالة",
+      "selector": "label:has(> #ffA05StaffActive)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.ffa05staffsort",
+      "screen": "staff",
+      "label": "حقل: الفرز",
+      "original": "الفرز",
+      "selector": "label:has(> #ffA05StaffSort)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.permissionemployee",
+      "screen": "staff",
+      "label": "حقل: الموظف",
+      "original": "الموظف",
+      "selector": "label:has(+ #permissionEmployee)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.control.ff51catalogclose",
+      "screen": "catalog",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff51CatalogClose",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.field.ffcatalogcardtarget",
+      "screen": "catalog",
+      "label": "حقل: الصنف أو العرض",
+      "original": "الصنف أو العرض",
+      "selector": "label:has(> #ffCatalogCardTarget)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.field.ffcatalogcardsort",
+      "screen": "catalog",
+      "label": "حقل: ترتيب البطاقة (الأصغر أولًا)",
+      "original": "ترتيب البطاقة (الأصغر أولًا)",
+      "selector": "label:has(+ #ffCatalogCardSort)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.field.ffcatalogcardstyle",
+      "screen": "catalog",
+      "label": "حقل: تصميم البطاقة",
+      "original": "تصميم البطاقة",
+      "selector": "label:has(+ #ffCatalogCardStyle)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.control.ffcatalogcardsave",
+      "screen": "catalog",
+      "label": "نص: حفظ تصميم البطاقة مركزيًا",
+      "original": "حفظ تصميم البطاقة مركزيًا",
+      "selector": "#ffCatalogCardSave",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.field.ffaliastarget",
+      "screen": "catalog",
+      "label": "حقل: الصنف أو العرض",
+      "original": "الصنف أو العرض",
+      "selector": "label:has(> #ffAliasTarget)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.field.ffaliasnames",
+      "screen": "catalog",
+      "label": "حقل: المرادفات، كل مرادف في سطر",
+      "original": "المرادفات، كل مرادف في سطر",
+      "selector": "label:has(> #ffAliasNames)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.control.ffaliassave",
+      "screen": "catalog",
+      "label": "نص: حفظ المرادفات",
+      "original": "حفظ المرادفات",
+      "selector": "#ffAliasSave",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "catalog.control.ffaliasdefault",
+      "screen": "catalog",
+      "label": "توضيح يحفظ النص الأصلي: استعادة المرادفات الافتراضية",
+      "original": "استعادة المرادفات الافتراضية",
+      "selector": "#ffAliasDefault",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "customers.control.ff51customersclose",
+      "screen": "customers",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff51CustomersClose",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "archive.control.ff51archiveprev",
+      "screen": "archive",
+      "label": "نص: الصفحة السابقة",
+      "original": "الصفحة السابقة",
+      "selector": "#ff51ArchivePrev",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "archive.control.ff51archivenext",
+      "screen": "archive",
+      "label": "نص: الصفحة التالية",
+      "original": "الصفحة التالية",
+      "selector": "#ff51ArchiveNext",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ff50refresh",
+      "screen": "orders",
+      "label": "نص: تحديث",
+      "original": "تحديث",
+      "selector": "#ff50Refresh",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ff50close",
+      "screen": "orders",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff50Close",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.field.ff50requestitems",
+      "screen": "orders",
+      "label": "حقل: الأصناف الجديدة كاملة (كل صنف يبدأ بالعدد)",
+      "original": "الأصناف الجديدة كاملة (كل صنف يبدأ بالعدد)",
+      "selector": "label:has(+ #ff50RequestItems)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.field.ff50requestreason",
+      "screen": "orders",
+      "label": "حقل: سبب التعديل",
+      "original": "سبب التعديل",
+      "selector": "label:has(+ #ff50RequestReason)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.hint.ff50requestreason",
+      "screen": "orders",
+      "label": "تلميح: اشرح ما طلبه العميل (إلزامي)",
+      "original": "اشرح ما طلبه العميل (إلزامي)",
+      "selector": "#ff50RequestReason",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ff50requestsave",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: إرسال طلب التعديل للكاشير",
+      "original": "إرسال طلب التعديل للكاشير",
+      "selector": "#ff50RequestSave",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ff50requestcancel",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: إلغاء",
+      "original": "إلغاء",
+      "selector": "#ff50RequestCancel",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ff49transferrefresh",
+      "screen": "orders",
+      "label": "نص: تحديث",
+      "original": "تحديث",
+      "selector": "#ff49TransferRefresh",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ff49transferclose",
+      "screen": "orders",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff49TransferClose",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "reservations.control.ff49reservesave",
+      "screen": "reservations",
+      "label": "توضيح يحفظ النص الأصلي: حفظ الحجز وإرساله لكاشير الفرع",
+      "original": "حفظ الحجز وإرساله لكاشير الفرع",
+      "selector": "#ff49ReserveSave",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "assembly.control.ff66assemblysoundsettings",
+      "screen": "assembly",
+      "label": "نص: 🔔 النغمات",
+      "original": "🔔 النغمات",
+      "selector": "#ff66AssemblySoundSettings",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.control.ffeditclose",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق ✕",
+      "original": "إغلاق ✕",
+      "selector": "#ffEditClose",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.control.ffeditsave",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: 💾 حفظ البيانات",
+      "original": "💾 حفظ البيانات",
+      "selector": "#ffEditSave",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.field.ordersearch",
+      "screen": "orders",
+      "label": "حقل: رقم الطلب أو الهاتف أو اسم العميل أو المنطقة",
+      "original": "رقم الطلب أو الهاتف أو اسم العميل أو المنطقة",
+      "selector": "label:has(+ #orderSearch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.field.orderbranchfilter",
+      "screen": "orders",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(+ #orderBranchFilter)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.field.orderstatusfilter",
+      "screen": "orders",
+      "label": "حقل: الحالة",
+      "original": "الحالة",
+      "selector": "label:has(+ #orderStatusFilter)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.auditrefreshbtn",
+      "screen": "orders",
+      "label": "نص: تحديث السجل",
+      "original": "تحديث السجل",
+      "selector": "#auditRefreshBtn",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ff49manualclose",
+      "screen": "orders",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff49ManualClose",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.field.ff49manualdriver",
+      "screen": "orders",
+      "label": "حقل: الموصل المرشح",
+      "original": "الموصل المرشح",
+      "selector": "label:has(+ #ff49ManualDriver)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.field.ff49manualreason",
+      "screen": "orders",
+      "label": "حقل: سبب اختيار الموصل",
+      "original": "سبب اختيار الموصل",
+      "selector": "label:has(+ #ff49ManualReason)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.hint.ff49manualreason",
+      "screen": "orders",
+      "label": "تلميح: مثال: في طريقه لنفس المنطقة",
+      "original": "مثال: في طريقه لنفس المنطقة",
+      "selector": "#ff49ManualReason",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ff49manualconfirm",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: تأكيد الإسناد وتوثيق السبب",
+      "original": "تأكيد الإسناد وتوثيق السبب",
+      "selector": "#ff49ManualConfirm",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ff52lateclose",
+      "screen": "orders",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff52LateClose",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.field.ff52lateitems",
+      "screen": "orders",
+      "label": "حقل: الأصناف (العدد أولًا، مع السعر أو اسم من المنيو)",
+      "original": "الأصناف (العدد أولًا، مع السعر أو اسم من المنيو)",
+      "selector": "label:has(+ #ff52LateItems)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.hint.ff52lateitems",
+      "screen": "orders",
+      "label": "تلميح: 1 تشكن | 1500 2 بطاطس | 300",
+      "original": "1 تشكن | 1500 2 بطاطس | 300",
+      "selector": "#ff52LateItems",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ff75latepreview",
+      "screen": "orders",
+      "label": "نص: 🔎 تحليل ومعاينة الإضافة",
+      "original": "🔎 تحليل ومعاينة الإضافة",
+      "selector": "#ff75LatePreview",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ff52latesave",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: تأكيد إرسال الإضافة إلى الموصل للموافقة",
+      "original": "تأكيد إرسال الإضافة إلى الموصل للموافقة",
+      "selector": "#ff52LateSave",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ffbclosereview",
+      "screen": "orders",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ffbCloseReview",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ffbconfirmsave",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: تأكيد إنشاء الطلب",
+      "original": "تأكيد إنشاء الطلب",
+      "selector": "#ffbConfirmSave",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ffbcancelreview",
+      "screen": "orders",
+      "label": "نص: عودة للتعديل",
+      "original": "عودة للتعديل",
+      "selector": "#ffbCancelReview",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.control.ff52routesclose",
+      "screen": "driver",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff52RoutesClose",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.field.ff52routebranch",
+      "screen": "driver",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(+ #ff52RouteBranch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.field.ff52routedriver",
+      "screen": "driver",
+      "label": "حقل: الموصل",
+      "original": "الموصل",
+      "selector": "label:has(+ #ff52RouteDriver)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.field.ff52routeareas",
+      "screen": "driver",
+      "label": "حقل: المناطق — افصل بينها بالفاصلة (،)",
+      "original": "المناطق — افصل بينها بالفاصلة (،)",
+      "selector": "label:has(+ #ff52RouteAreas)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.field.ff52routestart",
+      "screen": "driver",
+      "label": "حقل: من الساعة",
+      "original": "من الساعة",
+      "selector": "label:has(+ #ff52RouteStart)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.field.ff52routeend",
+      "screen": "driver",
+      "label": "حقل: حتى",
+      "original": "حتى",
+      "selector": "label:has(+ #ff52RouteEnd)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.field.ff52routeactive",
+      "screen": "driver",
+      "label": "حقل: حالة التوجيه",
+      "original": "حالة التوجيه",
+      "selector": "label:has(+ #ff52RouteActive)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.control.ff52routesave",
+      "screen": "driver",
+      "label": "نص: حفظ قاعدة التوجيه",
+      "original": "حفظ قاعدة التوجيه",
+      "selector": "#ff52RouteSave",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.addemail",
+      "screen": "staff",
+      "label": "حقل: بريد الموظف",
+      "original": "بريد الموظف",
+      "selector": "label:has(+ #addEmail)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.addname",
+      "screen": "staff",
+      "label": "حقل: اسم الموظف",
+      "original": "اسم الموظف",
+      "selector": "label:has(+ #addName)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.hint.addname",
+      "screen": "staff",
+      "label": "تلميح: اسم الموظف",
+      "original": "اسم الموظف",
+      "selector": "#addName",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.addrole",
+      "screen": "staff",
+      "label": "حقل: الدور",
+      "original": "الدور",
+      "selector": "label:has(+ #addRole)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.addbranch",
+      "screen": "staff",
+      "label": "حقل: الفرع (للموصل والكاشير ونقطة التجميع)",
+      "original": "الفرع (للموصل والكاشير ونقطة التجميع)",
+      "selector": "label:has(+ #addBranch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.control.linkuserbtn",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: ربط الحساب",
+      "original": "ربط الحساب",
+      "selector": "#linkUserBtn",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff60_refresh",
+      "screen": "dashboard",
+      "label": "نص: تحديث البيانات",
+      "original": "تحديث البيانات",
+      "selector": "#ff60-refresh",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff60_close",
+      "screen": "dashboard",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff60-close",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff60_search",
+      "screen": "dashboard",
+      "label": "حقل: بحث برقم الطلب أو المنطقة",
+      "original": "بحث برقم الطلب أو المنطقة",
+      "selector": "label:has(> #ff60-search)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.hint.ff60_search",
+      "screen": "dashboard",
+      "label": "تلميح: بحث سريع",
+      "original": "بحث سريع",
+      "selector": "#ff60-search",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff60_branch",
+      "screen": "dashboard",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(> #ff60-branch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff60_state",
+      "screen": "dashboard",
+      "label": "حقل: مرحلة الطلب",
+      "original": "مرحلة الطلب",
+      "selector": "label:has(> #ff60-state)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff60_open_old",
+      "screen": "dashboard",
+      "label": "نص: الواجهة الأصلية",
+      "original": "الواجهة الأصلية",
+      "selector": "#ff60-open-old",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff60_fast",
+      "screen": "dashboard",
+      "label": "حقل: عند وجود موصل بديل جاهز (بالدقائق)",
+      "original": "عند وجود موصل بديل جاهز (بالدقائق)",
+      "selector": "label:has(> #ff60-fast)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff60_slow",
+      "screen": "dashboard",
+      "label": "حقل: عند عدم وجود بديل (بالدقائق)",
+      "original": "عند عدم وجود بديل (بالدقائق)",
+      "selector": "label:has(> #ff60-slow)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff60_save_policy",
+      "screen": "dashboard",
+      "label": "نص: حفظ المهل للطلبات الجديدة",
+      "original": "حفظ المهل للطلبات الجديدة",
+      "selector": "#ff60-save-policy",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff4_refresh",
+      "screen": "dashboard",
+      "label": "نص: تحديث البيانات",
+      "original": "تحديث البيانات",
+      "selector": "#ff4-refresh",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff4_export",
+      "screen": "dashboard",
+      "label": "نص: تصدير CSV",
+      "original": "تصدير CSV",
+      "selector": "#ff4-export",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff4_close",
+      "screen": "dashboard",
+      "label": "نص: إغلاق ×",
+      "original": "إغلاق ×",
+      "selector": "#ff4-close",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff4_search",
+      "screen": "dashboard",
+      "label": "حقل: بحث برقم الطلب أو المنطقة",
+      "original": "بحث برقم الطلب أو المنطقة",
+      "selector": "label:has(> #ff4-search)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.hint.ff4_search",
+      "screen": "dashboard",
+      "label": "تلميح: بحث سريع",
+      "original": "بحث سريع",
+      "selector": "#ff4-search",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff4_branch",
+      "screen": "dashboard",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(> #ff4-branch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff4_state",
+      "screen": "dashboard",
+      "label": "حقل: الحالة",
+      "original": "الحالة",
+      "selector": "label:has(> #ff4-state)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff4_minutes",
+      "screen": "dashboard",
+      "label": "حقل: حد التأخير بالدقائق",
+      "original": "حد التأخير بالدقائق",
+      "selector": "label:has(> #ff4-minutes)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff5_refresh",
+      "screen": "dashboard",
+      "label": "نص: تحديث مباشر",
+      "original": "تحديث مباشر",
+      "selector": "#ff5-refresh",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff5_export",
+      "screen": "dashboard",
+      "label": "نص: تصدير المتابعة CSV",
+      "original": "تصدير المتابعة CSV",
+      "selector": "#ff5-export",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff5_close",
+      "screen": "dashboard",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff5-close",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff5_search",
+      "screen": "dashboard",
+      "label": "حقل: بحث الطلب / المنطقة",
+      "original": "بحث الطلب / المنطقة",
+      "selector": "label:has(> #ff5-search)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.hint.ff5_search",
+      "screen": "dashboard",
+      "label": "تلميح: رقم الطلب أو المنطقة",
+      "original": "رقم الطلب أو المنطقة",
+      "selector": "#ff5-search",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff5_branch",
+      "screen": "dashboard",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(> #ff5-branch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff5_age",
+      "screen": "dashboard",
+      "label": "حقل: أقدم من (دقيقة)",
+      "original": "أقدم من (دقيقة)",
+      "selector": "label:has(> #ff5-age)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.field.ff5_sort",
+      "screen": "dashboard",
+      "label": "حقل: الترتيب",
+      "original": "الترتيب",
+      "selector": "label:has(> #ff5-sort)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.field.additionitemsinput",
+      "screen": "orders",
+      "label": "حقل: محلّل أصناف الإضافة",
+      "original": "محلّل أصناف الإضافة",
+      "selector": "label:has(+ #additionItemsInput)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.hint.additionitemsinput",
+      "screen": "orders",
+      "label": "تلميح: 1 تشكن بدون شطة 1 جبن ذرة ملاحظة الاتصال بالعميل",
+      "original": "1 تشكن بدون شطة 1 جبن ذرة ملاحظة الاتصال بالعميل",
+      "selector": "#additionItemsInput",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41nextstatus",
+      "screen": "cases",
+      "label": "حقل: الحالة التالية",
+      "original": "الحالة التالية",
+      "selector": "label:has(+ #ff41NextStatus)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.field.ff41resolution",
+      "screen": "cases",
+      "label": "حقل: الحل أو الملاحظة (إلزامي عند «تم الحل»)",
+      "original": "الحل أو الملاحظة (إلزامي عند «تم الحل»)",
+      "selector": "label:has(+ #ff41Resolution)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.hint.ff41resolution",
+      "screen": "cases",
+      "label": "تلميح: اشرح الإجراء المتخذ أو الحل المقترح",
+      "original": "اشرح الإجراء المتخذ أو الحل المقترح",
+      "selector": "#ff41Resolution",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "cases.hint.ff41commentbody",
+      "screen": "cases",
+      "label": "تلميح: اكتب ردك أو الملاحظة...",
+      "original": "اكتب ردك أو الملاحظة...",
+      "selector": "#ff41CommentBody",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ffx_kpi_reload",
+      "screen": "dashboard",
+      "label": "نص: تحديث",
+      "original": "تحديث",
+      "selector": "#ffx-kpi-reload",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ffx_open_alerts",
+      "screen": "dashboard",
+      "label": "نص: عرض مركز المتابعة",
+      "original": "عرض مركز المتابعة",
+      "selector": "#ffx-open-alerts",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.hint.ff2_search",
+      "screen": "dashboard",
+      "label": "تلميح: ابحث عن صفحة أو وظيفة...",
+      "original": "ابحث عن صفحة أو وظيفة...",
+      "selector": "#ff2-search",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff3_close",
+      "screen": "dashboard",
+      "label": "نص: إغلاق ×",
+      "original": "إغلاق ×",
+      "selector": "#ff3-close",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ffx_density",
+      "screen": "system",
+      "label": "حقل: حجم الواجهة",
+      "original": "حجم الواجهة",
+      "selector": "label:has(+ #ffx-density)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ffx_auto",
+      "screen": "system",
+      "label": "حقل: الوضع الليلي تلقائيًا",
+      "original": "الوضع الليلي تلقائيًا",
+      "selector": "label:has(+ #ffx-auto)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ffx_reset",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: استعادة تفضيلات التصميم الافتراضية",
+      "original": "استعادة تفضيلات التصميم الافتراضية",
+      "selector": "#ffx-reset",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ffx_sound",
+      "screen": "system",
+      "label": "حقل: صوت الطلب الجديد والتنبيه",
+      "original": "صوت الطلب الجديد والتنبيه",
+      "selector": "label:has(+ #ffx-sound)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ffx_delay_sound",
+      "screen": "system",
+      "label": "حقل: صوت التأخير",
+      "original": "صوت التأخير",
+      "selector": "label:has(+ #ffx-delay-sound)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ffx_repeat",
+      "screen": "system",
+      "label": "حقل: إعادة تنبيه التأخير (دقائق)",
+      "original": "إعادة تنبيه التأخير (دقائق)",
+      "selector": "label:has(+ #ffx-repeat)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ffx_play_sound",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: تجربة النغمة",
+      "original": "تجربة النغمة",
+      "selector": "#ffx-play-sound",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ffx_play_delay",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: تجربة تنبيه التأخير",
+      "original": "تجربة تنبيه التأخير",
+      "selector": "#ffx-play-delay",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ffx_push_permission",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: 🔔 تفعيل إشعارات الخلفية واختبارها",
+      "original": "🔔 تفعيل إشعارات الخلفية واختبارها",
+      "selector": "#ffx-push-permission",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff_luxe_audio_unlock",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: 🔊 تفعيل وتشغيل النغمة التجريبية",
+      "original": "🔊 تفعيل وتشغيل النغمة التجريبية",
+      "selector": "#ff-luxe-audio-unlock",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ff66_tone_name",
+      "screen": "system",
+      "label": "حقل: اسم النغمة",
+      "original": "اسم النغمة",
+      "selector": "label:has(> #ff66-tone-name)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.hint.ff66_tone_name",
+      "screen": "system",
+      "label": "تلميح: مثلاً: نغمة وصول طلب جديد",
+      "original": "مثلاً: نغمة وصول طلب جديد",
+      "selector": "#ff66-tone-name",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff66_tone_add",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: ➕ إضافة النغمة للمطعم",
+      "original": "➕ إضافة النغمة للمطعم",
+      "selector": "#ff66-tone-add",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ff66_tone_refresh",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: 🔄 تحديث مكتبة النغمات",
+      "original": "🔄 تحديث مكتبة النغمات",
+      "selector": "#ff66-tone-refresh",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "reports.control.ff40exportcsv",
+      "screen": "reports",
+      "label": "نص: تصدير CSV",
+      "original": "تصدير CSV",
+      "selector": "#ff40ExportCSV",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "reports.control.ff40reportsclose",
+      "screen": "reports",
+      "label": "نص: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ff40ReportsClose",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "reports.field.ff40from",
+      "screen": "reports",
+      "label": "حقل: من تاريخ",
+      "original": "من تاريخ",
+      "selector": "label:has(+ #ff40From)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "reports.field.ff40to",
+      "screen": "reports",
+      "label": "حقل: إلى تاريخ",
+      "original": "إلى تاريخ",
+      "selector": "label:has(+ #ff40To)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "reports.field.ff40reportbranch",
+      "screen": "reports",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(+ #ff40ReportBranch)",
+      "mode": "label",
+      "source": "index.html"
+    },
+    {
+      "key": "reports.control.ff40runreport",
+      "screen": "reports",
+      "label": "نص: إعداد التقرير",
+      "original": "إعداد التقرير",
+      "selector": "#ff40RunReport",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.control.ffeditshare",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: 📤 مشاركة بيانات الدخول",
+      "original": "📤 مشاركة بيانات الدخول",
+      "selector": "#ffEditShare",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "reports.control.ff76today",
+      "screen": "reports",
+      "label": "نص: اليوم التشغيلي",
+      "original": "اليوم التشغيلي",
+      "selector": "#ff76Today",
+      "mode": "text",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.control.ff76yesterday",
+      "screen": "reports",
+      "label": "نص: أمس",
+      "original": "أمس",
+      "selector": "#ff76Yesterday",
+      "mode": "text",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.control.ff76seven",
+      "screen": "reports",
+      "label": "نص: آخر 7 أيام",
+      "original": "آخر 7 أيام",
+      "selector": "#ff76Seven",
+      "mode": "text",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.control.ff76thirty",
+      "screen": "reports",
+      "label": "نص: آخر 30 يوماً",
+      "original": "آخر 30 يوماً",
+      "selector": "#ff76Thirty",
+      "mode": "text",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.control.ff76savepreset",
+      "screen": "reports",
+      "label": "نص: حفظ الاختيارات",
+      "original": "حفظ الاختيارات",
+      "selector": "#ff76SavePreset",
+      "mode": "text",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.control.ff76usepreset",
+      "screen": "reports",
+      "label": "نص: تطبيق القالب",
+      "original": "تطبيق القالب",
+      "selector": "#ff76UsePreset",
+      "mode": "text",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.control.ffa10grantsave",
+      "screen": "reports",
+      "label": "توضيح يحفظ النص الأصلي: حفظ التفويض",
+      "original": "حفظ التفويض",
+      "selector": "#ffA10GrantSave",
+      "mode": "protected",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.control.ff76saveapproval",
+      "screen": "reports",
+      "label": "توضيح يحفظ النص الأصلي: حفظ واعتماد التقرير",
+      "original": "حفظ واعتماد التقرير",
+      "selector": "#ff76SaveApproval",
+      "mode": "protected",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.control.ff76dlgdownload",
+      "screen": "reports",
+      "label": "نص: حفظ الملف",
+      "original": "حفظ الملف",
+      "selector": "#ff76DlgDownload",
+      "mode": "text",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.control.ff76dlgshare",
+      "screen": "reports",
+      "label": "نص: مشاركة الملف",
+      "original": "مشاركة الملف",
+      "selector": "#ff76DlgShare",
+      "mode": "text",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.control.ff76dlgclose",
+      "screen": "reports",
+      "label": "نص: ✕ إغلاق",
+      "original": "✕ إغلاق",
+      "selector": "#ff76DlgClose",
+      "mode": "text",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "messages.field.ffa11priority",
+      "screen": "messages",
+      "label": "حقل: أولوية الرسالة",
+      "original": "أولوية الرسالة",
+      "selector": "label:has(> #ffA11Priority)",
+      "mode": "label",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.field.ffa11route",
+      "screen": "messages",
+      "label": "حقل: انتقال داخلي اختياري",
+      "original": "انتقال داخلي اختياري",
+      "selector": "label:has(> #ffA11Route)",
+      "mode": "label",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.field.ffa11template",
+      "screen": "messages",
+      "label": "حقل: قالب محفوظ",
+      "original": "قالب محفوظ",
+      "selector": "label:has(> #ffA11Template)",
+      "mode": "label",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.field.ffa11templatename",
+      "screen": "messages",
+      "label": "حقل: اسم القالب",
+      "original": "اسم القالب",
+      "selector": "label:has(> #ffA11TemplateName)",
+      "mode": "label",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.control.ffa11templatesave",
+      "screen": "messages",
+      "label": "نص: حفظ القالب",
+      "original": "حفظ القالب",
+      "selector": "#ffA11TemplateSave",
+      "mode": "text",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.control.ffa11templatedelete",
+      "screen": "messages",
+      "label": "توضيح يحفظ النص الأصلي: حذف القالب المحدد",
+      "original": "حذف القالب المحدد",
+      "selector": "#ffA11TemplateDelete",
+      "mode": "protected",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.control.ffa11preview",
+      "screen": "messages",
+      "label": "نص: معاينة المستلمين",
+      "original": "معاينة المستلمين",
+      "selector": "#ffA11Preview",
+      "mode": "text",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.field.ffa11grantuser",
+      "screen": "messages",
+      "label": "حقل: الموظف",
+      "original": "الموظف",
+      "selector": "label:has(> #ffA11GrantUser)",
+      "mode": "label",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.field.ffa11grantrole",
+      "screen": "messages",
+      "label": "حقل: الفئة",
+      "original": "الفئة",
+      "selector": "label:has(> #ffA11GrantRole)",
+      "mode": "label",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.field.ffa11grantbranch",
+      "screen": "messages",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(> #ffA11GrantBranch)",
+      "mode": "label",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.control.ffa11grantsave",
+      "screen": "messages",
+      "label": "توضيح يحفظ النص الأصلي: منح التفويض",
+      "original": "منح التفويض",
+      "selector": "#ffA11GrantSave",
+      "mode": "protected",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.control.ffa11grantrefresh",
+      "screen": "messages",
+      "label": "توضيح يحفظ النص الأصلي: تحديث التفويضات",
+      "original": "تحديث التفويضات",
+      "selector": "#ffA11GrantRefresh",
+      "mode": "protected",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.control.ffa11audit",
+      "screen": "messages",
+      "label": "نص: سجل التدقيق",
+      "original": "سجل التدقيق",
+      "selector": "#ffA11Audit",
+      "mode": "text",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "system.field.ffa12scope",
+      "screen": "system",
+      "label": "حقل: نطاق البيانات",
+      "original": "نطاق البيانات",
+      "selector": "label:has(> #ffA12Scope)",
+      "mode": "label",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.field.ffa12branch",
+      "screen": "system",
+      "label": "حقل: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(> #ffA12Branch)",
+      "mode": "label",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.field.ffa12type",
+      "screen": "system",
+      "label": "حقل: نوع الطلب",
+      "original": "نوع الطلب",
+      "selector": "label:has(> #ffA12Type)",
+      "mode": "label",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.field.ffa12from",
+      "screen": "system",
+      "label": "حقل: من تاريخ (توقيت صنعاء)",
+      "original": "من تاريخ (توقيت صنعاء)",
+      "selector": "label:has(> #ffA12From)",
+      "mode": "label",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.field.ffa12to",
+      "screen": "system",
+      "label": "حقل: إلى تاريخ",
+      "original": "إلى تاريخ",
+      "selector": "label:has(> #ffA12To)",
+      "mode": "label",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.control.ffa12preview",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: معاينة التبعيات والأعداد",
+      "original": "معاينة التبعيات والأعداد",
+      "selector": "#ffA12Preview",
+      "mode": "protected",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.control.ffa12execute",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: حفظ نسخة على الخادم وتصفير المحدد",
+      "original": "حفظ نسخة على الخادم وتصفير المحدد",
+      "selector": "#ffA12Execute",
+      "mode": "protected",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.control.ffa12list",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: تحديث النسخ",
+      "original": "تحديث النسخ",
+      "selector": "#ffA12List",
+      "mode": "protected",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.field.ffa12batch",
+      "screen": "system",
+      "label": "حقل: اختر نسخة",
+      "original": "اختر نسخة",
+      "selector": "label:has(> #ffA12Batch)",
+      "mode": "label",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.control.ffa12restore",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: استرجاع النسخة والتحقق من تطابقها",
+      "original": "استرجاع النسخة والتحقق من تطابقها",
+      "selector": "#ffA12Restore",
+      "mode": "protected",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.field.ffa12fixturetype",
+      "screen": "system",
+      "label": "حقل: النوع",
+      "original": "النوع",
+      "selector": "label:has(> #ffA12FixtureType)",
+      "mode": "label",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.field.ffa12fixturedate",
+      "screen": "system",
+      "label": "حقل: تاريخ الاختبار",
+      "original": "تاريخ الاختبار",
+      "selector": "label:has(> #ffA12FixtureDate)",
+      "mode": "label",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.field.ffa12fixtureconfirm",
+      "screen": "system",
+      "label": "حقل: اكتب: إنشاء طلب اختبار",
+      "original": "اكتب: إنشاء طلب اختبار",
+      "selector": "label:has(> #ffA12FixtureConfirm)",
+      "mode": "label",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.control.ffa12fixture",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: إنشاء طلب الاختبار",
+      "original": "إنشاء طلب الاختبار",
+      "selector": "#ffA12Fixture",
+      "mode": "protected",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "messages.field.ffa11grantpriority",
+      "screen": "messages",
+      "label": "حقل: أقصى أولوية",
+      "original": "أقصى أولوية",
+      "selector": "label:has(> #ffA11GrantPriority)",
+      "mode": "label",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "messages.field.ffa11granthours",
+      "screen": "messages",
+      "label": "حقل: مدة التفويض بالساعات",
+      "original": "مدة التفويض بالساعات",
+      "selector": "label:has(> #ffA11GrantHours)",
+      "mode": "label",
+      "source": "scripts/luxe-a11-communications.js"
+    },
+    {
+      "key": "reports.field.ff76presetname",
+      "screen": "reports",
+      "label": "حقل: اسم القالب",
+      "original": "اسم القالب",
+      "selector": "label:has(> #ff76PresetName)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ff76presetlist",
+      "screen": "reports",
+      "label": "حقل: قوالبي",
+      "original": "قوالبي",
+      "selector": "label:has(> #ff76PresetList)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ffa10grantuser",
+      "screen": "reports",
+      "label": "حقل: الحساب",
+      "original": "الحساب",
+      "selector": "label:has(> #ffA10GrantUser)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ffa10grantsection",
+      "screen": "reports",
+      "label": "حقل: القسم",
+      "original": "القسم",
+      "selector": "label:has(> #ffA10GrantSection)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ffa10grantallowed",
+      "screen": "reports",
+      "label": "حقل: القرار",
+      "original": "القرار",
+      "selector": "label:has(> #ffA10GrantAllowed)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ff76managername",
+      "screen": "reports",
+      "label": "حقل: اسم المدير",
+      "original": "اسم المدير",
+      "selector": "label:has(> #ff76ManagerName)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "reports.field.ff76managernotes",
+      "screen": "reports",
+      "label": "حقل: ملاحظات الإدارة",
+      "original": "ملاحظات الإدارة",
+      "selector": "label:has(> #ff76ManagerNotes)",
+      "mode": "label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "cashier.control.ffburgerpaneltoggle",
+      "screen": "cashier",
+      "label": "نص: 🍔 أوامر قسم البرجر",
+      "original": "🍔 أوامر قسم البرجر",
+      "selector": "#ffBurgerPanelToggle",
+      "mode": "text",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "cashier.control.ffburgernew",
+      "screen": "cashier",
+      "label": "نص: 🍔 إعلام قسم البرجر",
+      "original": "🍔 إعلام قسم البرجر",
+      "selector": "#ffBurgerNew",
+      "mode": "text",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "cashier.control.ffburgercollapse",
+      "screen": "cashier",
+      "label": "نص: ✕ إغلاق القائمة",
+      "original": "✕ إغلاق القائمة",
+      "selector": "#ffBurgerCollapse",
+      "mode": "text",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "cashier.control.ffburgersubmit",
+      "screen": "cashier",
+      "label": "توضيح يحفظ النص الأصلي: ✅ اعتماد وإرسال الطلب",
+      "original": "✅ اعتماد وإرسال الطلب",
+      "selector": "#ffBurgerSubmit",
+      "mode": "protected",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "cashier.control.ffburgercancel",
+      "screen": "cashier",
+      "label": "توضيح يحفظ النص الأصلي: إلغاء",
+      "original": "إلغاء",
+      "selector": "#ffBurgerCancel",
+      "mode": "protected",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "finance.title",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: 💰 تسويات الموصلين النقدية",
+      "original": "💰 تسويات الموصلين النقدية",
+      "selector": "#ff42Panel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "branches.title",
+      "screen": "branches",
+      "label": "توضيح يحفظ النص الأصلي: إعدادات الفروع والأسعار",
+      "original": "إعدادات الفروع والأسعار",
+      "selector": "#ffA05BranchCard .sectionbar h3",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.alerts_title",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: ⚠️ المتابعة التشغيلية للطلبات",
+      "original": "⚠️ المتابعة التشغيلية للطلبات",
+      "selector": "#ff40AlertsPanel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "reports.legacy_title",
+      "screen": "reports",
+      "label": "توضيح يحفظ النص الأصلي: 📊 التقارير التشغيلية للفروع",
+      "original": "📊 التقارير التشغيلية للفروع",
+      "selector": "#ff40ReportsPanel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.security_title",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: 🛡️ أمان النظام — فحص قاعدة البيانات",
+      "original": "🛡️ أمان النظام — فحص قاعدة البيانات",
+      "selector": "#ff43SecurityPanel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.integrity_title",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: 🔎 تدقيق سلامة البيانات",
+      "original": "🔎 تدقيق سلامة البيانات",
+      "selector": "#ff44IntegrityPanel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.access_title",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: 🔐 مراجعة عزل الفروع والصلاحيات",
+      "original": "🔐 مراجعة عزل الفروع والصلاحيات",
+      "selector": "#ff45AccessPanel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.readiness_title",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: 🧪 جاهزية النظام للتجربة الشاملة",
+      "original": "🧪 جاهزية النظام للتجربة الشاملة",
+      "selector": "#ff46ReadinessPanel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.qa_title",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: 📋 مركز التجربة الشاملة",
+      "original": "📋 مركز التجربة الشاملة",
+      "selector": "#ff47QAPanel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.changes_title",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: 📝 تعديلات الطلبات بموافقة الكاشير",
+      "original": "📝 تعديلات الطلبات بموافقة الكاشير",
+      "selector": "#ff50ChangesPanel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.transfer_title",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: 🔄 طلبات نقل الموصل بعد القطع",
+      "original": "🔄 طلبات نقل الموصل بعد القطع",
+      "selector": "#ff49TransferPanel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.manual_title",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: 🛵 إسناد يدوي معلّل",
+      "original": "🛵 إسناد يدوي معلّل",
+      "selector": "#ff49ManualPanel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.late_title",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: ➕ إضافة متأخرة بعد مغادرة الموصل",
+      "original": "➕ إضافة متأخرة بعد مغادرة الموصل",
+      "selector": "#ff52LatePanel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.routes_title",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: 📍 توجيه مناطق الجامعات",
+      "original": "📍 توجيه مناطق الجامعات",
+      "selector": "#ff52RoutesPanel .sectionbar h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.offers_title",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: 🔔 عروض الطلبات الجديدة",
+      "original": "🔔 عروض الطلبات الجديدة",
+      "selector": "#driverView .card:has(#driverOffers) > h2",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "cashier.guidance",
+      "screen": "cashier",
+      "label": "إرشاد إضافي: أكد الاستلام أولًا، ثم أدخل رقم فاتورة MicroPOS بعد قطعها خارجيًا. لا يصدر هذا النظام فاتورة.",
+      "original": "أكد الاستلام أولًا، ثم أدخل رقم فاتورة MicroPOS بعد قطعها خارجيًا. لا يصدر هذا النظام فاتورة.",
+      "selector": "#cashierView .card",
+      "mode": "guide",
+      "source": "existing instructional scope"
+    },
+    {
+      "key": "driver.guidance",
+      "screen": "driver",
+      "label": "إرشاد إضافي: تسجيل الدخول لا يبدأ الدوام تلقائيًا. اضغط تسجيل حضور عند بدء العمل.",
+      "original": "تسجيل الدخول لا يبدأ الدوام تلقائيًا. اضغط تسجيل حضور عند بدء العمل.",
+      "selector": "#driverView .card:has(#clockInBtn)",
+      "mode": "guide",
+      "source": "existing instructional scope"
+    },
+    {
+      "key": "finance.guidance",
+      "screen": "finance",
+      "label": "إرشاد إضافي: تقرير تشغيلي؛ ليس إثباتًا للتحصيل النقدي أو تسوية المحاسبة.",
+      "original": "تقرير تشغيلي؛ ليس إثباتًا للتحصيل النقدي أو تسوية المحاسبة.",
+      "selector": "#ff42Panel",
+      "mode": "guide",
+      "source": "existing instructional scope"
+    },
+    {
+      "key": "branches.guidance",
+      "screen": "branches",
+      "label": "إرشاد إضافي: وقت السريان بتوقيت صنعاء. لا تتغير أسعار الطلبات القديمة.",
+      "original": "وقت السريان بتوقيت صنعاء. لا تتغير أسعار الطلبات القديمة.",
+      "selector": "#ffA05BranchDialog",
+      "mode": "guide",
+      "source": "existing instructional scope"
+    },
+    {
+      "key": "system.security_guidance",
+      "screen": "system",
+      "label": "إرشاد إضافي: عدم ظهور تحذيرات لا يثبت أن النظام آمن.",
+      "original": "عدم ظهور تحذيرات لا يثبت أن النظام آمن.",
+      "selector": "#ff43SecurityPanel",
+      "mode": "guide",
+      "source": "existing instructional scope"
+    },
+    {
+      "key": "orders.late_guidance",
+      "screen": "orders",
+      "label": "إرشاد إضافي: لن تُحسب الإضافة ضمن المبلغ النهائي قبل موافقة الموصل وتأكيد الكاشير.",
+      "original": "لن تُحسب الإضافة ضمن المبلغ النهائي قبل موافقة الموصل وتأكيد الكاشير.",
+      "selector": "#ff52LatePanel",
+      "mode": "guide",
+      "source": "existing instructional scope"
+    },
+    {
+      "key": "orders.transfer_guidance",
+      "screen": "orders",
+      "label": "إرشاد إضافي: لا تنفّذ تأكيدًا قبل تحديث البرنامج الخارجي.",
+      "original": "لا تنفّذ تأكيدًا قبل تحديث البرنامج الخارجي.",
+      "selector": "#ff49TransferPanel",
+      "mode": "guide",
+      "source": "existing instructional scope"
+    },
+    {
+      "key": "messages.guidance",
+      "screen": "messages",
+      "label": "إرشاد إضافي: إرشادات إضافية للتعميم الإداري.",
+      "original": "إرشادات إضافية للتعميم الإداري.",
+      "selector": "#ff39Panel",
+      "mode": "guide",
+      "source": "existing instructional scope"
+    }
+  ],
+  "previousRegistryCoverage": [
+    {
+      "id": "ff76Run",
+      "screen": "reports",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff76Preview",
+      "screen": "reports",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff76Download",
+      "screen": "reports",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff76Share",
+      "screen": "reports",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffx-hero-new",
+      "screen": "dashboard",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffx-hero-reserve",
+      "screen": "dashboard",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffx-hero-overdue",
+      "screen": "dashboard",
+      "reason": "existing selector"
+    },
+    {
+      "id": "createBtn",
+      "screen": "orders",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffA06DiscardDraft",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffReserveBottom",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51BreakBtn",
+      "screen": "driver",
+      "reason": "existing selector"
+    },
+    {
+      "id": "clockInBtn",
+      "screen": "driver",
+      "reason": "existing selector"
+    },
+    {
+      "id": "clockOutBtn",
+      "screen": "driver",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffV12Toggle",
+      "screen": "assembly",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffV12Refresh",
+      "screen": "assembly",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffV12BurgerOpen",
+      "screen": "assembly",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffV12Logout",
+      "screen": "assembly",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffBurgerKitchenNotifications",
+      "screen": "burger_kitchen",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffBurgerViewFinished",
+      "screen": "burger_kitchen",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffBurgerKitchenRefresh",
+      "screen": "burger_kitchen",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffBurgerKitchenLogout",
+      "screen": "burger_kitchen",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51ItemSave",
+      "screen": "catalog",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff51ItemReset",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51OfferSave",
+      "screen": "catalog",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff51OfferReset",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51ArchiveRefresh",
+      "screen": "archive",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff51ArchiveExport",
+      "screen": "archive",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff51ArchiveClose",
+      "screen": "archive",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51RatingsRefresh",
+      "screen": "ratings",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff51RatingsClose",
+      "screen": "ratings",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49ReservationsRefresh",
+      "screen": "reservations",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff49ReservationsClose",
+      "screen": "reservations",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41Refresh",
+      "screen": "cases",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff41Close",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff39Refresh",
+      "screen": "messages",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff39Close",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff48Refresh",
+      "screen": "system",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff48Export",
+      "screen": "system",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff48Close",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "staffAuditRefresh",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51CustomerFind",
+      "screen": "customers",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff51CustomerNoteSave",
+      "screen": "customers",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffx-hero-title",
+      "screen": "dashboard",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffbQuickInput",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "newItems",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffbTabMenu",
+      "screen": "orders",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffbTabText",
+      "screen": "orders",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffbApplyText",
+      "screen": "orders",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffbMenuReload",
+      "screen": "orders",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff51CatName",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51ItemName",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51ItemPrice",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51OfferName",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51OfferPrice",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51CustomerSearch",
+      "screen": "customers",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51CustomerNoteText",
+      "screen": "customers",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76From",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76To",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76Branch",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76Driver",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA10Staff",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA10Area",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA10Item",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA10Status",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76Mode",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76Trend",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51ArchiveFrom",
+      "screen": "archive",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51ArchiveTo",
+      "screen": "archive",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51ArchiveStatus",
+      "screen": "archive",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51ArchiveBranch",
+      "screen": "archive",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51RatingBranch",
+      "screen": "ratings",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49ReserveBranch",
+      "screen": "reservations",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49ReserveName",
+      "screen": "reservations",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49ReservePhone",
+      "screen": "reservations",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49ReserveNotes",
+      "screen": "reservations",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49ReservePickup",
+      "screen": "reservations",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49ReserveItems",
+      "screen": "reservations",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41Kind",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41Branch",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41Priority",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41Subject",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41Description",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41FilterKind",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41FilterStatus",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff39Title",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff39Role",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff39Branch",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff39Body",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff42Load",
+      "screen": "finance",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff42Export",
+      "screen": "finance",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff42ClosePanel",
+      "screen": "finance",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff42Save",
+      "screen": "finance",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff42CloseSettlement",
+      "screen": "finance",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff42ShowDetail",
+      "screen": "finance",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff42Day",
+      "screen": "finance",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff42Branch",
+      "screen": "finance",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff42CashDue",
+      "screen": "finance",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff42CashReceived",
+      "screen": "finance",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff42Notes",
+      "screen": "finance",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05BranchPolicyBtn",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05Close",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05SaveHours",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05SaveTariff",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05PriceHistory",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05PolicyBranch",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05Effective",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05Reason",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05Day",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05Open",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05CloseTime",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05Shift",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05Area",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05Tariff",
+      "screen": "branches",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff47Reload",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff47Close",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff47Version",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff47Title",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff47Create",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff47Runs",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff47Export",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff47Finish",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff47Reopen",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff47Category",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff47Filter",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff46Run",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff46Export",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff46Close",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff45Run",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff45Export",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff45Close",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff44Export",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff44Close",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff44From",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff44To",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff44Run",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff43Run",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff43Export",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff43Close",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41Order",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41CustomerName",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41CustomerPhone",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41Channel",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41Create",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff39Send",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff39SentRefresh",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff40AlertRefresh",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff40AlertsClose",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff40AlertBranch",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffEditMyAccount",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "staffAdminRefresh",
+      "screen": "staff",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ffA05StaffSearch",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05StaffRole",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05StaffActive",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA05StaffSort",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "permissionEmployee",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "permissionLoad",
+      "screen": "staff",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff51CatalogRefresh",
+      "screen": "catalog",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff51CatalogClose",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffCatalogCardTarget",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffCatalogCardSort",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffCatalogCardStyle",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffCatalogCardSave",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffAliasTarget",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffAliasNames",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffAliasSave",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffAliasDefault",
+      "screen": "catalog",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51CustomersClose",
+      "screen": "customers",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51ArchivePrev",
+      "screen": "archive",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff51ArchiveNext",
+      "screen": "archive",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff50Refresh",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff50Close",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff50RequestItems",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff50RequestReason",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff50RequestSave",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff50RequestCancel",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49TransferRefresh",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49TransferClose",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49ReserveSave",
+      "screen": "reservations",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff66AssemblySoundSettings",
+      "screen": "assembly",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffEditClose",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffEditSave",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "orderSearch",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "orderBranchFilter",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "orderStatusFilter",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "auditRefreshBtn",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49ManualClose",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49ManualDriver",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49ManualReason",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff49ManualConfirm",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff52LateClose",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff52LateItems",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff75LatePreview",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff52LateSave",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffbCloseReview",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffbConfirmSave",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffbCancelReview",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff52RoutesClose",
+      "screen": "driver",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff52RouteBranch",
+      "screen": "driver",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff52RouteDriver",
+      "screen": "driver",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff52RouteAreas",
+      "screen": "driver",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff52RouteStart",
+      "screen": "driver",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff52RouteEnd",
+      "screen": "driver",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff52RouteActive",
+      "screen": "driver",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff52RouteSave",
+      "screen": "driver",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "addEmail",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "addName",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "addRole",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "addBranch",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "linkUserBtn",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff60-refresh",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff60-close",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff60-search",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff60-branch",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff60-state",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff60-open-old",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff60-fast",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff60-slow",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff60-save-policy",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff4-refresh",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff4-export",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff4-close",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff4-search",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff4-branch",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff4-state",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff4-minutes",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff5-refresh",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff5-export",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff5-close",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff5-search",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff5-branch",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff5-age",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff5-sort",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "additionItemsInput",
+      "screen": "orders",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41NextStatus",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41Resolution",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff41CommentBody",
+      "screen": "cases",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffx-kpi-reload",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffx-open-alerts",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff2-search",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff3-close",
+      "screen": "dashboard",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffx-density",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffx-auto",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffx-reset",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffx-sound",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffx-delay-sound",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffx-repeat",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffx-play-sound",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffx-play-delay",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffx-push-permission",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff-luxe-audio-unlock",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff66-tone-name",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff66-tone-add",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff66-tone-refresh",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff40ExportCSV",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff40ReportsClose",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff40From",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff40To",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff40ReportBranch",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff40RunReport",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffEditShare",
+      "screen": "staff",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76Close",
+      "screen": "reports",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff76Today",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76Yesterday",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76Seven",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76Thirty",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76CSV",
+      "screen": "reports",
+      "reason": "existing selector"
+    },
+    {
+      "id": "ff76SavePreset",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76UsePreset",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA10GrantSave",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76SaveApproval",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76DlgDownload",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76DlgShare",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76DlgClose",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11Priority",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11Route",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11Template",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11TemplateName",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11TemplateSave",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11TemplateDelete",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11Preview",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11GrantUser",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11GrantRole",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11GrantBranch",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11GrantSave",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11GrantRefresh",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11Audit",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12Scope",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12Branch",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12Type",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12From",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12To",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12Preview",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12Execute",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12List",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12Batch",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12Restore",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12FixtureType",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12FixtureDate",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12FixtureConfirm",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA12Fixture",
+      "screen": "system",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11GrantPriority",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA11GrantHours",
+      "screen": "messages",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76PresetName",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76PresetList",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA10GrantUser",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA10GrantSection",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffA10GrantAllowed",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76ManagerName",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ff76ManagerNotes",
+      "screen": "reports",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffBurgerPanelToggle",
+      "screen": "cashier",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffBurgerNew",
+      "screen": "cashier",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffBurgerCollapse",
+      "screen": "cashier",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffBurgerSubmit",
+      "screen": "cashier",
+      "reason": "new stable authored content"
+    },
+    {
+      "id": "ffBurgerCancel",
+      "screen": "cashier",
+      "reason": "new stable authored content"
+    }
+  ],
+  "remainingReview": [
+    {
+      "id": "driverOffers",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driverTasks",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffV12CountAll",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffV12CountPrinted",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffV12CountPreparing",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffV12CountReady",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_stage",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-hero-sub",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-kpis",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-shortcuts",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-order-list",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-overdue",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "newBranch",
+      "screen": "orders",
+      "reason": "duplicate, variable or existing field; not guessed"
+    },
+    {
+      "id": "newPhone",
+      "screen": "orders",
+      "reason": "duplicate, variable or existing field; not guessed"
+    },
+    {
+      "id": "newArea",
+      "screen": "orders",
+      "reason": "duplicate, variable or existing field; not guessed"
+    },
+    {
+      "id": "newFee",
+      "screen": "orders",
+      "reason": "duplicate, variable or existing field; not guessed"
+    },
+    {
+      "id": "newNotes",
+      "screen": "orders",
+      "reason": "duplicate, variable or existing field; not guessed"
+    },
+    {
+      "id": "newCustomerName",
+      "screen": "orders",
+      "reason": "duplicate, variable or existing field; not guessed"
+    },
+    {
+      "id": "newChannel",
+      "screen": "orders",
+      "reason": "duplicate, variable or existing field; not guessed"
+    },
+    {
+      "id": "newFullAddress",
+      "screen": "orders",
+      "reason": "duplicate, variable or existing field; not guessed"
+    },
+    {
+      "id": "ffbMenuSearch",
+      "screen": "orders",
+      "reason": "duplicate, variable or existing field; not guessed"
+    },
+    {
+      "id": "cashierOrders",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffV12BranchTitle",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffV12AssemblyStatus",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffV12AssemblySummary",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffV12AssemblyOrders",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff51CatalogItems",
+      "screen": "catalog",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff51OffersList",
+      "screen": "catalog",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff51CustomersList",
+      "screen": "customers",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff51CustomerHistory",
+      "screen": "customers",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff51CustomerNotesList",
+      "screen": "customers",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff76Status",
+      "screen": "reports",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff76Body",
+      "screen": "reports",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff76ApprovalBox",
+      "screen": "reports",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staffAdminList",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staffAuditList",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff51ArchiveCount",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff51ArchiveList",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff51RatingsList",
+      "screen": "ratings",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff49ReservationsList",
+      "screen": "reservations",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff41CaseList",
+      "screen": "cases",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff41Detail",
+      "screen": "cases",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff39InboxList",
+      "screen": "messages",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff39SentLog",
+      "screen": "messages",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff48Summary",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff48Rows",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff47Stats",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff47Cases",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff46Summary",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff44Results",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff43Findings",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "dashboard_status_tag",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "orders_status_tag",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "orders_addition_warning",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_offer_countdown",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_status_tag",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_status_tag",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_addition_warning",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffBurgerKitchenStatus",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffBurgerKitchenBranch",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffBurgerKitchenActive",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffBurgerKitchenFinished",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff42Difference",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff42Status",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff42Summary",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff42List",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff42Form",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff42Detail",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffA05Closed",
+      "screen": "branches",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffA05PolicyStatus",
+      "screen": "branches",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffA05PolicyCurrent",
+      "screen": "branches",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffA05PolicyHistory",
+      "screen": "branches",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffA05PriceRows",
+      "screen": "branches",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "loginBtn",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff61ApplyToggle",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff61StatusToggle",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff71CustomerToggle",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff71CustomerSend",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff71CustomerVerify",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff61ApplySend",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff61TrackSend",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "email",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "password",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff71CustomerPhone",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff71CustomerCode",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff61TrackCode",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "loginStatus",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff71CustomerMessage",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "join_name",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "join_email",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "join_phone",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "join_qualification",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "join_address",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "join_age",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "join_marital",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "join_role",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "join_experience",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "join_message",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff61Consent",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff61ApplyInfo",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff28Refresh",
+      "screen": "customer_portal",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff28Logout",
+      "screen": "customer_portal",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff28Title",
+      "screen": "customer_portal",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff28State",
+      "screen": "customer_portal",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff28Rows",
+      "screen": "customer_portal",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff28Name",
+      "screen": "customer_portal",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "ff28Role",
+      "screen": "customer_portal",
+      "reason": "public or login; separate safe public read policy not established"
+    },
+    {
+      "id": "offer_accept",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "offer_reject",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "offer_check_reject",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_on_way",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_arrived",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_delivered",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_customer_edit",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_auto",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_manual",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_change",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_reassign",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_transfer",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_cancel",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "addition_preview",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "addition_save",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "addition_close",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "case_transition",
+      "screen": "cases",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "case_comment",
+      "screen": "cases",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "employee_name",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "employee_username",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "employee_email",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "employee_phone",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "employee_qualification",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "employee_address",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "employee_age",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "employee_marital",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "employee_experience",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "employee_password",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "employee_message",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-branch",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-menu",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-refresh",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-bell",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-theme-toggle",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-options",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-drawer-close",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff2-close",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-pref-close",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-motion",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-fast",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-audio",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-visual",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-delay",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffx-volume",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff66-tone-file",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff39RequireAck",
+      "screen": "messages",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff4-overdue",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff4-hidephones",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_toggle_reject",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_open_addition",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_late_addition",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_cancel_addition",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_invoice_addition",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_invoice_late",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_accept_addition",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_reject_addition",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_pickup_addition",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_receive",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_invoice",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_burger",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_invoice_addition",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_invoice_late",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_filter_all",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_filter_printed",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_filter_preparing",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_filter_ready",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_filter_late",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_filter_priority",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_filter_all",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_filter_sent",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_filter_preparing",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_filter_late",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_order_timer",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staff_toggle",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staff_assembly_save",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staff_assembly_convert",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staff_edit",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staff_save_access",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staff_permission_save",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "message_ack",
+      "screen": "messages",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "message_read",
+      "screen": "messages",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "case_open",
+      "screen": "cases",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "settlement_select",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "qa_case_save",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "reservation_next",
+      "screen": "reservations",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "reservation_cancel",
+      "screen": "reservations",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "transfer_confirm",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "change_approve",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "change_reject",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "change_service",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "change_pos",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "catalog_item_edit",
+      "screen": "catalog",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "catalog_item_toggle",
+      "screen": "catalog",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "catalog_offer_edit",
+      "screen": "catalog",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "catalog_offer_toggle",
+      "screen": "catalog",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "customer_open",
+      "screen": "customers",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "route_edit",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "lifecycle_action",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "watch_tab",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "watch_find",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffCustomerEditSave",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffCustomerEditCancel",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffUnifiedMenuReview",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffUnifiedMenuUndo",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffUnifiedMenuClose",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffA12Confirm",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffA12RestoreConfirm",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffA10RatingEscalate",
+      "screen": "reports",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_edit_name",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_edit_phone",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_edit_area",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_edit_address",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_edit_reason",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "order_edit_customer_note",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffUnifiedMenuSearch",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffCaseAlertClose",
+      "screen": "cases",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffCaseAlertRefresh",
+      "screen": "cases",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "fflCashierFinishedToggle",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "fflFinishedFrom",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "fflFinishedTo",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "fflFinishedBranch",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "fflFinishedToday",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "fflFinishedApply",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "fflFinishedSearch",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "fflFinishedRefresh",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "fflFinishedMore",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffCompletedDetailClose",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffF01Date",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffF01Compare",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffF01Branch",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffF01Today",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffF01Refresh",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffHistoryFrom",
+      "screen": "reports",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffHistoryTo",
+      "screen": "reports",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffHistoryToday",
+      "screen": "reports",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffHistoryApply",
+      "screen": "reports",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff42RangeFrom",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff42RangeTo",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ff42RangeApply",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffRewardItemSearch",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffRewardIssue",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffRewardCodesRefresh",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "reward_issue_kind",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "reward_issue_name",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "reward_issue_phone",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "reward_issue_expiry",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffRewardServiceCode",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffRewardServiceApply",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffRewardCashierCode",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffRewardCashierApply",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffRewardRedeemButton",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "ffRewardRedeemClose",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "reward_redeem_branch",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "reward_redeem_channel",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "reward_redeem_area",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "reward_redeem_fee",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "reward_redeem_notes",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "reward_redeem_verify",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_send_branch",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_send_kind",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_send_order",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_send_invoice",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_send_notes",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_addition_notice",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_addition_invoice_notice",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_customer_edit",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_stage_action",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_stage_state",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_order_age",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_order_note",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_stage_action",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_stage_state",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_required_note",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "burger_confirm_note",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_burger_skip",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_burger_state",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_burger_timer",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_burger_skip",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_burger_state",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "assembly_burger_timer",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staff_assembly_branch",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staff_assembly_target",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staff_access_role",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staff_access_branch",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "staff_permission_value",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "system_qa_result",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "system_qa_note",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "finance_fee_amount",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "finance_fee_reference",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "finance_fee_save",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "finance_fee_status",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "finance_fee_history",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "lifecycle_invoice",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "lifecycle_reoffer_driver",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "lifecycle_reoffer_reason",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "lifecycle_countdown",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "lifecycle_state",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "dashboard_order_follow",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "system_theme_choice",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_cancel_ack",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_cancel_banner",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_cancel_note",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_feedback_refresh",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_feedback_open",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_rating_note",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_rating_star",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_rating_submit",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_rating_close",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_grievance_kind",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_grievance_details",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_grievance_save",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_grievance_close",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "orders_rate_driver_open",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "driver_grievance_open",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "orders_rate_star",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "orders_rate_note",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "orders_rate_save",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "orders_rate_skip",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_rate_star",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_rate_note",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_rate_save",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    },
+    {
+      "id": "cashier_rate_skip",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)"
+    }
+  ],
+  "warning": "Static inventory is not proof of mounted coverage; dynamic/public and remaining texts require review."
+}

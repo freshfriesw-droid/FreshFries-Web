@@ -38,7 +38,8 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  current_html=current_html[:current_start]+baseline_html[base_start:base_end]+current_html[current_end:]
  current_html=current_html.replace('./scripts/luxe-a07-design.js?v=20261125-step05','./scripts/luxe-a07-design.js')
  current_html=current_html.replace('luxe-shared-photo-menu-20261123.js?v=20261125-step05','luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style')
- assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04 and STEP05 audited areas'
+ current_html=current_html.replace('./scripts/luxe-content-studio.js?v=20261125-step06','./scripts/luxe-content-studio.js')
+ assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04, STEP05 and STEP06 asset version'
 else:
  assert current_html==baseline_html,'non-CSS application markup or script changed'
 changed={str(f.relative_to(base)) for f in list((base/'scripts').glob('*.js'))+list((base/'assets').glob('*.js')) if f.read_bytes()!=(root/f.relative_to(base)).read_bytes()}
