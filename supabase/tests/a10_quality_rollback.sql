@@ -15,6 +15,7 @@ BEGIN
  INSERT INTO public.ff38_delivery_tasks(order_id,driver_id,phase,cashier_stage,delivered_at) VALUES(o,d,'delivered','handed_over',now()-interval '20 minutes'),(o2,d2,'delivered','handed_over',now()-interval '20 minutes'),(o3,d,'assigned','handed_over',NULL);
  INSERT INTO public.ff_luxe_cashier_desks(code,label,branch_id,sort_order) VALUES(desk1,'QA desk1',b,1),(desk2,'QA desk2',b,2);
  INSERT INTO public.ff_luxe_cashier_staff_desks(user_id,desk_code,assigned_by) VALUES(c,desk1,m);
+ INSERT INTO public.ff49_cashier_receipts(order_id,received_by,received_at) VALUES(o3,c,now()-interval '30 minutes');
  INSERT INTO public.ff_luxe_cashier_order_desks(order_id,desk_code) VALUES(o,desk2),(o3,desk1);
  PERFORM set_config('request.jwt.claim.sub',u::text,true);SET LOCAL ROLE authenticated;
  res:=public.ff_a10_driver_rating_queue();
@@ -44,6 +45,10 @@ BEGIN
  blocked:=false;BEGIN PERFORM public.ff_luxe_rate_driver_cashier(o,5,'other desk');EXCEPTION WHEN insufficient_privilege THEN blocked:=true;END;IF NOT blocked THEN RAISE EXCEPTION 'Foreign desk rating';END IF;checks:=checks+1;
  blocked:=false;BEGIN PERFORM public.ff41_case_detail(complaint);EXCEPTION WHEN insufficient_privilege THEN blocked:=true;END;IF NOT blocked THEN RAISE EXCEPTION 'Foreign desk complaint';END IF;checks:=checks+1;
  PERFORM public.ff_luxe_rate_driver_cashier(o3,3,'QA handed over');
+ IF NOT public.ff_a10_cashier_coordination(o3,4,'QA preparation coordination') THEN RAISE EXCEPTION 'Coordination not saved';END IF;checks:=checks+1;
+ blocked:=false;BEGIN PERFORM public.ff_a10_cashier_coordination(o3,5,'overwrite');EXCEPTION WHEN OTHERS THEN blocked:=true;END;IF NOT blocked THEN RAISE EXCEPTION 'Coordination duplicate';END IF;checks:=checks+1;
+ blocked:=false;BEGIN PERFORM public.ff_a10_cashier_coordination(o,5,'foreign');EXCEPTION WHEN insufficient_privilege THEN blocked:=true;END;IF NOT blocked THEN RAISE EXCEPTION 'Coordination scope';END IF;checks:=checks+1;
+ res:=public.ff_luxe_cashier_completed_orders(60,0);IF NOT EXISTS(SELECT FROM jsonb_array_elements(res->'items') x WHERE x->>'id'=o3::text AND (x->>'coordination_stars')::int=4 AND NOT (x->>'can_rate_coordination')::boolean) THEN RAISE EXCEPTION 'Coordination state missing %',res;END IF;checks:=checks+1;
  RESET ROLE;PERFORM set_config('request.jwt.claim.sub',cust::text,true);SET LOCAL ROLE authenticated;
  PERFORM public.ff_a10_customer_rate(o,2,'QA customer note');
  blocked:=false;BEGIN PERFORM public.ff_a10_customer_rate(o,5,'overwrite');EXCEPTION WHEN insufficient_privilege THEN blocked:=true;END;IF NOT blocked THEN RAISE EXCEPTION 'Duplicate customer rating';END IF;checks:=checks+1;
@@ -61,6 +66,6 @@ BEGIN
  IF (SELECT rating FROM public.ff_orders WHERE id=o)<>2 OR (SELECT rating_note FROM public.ff_orders WHERE id=o)<>'QA customer note' OR (SELECT stars FROM public.ff51_driver_ratings WHERE id=rid)<>2 OR (SELECT status FROM public.ff_orders WHERE id=o)<>'delivered' THEN RAISE EXCEPTION 'Ratings mutated or blocked order';END IF;checks:=checks+1;
  RAISE EXCEPTION 'QA rollback' USING ERRCODE='ZQA11';
  EXCEPTION WHEN SQLSTATE 'ZQA11' THEN NULL;END;
- IF checks<>20 OR EXISTS(SELECT FROM public.ff_branches WHERE id IN(b,b2)) THEN RAISE EXCEPTION 'Incomplete QA rollback %',checks;END IF;
+ IF checks<>24 OR EXISTS(SELECT FROM public.ff_branches WHERE id IN(b,b2)) THEN RAISE EXCEPTION 'Incomplete QA rollback %',checks;END IF;
 END $qa$;
-SELECT 'PASS A10: 20 quality, private grievance lifecycle, rating identity and scope assertions' result;
+SELECT 'PASS A10: 24 quality, private grievance lifecycle, rating identity and scope assertions' result;
