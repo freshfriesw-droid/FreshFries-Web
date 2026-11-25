@@ -3,15 +3,15 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const screens={
- all:'جميع الشاشات',dashboard:'الرئيسية,#ff60-panel,#ff4-panel,#ff5-modal',orders:'الطلبات وخدمة العملاء,#ff49ManualPanel,#ff52LatePanel,#ffbConfirmLayer',cashier:'الكاشير',driver:'الموصل,#ff52RoutesPanel',
+ all:'جميع الشاشات',dashboard:'الرئيسية',orders:'الطلبات وخدمة العملاء',cashier:'الكاشير',driver:'الموصل',
  assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر',catalog:'المنيو والعروض',customers:'العملاء',
- reports:'التقارير',staff:'الموظفون والصلاحيات,#managerLinks',archive:'الأرشيف',ratings:'التقييمات',cases:'الشكاوى والتظلمات',
+ reports:'التقارير',staff:'الموظفون والصلاحيات',archive:'الأرشيف',ratings:'التقييمات',cases:'الشكاوى والتظلمات',
  messages:'الرسائل',reservations:'الحجوزات',system:'النظام والأمان',finance:'التسويات النقدية',branches:'الفروع وساعات العمل والأسعار',login:'الدخول وطلب الانضمام',customer_portal:'بوابة العميل'
 };
 const selectors={
- dashboard:'#ffx-dashboard,#ff40AlertsPanel',orders:'#serviceOnly,#staffOrders,#ff50ChangesPanel,#ff49TransferPanel',cashier:'#cashierView,#ffBurgerCashierPanel',driver:'#driverView',
+ dashboard:'#ffx-dashboard,#ff40AlertsPanel,#ff60-panel,#ff4-panel,#ff5-modal',orders:'#serviceOnly,#staffOrders,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel,#ffbConfirmLayer',cashier:'#cashierView,#ffBurgerCashierPanel',driver:'#driverView,#ff52RoutesPanel',
  assembly:'#ffV12AssemblyWorkspace',burger_kitchen:'#ffBurgerKitchenWorkspace',
- catalog:'#ff51CatalogPanel',customers:'#ff51CustomersPanel',reports:'#ff76Center',staff:'#staffAdminCard,#ffEditDialog',
+ catalog:'#ff51CatalogPanel',customers:'#ff51CustomersPanel',reports:'#ff76Center',staff:'#staffAdminCard,#ffEditDialog,#managerLinks',
  archive:'#ff51ArchivePanel',ratings:'#ff51RatingsPanel',cases:'#ff41Panel,#ff41Dialog',messages:'#ff39Panel,#ff39Dialog',
  finance:'#ff42Panel',branches:'#ffA05BranchCard,#ffA05BranchDialog',login:'#loginOverlay .loginbox',customer_portal:'#ff28Portal',
  reservations:'#ff49ReservationsPanel',system:'#ff48DiagnosticsPanel,#ff47QAPanel,#ff46ReadinessPanel,#ff44IntegrityPanel,#ff43SecurityPanel,#ff45AccessPanel,#ff62DataCenter'
