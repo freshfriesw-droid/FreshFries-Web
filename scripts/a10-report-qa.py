@@ -90,7 +90,7 @@ with sync_playwright() as pw:
  offer_performance:[{offer_name:'عرض مثبت',orders:1,quantity:2,registered_value:money?1000:undefined}],
  internal_low_ratings:money?[{rating_id:'r1',order_number:123,rater_role:'cashier',stars:2,note:window.a10DetailsChanged?'REPLACED-QA':'PRIVATE-QA'}]:[],
  cashier_coordination:[],days:[{work_day:args.p_from,orders:3,net:money?4000:undefined}],comparison:{today:{orders:3,delivered:2,net:money?4000:undefined}},
- reservation_summary:{total:1,collected:1},dispatch:{offered:2,accepted:1},additions:{count:1,invoiced_count:1},settlements:money?[]:undefined};
+ reservation_summary:{total:1,collected:1},dispatch:{offered:2,accepted:1},assignment_review:{manual_requests:2,assigned_without_manual_record:1,automatic_confirmed:1,manual_confirmed:1,special_direct_confirmed:1,evidence_events:3},additions:{count:1,invoiced_count:1},settlements:money?[]:undefined};
  }
  if(name==='ff_report_preset_list')return window.a10Presets;
  if(name==='ff_report_preset_save'){window.a10Presets=[{id:'preset-1',title:args.p_title,sections:args.p_sections,trend:args.p_trend}];return true}
@@ -107,6 +107,8 @@ with sync_playwright() as pw:
  assert 'ملخص مخصص' in page.locator('#ff76Body [data-report-section=finance] h3').inner_text()
  assert "تحصيل مثبت" in page.locator('#ff76Body').inner_text()
  assert "أداء العروض" in page.locator('#ff76Body').inner_text()
+ assert "إسناد تلقائي مؤكد بالسجل الجديد" in page.locator('#ff76Body').inner_text()
+ assert "إسناد مباشر خاص موثق" in page.locator('#ff76Body').inner_text()
  assert "PRIVATE-QA" in page.locator('#ff76Body').inner_text()
  page.locator('#ff76Branch').select_option('b1');page.locator('#ff76Run').click()
  page.locator('#ff76Body [data-report-section=finance]').wait_for()
@@ -121,6 +123,15 @@ with sync_playwright() as pw:
  page.locator('#ff76Mode').select_option('custom')
  page.locator('#ff76Choices input').evaluate_all("nodes=>nodes.forEach(n=>{n.checked=n.value==='items';n.dispatchEvent(new Event('change'))})")
  assert page.locator('#ff76Body [data-report-section]').count()==1
+ page.locator('details:has(#ff76PresetName) summary').click()
+ page.locator('#ff76PresetName').fill('اختبار قالب الأصناف')
+ page.locator('#ff76SavePreset').click()
+ page.wait_for_function("()=>document.querySelector('#ff76PresetStatus').textContent.includes('حُفظ')")
+ page.locator('#ff76Mode').select_option('all')
+ page.locator('#ff76UsePreset').click()
+ assert page.locator('#ff76Body [data-report-section]').count()==1
+ assert page.locator('#ff76Body [data-report-section=items]').count()==1
+ print('PASS STEP10 report preset round trip and verified dispatch labels',flush=True)
  with page.expect_download(timeout=30000) as d:page.locator('#ff76CSV').click()
  d.value.save_as(out/"report.csv")
  csv=(out/"report.csv").read_text(encoding="utf-8-sig")
