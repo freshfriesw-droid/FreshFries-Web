@@ -71,7 +71,9 @@ with sync_playwright() as pw:
  page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,"manager")
  page.evaluate("""()=>{
  const prior=rpc;
- window.a10Revoked=false;window.a10Escalated=false;
+ window.a10Revoked=false;window.a10Escalated=false;window.a10DetailsChanged=false;window.a10Presets=[];window.a10Shared=[];
+ Object.defineProperty(navigator,'canShare',{configurable:true,value:()=>true});
+ Object.defineProperty(navigator,'share',{configurable:true,value:async payload=>{const f=payload.files[0];window.a10Shared.push({name:f.name,type:f.type,header:await f.slice(0,4).text()})}});
  window.__a09Content=[{content_key:'reports.section.items',body:'أصناف مخصصة اختباريًا'},{content_key:'reports.section.finance',body:'ملخص مخصص'},{content_key:'reports.pdf_title',body:'عنوان PDF مخصص'},{content_key:'reports.pdf_note',body:'ملاحظة PDF مخصصة'}];
  rpc=async(name,args={})=>{
  if(name==='ff_a10_reporting_center'){
@@ -86,10 +88,12 @@ with sync_playwright() as pw:
  finance_evidence:money?{confirmed_received:1400,fee_collection_confirmed:250,draft_received:2200,confirmed_difference:100,closed_statements:1,fees_need_review:0}:undefined,
  items:[{item_name:'=HYPERLINK("bad")',quantity:2,revenue:money?1000:undefined}],
  offer_performance:[{offer_name:'عرض مثبت',orders:1,quantity:2,registered_value:money?1000:undefined}],
- internal_low_ratings:money?[{rating_id:'r1',order_number:123,rater_role:'cashier',stars:2,note:'PRIVATE-QA'}]:[],
+ internal_low_ratings:money?[{rating_id:'r1',order_number:123,rater_role:'cashier',stars:2,note:window.a10DetailsChanged?'REPLACED-QA':'PRIVATE-QA'}]:[],
  cashier_coordination:[],days:[{work_day:args.p_from,orders:3,net:money?4000:undefined}],comparison:{today:{orders:3,delivered:2,net:money?4000:undefined}},
  reservation_summary:{total:1,collected:1},dispatch:{offered:2,accepted:1},additions:{count:1,invoiced_count:1},settlements:money?[]:undefined};
  }
+ if(name==='ff_report_preset_list')return window.a10Presets;
+ if(name==='ff_report_preset_save'){window.a10Presets=[{id:'preset-1',title:args.p_title,sections:args.p_sections,trend:args.p_trend}];return true}
  if(name==='ff_a10_report_grants')return {accounts:[{id:'s1',name:'موظف تجريبي'}],grants:[]};
  if(name==='ff_a10_report_grant'){window.a10Grant=args;return true}
  if(name==='ff_a10_escalate_rating'){window.a10Escalated=args;return {already_exists:false}}
@@ -121,6 +125,30 @@ with sync_playwright() as pw:
  d.value.save_as(out/"report.csv")
  csv=(out/"report.csv").read_text(encoding="utf-8-sig")
  assert "'=HYPERLINK" in csv and "PRIVATE-QA" not in csv and "تحصيل مثبت" not in csv
+ # Native Excel opens as an actual OOXML ZIP, with RTL and no formulas.
+ with page.expect_download(timeout=30000) as x:page.locator('#ff76Excel').click()
+ assert x.value.suggested_filename.endswith('.xlsx')
+ x.value.save_as(out/'report.xlsx')
+ from zipfile import ZipFile
+ from xml.etree import ElementTree as ET
+ with ZipFile(out/'report.xlsx') as z:
+  assert z.testzip() is None
+  xml=z.read('xl/worksheets/sheet1.xml')
+  ns={'m':'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
+  worksheet=ET.fromstring(xml)
+  assert worksheet.find('m:sheetViews/m:sheetView',ns).attrib['rightToLeft']=='1'
+  assert not worksheet.findall('.//m:f',ns)
+  values=[v.text or '' for v in worksheet.findall('.//m:t',ns)]
+  assert '=HYPERLINK("bad")' in values and not any('PRIVATE-QA' in v or 'تحصيل مثبت' in v for v in values)
+  assert any('صنف' in v or 'أصناف' in v for v in values)
+ # Parse the actual workbook with an independent spreadsheet reader.
+ from openpyxl import load_workbook
+ wb=load_workbook(out/'report.xlsx',data_only=False)
+ assert wb.active.sheet_view.rightToLeft is True
+ assert all(c.data_type!='f' for row in wb.active.iter_rows() for c in row)
+ wb.close()
+ print('PASS STEP10 XLSX: ZIP CRC, independent workbook reader, RTL, literal formula-like text and section isolation',flush=True)
+
  with page.expect_download(timeout=90000) as d:page.locator('#ff76Download').click()
  d.value.save_as(out/"report.pdf")
  print("PDF bytes:",(out/"report.pdf").stat().st_size,flush=True)
@@ -129,10 +157,29 @@ with sync_playwright() as pw:
  from PIL import Image
  im=Image.open(out/"render-1.png").convert("L")
  assert im.getextrema()[0]<100 and sum(1 for p in im.getdata() if p<200)>500,"PDF is visually blank"
+ # Exercise the actual preview and sharing code; the OS share boundary is a
+ # deterministic stub, not a claim of delivery to a real external recipient.
+ page.locator('#ff76Share').click()
+ page.locator('#ff76PdfDialog').wait_for(state='visible',timeout=90000)
+ page.locator('#ff76DlgShare').click()
+ page.wait_for_function("()=>window.a10Shared.length===1")
+ assert page.evaluate("window.a10Shared[0].header")=='%PDF'
+ assert page.evaluate("window.a10Shared[0].type")=='application/pdf'
+ # Revocation of detail ownership can occur even when role/branch hash is unchanged.
+ page.evaluate("window.a10DetailsChanged=true")
+ page.locator('#ff76DlgShare').click()
+ page.wait_for_function("()=>document.querySelector('#ff76Body').textContent===''")
+ assert page.evaluate("window.a10Shared.length") == 1
+ assert page.locator('#ff76Excel').is_disabled()
+ page.evaluate("window.a10DetailsChanged=false")
+ page.locator('#ff76Run').click()
+ page.locator('#ff76Body [data-report-section=items]').wait_for()
+ print('PASS STEP10 PDF preview and share, revoked detail blocks stale file even with unchanged access key',flush=True)
+
  page.evaluate("window.a10Revoked=true")
  page.locator('#ff76CSV').click()
  page.wait_for_function("()=>document.querySelector('#ff76Body').textContent===''",timeout=20000)
- assert page.locator('#ff76Download').is_disabled()
+ assert page.locator('#ff76Download').is_disabled() and page.locator('#ff76Excel').is_disabled()
  page.evaluate("()=>{window.a10Revoked=false;data.role='supervisor';user={id:'qa-supervisor'};window.dispatchEvent(new Event('ff-luxe-session-reset'));window.ff76OpenReports()}")
  page.locator('#ff76Body [data-report-section=items]').wait_for()
  assert page.locator('#ff76Body [data-report-section=finance]').count()==0 and page.locator('#ffA10Grants').is_hidden()
