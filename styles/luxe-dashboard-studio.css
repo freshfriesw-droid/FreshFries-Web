@@ -134,3 +134,6 @@
  #ffStudio .ff-a07-compare-grid{grid-template-columns:minmax(0,1fr)}
  #ffStudio .actions>*{min-width:0;max-width:100%;flex-wrap:wrap}
 }
+
+/* STEP08: contain residual intrinsic overflow within the scrollable editor, never the modal or page. */
+#ffStudio form{overflow-x:auto;overscroll-behavior-inline:contain}
