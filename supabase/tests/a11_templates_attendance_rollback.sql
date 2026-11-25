@@ -1,0 +1,44 @@
+DO $qa$
+DECLARE m uuid:=gen_random_uuid();c uuid:=gen_random_uuid();s uuid:=gen_random_uuid();d uuid:=gen_random_uuid();u uuid:=gen_random_uuid();b uuid:=gen_random_uuid();t uuid;msg uuid;r jsonb;n int:=0;start_at timestamptz;
+BEGIN
+ BEGIN
+ INSERT INTO public.ff_branches(id,code,name) VALUES(b,'qa-a11-'||b,'A11 QA');
+ INSERT INTO auth.users(id) VALUES(m),(c),(s),(u);
+ INSERT INTO public.ff_profiles(user_id,display_name,role,active) VALUES(m,'QA manager','manager',true),(c,'QA cashier','cashier',true),(s,'QA central','customer_service',true),(u,'QA driver','driver',true) ON CONFLICT(user_id) DO UPDATE SET role=excluded.role,active=true;
+ INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(c,b);
+ INSERT INTO public.ff_drivers(id,name,branch_id) VALUES(d,'QA driver',b);
+ INSERT INTO public.ff38_driver_links(user_id,driver_id) VALUES(u,d);
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);SET LOCAL ROLE authenticated;
+ IF public.ff_a11_message_preview('customer_service',b,'information',ARRAY[s])->>'count'<>'1' THEN RAISE EXCEPTION 'central audience';END IF;n:=n+1;
+ r:=public.ff_a11_message_template_save('QA template','QA title','QA body','operational','messages',true);t:=(r->>'id')::uuid;
+ IF r->>'ok'<>'true' OR t IS NULL THEN RAISE EXCEPTION 'template save %',r;END IF;n:=n+1;
+ IF NOT EXISTS(SELECT FROM jsonb_array_elements(public.ff_a11_message_templates()) j WHERE j->>'id'=t::text AND j->>'body'='QA body') THEN RAISE EXCEPTION 'template read';END IF;n:=n+1;
+ r:=public.ff_a11_message_send('QA push','QA body','cashier',b,'information',ARRAY[c],ARRAY[c],false,NULL);msg:=(r->>'message_id')::uuid;
+ IF msg IS NULL THEN RAISE EXCEPTION 'message %',r;END IF;n:=n+1;
+ RESET ROLE;
+ INSERT INTO public.ff_push_jobs(user_id,event_key,kind,title,body,status) VALUES(c,'message:'||msg,'message','QA','QA','pending') ON CONFLICT DO NOTHING;
+ SET LOCAL ROLE authenticated;
+ IF public.ff_a11_message_state(msg,'cancel')->>'ok'<>'true' THEN RAISE EXCEPTION 'cancel';END IF;n:=n+1;
+ RESET ROLE;
+ IF EXISTS(SELECT FROM public.ff_push_jobs WHERE event_key='message:'||msg AND status IN ('pending','retry')) THEN RAISE EXCEPTION 'cancel push pending';END IF;n:=n+1;
+ PERFORM set_config('request.jwt.claim.sub',c::text,true);SET LOCAL ROLE authenticated;
+ IF EXISTS(SELECT FROM jsonb_array_elements(public.ff_a11_message_templates()) j WHERE j->>'id'=t::text) OR public.ff_a11_message_template_delete(t)->>'ok'<>'false' THEN RAISE EXCEPTION 'foreign template';END IF;n:=n+1;
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',m::text,true);SET LOCAL ROLE authenticated;
+ IF public.ff_a11_message_template_delete(t)->>'ok'<>'true' THEN RAISE EXCEPTION 'template deletion';END IF;n:=n+1;
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',u::text,true);SET LOCAL ROLE authenticated;
+ IF public.ff38_clock_in()->>'state'<>'ready' THEN RAISE EXCEPTION 'clock in';END IF;n:=n+1;
+ RESET ROLE;SELECT checked_in_at INTO start_at FROM public.ff38_driver_presence WHERE driver_id=d;
+ UPDATE public.ff38_driver_presence SET last_seen_at=now()-interval '10 minutes' WHERE driver_id=d;
+ IF NOT EXISTS(SELECT FROM public.ff38_driver_presence WHERE driver_id=d AND checked_in_at=start_at AND checked_out_at IS NULL AND state='ready') THEN RAISE EXCEPTION 'disconnect ended work';END IF;n:=n+1;
+ SET LOCAL ROLE authenticated;
+ IF public.ff38_heartbeat()->>'ok'<>'true' THEN RAISE EXCEPTION 'reconnect';END IF;n:=n+1;
+ RESET ROLE;
+ IF (SELECT count(*) FROM public.ff76_driver_work_sessions WHERE driver_id=d AND checked_in_at=start_at AND checked_out_at IS NULL)<>1 THEN RAISE EXCEPTION 'session duplicated or ended';END IF;n:=n+1;
+ SET LOCAL ROLE authenticated;PERFORM public.ff38_clock_out();
+ IF public.ff38_heartbeat()->>'requires_clock_in'<>'true' THEN RAISE EXCEPTION 'heartbeat restarted attendance';END IF;n:=n+1;
+ RESET ROLE;
+ IF (SELECT count(*) FROM public.ff76_driver_work_sessions WHERE driver_id=d AND checked_out_at IS NOT NULL)<>1 THEN RAISE EXCEPTION 'attendance not closed';END IF;n:=n+1;
+ RAISE EXCEPTION 'QA rollback' USING ERRCODE='ZQA11';
+ EXCEPTION WHEN SQLSTATE 'ZQA11' THEN NULL;END;
+ IF n<>14 OR EXISTS(SELECT FROM public.ff_branches WHERE id=b) THEN RAISE EXCEPTION 'QA incomplete %',n;END IF;
+END $qa$;
