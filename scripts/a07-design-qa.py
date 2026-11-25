@@ -689,7 +689,7 @@ with sync_playwright() as pw:
   }
   window.step03Probe('admin-renderers',rows,selectors);
 async function step06ConditionalAudit(){
- const registry=ffContentStudio.registry().filter(r=>r.selector&&!r.publicScreen);
+ const registry=ffContentStudio.registry().filter(r=>r.selector&&!r.publicScreen&&r.mode!=='guide');
  const text=n=>Array.from(n.childNodes).filter(c=>c.nodeType===Node.TEXT_NODE).map(c=>c.data).join('');
  const get=(r,n)=>r.mode==='accessible'?n.getAttribute('aria-label'):r.mode==='hint'?n.getAttribute('placeholder'):text(n);
  const cases=registry.filter(r=>r.mode!=='guide').flatMap((r,i)=>Array.from(document.querySelectorAll(r.selector)).map(n=>({r,n,before:get(r,n),marker:'توضيح اختباري '+i,value:n.value,handler:n.onclick,disabled:n.disabled})));
@@ -747,7 +747,7 @@ async function step06ConditionalAudit(){
    const checks=[];
 
 async function step06ConditionalAudit(){
- const registry=ffContentStudio.registry().filter(r=>r.selector&&!r.publicScreen);
+ const registry=ffContentStudio.registry().filter(r=>r.selector&&!r.publicScreen&&r.mode!=='guide');
  const text=n=>Array.from(n.childNodes).filter(c=>c.nodeType===Node.TEXT_NODE).map(c=>c.data).join('');
  const get=(r,n)=>r.mode==='accessible'?n.getAttribute('aria-label'):r.mode==='hint'?n.getAttribute('placeholder'):text(n);
  const cases=registry.filter(r=>r.mode!=='guide').flatMap((r,i)=>Array.from(document.querySelectorAll(r.selector)).map(n=>({r,n,before:get(r,n),marker:'توضيح اختباري '+i,value:n.value,handler:n.onclick,disabled:n.disabled})));

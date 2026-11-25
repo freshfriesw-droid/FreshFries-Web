@@ -135,7 +135,8 @@ function writeNode(key,node,value){
   const saved=accessibleOriginals.get(node),current=node.getAttribute('aria-label');
   if(value==null){if(saved&&current===saved.applied){if(saved.original==null)node.removeAttribute('aria-label');else node.setAttribute('aria-label',saved.original)}accessibleOriginals.delete(node);return}
   const original=saved&&current===saved.applied?saved.original:current;
-  const applied=(original||additionalByKey.get(key).original)+' — '+value;
+  const nativeLabel=Array.from(node.labels||[]).map(l=>l.textContent.trim()).filter(Boolean).join(' ');
+  const applied=(original||nativeLabel||additionalByKey.get(key).original)+' — '+value;
   node.setAttribute('aria-label',applied);accessibleOriginals.set(node,{original,applied});return;
  }
  if(key==='dashboard.title'){
