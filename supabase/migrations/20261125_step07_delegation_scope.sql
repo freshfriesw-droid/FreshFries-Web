@@ -8,13 +8,14 @@ CREATE OR REPLACE FUNCTION public.ff_a09_design_context(p_device text)
  SECURITY DEFINER
  SET search_path TO ''
 AS $function$
-DECLARE g public.ff82_content_grants; v public.ff_ui_versions; style jsonb;
+DECLARE g public.ff82_content_grants; v public.ff_ui_versions; style jsonb; cards jsonb;
 BEGIN
  SELECT * INTO g FROM public.ff82_my_grant();
  IF g.id IS NULL OR p_device IS NULL OR p_device NOT IN ('all','mobile','desktop') OR NOT(g.edit_kinds && ARRAY['colors','buttons','layout','design','fonts','identity','media','cards']::text[]) THEN RETURN NULL; END IF;
  SELECT * INTO v FROM ff_private.a07_resolve(g.screen,g.role_scope,g.branch_id,p_device,NULL);
  style:=ff_private.a07_style_layers(g.screen,g.role_scope,g.branch_id,p_device,NULL)->'style';
- RETURN jsonb_build_object('id',v.id,'pack',coalesce(v.pack,'D01'),'style_config',coalesce(style,'{}'),'screen',g.screen,'bar',coalesce(v.bar,'labels'),'card_layout',v.card_layout);
+ IF g.screen='dashboard' THEN SELECT layout INTO cards FROM ff_private.a08_card_source(g.role_scope,g.branch_id,p_device,NULL); END IF;
+ RETURN jsonb_build_object('id',v.id,'pack',coalesce(v.pack,'D01'),'style_config',coalesce(style,'{}'),'screen',g.screen,'bar',coalesce(v.bar,'labels'),'card_layout',cards);
 END $function$;
 
 CREATE OR REPLACE FUNCTION public.ff_a09_design_draft(p_device text, p_patch jsonb, p_name text, p_base bigint DEFAULT NULL::bigint)
@@ -56,6 +57,9 @@ BEGIN
   IF why IS NULL THEN
    SELECT * INTO effective FROM ff_private.a07_resolve(g.screen,g.role_scope,g.branch_id,p_device,NULL);
    merged:=coalesce(v.style_config,'{}')||(p_patch-ARRAY['elements','designPack','designBar','cardLayout']);
+   IF p_patch ? 'dashboardPanels' THEN
+    merged:=merged||jsonb_build_object('dashboardPanels',coalesce(v.style_config->'dashboardPanels','{}'::jsonb)||(p_patch->'dashboardPanels'));
+   END IF;
    IF p_patch ? 'elements' THEN
     inherited:=ff_private.a07_style_layers(g.screen,g.role_scope,g.branch_id,p_device,NULL)->'style'->'elements';
     element_config:=ff_private.a09_merge_elements(g.screen,v.style_config->'elements',inherited,p_patch->'elements',g.edit_kinds);
@@ -171,3 +175,54 @@ BEGIN
  END LOOP;
  RETURN out_rows;
 END $function$;
+
+-- Keep existing text delegation contracts while recording the effect and attempted revision.
+CREATE OR REPLACE FUNCTION public.ff82_delegate_draft(p_key text, p_body text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare g public.ff82_content_grants; prior bigint; revision bigint; why text;
+begin
+ if auth.uid() is null then return jsonb_build_object('ok',false,'reason','authentication');end if;
+ -- Serialize write with revocation and replacement. Recheck using the current grant after locking.
+ lock table public.ff82_content_grants in share mode;
+ select * into g from public.ff82_my_grant();
+ if g.id is null or not('text'=ANY(g.edit_kinds)) or not('edit'=any(g.capabilities)) or not exists(select 1 from public.ff_content_catalog c where c.key=p_key and c.screen=g.screen) then why:='outside_edit_scope';
+ elsif p_body is null then why:='restore_manager_only';
+ else
+  select id into prior from public.ff_content_versions where content_key=p_key and role_scope=g.role_scope and branch_id=g.branch_id and published_at is not null order by published_at desc,id desc limit 1;
+  begin
+   insert into public.ff_content_versions(content_key,role_scope,branch_id,body,actor_id,previous_id)
+   values(p_key,g.role_scope,g.branch_id,btrim(p_body),auth.uid(),prior) returning id into revision;
+  exception when check_violation then why:='invalid_text';end;
+ end if;
+ insert into public.ff82_content_audit(actor_id,grant_id,action,outcome,reason,content_key,revision_id,effect)
+ values(auth.uid(),g.id,'draft',case when why is null then 'allowed' else 'denied' end,coalesce(why,''),left(p_key,150),revision,case when why is null then 'draft_only' else 'no_change' end);
+ return jsonb_build_object('ok',why is null,'reason',why,'revision',revision);
+end $function$;
+
+-- Keep existing text delegation contracts while recording the effect and attempted revision.
+CREATE OR REPLACE FUNCTION public.ff82_delegate_review(p_revision bigint, p_note text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare g public.ff82_content_grants; v public.ff_content_versions; why text;
+begin
+ if auth.uid() is null then return jsonb_build_object('ok',false,'reason','authentication');end if;
+ lock table public.ff82_content_grants in share mode;
+ select * into g from public.ff82_my_grant();
+ select * into v from public.ff_content_versions where id=p_revision;
+ if g.id is null or not('text'=ANY(g.edit_kinds)) or not('review'=any(g.capabilities)) or v.id is null or v.published_at is not null or v.role_scope<>g.role_scope or v.branch_id is distinct from g.branch_id
+ or not exists(select 1 from public.ff_content_catalog c where c.key=v.content_key and c.screen=g.screen) then why:='outside_review_scope';
+ else
+  begin insert into public.ff82_content_reviews(revision_id,grant_id,reviewer,note) values(v.id,g.id,auth.uid(),btrim(p_note));
+  exception when check_violation or not_null_violation then why:='invalid_note';end;
+ end if;
+ insert into public.ff82_content_audit(actor_id,grant_id,action,outcome,reason,revision_id,attempted_revision,effect)
+ values(auth.uid(),g.id,'review',case when why is null then 'allowed' else 'denied' end,coalesce(why,''),case when why is null then v.id end,p_revision,case when why is null then 'review_only' else 'no_change' end);
+ return jsonb_build_object('ok',why is null,'reason',why);
+end $function$;
