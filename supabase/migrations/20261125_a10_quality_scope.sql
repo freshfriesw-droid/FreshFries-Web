@@ -338,7 +338,7 @@ BEGIN
  SELECT o.branch_id,t.driver_id INTO v_branch,v_driver
  FROM public.ff_orders o
  JOIN public.ff38_delivery_tasks t ON t.order_id=o.id
- WHERE o.id=p_order AND o.status <> 'cancelled';
+ WHERE o.id=p_order AND o.status <> 'cancelled' AND t.cashier_stage='handed_over';
  IF v_driver IS NULL THEN RAISE EXCEPTION 'الطلب غير موجود أو لا يوجد موصل مسند'; END IF;
  IF v_role='cashier' AND NOT EXISTS (
  SELECT 1 FROM public.ff_user_branches b WHERE b.user_id=auth.uid() AND b.branch_id=v_branch
@@ -437,3 +437,30 @@ BEGIN
 END $$;
 REVOKE ALL ON FUNCTION public.ff_a10_escalate_rating(uuid,text) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.ff_a10_escalate_rating(uuid,text) TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.ff_a10_driver_rating_queue()
+RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path='' AS $$
+DECLARE d uuid;
+BEGIN
+ SELECT l.driver_id INTO d FROM public.ff38_driver_links l JOIN public.ff_profiles p ON p.user_id=l.user_id AND p.active AND p.role='driver' JOIN public.ff_drivers dr ON dr.id=l.driver_id AND dr.active WHERE l.user_id=auth.uid();
+ IF d IS NULL THEN RAISE EXCEPTION 'الموصل فقط' USING ERRCODE='42501';END IF;
+ RETURN coalesce((SELECT jsonb_agg(to_jsonb(q) ORDER BY q.delivered_at DESC) FROM (SELECT o.id,o.order_number,coalesce(t.delivered_at,o.delivered_at) delivered_at FROM public.ff_orders o JOIN public.ff38_delivery_tasks t ON t.order_id=o.id WHERE t.driver_id=d AND o.status='delivered' AND coalesce(t.delivered_at,o.delivered_at)>now()-interval '30 days' AND NOT EXISTS(SELECT FROM public.ff_luxe_driver_feedback f WHERE f.order_id=o.id AND f.driver_user_id=auth.uid()) ORDER BY coalesce(t.delivered_at,o.delivered_at) DESC LIMIT 50) q),'[]');
+END $$;
+CREATE OR REPLACE FUNCTION public.ff_a10_customer_rate(p_order uuid,p_stars integer,p_note text DEFAULT '')
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
+DECLARE v_phone text; v_number text; v_order uuid;
+BEGIN
+ IF auth.uid() IS NULL OR EXISTS(SELECT FROM public.ff_profiles WHERE user_id=auth.uid()) THEN RAISE EXCEPTION 'العميل المخول فقط' USING ERRCODE='42501';END IF;
+ SELECT phone INTO v_phone FROM auth.users WHERE id=auth.uid() AND phone_confirmed_at IS NOT NULL;
+ v_number:=regexp_replace(coalesce(v_phone,''),'[^0-9]','','g');
+ IF v_number !~ '^9677[0-9]{8}$' THEN RAISE EXCEPTION 'يرجى تأكيد ملكية رقم الهاتف' USING ERRCODE='42501';END IF;
+ v_number:=right(v_number,9);
+ IF p_order IS NULL OR p_stars IS NULL OR p_stars NOT BETWEEN 1 AND 5 OR length(coalesce(p_note,''))>500 THEN RAISE EXCEPTION 'اختر من نجمة إلى خمس نجوم وملاحظة اختيارية حتى 500 حرف';END IF;
+ UPDATE public.ff_orders o SET rating=p_stars,rating_note=nullif(btrim(coalesce(p_note,'')),''),updated_at=now()
+ WHERE o.id=p_order AND o.status='delivered' AND o.rating IS NULL AND regexp_replace(translate(coalesce(o.phone_snapshot,''),'٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹','01234567890123456789'),'[^0-9]','','g') IN(v_number,'967'||v_number,'00967'||v_number)
+ RETURNING o.id INTO v_order;
+ IF v_order IS NULL THEN RAISE EXCEPTION 'الطلب غير متاح للتقييم أو تم تقييمه مسبقًا' USING ERRCODE='42501';END IF;
+ RETURN jsonb_build_object('saved',true);
+END $$;
+REVOKE ALL ON FUNCTION public.ff_a10_driver_rating_queue(),public.ff_a10_customer_rate(uuid,integer,text) FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.ff_a10_driver_rating_queue(),public.ff_a10_customer_rate(uuid,integer,text) TO authenticated;
