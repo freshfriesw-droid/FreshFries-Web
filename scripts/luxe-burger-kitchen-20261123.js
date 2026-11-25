@@ -288,6 +288,7 @@ function subscribe(){
   .subscribe();
 }
 window.ffBurgerActive=()=>isKitchenMode;
+window.ffBurgerContentBranch=()=>isKitchenMode&&profile?.branches?.length===1?profile.branches[0].id:null;
 window.ffBurgerRefresh=()=>refresh(true);
 window.ffBurgerStart=async()=>{
  reset();isKitchenMode=true;owner=identity();
