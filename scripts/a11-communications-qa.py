@@ -46,8 +46,19 @@ with sync_playwright() as pw:
  assert page.evaluate('window.a11Template.p_priority')=='urgent'
  page.locator('#ffA11GrantBox summary').click();page.locator('#ffA11GrantUser').select_option('u1');page.locator('#ffA11GrantRole').select_option('cashier');page.locator('#ffA11GrantBranch').select_option('b1');page.locator('#ffA11GrantPriority').select_option('operational');page.locator('#ffA11GrantSave').click();page.wait_for_function('()=>!!window.a11Grant')
  assert page.evaluate('window.a11Grant.p_branch')=='b1'
- # Real offline browser context: neither recipient data nor audio is synthesized while disconnected.
+ # Two independent browser contexts at phone and desktop widths.
+ # Shared RPC fixture messages are supplied explicitly; no real employee data is used.
+ online_ctx=browser.new_context(viewport={'width':1440,'height':900},service_workers='block')
+ online_ctx.route('**/*',lambda r:r.continue_() if r.request.url.startswith(origin) else r.abort())
+ online_page=online_ctx.new_page();online_page.goto(origin,wait_until='load');online_page.evaluate(fixture,'cashier')
+ online_page.wait_for_function("()=>window.__a06Calls.some(x=>x.name==='ff39_inbox')")
  ctx.set_offline(True)
+ online_page.evaluate("""()=>{window.a11Inbox=[{id:'m2',title:'QA incoming',body:'Stored on server',sender:'QA',created_at:new Date().toISOString(),priority:'urgent',requires_ack:true}];window.dispatchEvent(new Event('online'))}""")
+ expect(online_page.locator('#ff39InboxList')).to_contain_text('QA incoming',timeout=15000)
+ assert online_page.evaluate('navigator.onLine') is True
+ assert page.evaluate('navigator.onLine') is False
+ online_ctx.close()
+ # Offline recipient must remain unaware of the new message until reconnection.
  page.evaluate("()=>localStorage.setItem('freshfries_luxe_prefs_'+user.id,JSON.stringify({visual:false,audio:false}))")
  page.evaluate("""()=>{window.a11Inbox=[{id:'m2',title:'QA incoming',body:'Stored on server',sender:'QA',created_at:new Date().toISOString(),priority:'urgent',requires_ack:true}];window.dispatchEvent(new Event('offline'))}""")
  expect(page.locator('#ff39InboxStatus')).to_contain_text('غير متصل')
