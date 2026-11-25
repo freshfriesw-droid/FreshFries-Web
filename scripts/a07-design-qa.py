@@ -73,7 +73,7 @@ with sync_playwright() as pw:
   if role=="driver":
    page.evaluate("""async ()=>{window.__a07Button=document.getElementById('clockInBtn');window.__a07Rows={driver:{id:500,pack:'D09',bar:'labels',style_config:{elements:{driver_actions:[{key:'clockInBtn',shape:'pill',size:'large'},{key:'clockOutBtn',shape:'outline',size:'normal'},{key:'ff51BreakBtn',shape:'pack',size:'normal'}]}}}};await ffDashboardStudio.sync(true)}""")
    assert page.locator("#clockInBtn").get_attribute("data-ff-a07-shape")=="pill"
-   assert page.locator("#clockInBtn").evaluate("n=>n===window.__a07Button && getComputedStyle(n).order==='1'")
+   assert page.locator("#clockInBtn").evaluate("n=>n===window.__a07Button && getComputedStyle(n).order==='1'"),page.evaluate("()=>['clockInBtn','clockOutBtn','ff51BreakBtn'].map(id=>{const n=document.getElementById(id);return {id,order:getComputedStyle(n).order,attr:n.dataset.ffA07Order,parent:n.parentElement.className,display:getComputedStyle(n.parentElement).display,same:n===window.__a07Button}})")
    assert page.locator("#clockInBtn").is_visible()
    assert page.locator("#clockOutBtn").is_visible()
    assert page.locator("#cashierView").get_attribute("data-ff-a07-pack") is None
