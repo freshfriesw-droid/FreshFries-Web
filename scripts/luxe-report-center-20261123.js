@@ -30,7 +30,8 @@ root.innerHTML=[
 '<button type="button" id="ff76Preview" class="r-plain" disabled>👁️ معاينة PDF</button>',
 '<button type="button" id="ff76Download" class="r-plain" disabled>⬇️ تصدير PDF</button>',
 '<button type="button" id="ff76Share" class="r-plain" disabled>📤 مشاركة التقرير</button></div>',
- '<div class="r-actions"><button type="button" id="ff76CSV" class="r-plain" disabled>تصدير الأقسام CSV</button><button type="button" id="ff76Excel" class="r-plain" disabled>تصدير Excel (.xlsx)</button></div>',
+ '<button type="button" id="ff76CSV" class="r-plain" disabled>تصدير الأقسام CSV</button>',
+ '<button type="button" id="ff76Excel" class="r-plain" disabled>تصدير Excel (.xlsx)</button>',
  '<details><summary>قوالب أقسام التقرير</summary><label>اسم القالب<input id="ff76PresetName" maxlength="80"></label><button id="ff76SavePreset" type="button">حفظ الاختيارات</button><label>قوالبي<select id="ff76PresetList"></select></label><button id="ff76UsePreset" type="button">تطبيق القالب</button><p id="ff76PresetStatus" role="status"></p></details>',
 '<details id="ffA10Grants" hidden><summary>تفويض أقسام التقارير — المدير العام</summary><p class="r-muted">التفويض يقيّد الأقسام المتاحة أصلاً للدور؛ لا يوسع الفرع أو صلاحية تشغيلية.</p><div class="r-filters"><label>الحساب<select id="ffA10GrantUser"></select></label><label>القسم<select id="ffA10GrantSection"></select></label><label>القرار<select id="ffA10GrantAllowed"><option value="inherit">افتراضي الدور</option><option value="true">السماح ضمن الدور</option><option value="false">حجب القسم</option></select></label></div><button type="button" id="ffA10GrantSave">حفظ التفويض</button><p id="ffA10GrantStatus" role="status"></p></details>',
 '<p id="ff76Status" class="r-muted" role="status" aria-live="polite">حدد الفترة واضغط إعداد التقرير.</p>',
@@ -250,7 +251,7 @@ function excelBlob(rows){
  const files=[
  ['[Content_Types].xml',decl+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>'],
  ['_rels/.rels',decl+'<Relationships xmlns="'+pkg+'"><Relationship Id="rId1" Type="'+rel+'/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
- ['xl/workbook.xml',decl+'<workbook xmlns="'+ns+'" xmlns:r="'+rel+'"><sheets><sheet name="التقرير التشغيلي" sheetId="1" r:id="rId1"/></sheets></workbook>'],
+ ['xl/workbook.xml',decl+'<workbook xmlns="'+ns+'" xmlns:r="'+rel+'"><bookViews><workbookView/></bookViews><sheets><sheet name="التقرير التشغيلي" sheetId="1" r:id="rId1"/></sheets></workbook>'],
  ['xl/_rels/workbook.xml.rels',decl+'<Relationships xmlns="'+pkg+'"><Relationship Id="rId1" Type="'+rel+'/worksheet" Target="worksheets/sheet1.xml"/></Relationships>'],
  ['xl/worksheets/sheet1.xml',sheet]];
  const crcTable=Uint32Array.from({length:256},(_,i)=>{for(let j=0;j<8;j++)i=(i>>>1)^((i&1)?0xedb88320:0);return i>>>0});
