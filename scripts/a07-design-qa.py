@@ -84,6 +84,13 @@ with sync_playwright() as pw:
    assert page.locator("#clockInBtn").evaluate("n=>getComputedStyle(n).fontWeight==='700' && getComputedStyle(n).fontFamily.includes('Tahoma')")
    assert page.locator("#clockInBtn").is_visible()
    assert page.locator("#clockOutBtn").is_visible()
+   page.evaluate("""async()=>{window.__a07Rows.driver.style_config.logoAsset='mark';window.__a07Rows.driver.style_config.logoWidth='48';window.__a07Rows.driver.style_config.logoPosition='cover';await ffDashboardStudio.sync(true)}""")
+   logo=page.locator("#driverView > .ff-a07-logo-cover img")
+   assert logo.count()==1 and logo.get_attribute("src").endswith("ff-icon-192.png")
+   assert logo.evaluate("n=>getComputedStyle(n).width")=="48px"
+   page.evaluate("""async()=>{delete window.__a07Rows.driver.style_config.logoAsset;delete window.__a07Rows.driver.style_config.logoWidth;delete window.__a07Rows.driver.style_config.logoPosition;await ffDashboardStudio.sync(true)}""")
+   assert page.locator("#driverView > .ff-a07-logo-cover").count()==0
+   assert page.locator("#driverView .ff-a07-logo-inline").get_attribute("src").endswith("ff-official-logo.png")
    assert page.locator("#cashierView").get_attribute("data-ff-a07-pack") is None
   if role in ("manager","customer_service"):
    page.set_viewport_size({"width":390,"height":850})

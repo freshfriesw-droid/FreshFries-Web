@@ -28,6 +28,10 @@ const tokens={
  border:['الحدود',['pack','حسب الحزمة'],['thin','رفيعة'],['strong','بارزة']],
  iconSize:['مقاس الأيقونات',['normal','عادي'],['large','كبير']],
  logoSize:['مقاس الشعار',['normal','عادي'],['small','صغير'],['large','كبير']],
+ logoAsset:['صورة الشعار',['brand','الشعار الرسمي'],['mark','أيقونة المطعم']],
+ logoDarkAsset:['شعار الوضع الداكن',['brand','الشعار الرسمي'],['mark','أيقونة المطعم']],
+ logoWidth:['مقاس الشعار الدقيق',['24','24 بكسل'],['32','32 بكسل'],['40','40 بكسل'],['48','48 بكسل'],['56','56 بكسل'],['64','64 بكسل'],['80','80 بكسل']],
+ logoPosition:['موضع الشعار',['header','موضع العنوان الأصلي'],['cover','غلاف مستقل أعلى الشاشة']],
  logoAlign:['محاذاة الشعار',['start','البداية'],['center','الوسط'],['end','النهاية']],
  layout:['شبكة البطاقات على الكمبيوتر',['pack','حسب الحزمة'],['single','عمود واحد'],['double','عمودان'],['triple','ثلاثة أعمدة']]
 };
@@ -36,6 +40,7 @@ const packOK=p=>/^D[0-9]{2,}$/.test(p||'');
 const cfgOf=v=>v&&typeof v==='object'&&!Array.isArray(v)?v:{};
 let current={},owned=new Set();
 const LOGO='./assets/ff-official-logo.png',FALLBACK='./assets/ff-icon-192.png';
+const logoPaths={brand:LOGO,mark:FALLBACK},logoOrigins=new WeakMap();
 function imageFallback(img){
  if(img.dataset.ffA07Fallback)return;
  img.dataset.ffA07Fallback='1';
@@ -44,9 +49,26 @@ function imageFallback(img){
 function addLogo(root,screen){
  if(screen==='dashboard'||screen==='assembly'||root.id==='ffBurgerCashierPanel'||root.id==='staffOrders')return;
  const title=root.querySelector('h2,h3');
- if(!title||title.closest('button')||title.querySelector('.ff-a07-logo-inline'))return;
+ if(!title||title.closest('button')||root.querySelector('.ff-a07-logo-inline'))return;
  const img=document.createElement('img');img.className='ff-a07-logo-inline';img.src=LOGO;img.alt='شعار فريش فرايز';img.loading='lazy';img.width=40;img.height=40;imageFallback(img);
  title.prepend(img);
+}
+function applyLogo(root){
+ const logos=[...root.querySelectorAll('.ff-a07-logo-inline,.ffx-hero-logo,.ff-assembly-brand>img')].filter(img=>img.closest('[data-ff-a07-screen]')===root);
+ const dark=root.dataset.a07Surface==='dark'||(root.dataset.a07Surface!=='light'&&(document.body.classList.contains('ffx-dark')||['D02','D08','D11','D13'].includes(root.dataset.ffA07Pack)));
+ for(const img of logos){
+  if(!logoOrigins.has(img))logoOrigins.set(img,{src:img.getAttribute('src'),parent:img.parentNode,next:img.nextSibling,desired:null});
+  const o=logoOrigins.get(img),choice=dark&&root.dataset.a07LogoDarkAsset?root.dataset.a07LogoDarkAsset:root.dataset.a07LogoAsset;
+  const src=logoPaths[choice]||o.src;
+  if(src&&src!==o.desired){o.desired=src;delete img.dataset.ffA07Tried;if(img.getAttribute('src')!==src)img.src=src}
+  let cover=root.querySelector(':scope > .ff-a07-logo-cover');
+  if(root.dataset.a07LogoPosition==='cover'){
+   if(!cover){cover=document.createElement('div');cover.className='ff-a07-logo-cover';root.prepend(cover)}
+   if(img.parentNode!==cover)cover.append(img)
+  }else if(cover?.contains(img)&&o.parent?.isConnected){
+   o.parent.insertBefore(img,o.next?.parentNode===o.parent?o.next:null);if(!cover.children.length)cover.remove()
+  }
+ }
 }
 function applyCaption(root,row,screen){
  if(screen==='dashboard'||root.id==='staffOrders')return;
@@ -82,6 +104,7 @@ function refresh(){
  }
  for(const old of owned)if(!seen.has(old)){resetNode(old);delete old.dataset.ffA07Signature;delete old.dataset.ffA07Screen}
  owned=seen;
+ for(const root of seen)applyLogo(root);
  window.ffA07Elements?.refresh(seen,current);
  for(const img of document.querySelectorAll('img[src$="/ff-official-logo.png"],img[src$="/ff-icon-192.png"]'))imageFallback(img);
 }
@@ -127,7 +150,7 @@ function demoCard(screen,pack,style,compact=false,select=null){
  const root=document.createElement('section');root.className='ff-a07-demo';root.dataset.ffA07Screen=screen;
  decorate(root,{pack,style_config:style,id:'preview'});
  const head=document.createElement('header');head.className='ff-a07-demo-head';const img=document.createElement('img');img.src=LOGO;img.alt='شعار فريش فرايز';img.className='ff-a07-logo-inline';img.width=40;img.height=40;imageFallback(img);
- const h=document.createElement('strong');h.textContent=row[0];head.append(img,h);root.append(head);
+ const h=document.createElement('strong');h.textContent=row[0];head.append(img,h);root.append(head);applyLogo(root);
  const cards=document.createElement('div');cards.className='ff-a07-demo-grid';
  for(let i=0;i<(compact?2:3);i++){
   const card=document.createElement('article');card.className='ff-a07-demo-card';
