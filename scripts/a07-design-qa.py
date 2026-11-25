@@ -271,6 +271,15 @@ with sync_playwright() as pw:
    page.evaluate("""()=>{const d=document.createElement('dialog');d.className='ff-luxe-rate-dialog';d.id='qa-rate';d.innerHTML='<div class=ff-luxe-stars><button>★</button></div>';document.body.append(d);ffA07Design.refresh()}""")
    assert page.locator('#qa-rate').get_attribute('data-a07-dialog-radius')=='square'
    assert page.locator('#qa-rate .ff-luxe-stars button').evaluate('n=>getComputedStyle(n).fontSize')=='40px'
+   # Actual menu logo: repeated failed brand selections must fall back once per
+   # selection; periodic refresh must not continuously retry the failed asset.
+   recovery=page.evaluate("""async()=>{const style=window.__a07Rows.driver.style_config;const img=()=>document.querySelector('#ffx-sidebar .ff-step03-menu-brand img');const checks=[];for(let i=0;i<2;i++){style.logoAsset='brand';await ffDashboardStudio.sync(true);const n=img();const before=n.getAttribute('src');n.dispatchEvent(new Event('error'));ffA07Design.refresh();checks.push({before,after:n.getAttribute('src'),tried:n.dataset.ffA07Tried});style.logoAsset='mark';await ffDashboardStudio.sync(true)}return checks}""")
+   assert len(recovery)==2 and all(c["before"].endswith("ff-official-logo.png") and c["after"].endswith("ff-icon-192.png") and c["tried"]=="1" for c in recovery),recovery
+   # A driver feedback dialog retains its own appearance while another tab is
+   # active. Navigation state is not its scope. No operational RPC is invoked.
+   scoped_dialog=page.evaluate("""async()=>{const d=document.createElement('dialog');d.className='ff-luxe-rate-dialog';d.id='qa-scoped-rate';d.innerHTML='<div id=ffLuxeFourScores><button>★</button></div>';document.body.append(d);window.__a07Rows.dashboard={id:999,pack:'D01',style_config:{dialogRadius:'round',ratingScale:'normal'}};await ffDashboardStudio.sync(true);const selector='#ffx-nav button.active[data-key],#ffx-mobile-nav button.active[data-key]';const prev=[...document.querySelectorAll(selector)];for(const n of prev)n.classList.remove('active');const home=document.querySelector('#ffx-nav button[data-key=home],#ffx-mobile-nav button[data-key=home]');if(!home)throw Error('missing home navigation');home.classList.add('active');ffA07Design.refresh();const result={scope:d.dataset.ffA07Screen,radius:d.dataset.a07DialogRadius,scale:d.dataset.a07RatingScale};home.classList.remove('active');for(const n of prev)n.classList.add('active');d.remove();delete window.__a07Rows.dashboard;await ffDashboardStudio.sync(true);return result}""")
+   assert scoped_dialog=={"scope":"driver","radius":"square","scale":"large"},scoped_dialog
+   print("PASS STEP03 scoped rating dialog and repeat logo fallback",flush=True)
    page.evaluate("""async()=>{window.__a07Rows.driver.style_config={};await ffDashboardStudio.sync(true)}""")
    assert page.locator('#ffx-sidebar .ff-step03-menu-brand').count()==0
    assert page.locator('#qa-rate').get_attribute('data-a07-rating-scale') is None
