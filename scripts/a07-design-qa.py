@@ -61,6 +61,7 @@ fixture="""async role=>{
 }"""
 roles={"manager":("dashboard","#ffx-dashboard"),"supervisor":("dashboard","#ffx-dashboard"),"customer_service":("orders","#serviceOnly"),"cashier":("cashier","#cashierView"),"driver":("driver","#driverView"),"assembly":("assembly","#ffV12AssemblyWorkspace"),"burger_kitchen":("burger_kitchen","#ffBurgerKitchenWorkspace")}
 results=[]
+step05_design_metrics=[]
 visual_matrix=[]
 def collect_visual(page):
  visual_matrix.extend(page.evaluate("()=>window.__step03Matrix||[]"))
@@ -86,7 +87,20 @@ with sync_playwright() as pw:
    for i in (range(1,17) if width in (390,1440) else (1,8,16)):
     pack=f"D{i:02d}"
     row={"id":i,"pack":pack,"bar":"labels","layout_text":"وصف تجريبي","style_config":{}}
-    page.evaluate("""async ([screen,row])=>{window.__a07Rows={[screen]:row};await window.ffDashboardStudio.sync(true)}""",[screen,row])
+    render_ms=page.evaluate("""async ([screen,row])=>{const t=performance.now();window.__a07Rows={[screen]:row};await window.ffDashboardStudio.sync(true);return performance.now()-t}""",[screen,row])
+    if role in ('manager','cashier') and width in (390,1440):
+     metrics=page.locator(selector).evaluate("""e=>{
+      const rgb=v=>{const m=v.match(/\\d+(?:\\.\\d+)?/g);return m?m.slice(0,3).map(Number):null};
+      const lum=a=>a.map(v=>v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4).reduce((n,v,i)=>n+v*[.2126,.7152,.0722][i],0);
+      const card=e.querySelector('.ffx-hero,.card'),title=card.querySelector('h1,h2,h3');const fg=rgb(getComputedStyle(title).color),bg=rgb(getComputedStyle(card).backgroundColor);
+      const root=getComputedStyle(e),hex=v=>{v=v.trim();if(!/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(v))return null;if(v.length===4)v='#'+v.slice(1).split('').map(c=>c+c).join('');return [1,3,5].map(i=>parseInt(v.slice(i,i+2),16))};
+      const ratio=(a,b)=>a&&b?(Math.max(lum(a),lum(b))+.05)/(Math.min(lum(a),lum(b))+.05):null;
+      return {actualContrast:ratio(fg,bg),packContrast:ratio(hex(root.getPropertyValue('--a07-bg')),hex(root.getPropertyValue('--a07-ink'))),title: title.getBoundingClientRect().width,card:card.getBoundingClientRect().width}
+     }""")
+     assert metrics["packContrast"] is not None and metrics["packContrast"]>=4.5,(role,width,pack,metrics)
+     assert metrics["actualContrast"] is not None and metrics["actualContrast"]>=4.5,(role,width,pack,metrics)
+     assert metrics["title"]>0 and metrics["card"]>0,(role,width,pack,"unmounted component")
+     step05_design_metrics.append(dict(role=role,width=width,pack=pack,render_ms=round(render_ms,2),**metrics))
     result=page.locator(selector).evaluate("""e=>{const s=getComputedStyle(e);return {pack:e.dataset.ffA07Pack,signature:['bg','ink','radius','gap','cols','pad','font','shadow','scale'].map(k=>s.getPropertyValue('--a07-'+k)).join('|'),overflow:document.documentElement.scrollWidth>innerWidth+1}}""")
     assert result["pack"]==pack,(role,width,pack,result)
     assert not result["overflow"],(role,width,pack,"page overflow")
@@ -771,6 +785,9 @@ assert len(results)==7*47
 assert len(set(k for x in visual_matrix for k in x['entries']))==662, 'visual matrix registry coverage'
 failures=[f for x in visual_matrix for f in x['failures']]
 assert not failures, ('STEP03 computed property mismatch',len(failures),failures[:25])
+(out/"step05-design-performance-contrast.json").write_text(json.dumps(step05_design_metrics,ensure_ascii=False,indent=2))
+assert len(step05_design_metrics)==64,len(step05_design_metrics)
+print("PASS STEP05 measured 64 real screen/pack/viewport samples; min actual contrast",round(min(x["actualContrast"] for x in step05_design_metrics),2),"min pack contrast",round(min(x["packContrast"] for x in step05_design_metrics),2),"max sync ms",max(x["render_ms"] for x in step05_design_metrics),flush=True)
 print("PASS A07",len(results),"actual role/width/pack checks, gallery and reset",flush=True)
 if not alternate:
  subprocess.run([sys.executable,__file__,"--alternate"],check=True)

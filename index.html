@@ -3413,12 +3413,12 @@ async function ff74Change(which,value){
  const previous={sound:prefs.sound,delaySound:prefs.delaySound},viewer=String(user.id),connection=client,epoch=++ff74Epoch;
  const current=()=>ff74Manager()&&String(user.id)===viewer&&client===connection&&ff74Epoch===epoch;
  ff74Busy=false;ff74Saving=true;prefs[which]=value;applyPrefs();ff74Controls();
- try{const {data:cfg,error}=await connection.rpc('ff74_set_global_tones',{p_new_order:ff74As(prefs.sound),p_delay:ff74As(prefs.delaySound)});if(error)throw error;
+ try{const {data:cfg,error}=await connection.rpc('ff_step05_set_global_tone',{p_event:which==='sound'?'new_order':'delay',p_tone:ff74As(value),p_expected:ff74As(previous[which])});if(error)throw error;
   if(!current())return;
   prefs.sound=ff74From(cfg?.new_order)||prefs.sound;prefs.delaySound=ff74From(cfg?.delay)||prefs.delaySound;
   ff74LastCheck=Date.now();ff66ShowChoices();applyPrefs();showToast('تم اعتماد النغمة لجميع الموظفين');
  }catch(e){if(current()){Object.assign(prefs,previous);ff66ShowChoices();applyPrefs();showToast('تعذر اعتماد النغمة: '+(e.message||e),null,true)}}
- finally{if(ff74Epoch===epoch){ff74Saving=false;ff74Controls()}}
+ finally{if(ff74Epoch===epoch){ff74Saving=false;ff74Controls();void ff74Refresh(true)}}
 }
 for(const [id,key]of [['ffx-sound','sound'],['ffx-delay-sound','delaySound']])$x(id).addEventListener('change',e=>void ff74Change(key,e.target.value));
 window.addEventListener('focus',()=>void ff74Refresh(true));
@@ -3446,10 +3446,10 @@ function ff66ShowChoices(){
   const el=doc.createElement('div');el.className='ff66-tone-row';
   const name=doc.createElement('span');name.textContent=row.name+(row.is_active?'':' (معطّلة)');el.append(name);
   const toggle=doc.createElement('button');toggle.type='button';toggle.className='ffx-smallbtn';toggle.textContent=row.is_active?'تعطيل':'تفعيل';
-  toggle.onclick=async()=>{toggle.disabled=true;try{
-   const {error}=await client.from('ff66_tones').update({is_active:!row.is_active}).eq('id',row.id);if(error)throw error;
-   await ff66Load(true);showToast('تم تحديث حالة النغمة');
-  }catch(e){ff66SetStatus('تعذر التعديل: '+e.message)}finally{toggle.disabled=false}};
+  toggle.onclick=async()=>{if(!ff74Manager()||ff66User!==String(user.id))return;const actor=String(user.id),connection=client;const current=()=>ff74Manager()&&String(user.id)===actor&&client===connection;toggle.disabled=true;try{
+   const {error}=await connection.from('ff66_tones').update({is_active:!row.is_active}).eq('id',row.id);if(error)throw error;if(!current())return;
+   await ff66Load(true);if(current())showToast('تم تحديث حالة النغمة');
+  }catch(e){if(current())ff66SetStatus('تعذر التعديل: '+e.message)}finally{if(current())toggle.disabled=false}};
   el.append(toggle);list.append(el);
  }}
 }
@@ -3499,14 +3499,15 @@ $x('ff66-tone-add').onclick=async()=>{
  const types={'audio/mpeg':'mp3','audio/mp3':'mp3','audio/wav':'wav','audio/x-wav':'wav','audio/ogg':'ogg','audio/mp4':'m4a','audio/x-m4a':'m4a'};
  if(name.length<2||name.length>65){ff66SetStatus('اكتب اسمًا للنغمة من 2 إلى 65 حرفًا');return}
  if(!file||!types[file.type]||file.size<100||file.size>2097152){ff66SetStatus('اختر ملف MP3 أو WAV أو OGG أو M4A بحجم 2MB كحد أقصى');return}
+ const actor=String(user.id),connection=client,current=()=>ff74Manager()&&String(user.id)===actor&&client===connection;
  button.disabled=true;let path='';try{
   path='tones/'+crypto.randomUUID()+'.'+types[file.type];
-  const upload=await client.storage.from(FF66_BUCKET).upload(path,file,{contentType:file.type,upsert:false});
-  if(upload.error)throw upload.error;
-  const {error}=await client.from('ff66_tones').insert({name,storage_path:path,mime_type:file.type,size_bytes:file.size,created_by:user.id});
-  if(error){await client.storage.from(FF66_BUCKET).remove([path]);throw error}
-  $x('ff66-tone-name').value='';$x('ff66-tone-file').value='';await ff66Load(true);showToast('تمت إضافة النغمة إلى مكتبة المطعم');
- }catch(e){ff66SetStatus('فشل رفع النغمة: '+e.message)}finally{button.disabled=false}
+  const upload=await connection.storage.from(FF66_BUCKET).upload(path,file,{contentType:file.type,upsert:false});
+  if(upload.error)throw upload.error;if(!current())return;
+  const {error}=await connection.from('ff66_tones').insert({name,storage_path:path,mime_type:file.type,size_bytes:file.size,created_by:actor});
+  if(error){if(current()){const check=await connection.from('ff66_tones').select('id').eq('storage_path',path).maybeSingle();if(!check.error&&!check.data)await connection.storage.from(FF66_BUCKET).remove([path])}throw error}
+  if(!current())return;$x('ff66-tone-name').value='';$x('ff66-tone-file').value='';await ff66Load(true);if(current())showToast('تمت إضافة النغمة إلى مكتبة المطعم');
+ }catch(e){if(current())ff66SetStatus('فشل رفع النغمة: '+e.message)}finally{button.disabled=false}
 };
 
 let audioCtx=null,lastSoundAt=0,ffLuxeQueuedTone='';

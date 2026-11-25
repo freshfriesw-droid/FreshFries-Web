@@ -40,7 +40,7 @@ const cases=`
  await tick();prefs.sound='tone:not-loaded';ff66ShowChoices();assert.equal(prefs.sound,'tone:not-loaded');assert.equal($x('ffx-sound').value,'tone:not-loaded');
  let finish;client=reply([],Promise.resolve({data:[]}),()=>new Promise(r=>finish=r));const oldConfig=ff74Refresh(true);await tick();
  user={id:'D'};events.get('ff-luxe-session-reset')();prefs={sound:'digital',delaySound:'soft',audio:true,volume:100};finish({data:{new_order:{type:'built_in',key:'urgent'}}});await oldConfig;assert.equal(prefs.sound,'digital');
- data={role:'manager'};let finishSave,writes=0;client=reply([],Promise.resolve({data:[]}),()=>{writes++;return new Promise(r=>finishSave=r)});
+ data={role:'manager'};let finishSave,writes=0;client=reply([],Promise.resolve({data:[]}), (name,args)=>{if(name==='ff74_get_global_tones')return Promise.resolve({data:{new_order:{type:'built_in',key:'classic'},delay:{type:'built_in',key:'soft'}}});assert.equal(name,'ff_step05_set_global_tone');assert.equal(args.p_event,'new_order');assert.equal(args.p_expected.key,'digital');writes++;return new Promise(r=>finishSave=r)});
  const saving=ff74Change('sound','classic');assert.equal($x('ffx-sound').disabled,true);await ff74Change('delaySound','urgent');assert.equal(writes,1);
  finishSave({data:{new_order:{type:'built_in',key:'classic'},delay:{type:'built_in',key:'soft'}}});await saving;assert.equal(prefs.sound,'classic');assert.equal($x('ffx-sound').disabled,false);
  console.log('PASS STEP05 media: path mapping, account switch, stale playback, mute, failure fallback, central preference and serialized save');
