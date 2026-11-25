@@ -109,7 +109,7 @@ BEGIN
   SELECT * INTO v FROM public.ff_ui_versions WHERE screen_scope=g.screen AND role_scope=g.role_scope AND branch_id=g.branch_id AND device=p_device AND published_at IS NOT NULL ORDER BY published_at DESC,id DESC LIMIT 1;
   prior:=v.id;
   IF p_base IS NOT NULL THEN
-   SELECT * INTO v FROM public.ff_ui_versions WHERE id=p_base AND actor_id=auth.uid() AND published_at IS NULL AND screen_scope=g.screen AND role_scope=g.role_scope AND branch_id=g.branch_id AND device=p_device AND previous_id IS NOT DISTINCT FROM prior;
+   SELECT * INTO v FROM public.ff_ui_versions WHERE id=p_base AND actor_id=auth.uid() AND published_at IS NULL AND screen_scope=g.screen AND role_scope=g.role_scope AND branch_id=g.branch_id AND device=p_device AND previous_id IS NOT DISTINCT FROM prior AND EXISTS(SELECT 1 FROM public.ff82_content_audit a WHERE a.design_revision=p_base AND a.grant_id=g.id AND a.actor_id=auth.uid() AND a.action='design_draft' AND a.outcome='allowed');
    IF v.id IS NULL THEN why:='stale_or_foreign_draft';END IF;
   END IF;
   IF why IS NULL THEN
