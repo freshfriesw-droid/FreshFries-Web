@@ -50,6 +50,14 @@ const states=new WeakMap();
 let owned=new Set(),ownedParents=new Set();
 function clearProperties(node){for(const k of Object.keys(properties))delete node.dataset['ffA07El'+k[0].toUpperCase()+k.slice(1)]}
 function shape(node,e){node.dataset.ffA07Shape=e.shape;node.dataset.ffA07Size=e.size;clearProperties(node);for(const [k,options] of Object.entries(properties))if(Object.hasOwn(options,e[k]??'')&&safeEffect(k,e.key))node.dataset['ffA07El'+k[0].toUpperCase()+k.slice(1)]=e[k]}
+// Keep native checkboxes/radios and file selection usable: customize their
+// existing single-control label/switch row, never their input semantics.
+function visualTarget(n){
+ if(!n?.matches('input[type="checkbox"],input[type="radio"],input[type="file"]'))return n;
+ const wrap=n.closest('label,.ffx-switchrow');
+ return wrap&&wrap.querySelectorAll('input,select,textarea').length===1&&wrap.closest('[data-ff-a07-screen]')===n.closest('[data-ff-a07-screen]')?wrap:n;
+}
+const wrappedNativeKeys=new Set(['ffA05Closed','ff61Consent','ffx-motion','ffx-fast','ffx-audio','ffx-visual','ffx-delay','ff66-tone-file','ff39RequireAck','ff4-overdue','ff4-hidephones','reward_redeem_verify']);
 function resolve(root,g,key){
  if(Object.hasOwn(dynamicSelectors,key))return [...root.querySelectorAll(dynamicSelectors[key])];
  if(key==='cashier_stage')return [...root.querySelectorAll('[data-cashier]')];
@@ -64,7 +72,12 @@ function refresh(roots,configs){
   const screen=root.dataset.ffA07Screen,v=configs[screen]?.style_config?.elements||{};
   for(const [g,rows] of Object.entries(v)){
    if(groups[g]?.screen!==screen||!Array.isArray(rows))continue;
-   const resolved=rows.map(e=>({e,nodes:resolve(root,g,e.key)}));
+   // A nested workspace owns its own controls. An outer screen may not
+   // capture its dynamic selectors (even if the inner scope has no design).
+   const resolved=rows.map(e=>({e,nodes:[...new Set(resolve(root,g,e.key).filter(n=>{
+    const scope=n.closest('[data-ff-a07-screen]');
+    return !scope||scope.dataset.ffA07Screen===screen;
+   }).map(visualTarget))]}));
    const nodes=resolved.flatMap(x=>x.nodes);
    const parent=nodes[0]?.parentElement;
    const sameParent=!!parent&&nodes.length===rows.length&&nodes.every(n=>n.parentElement===parent);
@@ -110,7 +123,7 @@ function editor(form,anchor){
    for(const [key,opts,label] of [['shape',shapes,'الشكل'],['size',sizes,'الحجم']]){
     const wrap=document.createElement('label');wrap.textContent=label;const input=document.createElement('select');input.setAttribute('aria-label',label+' '+name.textContent);input.replaceChildren(...Object.entries(opts).map(([k,v])=>new Option(v,k)));input.value=e[key];input.onchange=()=>modify(i,a=>a[i][key]=input.value);wrap.append(input);row.append(wrap)
    }
-   const advanced=document.createElement('details');advanced.className='ff-step03-properties';const title=document.createElement('summary');title.textContent='خصائص العنصر';advanced.append(title);const info=document.createElement('p');info.className='muted';info.textContent='معرّف ثابت: '+e.key+' · '+(groups[g].styleOnly?'مظهر فقط؛ لا يغيّر موقع الحقل أو صلاحياته.':'عنصر موجود؛ لا يغيّر التخصيص وظيفته.');advanced.append(info);const details=document.createElement('p');details.textContent='الاسم الأساسي: '+name.textContent+' · '+(groups[g].styleOnly?'ارتباط تشغيلي ثابت (غير قابل للتبديل)':'الإجراء الأصلي ثابت؛ الترتيب والمظهر لا يغيّران الصلاحيات.');advanced.append(details);const resetElement=document.createElement('button');resetElement.type='button';resetElement.dataset.step03ResetElement='1';resetElement.textContent='استعادة مظهر العنصر من النطاق الأعم';resetElement.onclick=()=>{modify(i,a=>{const orderMode=a[i].orderMode;a[i]={key:e.key,shape:'inherit',size:'inherit',...(orderMode?{orderMode}: {})}});[...list.querySelectorAll('.ff-a07-element-row')].find(n=>n.dataset.elementKey===e.key)?.querySelector('.ff-step03-properties')?.setAttribute('open','')};advanced.append(resetElement);if(contentKeys[e.key]){const b=document.createElement('button');b.type='button';b.dataset.step03Content=contentKeys[e.key];b.textContent='تحرير النص المرتبط';b.onclick=()=>void window.ffContentStudio?.open({key:contentKeys[e.key],role:form.elements.role.value,branch:form.elements.branch.value});advanced.append(b)}
+   const advanced=document.createElement('details');advanced.className='ff-step03-properties';const title=document.createElement('summary');title.textContent='خصائص العنصر';advanced.append(title);const info=document.createElement('p');info.className='muted';info.textContent='معرّف ثابت: '+e.key+' · '+(groups[g].styleOnly?'مظهر فقط؛ لا يغيّر موقع الحقل أو صلاحياته.':'عنصر موجود؛ لا يغيّر التخصيص وظيفته.');advanced.append(info);if(wrappedNativeKeys.has(e.key)){const note=document.createElement('p');note.className='muted';note.textContent='تطبق الخصائص على حاوية الحقل المرئية؛ يبقى التحكم الأصلي وعلامة الاختيار وإدخال الملف دون تغيير.';advanced.append(note)}const details=document.createElement('p');details.textContent='الاسم الأساسي: '+name.textContent+' · '+(groups[g].styleOnly?'ارتباط تشغيلي ثابت (غير قابل للتبديل)':'الإجراء الأصلي ثابت؛ الترتيب والمظهر لا يغيّران الصلاحيات.');advanced.append(details);const resetElement=document.createElement('button');resetElement.type='button';resetElement.dataset.step03ResetElement='1';resetElement.textContent='استعادة مظهر العنصر من النطاق الأعم';resetElement.onclick=()=>{modify(i,a=>{const orderMode=a[i].orderMode;a[i]={key:e.key,shape:'inherit',size:'inherit',...(orderMode?{orderMode}: {})}});[...list.querySelectorAll('.ff-a07-element-row')].find(n=>n.dataset.elementKey===e.key)?.querySelector('.ff-step03-properties')?.setAttribute('open','')};advanced.append(resetElement);if(contentKeys[e.key]){const b=document.createElement('button');b.type='button';b.dataset.step03Content=contentKeys[e.key];b.textContent='تحرير النص المرتبط';b.onclick=()=>void window.ffContentStudio?.open({key:contentKeys[e.key],role:form.elements.role.value,branch:form.elements.branch.value});advanced.append(b)}
    for(const [key,options] of Object.entries(properties)){if(!safeEffect(key,e.key))continue;const wrap=document.createElement('label');wrap.textContent=propertyLabels[key];const input=document.createElement('select');input.dataset.step03Property=key;input.setAttribute('aria-label',propertyLabels[key]+' '+name.textContent);input.add(new Option('وراثة من التصميم',''));for(const [k,v] of Object.entries(options))input.add(new Option(v,k));input.value=e[key]||'';input.onchange=()=>{modify(i,a=>{if(input.value)a[i][key]=input.value;else delete a[i][key]});[...list.querySelectorAll('.ff-a07-element-row')].find(n=>n.dataset.elementKey===e.key)?.querySelector('.ff-step03-properties')?.setAttribute('open','')};wrap.append(input);advanced.append(wrap)}row.append(advanced);
    if(!groups[g].styleOnly)for(const [label,d] of [['تقديم',-1],['تأخير',1]]){const b=document.createElement('button');b.type='button';b.textContent=label;b.disabled=i+d<0||i+d>=rows.length;b.onclick=()=>modify(i,a=>{a.splice(i+d,0,...a.splice(i,1));for(const e of a)delete e.orderMode});row.append(b)}
    list.append(row);
@@ -143,5 +156,5 @@ function preview(root,screen,v,select){
  }
 }
 function selectPreview(form,group,key){states.get(form)?.selectPreview(group,key)}
-window.ffA07Elements={editor,read,set,refresh,preview,selectPreview,groups,labels,itemLabels,shapes,sizes,properties,propertyLabels,toneAllowed,defaultRows};
+window.ffA07Elements={editor,read,set,refresh,preview,selectPreview,visualTarget,groups,labels,itemLabels,shapes,sizes,properties,propertyLabels,toneAllowed,defaultRows};
 })();
