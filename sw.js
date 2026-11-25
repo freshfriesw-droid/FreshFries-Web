@@ -2,7 +2,7 @@
    NEVER cache Supabase responses, authenticated data, order screens or credentials.
    Web Push delivery requires a separately configured VAPID sender on the server. */
 'use strict';
-const SHELL_CACHE = 'ff-luxe-static-v38-36-1-official-logo-20261121-v2';
+const SHELL_CACHE = 'ff-luxe-static-v38-step11-20261126';
 const STATIC_ASSETS = [
   './offline.html', './manifest.webmanifest',
   './assets/ff-icon-192.png', './assets/ff-icon-512.png'
@@ -42,11 +42,11 @@ self.addEventListener('push', event => {
     payload={};
   }
   // Only non-sensitive metadata appears on the lock screen.
-  const kinds=new Set(['new','assigned','driver_assigned','offer','ready','cancelled','late']);
+  const kinds=new Set(['new','assigned','driver_assigned','offer','ready','cancelled','late','message','employee_notice','addition']);
   const kind=kinds.has(payload.kind)?payload.kind:'general';
-  const title=typeof payload.title==='string'&&payload.title.length<=90
+  const title=kind==='message'?'✉️ رسالة داخلية جديدة':typeof payload.title==='string'&&payload.title.length<=90
     ?payload.title:'🍟 فريش فرايز — تنبيه جديد';
-  const body=typeof payload.body==='string'&&payload.body.length<=180
+  const body=kind==='message'?'افتح نظام فريش فرايز للاطلاع على الرسالة.':typeof payload.body==='string'&&payload.body.length<=180
     ?payload.body:'افتح تطبيق فريش فرايز للاطلاع على التفاصيل.';
   const tag=typeof payload.tag==='string'&&/^[a-zA-Z0-9_-]{1,90}$/.test(payload.tag)
     ?payload.tag:'fresh-fries-luxe-alert';
@@ -82,13 +82,13 @@ self.addEventListener('notificationclick', event => {
     if (existing) {
       // Background ringtone must stop when the user opens the notification,
       // without requiring a second "accept order" tap after returning to the app.
-      if (existing.visibilityState !== 'visible') {
+      if (existing.visibilityState !== 'visible' && event.notification.data?.kind!=='message') {
         existing.postMessage({type:'FF_LUXE_NOTIFICATION_OPENED'});
       }
       return existing.focus();
     }
     const target=new URL('./index.html',self.registration.scope);
-    target.searchParams.set('ff_push_opened','1');
+    if(event.notification.data?.kind!=='message')target.searchParams.set('ff_push_opened','1');
     return self.clients.openWindow(target.href);
   })());
 });
