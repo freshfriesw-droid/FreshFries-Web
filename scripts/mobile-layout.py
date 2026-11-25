@@ -353,6 +353,9 @@ with sync_playwright() as playwright:
                   rpc=async name=>{
                     if(name==='ff_ui_manager_history'||name==='ff_ui_effective')return [];
                     if(name==='ff81_effective_design')return null;
+                    if(name==='ff_a07_effective_designs')return {};
+                    if(name==='ff_a07_design_catalog')return [];
+                    if(name==='ff_a07_manager_style_layers')return {sources:{}};
                     if(name==='ff62_manager_data_overview')return {mode:'read_only',orders:7};
                     throw Error('Unconfigured test fixture');
                   };
@@ -420,7 +423,8 @@ with sync_playwright() as playwright:
                 page.evaluate("""() => {
                   const before=rpc;
                   rpc=async(name,args)=>{
-                    if(name==='ff_ui_manager_source'){
+                    if(name==='ff_a07_manager_source'){
+                      if(args.p_screen!=='dashboard')throw Error('Expected dashboard scope');
                       if(args.p_role==='cashier'&&args.p_device==='mobile')
                         return [{id:73,role_scope:'cashier',branch_id:null,device:'mobile',pack:'D05',bar:'icons',layout_text:'وصف منشور'}];
                       if(args.p_role==='driver')
