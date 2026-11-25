@@ -27,7 +27,7 @@ fixture="""async role=>{
   if(name==='ff82_my_grant')return window.__a09Grant?[window.__a09Grant]:[];
   if(name==='ff82_manager_accounts')return [{user_id:'qa-cashier',display_name:'موظف اختباري',role:'cashier',branch_id:'b1',branch_name:'القاهرة'}];
   if(name==='ff82_manager_grants')return window.__a09Grant?[window.__a09Grant]:[];
-  if(name==='ff82_manager_audit')return [];
+  if(name==='ff82_manager_audit')return [{id:91,created_at:'2026-11-25T01:00:00Z',actor_id:'qa-cashier',action:'design_publish',outcome:'denied',reason:'manager_only:revoked',attempted_revision:902,effect:'no_change'}];
   if(name==='ff_a09_set_grant'){
    window.__a09Grant={id:901,recipient:args.p_recipient,role_scope:'cashier',branch_id:args.p_branch,screen:args.p_screen,capabilities:args.p_capabilities,edit_kinds:args.p_kinds,starts_at:args.p_start,ends_at:args.p_end};return 901;
   }
@@ -80,6 +80,10 @@ with sync_playwright() as pw:
  page.locator("#ff82Open").click()
  dlg=page.locator("#ff82Delegation")
  dlg.locator("[data-d-account] option").wait_for(state="attached")
+ dlg.locator("summary").filter(has_text="سجل التدقيق").click()
+ assert "manager_only:revoked" in dlg.locator("[data-d-audit]").inner_text()
+ assert "الإصدار المطلوب #902" in dlg.locator("[data-d-audit]").inner_text()
+ assert "لم يتغير أي إصدار أو تفويض" in dlg.locator("[data-d-audit]").inner_text()
  dlg.locator("[data-d-screen]").select_option("cashier")
  dlg.locator("[data-d-kinds] input[value=text]").uncheck()
  for k in ("colors","buttons","layout"):dlg.locator(f"[data-d-kinds] input[value={k}]").check()
