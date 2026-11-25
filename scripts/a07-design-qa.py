@@ -236,6 +236,7 @@ with sync_playwright() as pw:
    assert dlg.locator("[data-a07-after] [data-ff-a07-el-font=cairo]").count()==0
    dlg.locator("[data-a07-redo]").click()
    assert dlg.locator("[data-a07-after] [data-ff-a07-el-font=cairo]").count()==1
+   if row.locator("details").get_attribute("open") is None: row.locator("details summary").click()
    row.locator("[data-step03-reset-element]").click()
    assert row.locator("select").first.input_value()=="inherit"
    assert dlg.locator("[data-a07-after] [data-ff-a07-el-font=cairo]").count()==0
