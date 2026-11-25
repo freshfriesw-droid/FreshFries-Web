@@ -47,3 +47,40 @@ begin
  exception when sqlstate 'ZQA12' then null;end;
  if n<>16 or (select count(*) from public.ff_orders)<>baseline or (select count(*) from public.ff_audit_log)<>audit_base or exists(select from public.ff_branches where id in(b,b2)) then raise exception 'incomplete or fixture leak %',n;end if;
 end $qa$;
+
+-- Real branch configurations, only ephemeral rows, including a protected SET NULL dependency.
+DO $qa$
+declare m uuid:=gen_random_uuid(); b uuid; d date:=(now() at time zone 'Asia/Aden')::date; o uuid; r jsonb; snap jsonb; batch uuid; n int:=0;
+begin
+ begin
+ select id into b from public.ff_branches where code='cairo' and active;
+ if b is null then raise exception 'QA requires Cairo branch configuration';end if;
+ insert into auth.users(id) values(m);
+ insert into public.ff_profiles(user_id,display_name,role,active) values(m,'A12 QA manager','manager',true) on conflict(user_id) do update set role=excluded.role,active=true;
+ perform set_config('request.jwt.claim.sub',m::text,true);set local role authenticated;
+ o:=(public.ff_a12_create_fixture(b,'delivery',d,'إنشاء طلب اختبار')->>'id')::uuid;
+ r:=public.ff_a12_reset_preview(b,'delivery',d,d);
+ -- Abort rather than touch any previously generated fixture in a real branch.
+ if r#>>'{counts,orders}'<>'1' or r#>>'{orders,0,id}'<>o::text or r#>>'{counts,desks}'<>'1' then raise exception 'fixture scope or desk mismatch %',r;end if;n:=n+1;
+ reset role;
+ insert into public.ff_push_jobs(user_id,order_id,event_key,kind,title,body,status)
+ values(m,o,'a12-test:'||o,'employee_notice','QA','QA','sent');
+ set local role authenticated;
+ r:=public.ff_a12_reset_preview(b,'delivery',d,d);
+ if r->'blockers'='{}'::jsonb then raise exception 'SET NULL dependent row not protected';end if;n:=n+1;
+ begin perform public.ff_a12_reset_execute(b,'delivery',d,d,r->>'token','تصفير طلبات الاختبار فقط');raise exception 'blocked reset allowed' using errcode='ZQA01';exception when others then if sqlstate='ZQA01' then raise;end if;end;n:=n+1;
+ reset role;
+ if not exists(select from public.ff_push_jobs where order_id=o and event_key='a12-test:'||o) or not exists(select from public.ff_orders where id=o) then raise exception 'protected data changed';end if;n:=n+1;
+ delete from public.ff_push_jobs where order_id=o and event_key='a12-test:'||o;
+ select ff_private.a12_snapshot(array[o]) into snap;
+ set local role authenticated;
+ r:=public.ff_a12_reset_preview(b,'delivery',d,d);
+ batch:=(public.ff_a12_reset_execute(b,'delivery',d,d,r->>'token','تصفير طلبات الاختبار فقط')->>'batch_id')::uuid;
+ r:=public.ff_a12_restore(batch,'استرجاع نسخة الاختبار');
+ if r->>'exact_match'<>'true' then raise exception 'real branch restore failure';end if;n:=n+1;
+ reset role;
+ if ff_private.a12_snapshot(array[o]) is distinct from snap then raise exception 'desk restore not exact';end if;n:=n+1;
+ raise exception 'QA rollback' using errcode='ZQA12';
+ exception when sqlstate 'ZQA12' then null;end;
+ if n<>6 or exists(select from public.ff_orders where id=o) or exists(select from auth.users where id=m) then raise exception 'QA incomplete %',n;end if;
+end $qa$;
