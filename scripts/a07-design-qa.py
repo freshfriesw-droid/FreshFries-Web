@@ -875,7 +875,8 @@ async function step06ConditionalAudit(){
 server.shutdown()
 (out/"role-pack-matrix.json").write_text(json.dumps(results,ensure_ascii=False,indent=2))
 assert len(results)==7*47
-assert len(set(k for x in visual_matrix for k in x['entries']))==662, 'visual matrix registry coverage'
+covered_entries=set(k for x in visual_matrix for k in x['entries'])
+assert len(covered_entries)==663 and 'reports/report_excel_controls/ff76Excel' in covered_entries, ('visual matrix registry coverage',len(covered_entries))
 failures=[f for x in visual_matrix for f in x['failures']]
 assert not failures, ('STEP03 computed property mismatch',len(failures),failures[:25])
 (out/"step05-design-performance-contrast.json").write_text(json.dumps(step05_design_metrics,ensure_ascii=False,indent=2))
@@ -888,7 +889,7 @@ if not alternate:
  widths={}
  for entry in visual_matrix+second:
   for key in entry["entries"]: widths.setdefault(key,set()).add(entry["width"])
- assert len(widths)==662 and all({390,1440}<=v for v in widths.values()), [(k,sorted(v)) for k,v in widths.items() if not {390,1440}<=v]
+ assert len(widths)==663 and 'reports/report_excel_controls/ff76Excel' in widths and all({390,1440}<=v for v in widths.values()), [(k,sorted(v)) for k,v in widths.items() if not {390,1440}<=v]
  states=json.loads((out/"step03-interaction-pseudo-states.json").read_text())+json.loads((out/"alternate"/"step03-interaction-pseudo-states.json").read_text())
  assert len(states)==36 and len({(x["key"],x["width"],x["disabled"]) for x in states})==36
  evidence={"interactive_cases":len(states),"entries":len(widths),"both_widths":sum({390,1440}<=v for v in widths.values()),"computed":sum(x["computed"] for x in visual_matrix+second),"binding_only":sum(x["bindingOnly"] for x in visual_matrix+second),"combined":sum(x.get("combined",0) for x in visual_matrix+second),"failures":sum(len(x["failures"]) for x in visual_matrix+second)}
