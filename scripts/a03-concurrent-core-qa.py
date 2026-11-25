@@ -201,7 +201,7 @@ print("PASS STEP11 actual concurrent checkout/dispatch in both orders, pause/dis
 
 # STEP11: clock-in must not wait on the branch/order locks held by a dispatcher
 # while it owns the driver's presence row. Normal uncontended sweep remains.
-query("alter table public.ff_orders add column created_at timestamptz not null default now()")
+query("alter table public.ff_orders add column if not exists created_at timestamptz not null default now()")
 query((root/"supabase/tests/step11_clock_in_concurrent_fixture.sql").read_text())
 br2=uid(); d2=uid(); u2=uid(); o2=uid()
 query(f"""
