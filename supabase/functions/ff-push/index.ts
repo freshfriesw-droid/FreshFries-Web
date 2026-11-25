@@ -53,7 +53,7 @@ async function authorizedUser(req:Request):Promise<string|null>{
  const {data:{user},error}=await sb.auth.getUser(token);
  if(error||!user)return null;
  const {data:profile}=await admin.from("ff_profiles").select("active,role").eq("user_id",user.id).maybeSingle();
- if(!profile?.active||!["manager","supervisor","customer_service","cashier","driver","assembly"].includes(profile.role))return null;
+ if(!profile?.active||!["manager","supervisor","customer_service","cashier","driver","assembly","burger_kitchen"].includes(profile.role))return null;
  return user.id;
 }
 async function dispatchJobs():Promise<{claimed:number,sent:number,retry:number,without_devices:number}>{
@@ -69,11 +69,19 @@ async function dispatchJobs():Promise<{claimed:number,sent:number,retry:number,w
    try{
     const {data:profile,error:profileErr}=await admin.from("ff_profiles").select("active").eq("user_id",job.user_id).maybeSingle();
     if(profileErr)throw profileErr;
-    if(!profile?.active){ok=true;without_devices++;return;}
+    if(!profile?.active){failure='INACTIVE_RECIPIENT';without_devices++;return;}
     const {data:devices,error:deviceErr}=await admin.from("ff_push_devices")
        .select("id,subscription").eq("user_id",job.user_id).eq("enabled",true).limit(15);
     if(deviceErr)throw deviceErr;
-    if(!devices?.length){ok=true;without_devices++;return;}
+    if(!devices?.length){failure='NO_ENABLED_DEVICE';without_devices++;return;}
+    // Cancellation may occur after the job was claimed; recheck before external delivery.
+    if(job.kind==='message'){
+      const mid=job.event_key.startsWith('message:')?job.event_key.slice(8):'';
+      if(!/^[0-9a-f-]{36}$/i.test(mid)){failure='MESSAGE_CANCELLED';return;}
+      const {data:message,error:messageErr}=await admin.from('ff39_messages').select('cancelled_at').eq('id',mid).maybeSingle();
+      if(messageErr)throw messageErr;
+      if(!message||message.cancelled_at){failure='MESSAGE_CANCELLED';return;}
+    }
     const body={
       type:"order-alert",kind:normalize(job.kind,24),
       title:normalize(job.title,90),body:normalize(job.body,180),
@@ -96,11 +104,11 @@ async function dispatchJobs():Promise<{claimed:number,sent:number,retry:number,w
    finally{
     try{
      const {error:doneErr}=await admin.rpc("ff_push_finish_job",{
-       p_job:job.id,p_success:ok,p_error:ok?null:failure
+       p_job:job.id,p_success:ok,p_error:ok?'PROVIDER_ACCEPTED':failure
      });
      if(doneErr)console.error("FF push finish error",doneErr.message);
     }catch(e){console.error("FF push acknowledgement error",String(e))}
-    if(ok)sent++;else retry++;
+    if(ok)sent++;else if(!['NO_ENABLED_DEVICE','INACTIVE_RECIPIENT','MESSAGE_CANCELLED'].includes(failure))retry++;
    }
   }));
  }
