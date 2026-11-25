@@ -1,0 +1,68 @@
+name: LUXE A10 reports and quality QA
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/luxe-report-center-20261123.js'
+      - 'scripts/luxe-completed-universal-20261123.js'
+      - '.github/workflows/luxe-a10-report-qa.yml'
+permissions:
+  contents: read
+jobs:
+  report-browser:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright pillow
+      - run: npm install --no-save --ignore-scripts html2pdf.js@0.10.1
+      - run: sudo apt-get update -qq && sudo apt-get install -y poppler-utils fonts-noto-core
+      - run: python3 scripts/a10-report-qa.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a10-report-evidence
+          path: a10-evidence/
+  live-site:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify public domain serves exact merged report and archive scripts
+        run: |
+          python3 - <<'PY'
+          from urllib.request import Request,urlopen
+          from urllib.parse import urlparse
+          from pathlib import Path
+          from hashlib import sha256
+          from time import sleep
+          root='https://delivery.freshfriesz.com/'
+          marker='20261125-a10'
+          paths=['scripts/luxe-report-center-20261123.js','scripts/luxe-completed-universal-20261123.js']
+          def get(url):
+              with urlopen(Request(root+url,headers={'Cache-Control':'no-cache','User-Agent':'FreshFries-LUXE-release-QA'}),timeout=15) as response:
+                  assert response.status==200
+                  assert urlparse(response.geturl()).hostname=='delivery.freshfriesz.com'
+                  return response.read()
+          for attempt in range(10):
+              try:
+                  html=get('?qa='+marker).decode()
+                  for relative in paths:
+                      assert relative+'?v='+marker in html
+                      shipped=get(relative+'?v='+marker)
+                      assert shipped==Path(relative).read_bytes()
+                      print('PASS live domain:',relative,sha256(shipped).hexdigest(),flush=True)
+                  break
+              except Exception as exc:
+                  print('Public deployment probe attempt',attempt+1,str(exc),flush=True)
+                  if attempt==9:
+                      raise
+                  sleep(12)
+          PY

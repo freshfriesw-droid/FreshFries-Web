@@ -1213,8 +1213,8 @@ async function ff28PortalLoad(){
   if(o.rating){row.append(' · تقييمك '+o.rating+' من 5');continue}
   if(o.status==='delivered'){
    const sel=document.createElement('select');sel.setAttribute('aria-label','تقييم الطلب');sel.add(new Option('اختر التقييم',''));for(let n=1;n<=5;n++)sel.add(new Option(n+' من 5',n));
-   const b=document.createElement('button');b.textContent='إرسال التقييم';row.append(sel,b);
-   b.onclick=async()=>{if(!sel.value||seq!==ff28Epoch)return;b.disabled=true;try{await rpc('ff28_customer',{p_order:o.id,p_stars:Number(sel.value)});if(seq===ff28Epoch)await ff28PortalLoad()}catch(e){if(seq===ff28Epoch)$('ff28State').textContent=e.message}finally{b.disabled=false}};
+   const b=document.createElement('button');b.textContent='إرسال التقييم';const note=document.createElement('textarea');note.maxLength=500;note.placeholder='ملاحظة اختيارية';note.setAttribute('aria-label','ملاحظة التقييم');row.append(sel,note,b);
+   b.onclick=async()=>{if(!sel.value||seq!==ff28Epoch)return;b.disabled=true;try{await rpc('ff_a10_customer_rate',{p_order:o.id,p_stars:Number(sel.value),p_note:note.value.trim()});if(seq===ff28Epoch)await ff28PortalLoad()}catch(e){if(seq===ff28Epoch)$('ff28State').textContent=e.message}finally{b.disabled=false}};
   }
  }
  }catch(e){if(seq===ff28Epoch)$('ff28State').textContent=e.message}
@@ -1770,9 +1770,11 @@ function ff41DisplayList(){
 }
 async function ff41LoadCases(){
  if(!user||!data||ff41ListLoading)return;
+ const uid=user.id,role=data.role;
  ff41ListLoading=true;$('ff41ListStatus').textContent='جاري تحديث البلاغات...';
  try{
   const r=await rpc('ff41_case_list',{p_status:$('ff41FilterStatus').value||null,p_kind:$('ff41FilterKind').value||null,p_limit:80});
+  if(user?.id!==uid||data?.role!==role)return;
   if(!r||!Array.isArray(r.items))throw Error('تنسيق بيانات البلاغات غير متوقع');
   ff41Cases=r.items;const active=Number(r.open_count||0)+Number(r.review_count||0);
   $('ff41OpenBadge').textContent=String(active);
@@ -1783,11 +1785,13 @@ async function ff41LoadCases(){
  finally{ff41ListLoading=false;}
 }
 async function ff41ShowDetail(id){
- if(ff41DetailLoading)return;
+ if(ff41DetailLoading||!user||!data)return;
+ const uid=user.id,role=data.role;
  ff41DetailLoading=true;ff41Selected=id;
  ff41DisplayList();$('ff41Detail').textContent='جارٍ تحميل التفاصيل...';
  try{
   const result=await rpc('ff41_case_detail',{p_case:id}),c=result?.item,events=result?.events;
+  if(user?.id!==uid||data?.role!==role||ff41Selected!==id)return;
   if(!c||!Array.isArray(events))throw Error('تعذر قراءة تفاصيل البلاغ');
   const history=events.length?events.map(e=>{
     const action=e.action==='created'?'فتح البلاغ':e.action==='comment'?'رد / متابعة':`تغيير الحالة إلى ${ff41StatusNames[e.new_status]||e.new_status}`;
@@ -1895,7 +1899,7 @@ function ff42Render(){
   return `<article class="ff42-driver ${active}"><div class="item-top"><strong>${esc(r.driver_name)} — ${esc(r.branch_name)}</strong><span class="tag ${r.settlement_status==='closed'?'ready':'busy'}">${status}</span></div>`+
    `<div class="ff42-driver-grid"><div>طلبات مسلّمة: <b>${amount(r.delivered_orders)}</b></div><div>قيمة طلبات: <b>${ff42Currency(r.delivered_order_value)}</b></div>`+
    `<div>رسوم التوصيل ضمن القيمة: <b>${ff42Currency(r.delivered_delivery_fees)}</b></div><div>إضافات مفوترة ضمن القيمة: <b>${ff42Currency(r.invoiced_additions)}</b></div>`+
-   `${r.settlement_id?`<div>النقد المطلوب (مدخل يدويًا): <b>${ff42Currency(r.cash_due)}</b></div><div>النقد المستلم: <b>${ff42Currency(r.cash_received)}</b></div><div>فرق التوريد: <b>${ff42Currency(r.difference)}</b></div>`:''}</div>`+
+   `${r.settlement_id?`<div>النقد المطلوب (مدخل يدويًا): <b>${ff42Currency(r.cash_due)}</b></div><div>النقد المستلم (${r.settlement_status==='closed'?'مقفل':'مسودة غير مؤكدة'}): <b>${ff42Currency(r.cash_received)}</b></div><div>فرق التوريد: <b>${ff42Currency(r.difference)}</b></div>`:''}</div>`+
    `${r.snapshot_changed?'<div class="warning">⚠️ تغيرت قيمة أو عدد الطلبات بعد حفظ هذه التسوية. تحتاج مراجعة.</div>':''}`+
    `<div class="actions"><button class="outline" type="button" data-ff42-select="${i}">${r.settlement_status==='closed'?'استعراض التسوية':'فتح / تعديل التسوية'}</button></div></article>`;
  }).join(''):'<div class="empty">لا توجد موصلات أو طلبات في نطاق التاريخ والفرع المختارين.</div>';
@@ -1903,18 +1907,20 @@ function ff42Render(){
 }
 async function ff42Load(){
  if(!user||data?.role!=='manager'||ff42Loading)return;
- const day=$('ff42Day').value,branch=$('ff42Branch').value||null;
+ const uid=user.id,day=$('ff42Day').value,branch=$('ff42Branch').value||null;
  if(!day)return toast('حدد يوم التسوية');
  ff42Loading=true;$('ff42Status').textContent='جارٍ قراءة أرقام الطلبات والتسويات...';
  try{
   const result=await rpc('ff42_settlement_overview',{p_day:day,p_branch:branch});
+  if(user?.id!==uid||data?.role!=='manager'||$('ff42Day').value!==day||($('ff42Branch').value||null)!==branch)return;
   if(!result||!Array.isArray(result.rows))throw Error('تعذر قراءة بيانات التسويات');
   ff42Rows=result.rows;ff42Selected=null;$('ff42Form').classList.add('hidden');$('ff42Detail').innerHTML='';
-  ff42Render();$('ff42Status').textContent=`تاريخ التسوية: ${day} · ${ff42Rows.length} سجلات موصل / فرع. المبالغ المحصّلة لا تُحتسب إلا بعد إدخالها من المدير.`;
+  ff42Render();$('ff42Status').textContent=`تاريخ التسوية: ${day} · ${ff42Rows.length} سجلات موصل / فرع. التحصيل المؤكد يستند إلى تسوية مقفلة؛ إثبات تحصيل رسم التوصيل مستقل.`;
  }catch(e){$('ff42Status').textContent='تعذر إعداد التسوية: '+e.message;toast(e.message);}
  finally{ff42Loading=false;}
 }
 async function ff42Pick(i){
+ if(!user||data?.role!=='manager')return;
  if(!Number.isInteger(i)||i<0||i>=ff42Rows.length)return;
  ff42Selected=i;const r=ff42Rows[i];ff42Render();
  $('ff42Form').classList.remove('hidden');
@@ -1931,6 +1937,15 @@ async function ff42Pick(i){
  $('ff42FormStatus').textContent=closed?'هذه التسوية مقفلة، ولا يمكن تعديلها.':'أدخل المبلغ النقدي الواجب توريده والمبلغ المستلم يدويًا، ووضح الاختلافات إن وجدت.';
  $('ff42Detail').innerHTML='';ff42Recalculate();
  $('ff42Form').scrollIntoView({behavior:'smooth',block:'start'});
+ await ffA10FeeEvidence(r);
+}
+async function ffA10FeeEvidence(r){
+ const id='ffA10FeeEvidence';document.getElementById(id)?.remove();if(!r?.settlement_id||r.settlement_status!=='closed'||data?.role!=='manager'||!user)return;
+ const uid=user.id,box=document.createElement('section');box.id=id;box.className='note';box.innerHTML='<h3>إثبات تحصيل رسوم التوصيل</h3><p class="muted">إثبات مستقل لا يغيّر التسوية المقفلة ولا يفترض أن كامل النقد المستلم رسوم توصيل.</p><p data-history>جارٍ القراءة...</p><label>مبلغ الرسوم المثبت<input type="number" min="0" step="0.01" data-fee></label><label>مرجع الإثبات أو سبب التصحيح<textarea maxlength="500" data-note></textarea></label><button type="button" data-save>حفظ إثبات الرسوم</button><p role="status" data-status></p>';$('ff42FormStatus').after(box);
+ const current=()=>user?.id===uid&&data?.role==='manager'&&ff42Rows[ff42Selected]?.settlement_id===r.settlement_id&&box.isConnected;
+ const input=box.querySelector('[data-fee]');input.max=String(Math.min(Number(r.cash_received),Number(r.delivered_delivery_fees)));
+ async function history(){try{const h=await rpc('ff_a10_fee_history',{p_settlement:r.settlement_id});if(!current())return;const rows=Array.isArray(h)?h:h?.history||[];box.querySelector('[data-history]').textContent=rows.length?rows.map(x=>String(x.confirmed_fee??x.amount??x.fee_amount??'—')+' ريال · '+String(x.evidence_note??'')+' · '+time(x.confirmed_at)).join('\n'):'لا يوجد إثبات مستقل حتى الآن؛ المبلغ المؤكد غير معلوم.'}catch(e){if(current())box.querySelector('[data-history]').textContent=e.message}}
+ box.querySelector('[data-save]').onclick=async()=>{if(!current())return;const v=input.value,n=box.querySelector('[data-note]').value.trim(),amount=Number(v),status=box.querySelector('[data-status]');if(v===''||!Number.isFinite(amount)||amount<0||amount>Number(input.max)||!n){status.textContent='أدخل مبلغاً ضمن الحد المثبت ومرجع الإثبات.';return}if(!confirm('تأكيد تسجيل إثبات الرسوم دون تعديل التسوية؟'))return;const b=box.querySelector('[data-save]');b.disabled=true;try{await rpc('ff_a10_confirm_fee',{p_settlement:r.settlement_id,p_amount:amount,p_note:n});if(current()){status.textContent='تم حفظ الإثبات.';await history()}}catch(e){if(current())status.textContent=e.message}finally{b.disabled=false}};await history();
 }
 function ff42Recalculate(){
  const d=$('ff42CashDue').value,r=$('ff42CashReceived').value;
@@ -1977,7 +1992,7 @@ async function ff42ShowDetail(){
 }
 function ff42CsvCell(v){let x=String(v??'').replace(/[\r\n\u0000-\u001f]/g,' ');if(/^[=+\-@\t]/.test(x.trimStart()))x="'"+x;return '"'+x.replace(/"/g,'""')+'"';}
 function ff42Export(){
- if(!ff42Rows.length)return;
+ if(!user||data?.role!=='manager'||!ff42Rows.length)return;
  const headers=['التاريخ','الفرع','الموصل','عدد الطلبات المسلمة','قيمة الطلبات','رسوم التوصيل ضمن القيمة','الإضافات المفوترة','النقد الواجب توريده','النقد المستلم','الفرق','حالة التسوية','ملاحظة'];
  const csv=[headers,...ff42Rows.map(r=>[$('ff42Day').value,r.branch_name,r.driver_name,r.delivered_orders,r.delivered_order_value,r.delivered_delivery_fees,
    r.invoiced_additions,r.cash_due??'',r.cash_received??'',r.difference??'',r.settlement_status||'غير محفوظ',r.notes||''])]
@@ -5443,7 +5458,12 @@ resetUI=function(){generation++;cached=[];lastFetch=0;seen.clear();acknowledgedH
 (function(){
 'use strict';
 const escText=t=>String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+let feedbackEpoch=0,feedbackLast=0,feedbackBusy=false;
+const feedbackBox=document.createElement('section');feedbackBox.id='ffA10DriverFeedback';feedbackBox.hidden=true;feedbackBox.innerHTML='<h3>⭐ تقييم الطلبات المكتملة (اختياري)</h3><p class="muted">يمكنك تقييم الطلب بعد التسليم أو تجاوز التقييم دون أي أثر على عملك.</p><button type="button" class="outline" data-refresh>تحديث الطلبات</button><div data-rows></div>';document.getElementById('driverView')?.append(feedbackBox);
+async function loadFeedback(force=false){if(!user||data?.role!=='driver'){feedbackBox.hidden=true;feedbackBox.querySelector('[data-rows]').replaceChildren();return}feedbackBox.hidden=false;if(feedbackBusy||(!force&&Date.now()-feedbackLast<15000))return;const uid=user.id,epoch=++feedbackEpoch;feedbackBusy=true;feedbackLast=Date.now();const list=feedbackBox.querySelector('[data-rows]');try{const r=await rpc('ff_a10_driver_rating_queue');if(user?.id!==uid||epoch!==feedbackEpoch||data?.role!=='driver')return;list.replaceChildren();for(const o of (Array.isArray(r)?r:r?.orders||[])){const row=document.createElement('div');row.className='item';const b=document.createElement('button');b.type='button';b.textContent='تقييم الطلب #'+o.order_number;b.onclick=()=>multiRate(o.order_id||o.id);row.append(b);list.append(row)}if(!list.children.length)list.textContent='لا توجد طلبات مكتملة بانتظار تقييمك.'}catch(e){if(user?.id===uid&&epoch===feedbackEpoch)list.textContent='تعذر تحميل الطلبات: '+e.message}finally{if(epoch===feedbackEpoch)feedbackBusy=false}}
+feedbackBox.querySelector('[data-refresh]').onclick=()=>loadFeedback(true);
 async function multiRate(orderId){
+ const uid=user?.id;if(!uid||data?.role!=='driver')return;
  const dlg=document.createElement('dialog');dlg.className='ff-luxe-rate-dialog';
  dlg.innerHTML='<h2>⭐ تقييم الطلب من الموصل</h2><p>قيّم الخدمة والكاشير والعميل والطلب بشكل عام.</p><div id="ffLuxeFourScores"></div><textarea maxlength="1000" placeholder="تعليق أو ملاحظة (اختياري)"></textarea><div class="actions"><button class="primary" data-submit>حفظ التقييم</button><button class="outline" data-close>إغلاق</button></div>';
  const state={cs:0,cashier:0,customer:0,overall:0};let rows=dlg.querySelector('#ffLuxeFourScores');
@@ -5453,9 +5473,10 @@ async function multiRate(orderId){
  }
  dlg.querySelector('[data-close]').onclick=()=>dlg.close();
  dlg.querySelector('[data-submit]').onclick=async()=>{
+  if(user?.id!==uid||data?.role!=='driver')return;
   if(Object.values(state).some(x=>x<1)){alert('قيّم كل بند من 1 إلى 5 نجوم');return}
   const b=dlg.querySelector('[data-submit]');b.disabled=true;
-  try{await rpc('ff_luxe_driver_rate_order',{p_order:orderId,p_cs:state.cs,p_cashier:state.cashier,p_customer:state.customer,p_overall:state.overall,p_note:dlg.querySelector('textarea').value});toast('تم حفظ تقييمك');dlg.close()}catch(e){toast('تعذر حفظ التقييم: '+e.message);b.disabled=false}
+  try{await rpc('ff_luxe_driver_rate_order',{p_order:orderId,p_cs:state.cs,p_cashier:state.cashier,p_customer:state.customer,p_overall:state.overall,p_note:dlg.querySelector('textarea').value});if(user?.id===uid){toast('تم حفظ تقييمك');dlg.close();void loadFeedback(true)}}catch(e){toast('تعذر حفظ التقييم: '+e.message);b.disabled=false}
  };
  dlg.addEventListener('close',()=>dlg.remove());document.body.append(dlg);dlg.showModal()
 }
@@ -5473,13 +5494,13 @@ function addControls(){
  }
  if(data.role==='driver'){
  const cards=[...document.querySelectorAll('#driverTasks>.item')];
- for(const card of cards){const no=card.querySelector('strong')?.textContent?.match(/#(\d+)/)?.[1];const o=(data.orders||[]).find(x=>String(x.number)===no);if(!o||card.querySelector('[data-ff-luxe-order-rate]'))continue;const actions=card.querySelector('.actions');if(!actions)continue;
- const rate=document.createElement('button');rate.type='button';rate.className='outline';rate.dataset.ffLuxeOrderRate=o.id;rate.textContent='⭐ تقييم الطلب';rate.onclick=()=>void multiRate(o.id);
- const appeal=document.createElement('button');appeal.type='button';appeal.className='outline';appeal.textContent='⚖️ تظلم للإدارة';appeal.onclick=()=>void grievance(o.id);actions.append(rate,appeal);
+ for(const card of cards){const no=card.querySelector('strong')?.textContent?.match(/#(\d+)/)?.[1];const o=(data.orders||[]).find(x=>String(x.number)===no);if(!o||card.querySelector('[data-a10-appeal]'))continue;const actions=card.querySelector('.actions');if(!actions)continue;
+ const appeal=document.createElement('button');appeal.type='button';appeal.className='outline';appeal.textContent='⚖️ تظلم للإدارة';appeal.dataset.a10Appeal=o.id;appeal.onclick=()=>void grievance(o.id);actions.append(appeal);
  }
  }
 }
-const prev=draw;draw=function(){prev();addControls()};
+const prev=draw;draw=function(){prev();addControls();void loadFeedback()};
+const feedbackReset=resetUI;resetUI=function(){feedbackEpoch++;feedbackBusy=false;feedbackLast=0;feedbackBox.hidden=true;feedbackBox.querySelector('[data-rows]').replaceChildren();feedbackReset()};
 })();
 </script><style id="ff-luxe-manager-preview-style">
 #ffLuxeManagerViews{margin:12px 0;padding:14px;border:2px solid #ae1717;border-radius:14px;background:var(--ffb-surface,#fff)}
@@ -5540,4 +5561,4 @@ center.append(box);
 </script><script src="./scripts/luxe-a07-elements.js" defer></script>
 <script src="./scripts/luxe-a07-design.js" defer></script>
 <script src="./scripts/luxe-a08-dashboard.js" defer></script>
-<script src="./scripts/luxe-dashboard-studio.js" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js?v=20261125-a09-denial" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script><script defer src="scripts/luxe-a05-branch-policy.js"></script><script defer src="./scripts/luxe-a06-navigation.js"></script></body></html>
+<script src="./scripts/luxe-dashboard-studio.js" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js?v=20261125-a09-denial" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script><script defer src="scripts/luxe-a05-branch-policy.js"></script><script defer src="./scripts/luxe-a06-navigation.js"></script></body></html>
