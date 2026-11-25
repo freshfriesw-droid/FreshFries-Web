@@ -86,13 +86,25 @@ with sync_playwright() as pw:
    page.set_viewport_size({"width":390,"height":850})
    page.locator('#ffx-mobile-nav button[data-key="attendance"]').click()
    assert page.locator("#clockInBtn").is_visible(),"pre-existing attendance workspace must be opened"
-   page.evaluate("""async ()=>{window.__a07Button=document.getElementById('clockInBtn');window.__a07Rows={driver:{id:500,pack:'D09',bar:'labels',style_config:{elements:{driver_actions:[{key:'clockInBtn',shape:'pill',size:'large',weight:'strong',font:'tahoma',border:'strong'},{key:'clockOutBtn',shape:'outline',size:'normal'},{key:'ff51BreakBtn',shape:'pack',size:'normal'}]}}}};await ffDashboardStudio.sync(true)}""")
+   page.evaluate("""async ()=>{window.__a07Button=document.getElementById('clockInBtn');window.__a07Rows={driver:{id:500,pack:'D09',bar:'labels',style_config:{elements:{driver_actions:[{key:'clockInBtn',shape:'pill',size:'large',weight:'strong',font:'tahoma',border:'strong',align:'center',textScale:'large'},{key:'clockOutBtn',shape:'outline',size:'normal'},{key:'ff51BreakBtn',shape:'pack',size:'normal'}]}}}};await ffDashboardStudio.sync(true)}""")
    assert page.locator("#clockInBtn").get_attribute("data-ff-a07-shape")=="pill"
    assert page.locator("#clockInBtn").evaluate("n=>n===window.__a07Button && getComputedStyle(n).order==='1'"),page.evaluate("()=>['clockInBtn','clockOutBtn','ff51BreakBtn'].map(id=>{const n=document.getElementById(id);return {id,order:getComputedStyle(n).order,attr:n.dataset.ffA07Order,parent:n.parentElement.className,display:getComputedStyle(n.parentElement).display,same:n===window.__a07Button}})")
    assert page.locator("#clockInBtn").get_attribute("data-ff-a07-el-weight")=="strong"
    assert page.locator("#clockInBtn").evaluate("n=>getComputedStyle(n).fontWeight==='700' && getComputedStyle(n).fontFamily.includes('Tahoma')")
    assert page.locator("#clockInBtn").is_visible()
    assert page.locator("#clockOutBtn").is_visible()
+   assert page.locator("#clockInBtn").get_attribute("data-ff-a07-el-align")=="center"
+   assert page.locator("#clockInBtn").evaluate("n=>getComputedStyle(n).textAlign==='center' && Math.abs(parseFloat(getComputedStyle(n).fontSize)-1.125*parseFloat(getComputedStyle(n.parentElement).fontSize))<0.1")
+   assert page.locator("#clockOutBtn").get_attribute("data-ff-a07-el-align") is None
+   assert page.locator("#clockInBtn").evaluate("n=>n===window.__a07Button")
+   page.evaluate("""async()=>{window.__a07Rows.driver.style_config.elements.driver_actions[0].font='noto';await ffDashboardStudio.sync(true)}""")
+   assert page.locator("#clockInBtn").evaluate("n=>getComputedStyle(n).fontFamily.includes('Noto Sans Arabic')")
+   for w in (320,1440):
+    page.set_viewport_size({"width":w,"height":850})
+    assert page.locator("#clockInBtn").is_visible()
+    assert page.locator("#clockOutBtn").is_visible()
+    assert page.evaluate("()=>document.documentElement.scrollWidth<=innerWidth+1")
+   page.set_viewport_size({"width":390,"height":850})
    page.evaluate("""async()=>{window.__a07Rows.driver.style_config.logoAsset='mark';window.__a07Rows.driver.style_config.logoWidth='48';window.__a07Rows.driver.style_config.logoPosition='cover';await ffDashboardStudio.sync(true)}""")
    logo=page.locator("#driverView > .ff-a07-logo-cover img")
    assert logo.count()==1 and logo.get_attribute("src").endswith("ff-icon-192.png")
@@ -110,6 +122,9 @@ with sync_playwright() as pw:
    page.evaluate("""async()=>{window.__a07Rows.driver.style_config={};await ffDashboardStudio.sync(true)}""")
    assert page.locator('#ffx-sidebar .ff-step03-menu-brand').count()==0
    assert page.locator('#qa-rate').get_attribute('data-a07-rating-scale') is None
+   assert page.locator("#clockInBtn").get_attribute("data-ff-a07-el-align") is None
+   assert page.locator("#clockInBtn").get_attribute("data-ff-a07-el-text-scale") is None
+   assert page.locator("#clockInBtn").get_attribute("data-ff-a07-el-font") is None
   if role in ("manager","customer_service"):
    page.set_viewport_size({"width":390,"height":850})
    page.evaluate("""async ()=>{document.getElementById('newItems').value='1 تشكن بدون شطة';document.getElementById('ffbQuickInput').value='نص محفوظ';window.__a07Rows={orders:{id:501,pack:'D10',bar:'labels',style_config:{density:'compact'}}};await ffDashboardStudio.sync(true)}""")
@@ -174,6 +189,16 @@ with sync_playwright() as pw:
    assert dlg.locator("[data-a07-after] [data-ff-a07-shape=pill]").count()>=1
    dlg.locator("[data-a07-redo]").click()
    assert dlg.locator("[data-a07-after] [data-ff-a07-el-weight=strong]").count()>=1
+   row=dlg.locator(".ff-a07-element-row").first
+   if row.locator("details").get_attribute("open") is None: row.locator("details summary").click()
+   row.locator('[data-step03-property=align]').select_option("end")
+   row.locator('[data-step03-property=textScale]').select_option("large")
+   row.locator('[data-step03-property=font]').select_option("cairo")
+   assert dlg.locator("[data-a07-after] [data-ff-a07-el-align=end]").count()==1
+   dlg.locator("[data-a07-undo]").click()
+   assert dlg.locator("[data-a07-after] [data-ff-a07-el-font=cairo]").count()==0
+   dlg.locator("[data-a07-redo]").click()
+   assert dlg.locator("[data-a07-after] [data-ff-a07-el-font=cairo]").count()==1
    dlg.locator("#ffStep03ScopeCompare > summary").click()
    dlg.locator("[data-step03-compare]").click()
    page.wait_for_function("()=>document.querySelector('[data-step03-compare-results]').children.length===2")
@@ -187,6 +212,9 @@ with sync_playwright() as pw:
    assert payload["p_style"]["elements"]["driver_actions"][0]["shape"]=="pill"
    assert len(payload["p_style"]["elements"]["driver_actions"])==3
    assert payload["p_style"]["elements"]["driver_actions"][0]["weight"]=="strong"
+   assert payload["p_style"]["elements"]["driver_actions"][0]["align"]=="end"
+   assert payload["p_style"]["elements"]["driver_actions"][0]["textScale"]=="large"
+   assert payload["p_style"]["elements"]["driver_actions"][0]["font"]=="cairo"
    assert all("orderMode" not in e for e in payload["p_style"]["elements"]["driver_actions"])
    assert payload["p_style"]["elements"]["driver_actions"][1]["shape"]=="inherit"
    assert not page.evaluate("()=>window.__a06Calls.some(c=>['ff_ui_publish','ff_ui_control_trial'].includes(c.name))")
