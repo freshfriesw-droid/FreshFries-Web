@@ -31,6 +31,13 @@
  const appearance=window.ffA07Design;
  appearance.selectFields(form);
  const redrawGallery=appearance.gallery(form,packs);
+ const a08=window.ffA08Dashboard;
+ const a08Panels=a08.editor(form,dlg.querySelector('#ffCardEditor'));
+ const inheritance=document.createElement('label');inheritance.innerHTML='<input type="checkbox" data-a08-inherit-cards> وراثة البطاقات من النطاق الأعم (بدلاً من حفظ ترتيب مستقل)';
+ dlg.querySelector('[data-card-list]').before(inheritance);
+ const inherit=inheritance.querySelector('input');
+ const readStyle=()=>({...appearance.readStyle(form),...a08.read(form)});
+ const setStyle=v=>{appearance.setStyle(form,v);a08.set(form,v)};
  const dashboard=document.getElementById('ffx-dashboard'),caption=document.getElementById('ffx-hero-sub'),original=caption.textContent;
  const actor=()=>typeof user!=='undefined'&&user?.id&&typeof data!=='undefined'&&data?.role?user.id:'';
  const manager=()=>actor()&&data.role==='manager';
@@ -50,17 +57,18 @@
  let cards=defaults(),undoCards=[],redoCards=[],editorActor='';
  const copyCards=items=>items.map(x=>({...x}));
  function rememberCards(){undoCards.push(copyCards(cards));redoCards=[]}
- function changeCards(action){if(busy||!manager())return;rememberCards();action();renderCardEditor();}
+ function changeCards(action){if(busy||!manager())return;inherit.checked=false;rememberCards();action();renderCardEditor();}
  function renderCardPreview(){
   const preview=dlg.querySelector('[data-card-preview]');preview.replaceChildren();
   const width=Number(field('viewport').value)||390;preview.style.setProperty('--ff-card-columns',width<430?'2':width<768?'3':'4');
   for(const card of cards){
+   const role=field('role').value;if(role!=='all'&&!a08.cardVisible(card,role,()=>true))continue;
    const box=document.createElement('div');box.className='ff-card-sample';box.dataset.cardSize=card.size;box.dataset.cardTone=card.tone;
-   const name=document.createElement('b');name.textContent=card.label;
-   const value=document.createElement('span');value.textContent=card.metric==='available_drivers'&&!['all','manager','supervisor','customer_service'].includes(field('role').value)?'غير متاح':'—';
+   const name=document.createElement('b');name.textContent=card.label+(card.icon?' · '+(a08.icons[card.icon]||''):'');
+   const value=document.createElement('span');value.textContent=card.permission?'تتطلب صلاحية':card.metric==='available_drivers'&&!['all','manager','supervisor','customer_service'].includes(field('role').value)?'غير متاح':'—';
    box.append(name,value);preview.append(box);
   }
-  dlg.querySelector('[data-card-count]').textContent=cards.length+' بطاقة — معاينة تخطيطية دون أرقام افتراضية';
+  dlg.querySelector('[data-card-count]').textContent=(inherit.checked?'الوراثة مفعّلة · البطاقات المعروضة نموذج للترتيب فقط · ':'')+cards.length+' بطاقة — معاينة تخطيطية دون أرقام افتراضية';
  }
  function renderCardEditor(){
   const list=dlg.querySelector('[data-card-list]');list.replaceChildren();
@@ -69,7 +77,7 @@
    row.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',String(i));e.dataTransfer.effectAllowed='move'});
    row.addEventListener('dragover',e=>e.preventDefault());
    row.addEventListener('drop',e=>{e.preventDefault();const raw=e.dataTransfer.getData('text/plain'),from=Number(raw);if(/^\d+$/.test(raw)&&Number.isInteger(from)&&from>=0&&from<cards.length&&from!==i)changeCards(()=>cards.splice(i,0,...cards.splice(from,1)))});
-   const input=document.createElement('input');input.maxLength=100;input.required=true;input.value=card.label;input.setAttribute('aria-label','عنوان البطاقة '+(i+1));input.addEventListener('change',()=>{if(busy||!manager())return;rememberCards();card.label=input.value.trim();renderCardPreview();dlg.querySelector('[data-card-undo]').disabled=false;dlg.querySelector('[data-card-redo]').disabled=true});input.addEventListener('input',()=>{const box=dlg.querySelector('[data-card-preview]').children[i]?.querySelector('b');if(box)box.textContent=input.value});
+   const input=document.createElement('input');input.maxLength=100;input.required=true;input.value=card.label;input.setAttribute('aria-label','عنوان البطاقة '+(i+1));input.addEventListener('change',()=>{if(busy||!manager())return;inherit.checked=false;rememberCards();card.label=input.value.trim();renderCardPreview();dlg.querySelector('[data-card-undo]').disabled=false;dlg.querySelector('[data-card-redo]').disabled=true});input.addEventListener('input',()=>{const box=dlg.querySelector('[data-card-preview]').children[i]?.querySelector('b');if(box)box.textContent=input.value});
    row.append(input);
    for(const [key,options] of Object.entries({metric:metricNames,size:sizes,tone:tones})){
     const select=document.createElement('select');select.setAttribute('aria-label',({metric:'مصدر المؤشر',size:'مقاس البطاقة',tone:'لون البطاقة'})[key]+' '+(i+1));select.replaceChildren(...Object.entries(options).map(([k,label])=>new Option(label,k)));select.value=card[key];select.onchange=()=>changeCards(()=>{card[key]=select.value;if(key==='metric')card.label=metricNames[select.value]});row.append(select);
@@ -78,12 +86,13 @@
    for(const [label,disabled,action] of [['تقديم',i===0,()=>cards.splice(i-1,0,...cards.splice(i,1))],['تأخير',i===cards.length-1,()=>cards.splice(i+1,0,...cards.splice(i,1))],['نسخ',false,()=>cards.splice(i+1,0,{...card})],['حذف',false,()=>cards.splice(i,1)]]){
     const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.disabled=disabled;btn.onclick=()=>changeCards(action);actions.append(btn);
    }
-   row.append(actions);list.append(row);
+   row.append(a08.cardFields(card,i,changeCards));row.append(actions);list.append(row);
   }
   dlg.querySelector('[data-card-undo]').disabled=busy||!undoCards.length;dlg.querySelector('[data-card-redo]').disabled=busy||!redoCards.length;
   renderCardPreview();
  }
- function resetCards(layout){cards=Array.isArray(layout)?copyCards(layout):defaults();undoCards=[];redoCards=[];renderCardEditor()}
+ function resetCards(layout,inheritLayout=false){inherit.checked=inheritLayout;cards=Array.isArray(layout)?copyCards(layout):defaults();undoCards=[];redoCards=[];renderCardEditor()}
+ inherit.onchange=renderCardPreview;
  dlg.querySelector('[data-card-add]').onclick=()=>changeCards(()=>cards.push(defaults()[0]));
  dlg.querySelector('[data-card-default]').onclick=()=>changeCards(()=>{cards=defaults()});
  dlg.querySelector('[data-card-undo]').onclick=()=>{if(!busy&&manager()&&undoCards.length){redoCards.push(copyCards(cards));cards=undoCards.pop();renderCardEditor()}};
@@ -92,7 +101,7 @@
  const revisionLabel=document.createElement('small');
  caption.after(revisionLabel);
  function apply(version,cardLayout=null,barVersion=version){
-  window.ffApplyCardLayout?.(cardLayout);
+  window.ffApplyCardLayout?.(cardLayout,version?.style_config||{},version?.card_layout_source??null);
   revisionLabel.hidden=!version;
   revisionLabel.textContent=version?'إصدار التصميم '+version.id:'';
   dashboard.classList.toggle('ff-design-layout',!!version);
@@ -120,7 +129,7 @@
    apply(version,version?.card_layout??null,roleVersion);appearance.apply(rows);
   }catch{/* Keep the last confirmed design only for the same account and scope. */}
  }
- function reset(){editorActor='';clearSource();appearance.clear();serial++;session++;context='';last=0;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();appearance.setStyle(form,{});resetCards(null);status.textContent='';if(dlg.open)dlg.close();apply(null)}
+ function reset(){editorActor='';clearSource();appearance.clear();serial++;session++;context='';last=0;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();setStyle({});resetCards(null);status.textContent='';if(dlg.open)dlg.close();apply(null)}
  const sampleNav={all:['الرئيسية','الطلبات','المزيد'],manager:['الرئيسية','طلب جديد','الطلبات','تحكم المدير','المزيد'],supervisor:['الرئيسية','الطلبات','المزيد'],customer_service:['الرئيسية','طلب جديد','الطلبات','المزيد'],cashier:['الرئيسية','شاشة الكاشير','المزيد'],driver:['الرئيسية','مهامي','المزيد'],assembly:['الرئيسية','المزيد'],burger_kitchen:['الرئيسية','المزيد']};
  function luminance(hex){
   const parts=/^#([0-9a-f]{6})$/i.exec(hex.trim());if(!parts)return null;
@@ -153,7 +162,8 @@
     sourceEl('status').textContent='الإصدار #'+row.id+' · '+screenLabel(row.screen_scope)+' · '+roles[row.role_scope]+' · '+branchLabel(row.branch_id)+' · '+deviceLabel[row.device];
     sourceEl('pack').textContent=row.pack;sourceEl('bar').textContent=Array.from(field('bar').options).find(o=>o.value===row.bar)?.textContent||row.bar;
     sourceEl('caption').textContent=row.layout_text||original;sourceEl('details').hidden=false;
-    try{const layers=await rpc('ff_a07_manager_style_layers',{p_screen:screen,p_role:role,p_branch:b,p_device:d});if(request!==sourceSerial||token!==session||who!==actor()||!manager()||!dlg.open)return;sourceEl('layers').textContent=Object.entries(layers?.sources||{}).map(([k,id])=>(appearance.tokens[k]?.[0]||k)+' ← #'+id).join(' · ')||'الخصائص الأساسية للحزمة';}catch{if(request===sourceSerial)sourceEl('layers').textContent='تعذر التحقق من طبقات الخصائص'}
+    try{const layers=await rpc('ff_a07_manager_style_layers',{p_screen:screen,p_role:role,p_branch:b,p_device:d});if(request!==sourceSerial||token!==session||who!==actor()||!manager()||!dlg.open)return;sourceEl('layers').textContent=Object.entries(layers?.sources||{}).map(([k,id])=>(appearance.tokens[k]?.[0]||k)+' ← #'+id).join(' · ')||'الخصائص الأساسية للحزمة';
+     if(['all','dashboard'].includes(screen)){const cs=await rpc('ff_a08_manager_card_source',{p_role:role,p_branch:b,p_device:d});if(request!==sourceSerial||token!==session||who!==actor()||!manager()||!dlg.open)return;sourceEl('layers').textContent+=' · البطاقات ← '+(cs?.[0]?.revision?'#'+cs[0].revision:'الافتراضي')}}catch{if(request===sourceSerial)sourceEl('layers').textContent='تعذر التحقق من طبقات الخصائص'}
    }catch(e){if(request===sourceSerial&&token===session&&who===actor()&&manager()&&dlg.open){sourceEl('status').textContent='تعذر التحقق من المصدر المنشور. لا تعتبر القيمة المعروضة اعتماداً.';sourceKey=''}}
   },180);
  }
@@ -181,11 +191,12 @@
   dlg.querySelector('[data-impact-nav]').textContent=width>850?'شريط الهاتف لا يظهر في هذا العرض.':bar==='compact'?'الشريط المختصر: الرئيسية والمزيد والإجراء النشط؛ الاختصارات الأخرى عبر قائمة المزيد.':bar==='icons'?'الأيقونات فقط؛ أسماء العناصر تبقى لقارئ الشاشة.':'معاينة شكل الشريط؛ لا تخفي الإجراءات.';
   renderCardPreview();sourceRefresh();redrawGallery();
   dlg.querySelector('#ffCardEditor').hidden=!['all','dashboard'].includes(field('screen').value);
+  a08Panels.hidden=dlg.querySelector('#ffCardEditor').hidden;
  }
 
  function selectRecord(row){
   for(const [name,value] of Object.entries({draftName:row.draft_name||'',description:row.draft_description||'',screen:row.screen_scope||'dashboard',role:row.role_scope,branch:row.branch_id||'',device:row.device,caption:row.layout_text,pack:row.pack,bar:row.bar}))field(name).value=value;
-  appearance.setStyle(form,row.style_config);resetCards(row.card_layout);redraw();
+  setStyle(row.style_config);resetCards(row.card_layout,row.card_layout==null);redraw();
  }
  function compare(){
   const left=records.find(row=>String(row.id)===field('baseline').value);
@@ -197,7 +208,7 @@
   const properties=[
    ['اسم المسودة',row=>row.draft_name||'—'],['وصف التعديل',row=>row.draft_description||'—'],['الشاشة',row=>screenLabel(row.screen_scope)],['الدور',row=>roles[row.role_scope]],['الفرع',row=>branch(row.branch_id)],
    ['الجهاز',row=>row.device],['الحزمة',row=>row.pack],['شريط الجوال',row=>row.bar],
-   ['وصف الواجهة',row=>row.layout_text||original],['خصائص المظهر',row=>Object.entries(row.style_config||{}).sort().map(([k,v])=>(appearance.tokens[k]?.[0]||(k==='elements'?'ترتيب العناصر وأشكالها':k))+': '+(k==='elements'?JSON.stringify(v):appearance.tokens[k]?.slice(1).find(x=>x[0]===v)?.[1]||v)).join('\n')||'حسب الحزمة'],['عدد البطاقات',row=>String((row.card_layout??defaults()).length)],['ترتيب البطاقات ومصادرها وأحجامها وألوانها',row=>(row.card_layout??defaults()).map((card,i)=>(i+1)+'. '+card.label+' ['+(metricNames[card.metric]||card.metric)+' · '+(sizes[card.size]||card.size)+' · '+(tones[card.tone]||card.tone)+']').join('\n')||'لا توجد بطاقات']
+   ['وصف الواجهة',row=>row.layout_text||original],['خصائص المظهر',row=>Object.entries(row.style_config||{}).sort().map(([k,v])=>(appearance.tokens[k]?.[0]||(k==='elements'?'ترتيب العناصر وأشكالها':k))+': '+(k==='elements'?JSON.stringify(v):appearance.tokens[k]?.slice(1).find(x=>x[0]===v)?.[1]||v)).join('\n')||'حسب الحزمة'],['عدد البطاقات',row=>row.card_layout==null?'وراثة / الافتراضي':String(row.card_layout.length)],['ترتيب البطاقات ومصادرها وأحجامها وألوانها',row=>(row.card_layout??defaults()).map((card,i)=>(i+1)+'. '+card.label+' ['+(metricNames[card.metric]||card.metric)+' · '+(sizes[card.size]||card.size)+' · '+(tones[card.tone]||card.tone)+' · '+(card.roles?.join('/')||'كل الأدوار')+' · '+(card.permission||'الصلاحيات الأصلية')+' · '+(card.icon||'أيقونة المؤشر')+']').join('\n')||'لا توجد بطاقات']
   ];
   for(const [label,value] of properties){
    if(value(left)===value(right))continue;
@@ -247,7 +258,7 @@
   finally{if(valid(token,who)){busy=false;buttons()}}
  }
  function open(){
-  if(!manager()||dlg.open)return;editorActor=actor();session++;form.reset();appearance.setStyle(form,{});resetCards(null);records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();status.textContent='';field('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));redraw();dlg.showModal();redraw();void run(async token=>{await refreshCatalog(token);await history(token)});
+  if(!manager()||dlg.open)return;editorActor=actor();session++;form.reset();setStyle({});resetCards(null);records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();status.textContent='';field('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));redraw();dlg.showModal();redraw();void run(async token=>{await refreshCatalog(token);await history(token)});
  }
  for(const width of [320,360,390,430,768,1024,1440]){
   field('viewport').add(new Option(String(width),String(width),width===390,width===390));
@@ -256,7 +267,7 @@
  packs.forEach(({code,name})=>field('pack').add(new Option(code+' · '+name,code)));
  form.oninput=redraw;form.addEventListener('change',redraw);field('baseline').onchange=compare;field('version').onchange=()=>{field('accounts').replaceChildren();buttons();compare()};
  form.onsubmit=e=>{e.preventDefault();void run(async(token,who)=>{
-  const id=await rpc('ff_a07_named_design',{p_screen:field('screen').value,p_style:appearance.readStyle(form),p_cards:['all','dashboard'].includes(field('screen').value)?copyCards(cards):null,p_name:field('draftName').value,p_description:field('description').value,p_role:field('role').value,p_branch:field('branch').value||null,p_device:field('device').value,p_pack:field('pack').value,p_text:field('caption').value,p_bar:field('bar').value});
+  const id=await rpc('ff_a07_named_design',{p_screen:field('screen').value,p_style:readStyle(),p_cards:['all','dashboard'].includes(field('screen').value)&&!inherit.checked?copyCards(cards):null,p_name:field('draftName').value,p_description:field('description').value,p_role:field('role').value,p_branch:field('branch').value||null,p_device:field('device').value,p_pack:field('pack').value,p_text:field('caption').value,p_bar:field('bar').value});
   if(valid(token,who)){await history(token,id);if(valid(token,who))status.textContent='حُفظت المسودة رقم '+id}
  })};
  const selected=()=>records.find(r=>String(r.id)===field('version').value);
@@ -305,7 +316,7 @@
   await rpc('ff_ui_publish',{p_id:row.id});
   if(valid(token,who)){await history(token,row.id);if(valid(token,who)){status.textContent='نُشر الإصدار رقم '+row.id;sourceRefresh(true);void sync(true)}}
  });
- dlg.querySelector('[data-close]').onclick=()=>dlg.close();dlg.onclose=()=>{if(dlg.open)return;editorActor='';session++;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();appearance.setStyle(form,{});resetCards(null);status.textContent='';clearSource()};
+ dlg.querySelector('[data-close]').onclick=()=>dlg.close();dlg.onclose=()=>{if(dlg.open)return;editorActor='';session++;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();setStyle({});resetCards(null);status.textContent='';clearSource()};
  window.addEventListener('ff-luxe-session-reset',reset);
  document.getElementById('ffx-branch').addEventListener('change',()=>sync(true));
  matchMedia('(max-width:850px)').addEventListener('change',()=>sync(true));
