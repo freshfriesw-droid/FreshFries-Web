@@ -120,7 +120,9 @@ dialog.innerHTML='<div class="sectionbar"><h2 id="ffContentHeading">استودي
  '<section class="ff-content-preview"><h3>معاينة قبل / بعد</h3><p>الأصل: <b data-content-original></b></p><p>المسودة: <b data-content-preview></b></p><div data-content-rich-preview hidden></div></section>'+
  '<div class="actions"><button type="button" data-content-save>حفظ مسودة</button><button type="button" data-content-restore>استعادة الأصل كمسودة</button></div>'+
  '<div class="actions"><label>دور الإصدارات<select data-content-history-role></select></label><label>فرع الإصدارات<select data-content-history-branch></select></label></div><label>الإصدارات (أحدث 200 نتيجة في النطاق)<select data-content-history></select></label><p data-content-audit></p>'+
- '<div class="actions"><button type="button" data-content-load>معاينة الإصدار</button><button type="button" data-content-publish>نشر الإصدار المحدد</button></div>'+
+ '<div class="actions"><button type="button" data-content-load>معاينة الإصدار</button><button type="button" data-content-publish>نشر الإصدار المحدد</button><button type="button" data-content-rollback>استعادة الإصدار السابق الآن</button></div>'+ 
+ '<section><h3>مقارنة الإصدارات وتقرير التأثير</h3><label>الإصدار المرجعي<select data-content-baseline></select></label><p data-content-compare></p><button type="button" data-content-impact-check>تحقق من أثر الإصدار المحدد</button><p data-content-impact aria-live="polite"></p></section>'+ 
+ '<details><summary>تجربة محدودة للنص المحدد</summary><p>تطبق على الحسابات المسموح بها على جميع أجهزتها، دون نشر عام. النصوص العامة لا تدخل في تجربة الحسابات.</p><button type="button" data-content-accounts-load>تحميل الحسابات المؤهلة</button><label>الحسابات<select data-content-accounts multiple size="4"></select></label><label>المدة<select data-content-hours><option value="1">ساعة</option><option value="8">8 ساعات</option><option value="24">24 ساعة</option></select></label><div class="actions"><button type="button" data-content-trial>بدء تجربة النص</button><button type="button" data-content-stop>إيقاف تجربة النص</button></div></details>'+
  '<p data-content-status role="status" aria-live="polite"></p>';
 document.body.append(dialog);
 const q=s=>dialog.querySelector('[data-content-'+s+']');
@@ -207,7 +209,7 @@ async function sync(force=false){
  const b=branch(),role=currentRole(),key=[who,role,b].join('|');
  if(key!==context){serial++;values.clear();if(dialog.open&&(!manager()||(context&&context.split('|')[0]!==who)))reset();context=key;last=0}
  render();
- if(!force&&Date.now()-last<30000)return;
+ if(!force&&Date.now()-last<3000)return;
  last=Date.now();const request=++serial;
  try{
   const rows=await rpc('ff_content_effective',{p_branch:b});
@@ -235,10 +237,25 @@ function preview(){
  const binding=additionalByKey.get(key);q('original').parentElement.title=['protected','protected_label','guide'].includes(binding?.mode)?'يبقى النص الرسمي ظاهرًا؛ النص المعدل توضيح إضافي.':'';
  const draft=q('body').value; q('preview').textContent=(draft?((preserveState.has(key)||binding?.message||binding?.mode==='accessible')?original+' — '+draft:templates.has(key)?substitute(draft,sampleVars):draft):'—');
 }
-function audit(){
+function compareVersions(){
+ const row=selected(),before=history.find(v=>String(v.id)===q('baseline').value);
+ q('compare').textContent=row&&before?('قبل #'+before.id+': '+(before.body??'النص الأصلي')+' | بعد #'+row.id+': '+(row.body??'النص الأصلي')):'اختر إصدارين للمقارنة؛ النص الأصلي متاح في المعاينة.';
+}
+ async function contentImpact(row,token,who){
+  const info=await rpc('ff_step08_release_impact',{p_kind:'content',p_id:row.id});
+  if(token!==session||who!==actor()||!manager()||!dialog.open||selected()?.id!==row.id)return null;
+  if(!info||Number(info.id)!==Number(row.id))throw Error('تعذر التحقق من تقرير التأثير');
+  q('impact').textContent=(info.valid?'صالح للنشر':'مسودة قديمة أو غير صالحة')+' · '+(info.public?'نطاق عام':'الحسابات المؤهلة: '+info.target_count)+' · الإصدار السابق: '+(info.previous?'#'+info.previous:'الأصلي');
+  return info;
+ }
+ function audit(){
  const row=selected();
  q('audit').textContent=row?('الإصدار #'+row.id+' · '+(row.published_at?'منشور':'مسودة')+' · '+new Date(row.created_at).toLocaleString('ar-YE')+' · محرر: '+row.actor_id+(row.published_by?' · نشر: '+row.published_by:'')):'لا يوجد إصدار محدد';
  q('publish').disabled=busy||!row||!!row.published_at;q('load').disabled=busy||!row;
+ q('rollback').disabled=busy||!row?.published_at||!row.previous_id||history.some(v=>v.published_at&&v.previous_id===row.id);
+ q('impact-check').disabled=busy||!row;const publicRow=additionalByKey.get(row?.content_key)?.publicScreen;
+ for(const name of ['accounts-load','accounts','hours','trial','stop'])q(name).disabled=busy||!row||!!row.published_at||!!publicRow;
+ q('baseline').disabled=busy;compareVersions();
 }
 function controls(){
  for(const name of ['search','screen','key','role','branch','body','history','history-role','history-branch','bold','bullet'])q(name).disabled=busy;
@@ -260,7 +277,8 @@ async function getHistory(token,selectId){
  if(token!==session||who!==actor()||!manager()||q('key').value!==key||q('history-role').value!==role||q('history-branch').value!==branchFilter)return;
  history=rows||[];
  q('history').replaceChildren(...history.map(r=>new Option('#'+r.id+' · '+(r.published_at?'منشور':'مسودة')+' · '+roles[r.role_scope]+' · '+(r.branch_id?(data.branches||[]).find(b=>b.id===r.branch_id)?.name||'فرع محدد':'كل الفروع'),String(r.id))));
- if(selectId&&history.some(r=>String(r.id)===String(selectId)))q('history').value=String(selectId);controls();
+ if(selectId&&history.some(r=>String(r.id)===String(selectId)))q('history').value=String(selectId);
+ q('baseline').replaceChildren(...Array.from(q('history').options,o=>o.cloneNode(true)));if(selected()?.previous_id)q('baseline').value=String(selected().previous_id);q('accounts').replaceChildren();q('impact').textContent='';controls();
 }
 async function run(action){
  if(!manager()||busy)return;const token=session,who=actor();busy=true;controls();
@@ -294,7 +312,7 @@ function insertFormat(prefix,suffix){
 q('bold').onclick=()=>insertFormat('**','**');
 q('bullet').onclick=()=>insertFormat(q('body').selectionStart===0||q('body').value[q('body').selectionStart-1]==='\n'?'- ':'\n- ','');
 q('screen').onchange=()=>{setKeys();selectKey()};q('history-role').onchange=q('history-branch').onchange=()=>void run(token=>getHistory(token));
-q('key').onchange=selectKey;q('role').onchange=preview;q('body').oninput=preview;q('history').onchange=audit;
+q('key').onchange=selectKey;q('role').onchange=preview;q('body').oninput=preview;q('history').onchange=()=>{q('accounts').replaceChildren();q('impact').textContent='';audit()};q('baseline').onchange=compareVersions;
 q('load').onclick=()=>{const row=selected();if(!row)return;q('role').value=row.role_scope;q('branch').value=row.branch_id||'';q('body').value=row.body??originalText(row.content_key,row.role_scope);preview()};
 async function draft(restore){
  const key=q('key').value,role=q('role').value,b=q('branch').value||null,body=restore?null:q('body').value.trim();
@@ -310,11 +328,30 @@ async function draft(restore){
 q('save').onclick=()=>void draft(false);q('restore').onclick=()=>void draft(true);
 q('publish').onclick=()=>void run(async(token,who)=>{
  const row=selected();if(!row||row.published_at)return;
- const scope=roles[row.role_scope]+' · '+(row.branch_id?(data.branches||[]).find(b=>b.id===row.branch_id)?.name||'فرع محدد':'كل الفروع');
+ const info=await contentImpact(row,token,who);if(!info)return;if(!info.valid)throw Error('مسودة قديمة أو غير صالحة للنشر');
+ const scope=(info.public?'نطاق عام':'الحسابات المؤهلة: '+info.target_count)+' · '+roles[row.role_scope]+' · '+(row.branch_id?(data.branches||[]).find(b=>b.id===row.branch_id)?.name||'فرع محدد':'كل الفروع');
  if(!confirm('نشر النص المحدد #'+row.id+'؟\n'+scope+'\n'+(row.body??'استعادة النص الأصلي')))return;
  await rpc('ff_content_publish',{p_id:row.id});
  if(token!==session||who!==actor()||!manager())return;
  await getHistory(token,row.id);if(token===session&&who===actor()&&manager()){if(!history.some(x=>String(x.id)===String(row.id)&&x.published_at))throw Error('لم يثبت نشر الإصدار؛ أعد تحميل السجل');q('status').textContent='تم نشر النص #'+row.id;void sync(true);void syncPublic(true)}
+});
+q('impact-check').onclick=()=>void run(async(token,who)=>{const row=selected();if(row)await contentImpact(row,token,who)});
+q('accounts-load').onclick=()=>void run(async(token,who)=>{const row=selected();if(!row||row.published_at)return;const info=await contentImpact(row,token,who);if(!info||!info.trial_allowed)return;q('accounts').replaceChildren(...info.targets.map(a=>new Option(a.account_name,a.account_id)))});
+for(const action of ['trial','stop'])q(action).onclick=()=>void run(async(token,who)=>{
+ const row=selected();if(!row||row.published_at)return;
+ const hours=action==='stop'?0:Number(q('hours').value),ids=Array.from(q('accounts').selectedOptions,o=>o.value);
+ if(hours){const info=await contentImpact(row,token,who);if(!info)return;if(!info.trial_allowed||!ids.length||!ids.every(id=>info.targets.some(a=>a.account_id===id)))throw Error('اختر حسابات مؤهلة لمسودة صالحة');}
+ if(!confirm(hours?'تجربة النص #'+row.id+' على '+ids.length+' حساب لمدة '+hours+' ساعة؟':'إيقاف تجربة النص #'+row.id+'؟'))return;
+ const n=await rpc('ff_step08_content_trial',{p_id:row.id,p_accounts:ids,p_hours:hours});
+ if(token===session&&who===actor()&&manager()&&dialog.open){q('status').textContent=(hours?'بدأت التجربة: ':'انتهت التجربة: ')+n+' حساب';void sync(true)}
+});
+q('rollback').onclick=()=>void run(async(token,who)=>{
+ const row=selected();if(!row?.published_at||!row.previous_id)return;
+ if(!confirm('استعادة النص السابق #'+row.previous_id+' في نفس نطاق الإصدار #'+row.id+'؟'))return;
+ const id=await rpc('ff_step08_content_restore',{p_current:row.id});
+ if(token!==session||who!==actor()||!manager()||!dialog.open)return;
+ await getHistory(token,id);
+ if(token===session&&who===actor()&&manager()&&dialog.open){if(!history.some(v=>v.id===id&&v.published_at))throw Error('لم تثبت الاستعادة في السجل');q('status').textContent='تمت الاستعادة في الإصدار #'+id;void sync(true);void syncPublic(true)}
 });
 q('close').onclick=()=>dialog.close();dialog.onclose=()=>{session++;busy=false;q('rich-preview').replaceChildren();q('body').value=''};
 const studio=document.querySelector('#ffStudio form');
