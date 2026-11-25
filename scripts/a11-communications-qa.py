@@ -8,12 +8,12 @@ from playwright.sync_api import sync_playwright,expect
 root=Path(__file__).resolve().parents[1]
 fixture=next(ast.literal_eval(n.value) for n in ast.parse((root/'scripts/a10-report-qa.py').read_text()).body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='fixture' for t in n.targets))
 fixture=fixture.replace("window.__a06Calls.push({name,args});", """window.__a06Calls.push({name,args});
- if(name==='ff_a11_message_access')return {manager:role==='manager',can_send:role==='manager',branches:[b,b2]};
+ if(name==='ff_a11_message_access')return {manager:role==='manager'&&!window.a11Revoked,can_send:role==='manager'&&!window.a11Revoked,branches:[b,b2]};
  if(name==='ff_a11_message_preview')return {ok:true,count:2,people:[{user_id:'u1',display_name:'QA one',role:'cashier'},{user_id:'u2',display_name:'QA two',role:'cashier'}]};
  if(name==='ff_a11_message_send'){window.a11Sent=args;return {ok:true,recipients:args.p_expected.length,message_id:'m1'}}
  if(name==='ff_a11_message_templates')return [{id:'t1',name:'QA template',title:'QA saved',body:'saved body',priority:'urgent',requires_ack:true,internal_route:'messages'}];
  if(name==='ff_a11_message_template_save'){window.a11Template=args;return {ok:true}}
- if(name==='ff_a11_message_history')return [];
+ if(name==='ff_a11_message_history')return [{id:'m1',title:'QA proof',sender:'QA',created_at:new Date().toISOString(),role:'cashier',priority:'urgent',recipients:3,push_accepted_count:1,push_unverified_count:1,push_unavailable_count:1,read_count:0,ack_count:0}];
  if(name==='ff_a11_message_grants')return {staff:[{id:'u1',name:'QA cashier',role:'cashier'}],grants:[]};
  if(name==='ff_a11_message_grant'){window.a11Grant=args;return {ok:true}}
  if(name==='ff39_inbox')return {items:window.a11Inbox||[],unread_count:(window.a11Inbox||[]).length,pending_ack_count:0};
@@ -38,13 +38,28 @@ with sync_playwright() as pw:
  page.wait_for_function('()=>!!window.a11Sent')
  assert page.evaluate('window.a11Sent.p_people')==['u1'] and page.evaluate('window.a11Sent.p_expected')==['u1']
  expect(page.locator('#ff39Send')).to_be_disabled()
+ expect(page.locator('#ff39SentLog')).to_contain_text('قبول مزود Push المثبت (ليس مشاهدة): 1')
+ expect(page.locator('#ff39SentLog')).to_contain_text('سجل Push قديم غير مؤكد: 1')
+ expect(page.locator('#ff39SentLog')).to_contain_text('لا جهاز مؤهل: 1')
  page.locator('#ffA11Template').select_option('t1');expect(page.locator('#ff39Title')).to_have_value('QA saved')
  page.locator('#ffA11TemplateSave').click();page.wait_for_function('()=>!!window.a11Template')
  assert page.evaluate('window.a11Template.p_priority')=='urgent'
  page.locator('#ffA11GrantBox summary').click();page.locator('#ffA11GrantUser').select_option('u1');page.locator('#ffA11GrantRole').select_option('cashier');page.locator('#ffA11GrantBranch').select_option('b1');page.locator('#ffA11GrantPriority').select_option('operational');page.locator('#ffA11GrantSave').click();page.wait_for_function('()=>!!window.a11Grant')
  assert page.evaluate('window.a11Grant.p_branch')=='b1'
- page.evaluate("""()=>{window.a11Inbox=[{id:'m2',title:'QA incoming',body:'Stored on server',sender:'QA',created_at:new Date().toISOString(),priority:'urgent',requires_ack:true}];window.dispatchEvent(new Event('online'))}""")
- expect(page.locator('#ff39InboxList')).to_contain_text('QA incoming')
+ # Real offline browser context: neither recipient data nor audio is synthesized while disconnected.
+ ctx.set_offline(True)
+ page.evaluate("()=>localStorage.setItem('freshfries_luxe_prefs_'+user.id,JSON.stringify({visual:false,audio:false}))")
+ page.evaluate("""()=>{window.a11Inbox=[{id:'m2',title:'QA incoming',body:'Stored on server',sender:'QA',created_at:new Date().toISOString(),priority:'urgent',requires_ack:true}];window.dispatchEvent(new Event('offline'))}""")
+ expect(page.locator('#ff39InboxStatus')).to_contain_text('غير متصل')
+ assert 'QA incoming' not in page.locator('#ff39InboxList').text_content()
+ ctx.set_offline(False)
+ expect(page.locator('#ff39InboxList')).to_contain_text('QA incoming',timeout=15000)
+ expect(page.locator('#ffA11Visual')).to_be_hidden()
+ # Revocation clears delegated controls and stale local history.
+ page.evaluate("()=>{window.a11Revoked=true;window.dispatchEvent(new Event('online'))}")
+ expect(page.locator('#ffA11Preview')).to_be_hidden(timeout=15000)
+ assert 'QA proof' not in page.locator('#ff39SentLog').text_content()
+ print('PASS STEP11 offline/online recovery, Push proof labels, visual preference and revocation',flush=True)
  page.evaluate("()=>{window.dispatchEvent(new Event('ff-luxe-session-reset'));user=null;data=null;}")
  expect(page.locator('#ff39Title')).to_have_value('')
  assert 'QA incoming' not in page.locator('#ff39InboxList').text_content()
