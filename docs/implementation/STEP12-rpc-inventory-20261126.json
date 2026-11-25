@@ -302,7 +302,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "24dfa3f8e3264d1ee532e4b48aec6708"
+      "definition_md5": "24dfa3f8e3264d1ee532e4b48aec6708",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff39_admin_sent",
@@ -701,7 +702,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "e5a86ca864f82e500144c4f8d4292c5b"
+      "definition_md5": "e5a86ca864f82e500144c4f8d4292c5b",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff51_catalog_save_item",
@@ -875,7 +877,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "579a5572acd9083d344ecfc2fba6dbe0"
+      "definition_md5": "579a5572acd9083d344ecfc2fba6dbe0",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff52_reassign_before_pos",
@@ -1041,7 +1044,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f06a698bf49379d6cc4c336a111c0595"
+      "definition_md5": "f06a698bf49379d6cc4c336a111c0595",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff62_set_pinned",
@@ -1068,7 +1072,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "ae534210a183e6e2c6ae1934401217e6"
+      "definition_md5": "ae534210a183e6e2c6ae1934401217e6",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff70_set_item_notes",
@@ -1134,7 +1139,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "2075f50c6343280772889480c7801fdf"
+      "definition_md5": "2075f50c6343280772889480c7801fdf",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled/foreign branch/revoked denied, own authorized; not full role/argument acceptance"
     },
     {
       "name": "ff81_effective_cards",
@@ -1170,7 +1176,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "b876f1b41efd8d552b974fcc77cf814f"
+      "definition_md5": "b876f1b41efd8d552b974fcc77cf814f",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled receives empty or null; not full role/argument acceptance"
     },
     {
       "name": "ff82_delegate_draft",
@@ -1296,7 +1303,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f01ca64cf7c6c916e683a598bc95785e"
+      "definition_md5": "f01ca64cf7c6c916e683a598bc95785e",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled/foreign branch denied, own allowed; not full role/argument acceptance"
     },
     {
       "name": "ff_a05_branch_policy",
@@ -1305,7 +1313,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9e13e684e445e0557548b95e495dbf69"
+      "definition_md5": "9e13e684e445e0557548b95e495dbf69",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled/foreign branch denied, own allowed; not full role/argument acceptance"
     },
     {
       "name": "ff_a05_catalog_price_history",
@@ -1314,7 +1323,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d94924689bd80a88188f4f7e680fe5b5"
+      "definition_md5": "d94924689bd80a88188f4f7e680fe5b5",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff_a05_set_area_tariff",
@@ -1386,7 +1396,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "b6195842775d27e41c450eb0cdb6b15a"
+      "definition_md5": "b6195842775d27e41c450eb0cdb6b15a",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff_a07_named_design",
@@ -1404,7 +1415,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "2c1cb325b0dbf60864d05ff2a3729684"
+      "definition_md5": "2c1cb325b0dbf60864d05ff2a3729684",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff_a07_public_appearance",
@@ -1413,7 +1425,8 @@
       "anon": true,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "7de552b410f6f936cf5190b897bc1c96"
+      "definition_md5": "7de552b410f6f936cf5190b897bc1c96",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: anon public allowed, staff scope denied or empty; not full role/argument acceptance"
     },
     {
       "name": "ff_a08_manager_card_source",
@@ -1422,7 +1435,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "817ec4f3f2f3df6990df7e5b86114cfc"
+      "definition_md5": "817ec4f3f2f3df6990df7e5b86114cfc",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff_a08_metric_detail",
@@ -1431,7 +1445,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "043b193c4231c7bf8e9ab9bf0b621bde"
+      "definition_md5": "043b193c4231c7bf8e9ab9bf0b621bde",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled/foreign branch/revoked denied, own authorized; not full role/argument acceptance"
     },
     {
       "name": "ff_a09_design_context",
@@ -1440,7 +1455,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "46676f8bb53e9af62217342d6e0be211"
+      "definition_md5": "46676f8bb53e9af62217342d6e0be211",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled receives empty or null; not full role/argument acceptance"
     },
     {
       "name": "ff_a09_design_draft",
@@ -1575,7 +1591,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "4a62c704def133b58854e88a929fdd04"
+      "definition_md5": "4a62c704def133b58854e88a929fdd04",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff_a11_message_grant",
@@ -1593,7 +1610,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f1fac85adf929e947c6ecf564209eabe"
+      "definition_md5": "f1fac85adf929e947c6ecf564209eabe",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff_a11_message_history",
@@ -1683,7 +1701,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d6dc56de65eba9f116918acfb8c6d54f"
+      "definition_md5": "d6dc56de65eba9f116918acfb8c6d54f",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff_a12_legacy_execute",
@@ -1719,7 +1738,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "dc7d734a869ccaced49f4b70fb8bcd1b"
+      "definition_md5": "dc7d734a869ccaced49f4b70fb8bcd1b",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff_a12_reset_execute",
@@ -1901,7 +1921,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "53de3bfc5275d1dfc20e9968778f7bb2"
+      "definition_md5": "53de3bfc5275d1dfc20e9968778f7bb2",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff_f01_daily_summary",
@@ -1993,7 +2014,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "68a8d0ffdf15b88a3f8b36a902278d3f"
+      "definition_md5": "68a8d0ffdf15b88a3f8b36a902278d3f",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff_luxe_cashier_completed_report",
@@ -2002,7 +2024,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "012c98b538e5c0dbf7e236de986d9341"
+      "definition_md5": "012c98b538e5c0dbf7e236de986d9341",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     },
     {
       "name": "ff_luxe_cashier_desks_roster",
@@ -2311,7 +2334,8 @@
       "anon": true,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "0ca9f91391bd11e467b3a453cae2d5c9"
+      "definition_md5": "0ca9f91391bd11e467b3a453cae2d5c9",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: anon public allowed, staff scope denied or empty; not full role/argument acceptance"
     },
     {
       "name": "ff_step08_content_restore",
@@ -2480,8 +2504,9 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "e36ad6176fc8e89141933210b87fd9c8"
+      "definition_md5": "e36ad6176fc8e89141933210b87fd9c8",
+      "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26: delegated wrapper review and 24 assertions"
+  "last_update": "2026-11-26: all 25 delegated indicator entries targeted live SQL authorization checks"
 }
