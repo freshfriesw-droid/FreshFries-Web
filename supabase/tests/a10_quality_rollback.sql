@@ -9,6 +9,7 @@ BEGIN
  DELETE FROM public.ff_profiles WHERE user_id=cust;
  INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(s,b),(c,b),(cs,b),(cs2,b2),(u,b),(u2,b2);
  INSERT INTO public.ff_drivers(id,name,branch_id) VALUES(d,'A10 QA driver',b),(d2,'A10 QA other driver',b2);
+ INSERT INTO public.ff38_driver_presence(driver_id,state,checked_in_at,last_seen_at) VALUES(d,'busy',now()-interval '2 hours',now()),(d2,'busy',now()-interval '2 hours',now()) ON CONFLICT(driver_id) DO UPDATE SET state='busy',checked_in_at=excluded.checked_in_at,last_seen_at=excluded.last_seen_at;
  INSERT INTO public.ff38_driver_links(user_id,driver_id) VALUES(u,d),(u2,d2);
  INSERT INTO public.ff_orders(id,order_number,branch_id,phone_snapshot,driver_id,status,created_by,created_at,delivered_at) VALUES(o,n,b,phone,d,'delivered',cs,now()-interval '1 hour',now()-interval '20 minutes'),(o2,n-1,b2,'000000000',d2,'delivered',cs2,now()-interval '1 hour',now()-interval '20 minutes'),(o3,n-2,b,phone,d,'sent',cs,now()-interval '1 hour',NULL);
  INSERT INTO public.ff38_delivery_tasks(order_id,driver_id,phase,cashier_stage,delivered_at) VALUES(o,d,'delivered','handed_over',now()-interval '20 minutes'),(o2,d2,'delivered','handed_over',now()-interval '20 minutes'),(o3,d,'assigned','handed_over',NULL);
