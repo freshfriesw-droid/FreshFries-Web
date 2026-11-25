@@ -125,7 +125,7 @@ function sync(snapshot,config){
    const rows=snapshot?.branch_status;
    if(!Array.isArray(rows))branches.body.append(make('p','البيانات غير متاحة أو بانتظار الاتصال.'));
    else if(!rows.length)branches.body.append(make('p','لا توجد فروع ضمن النطاق.'));
-   else for(const x of rows){const n=make('article');n.className='ff-a08-data-row';n.append(make('b',String(x.branch_name||'—')),make('span',x.active===true?'فرع مفعّل':x.active===false?'فرع غير مفعّل':'حالة الفرع غير متاحة'),make('span','الطلبات: '+number(x.orders_today)+' · المنجزة: '+number(x.completed_today)+' · المتأخرة: '+number(x.late_today)+' · الجاهزون: '+number(x.available_drivers)));branches.body.append(n)}
+   else for(const x of rows){const n=make('article');n.className='ff-a08-data-row';n.append(make('b',String(x.branch_name||'—')),make('span',x.active===true?'فرع مفعّل':x.active===false?'فرع غير مفعّل':'حالة الفرع غير متاحة'),make('span','الطلبات: '+number(x.orders_today)+' · المنجزة: '+number(x.completed_today)+' · المتأخرة: '+number(x.late_today)+' · الجاهزون: '+number(['manager','supervisor','customer_service'].includes(config.role)?x.available_drivers:null)));branches.body.append(n)}
   }
  }
 }
