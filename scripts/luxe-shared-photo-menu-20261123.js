@@ -48,13 +48,13 @@ function createTile(item,opts={}){
  const root=document.createElement('div');root.className='ffl-picker-tile';root.dataset.cardStyle=['compact','large'].includes(item.card_style)?item.card_style:'standard';
  const product=document.createElement('button');product.type='button';product.className='ffl-picker-product';product.setAttribute('aria-label','إضافة '+String(item.name||'صنف'));
  const pic=imageUrl(item);let media;
- if(pic){media=document.createElement('img');media.src=pic;media.loading='lazy';media.alt='صورة '+String(item.name||'صنف');media.onerror=()=>media.replaceWith(placeholder(item))}
+ if(pic){media=document.createElement('img');media.loading='lazy';media.alt='صورة '+String(item.name||'صنف');media.onerror=()=>{if(media.parentNode)media.replaceWith(placeholder(item));else media.dataset.ffMediaFailed='1'};media.src=pic}
  else media=placeholder(item);
  const name=document.createElement('span');name.className='ffb-v2-name';name.textContent=String(item.name||'صنف');
  const price=document.createElement('span');price.className='ffb-v2-price';
  if(opts.showPrice!==false&&item.price!==undefined&&item.price!==null&&Number.isFinite(Number(item.price)))price.textContent=Number(item.price).toLocaleString('ar-YE')+' ريال';
  const badge=document.createElement('span');badge.className='ffb-v2-count';badge.hidden=true;
- product.append(media,name);if(price.textContent)product.append(price);product.append(badge);
+ product.append(media,name);if(media.dataset.ffMediaFailed==='1')media.replaceWith(placeholder(item));if(price.textContent)product.append(price);product.append(badge);
  const controls=document.createElement('div');controls.className='ffl-picker-controls';
  const less=document.createElement('button');less.type='button';less.className='ffl-picker-minus';less.textContent='−';less.setAttribute('aria-label','إنقاص '+item.name);
  const plus=document.createElement('button');plus.type='button';plus.textContent='+';plus.setAttribute('aria-label','زيادة '+item.name);

@@ -30,14 +30,22 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  current_html=current_html[:start]+baseline_html[old_start:old_end]+current_html[end:]
  for asset in ('scripts/luxe-a08-dashboard.js','scripts/luxe-dashboard-studio.js','styles/luxe-a08-dashboard.css'):
   current_html=current_html.replace('./'+asset+'?v=20261125-step04','./'+asset)
- assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04 shortcut block and asset versions'
+ # STEP05: only the explicitly audited tone lifecycle and asset URLs differ.
+ current_start=current_html.index('let ff74Busy=false,ff74')
+ current_end=current_html.index('let audioCtx=null,lastSoundAt=0',current_start)
+ base_start=baseline_html.index('let ff74Busy=false,ff74')
+ base_end=baseline_html.index('let audioCtx=null,lastSoundAt=0',base_start)
+ current_html=current_html[:current_start]+baseline_html[base_start:base_end]+current_html[current_end:]
+ current_html=current_html.replace('./scripts/luxe-a07-design.js?v=20261125-step05','./scripts/luxe-a07-design.js')
+ current_html=current_html.replace('luxe-shared-photo-menu-20261123.js?v=20261125-step05','luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style')
+ assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04 and STEP05 audited areas'
 else:
  assert current_html==baseline_html,'non-CSS application markup or script changed'
 changed={str(f.relative_to(base)) for f in list((base/'scripts').glob('*.js'))+list((base/'assets').glob('*.js')) if f.read_bytes()!=(root/f.relative_to(base)).read_bytes()}
 step03_scripts={'scripts/luxe-a07-elements.js','scripts/luxe-a07-design.js','scripts/luxe-dashboard-studio.js','scripts/luxe-content-studio.js'}
 if os.environ.get('P2_STEP04_REGRESSION')=='1':
  # No unrelated scripts changed; keep all visual/focus/pixel comparisons intact.
- assert changed==step03_scripts|{'scripts/luxe-a08-dashboard.js'},changed
+ assert changed==step03_scripts|{'scripts/luxe-a08-dashboard.js','scripts/luxe-shared-photo-menu-20261123.js'},changed
 elif os.environ.get('P2_STEP03_REGRESSION')=='1':
  assert changed==step03_scripts,changed
 else:

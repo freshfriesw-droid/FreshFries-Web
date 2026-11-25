@@ -3388,49 +3388,55 @@ doc.addEventListener('keydown',event=>{
 
 // FF66: shared ringtone catalog (private Supabase Storage; server-side RLS).
 // FF74 manager-controlled global notification tones.
-let ff74Busy=false,ff74LoadedFor='',ff74LastCheck=0;
+let ff74Busy=false,ff74Saving=false,ff74LoadedFor='',ff74LastCheck=0,ff74Epoch=0;
 const ff74Manager=()=>ff66Ready()&&typeof data!=='undefined'&&data?.role==='manager';
 const ff74From=t=>t?.type==='uploaded'&&t.tone_id?'tone:'+t.tone_id:t?.type==='built_in'&&['soft','digital','classic','double','urgent'].includes(t.key)?t.key:null;
 const ff74As=v=>String(v).startsWith('tone:')?{type:'uploaded',tone_id:String(v).slice(5)}:{type:'built_in',key:v};
-function ff74Controls(){for(const id of ['ffx-sound','ffx-delay-sound']){const el=$x(id);if(el){el.disabled=!ff74Manager();el.title=ff74Manager()?'تحديد المدير ينطبق على جميع الموظفين':'اختيار النغمة للمدير فقط';}}}
+function ff74Controls(){for(const id of ['ffx-sound','ffx-delay-sound']){const el=$x(id);if(el){el.disabled=!ff74Manager()||ff74Saving;el.title=ff74Manager()?'تحديد المدير ينطبق على جميع الموظفين':'اختيار النغمة للمدير فقط';}}}
+function ff74Reset(){ff74Epoch++;ff74Busy=false;ff74Saving=false;ff74LoadedFor='';ff74LastCheck=0;ff74Controls()}
 async function ff74Refresh(force=false){
- if(!ff66Ready()){ff74LoadedFor='';ff74Controls();return}
- if(ff74Busy||(!force&&ff74LoadedFor===String(user.id)&&Date.now()-ff74LastCheck<20000))return;
- ff74Busy=true;const viewer=String(user.id);
- try{const {data:cfg,error}=await client.rpc('ff74_get_global_tones');if(error)throw error;
-  if(!ff66Ready()||String(user.id)!==viewer)return;
+ if(!ff66Ready()){ff74Reset();return}
+ if(ff74Busy||ff74Saving||(!force&&ff74LoadedFor===String(user.id)&&Date.now()-ff74LastCheck<20000))return;
+ ff74Busy=true;const viewer=String(user.id),connection=client,epoch=++ff74Epoch;
+ const current=()=>ff66Ready()&&String(user.id)===viewer&&client===connection&&ff74Epoch===epoch;
+ try{const {data:cfg,error}=await connection.rpc('ff74_get_global_tones');if(error)throw error;if(!current())return;
   const a=ff74From(cfg?.new_order),b=ff74From(cfg?.delay);
   if(a)prefs.sound=a;if(b)prefs.delaySound=b;
   ff74LoadedFor=viewer;ff74LastCheck=Date.now();ff66ShowChoices();applyPrefs();ff74Controls();
- }catch(e){console.warn('FF74 centralized tones unavailable',e);ff74Controls()}
- finally{ff74Busy=false}
+ }catch(e){if(current()){console.warn('FF74 centralized tones unavailable',e);ff74Controls()}}
+ finally{if(ff74Epoch===epoch)ff74Busy=false}
 }
 async function ff74Change(which,value){
  if(!ff74Manager()){showToast('اختيار النغمات للمدير فقط');await ff74Refresh(true);return}
- const previous={sound:prefs.sound,delaySound:prefs.delaySound};prefs[which]=value;applyPrefs();ff74Controls();
- try{const {data:cfg,error}=await client.rpc('ff74_set_global_tones',{p_new_order:ff74As(prefs.sound),p_delay:ff74As(prefs.delaySound)});if(error)throw error;
+ if(ff74Saving||!['sound','delaySound'].includes(which))return;
+ if(!['soft','digital','classic','double','urgent'].includes(value)&&!ff66Rows.some(r=>r.is_active&&'tone:'+r.id===value))return;
+ const previous={sound:prefs.sound,delaySound:prefs.delaySound},viewer=String(user.id),connection=client,epoch=++ff74Epoch;
+ const current=()=>ff74Manager()&&String(user.id)===viewer&&client===connection&&ff74Epoch===epoch;
+ ff74Busy=false;ff74Saving=true;prefs[which]=value;applyPrefs();ff74Controls();
+ try{const {data:cfg,error}=await connection.rpc('ff_step05_set_global_tone',{p_event:which==='sound'?'new_order':'delay',p_tone:ff74As(value),p_expected:ff74As(previous[which])});if(error)throw error;
+  if(!current())return;
   prefs.sound=ff74From(cfg?.new_order)||prefs.sound;prefs.delaySound=ff74From(cfg?.delay)||prefs.delaySound;
-  ff74LastCheck=Date.now();applyPrefs();ff74Controls();showToast('تم اعتماد النغمة لجميع الموظفين');
- }catch(e){Object.assign(prefs,previous);applyPrefs();ff74Controls();showToast('تعذر اعتماد النغمة: '+(e.message||e),null,true)}
+  ff74LastCheck=Date.now();ff66ShowChoices();applyPrefs();showToast('تم اعتماد النغمة لجميع الموظفين');
+ }catch(e){if(current()){Object.assign(prefs,previous);ff66ShowChoices();applyPrefs();showToast('تعذر اعتماد النغمة: '+(e.message||e),null,true)}}
+ finally{if(ff74Epoch===epoch){ff74Saving=false;ff74Controls();void ff74Refresh(true)}}
 }
 for(const [id,key]of [['ffx-sound','sound'],['ffx-delay-sound','delaySound']])$x(id).addEventListener('change',e=>void ff74Change(key,e.target.value));
 window.addEventListener('focus',()=>void ff74Refresh(true));
 doc.addEventListener('visibilitychange',()=>{if(!doc.hidden)void ff74Refresh(true)});
 setInterval(()=>void ff74Refresh(),25000);
 const FF66_BUCKET='ff-luxe-tones';
-let ff66Rows=[],ff66Urls=new Map(),ff66User='',ff66LastLoaded=0,ff66Loading=false;
+let ff66Rows=[],ff66Urls=new Map(),ff66User='',ff66LastLoaded=0,ff66Loading=false,ff66Epoch=0;
 const ff66Ready=()=>typeof client!=='undefined'&&!!client&&typeof user!=='undefined'&&!!user?.id;
-function ff66Reset(){ff66Rows=[];ff66Urls.clear();ff66LastLoaded=0;ff66User=ff66Ready()?String(user.id):'';}
+function ff66Reset(){ff66Epoch++;ff66Loading=false;ff66Rows=[];ff66Urls.clear();ff66LastLoaded=0;ff66User=ff66Ready()?String(user.id):'';for(const audio of ffLuxeTonePlayers.values()){try{audio.pause();audio.removeAttribute('src');audio.load()}catch{}}ffLuxeTonePlayers.clear();}
 function ff66SetStatus(message){const el=$x('ff66-tone-status');if(el)el.textContent=message;}
 function ff66ShowChoices(){
  const active=ff66Rows.filter(r=>r.is_active);
- for(const k of ['sound','delaySound']){if(String(prefs[k]).startsWith('tone:')&&!active.some(r=>'tone:'+r.id===prefs[k])){
-   prefs[k]='soft';storePrefs();
- }}
  for(const id of ['ffx-sound','ffx-delay-sound']){
   const select=$x(id);select.querySelectorAll('option[data-ff66-tone]').forEach(option=>option.remove());
   for(const row of active){const option=new Option('🎵 '+row.name,'tone:'+row.id);option.dataset.ff66Tone=row.id;select.add(option);}
-  select.value=id==='ffx-sound'?prefs.sound:prefs.delaySound;
+  const chosen=id==='ffx-sound'?prefs.sound:prefs.delaySound;
+  if(String(chosen).startsWith('tone:')&&!active.some(r=>'tone:'+r.id===chosen)){const missing=new Option('نغمة مشتركة غير متاحة — البديل المحلي',chosen);missing.dataset.ff66Tone='unavailable';missing.disabled=true;select.add(missing)}
+  select.value=chosen;
  }
  const manager=ff74Manager();
  $x('ff66-manager').hidden=!manager;
@@ -3440,42 +3446,47 @@ function ff66ShowChoices(){
   const el=doc.createElement('div');el.className='ff66-tone-row';
   const name=doc.createElement('span');name.textContent=row.name+(row.is_active?'':' (معطّلة)');el.append(name);
   const toggle=doc.createElement('button');toggle.type='button';toggle.className='ffx-smallbtn';toggle.textContent=row.is_active?'تعطيل':'تفعيل';
-  toggle.onclick=async()=>{toggle.disabled=true;try{
-   const {error}=await client.from('ff66_tones').update({is_active:!row.is_active}).eq('id',row.id);if(error)throw error;
-   await ff66Load(true);showToast('تم تحديث حالة النغمة');
-  }catch(e){ff66SetStatus('تعذر التعديل: '+e.message)}finally{toggle.disabled=false}};
+  toggle.onclick=async()=>{if(!ff74Manager()||ff66User!==String(user.id))return;const actor=String(user.id),connection=client;const current=()=>ff74Manager()&&String(user.id)===actor&&client===connection;toggle.disabled=true;try{
+   const {error}=await connection.from('ff66_tones').update({is_active:!row.is_active}).eq('id',row.id);if(error)throw error;if(!current())return;
+   await ff66Load(true);if(current())showToast('تم تحديث حالة النغمة');
+  }catch(e){if(current())ff66SetStatus('تعذر التعديل: '+e.message)}finally{if(current())toggle.disabled=false}};
   el.append(toggle);list.append(el);
  }}
 }
 async function ff66Load(force=false){
  if(!ff66Ready()){ff66Reset();ff66SetStatus('سجل الدخول لتفعيل النغمات المشتركة.');ff66ShowChoices();ff74Controls();return}
- if(ff66Loading||(!force&&ff66User===String(user.id)&&Date.now()-ff66LastLoaded<60000))return;
- ff66Loading=true;const viewer=String(user.id);ff66SetStatus('جاري جلب النغمات المشتركة...');
+ const viewer=String(user.id);if(ff66User!==viewer)ff66Reset();
+ if(ff66Loading||(!force&&Date.now()-ff66LastLoaded<60000))return;
+ ff66Loading=true;const epoch=++ff66Epoch,connection=client;
+ const current=()=>ff66Ready()&&String(user.id)===viewer&&client===connection&&ff66Epoch===epoch;
+ ff66SetStatus('جاري جلب النغمات المشتركة...');
  try{
-  const {data:rows,error}=await client.from('ff66_tones').select('id,name,storage_path,is_active').order('created_at',{ascending:false}).limit(100);
-  if(error)throw error;if(!ff66Ready()||String(user.id)!==viewer)return;
-  ff66User=viewer;ff66Rows=rows||[];ff66Urls.clear();
-  const active=ff66Rows.filter(r=>r.is_active),paths=active.map(r=>r.storage_path);
-  if(paths.length){const signed=await client.storage.from(FF66_BUCKET).createSignedUrls(paths,900);
-    if(signed.error)throw signed.error;
-    (signed.data||[]).forEach((item,i)=>{if(item?.signedUrl)ff66Urls.set(active[i].id,item.signedUrl)})
+  const {data:rows,error}=await connection.from('ff66_tones').select('id,name,storage_path,is_active').order('created_at',{ascending:false}).limit(100);
+  if(error)throw error;if(!current())return;
+  const nextRows=rows||[],active=nextRows.filter(r=>r.is_active),paths=active.map(r=>r.storage_path),nextUrls=new Map();
+  if(paths.length){const signed=await connection.storage.from(FF66_BUCKET).createSignedUrls(paths,900);
+   if(!current())return;if(signed.error)throw signed.error;
+   // Match the returned object path, never the response-array index.
+   for(const item of signed.data||[]){const row=active.find(r=>r.storage_path===item?.path);if(row&&item.signedUrl)nextUrls.set(row.id,item.signedUrl)}
   }
-  if(!ff66Ready()||String(user.id)!==viewer)return;
-  ff66LastLoaded=Date.now();ff66SetStatus('المكتبة متاحة: '+active.length+' نغمة مشتركة.');ff66ShowChoices();await ff74Refresh(true);
- }catch(e){if(ff66Ready()&&String(user.id)===viewer)ff66SetStatus('تعذر تحميل المكتبة: '+e.message+' — تأكد من تطبيق FF66.');}
- finally{ff66Loading=false}
+  if(!current())return;
+  for(const [id,audio] of ffLuxeTonePlayers)if(!nextUrls.has(id)||audio.src!==nextUrls.get(id)){try{audio.pause();audio.removeAttribute('src');audio.load()}catch{}ffLuxeTonePlayers.delete(id)}
+  ff66Rows=nextRows;ff66Urls=nextUrls;ff66LastLoaded=Date.now();ff66SetStatus('المكتبة متاحة: '+active.length+' نغمة مشتركة.');ff66ShowChoices();await ff74Refresh(true);
+ }catch(e){if(current()){ff66Urls.clear();for(const audio of ffLuxeTonePlayers.values()){try{audio.pause();audio.removeAttribute('src');audio.load()}catch{}}ffLuxeTonePlayers.clear();ff66SetStatus('تعذر تحميل المكتبة؛ تستخدم النغمة المحلية عند عدم توفر الملف.');}}
+ finally{if(ff66Epoch===epoch)ff66Loading=false}
 }
 const ffLuxeTonePlayers=new Map();
+window.addEventListener('ff-luxe-session-reset',()=>{ff66Reset();ff74Reset();window.ffLuxeStopAlertAudio?.();for(const id of ['ffx-sound','ffx-delay-sound'])$x(id)?.querySelectorAll('option[data-ff66-tone]').forEach(o=>o.remove());$x('ff66-tone-list')?.replaceChildren()});
 function ff66PlayTone(kind){
- if(!ff66Ready())return false;
- const id=String(kind).slice(5),url=ff66Urls.get(id);
+ if(!ff66Ready()||ff66User!==String(user.id))return false;
+ const id=String(kind).slice(5),url=ff66Urls.get(id),viewer=String(user.id),epoch=ff66Epoch;
  if(!url){void ff66Load(true);return false}
  try{
   let audio=ffLuxeTonePlayers.get(id);
   if(!audio||audio.src!==url){audio=new Audio(url);audio.preload='auto';ffLuxeTonePlayers.set(id,audio)}
   audio.volume=Math.max(0,Math.min(1,Number(prefs.volume)/100));
   audio.pause();try{audio.currentTime=0}catch{}
-  void audio.play().catch(()=>{sound('soft',true);ffLuxeAudioStatus('⚠️ ملف النغمة محجوب من الجهاز؛ تمت محاولة تشغيل النغمة الافتراضية')});
+  void audio.play().catch(()=>{if(!ff66Ready()||String(user.id)!==viewer||ff66Epoch!==epoch||ffLuxeTonePlayers.get(id)!==audio||!prefs.audio||Number(prefs.volume)<=0||document.hidden)return;sound('soft',true);ffLuxeAudioStatus('⚠️ تعذر ملف النغمة؛ تمت محاولة تشغيل النغمة الافتراضية')});
   return true;
  }catch{return false}
 }
@@ -3488,14 +3499,15 @@ $x('ff66-tone-add').onclick=async()=>{
  const types={'audio/mpeg':'mp3','audio/mp3':'mp3','audio/wav':'wav','audio/x-wav':'wav','audio/ogg':'ogg','audio/mp4':'m4a','audio/x-m4a':'m4a'};
  if(name.length<2||name.length>65){ff66SetStatus('اكتب اسمًا للنغمة من 2 إلى 65 حرفًا');return}
  if(!file||!types[file.type]||file.size<100||file.size>2097152){ff66SetStatus('اختر ملف MP3 أو WAV أو OGG أو M4A بحجم 2MB كحد أقصى');return}
+ const actor=String(user.id),connection=client,current=()=>ff74Manager()&&String(user.id)===actor&&client===connection;
  button.disabled=true;let path='';try{
   path='tones/'+crypto.randomUUID()+'.'+types[file.type];
-  const upload=await client.storage.from(FF66_BUCKET).upload(path,file,{contentType:file.type,upsert:false});
-  if(upload.error)throw upload.error;
-  const {error}=await client.from('ff66_tones').insert({name,storage_path:path,mime_type:file.type,size_bytes:file.size,created_by:user.id});
-  if(error){await client.storage.from(FF66_BUCKET).remove([path]);throw error}
-  $x('ff66-tone-name').value='';$x('ff66-tone-file').value='';await ff66Load(true);showToast('تمت إضافة النغمة إلى مكتبة المطعم');
- }catch(e){ff66SetStatus('فشل رفع النغمة: '+e.message)}finally{button.disabled=false}
+  const upload=await connection.storage.from(FF66_BUCKET).upload(path,file,{contentType:file.type,upsert:false});
+  if(upload.error)throw upload.error;if(!current())return;
+  const {error}=await connection.from('ff66_tones').insert({name,storage_path:path,mime_type:file.type,size_bytes:file.size,created_by:actor});
+  if(error){if(current()){const check=await connection.from('ff66_tones').select('id').eq('storage_path',path).maybeSingle();if(!check.error&&!check.data)await connection.storage.from(FF66_BUCKET).remove([path])}throw error}
+  if(!current())return;$x('ff66-tone-name').value='';$x('ff66-tone-file').value='';await ff66Load(true);if(current())showToast('تمت إضافة النغمة إلى مكتبة المطعم');
+ }catch(e){if(current())ff66SetStatus('فشل رفع النغمة: '+e.message)}finally{button.disabled=false}
 };
 
 let audioCtx=null,lastSoundAt=0,ffLuxeQueuedTone='';
@@ -5560,6 +5572,6 @@ const reset=resetUI;resetUI=function(){mode='';document.body.classList.remove('f
 #ffLuxeResetOptions [data-reset-run]{background:#b00000;color:#fff;padding:12px 16px;font-weight:800}
 </style>
 <script src="./scripts/luxe-a07-elements.js" defer></script>
-<script src="./scripts/luxe-a07-design.js" defer></script>
+<script src="./scripts/luxe-a07-design.js?v=20261125-step05" defer></script>
 <script src="./scripts/luxe-a08-dashboard.js?v=20261125-step04" defer></script>
-<script src="./scripts/luxe-dashboard-studio.js?v=20261125-step04" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js?v=20261125-a09-denial" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script><script defer src="scripts/luxe-a05-branch-policy.js"></script><script defer src="./scripts/luxe-a06-navigation.js"></script><script defer src="./scripts/luxe-a11-communications.js?v=20261125-a11"></script><script defer src="./scripts/luxe-a12-recovery.js?v=20261125-a12-legacy"></script></body></html>
+<script src="./scripts/luxe-dashboard-studio.js?v=20261125-step04" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261125-step05" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js?v=20261125-a09-denial" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script><script defer src="scripts/luxe-a05-branch-policy.js"></script><script defer src="./scripts/luxe-a06-navigation.js"></script><script defer src="./scripts/luxe-a11-communications.js?v=20261125-a11"></script><script defer src="./scripts/luxe-a12-recovery.js?v=20261125-a12-legacy"></script></body></html>
