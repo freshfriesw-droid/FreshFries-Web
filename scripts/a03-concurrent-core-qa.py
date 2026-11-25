@@ -157,3 +157,72 @@ assert scalar(f"select count(*) from ff_private.a10_fee_evidence where settlemen
 assert scalar(f"select amount from ff_private.a10_fee_evidence where settlement_id='{settlement}' order by id desc limit 1")=="250"
 assert scalar(f"select cash_received from ff42_driver_settlements where id='{settlement}'")=="800"
 print("PASS STEP10 concurrent confirmed fee: both evidence revisions retained, latest ordered, settlement unchanged",flush=True)
+
+
+# STEP11: use exact new attendance functions and dispatch lock recheck.
+query("""
+alter table public.ff38_driver_presence add column checked_out_at timestamptz;
+create table public.ff51_driver_breaks(id bigint generated always as identity primary key,driver_id uuid not null,started_at timestamptz not null default now(),ended_at timestamptz);
+""")
+att=(root/"supabase/migrations/20261126_step11_attendance_guards.sql").read_text()
+a=att.index("CREATE OR REPLACE FUNCTION public.ff38_clock_out")
+b=att.index("-- Both automatic offer paths",a)
+query(att[a:b])
+a=att.index("DO $migration$",b)
+b=att.index(" d:=pg_get_functiondef('public.ff52_reassign_before_pos",a)
+query(att[a:b]+"\nEND $migration$;")
+br=uid(); du=uid(); courier_uid=uid(); ord_a=uid(); ord_b=uid(); ord_c=uid()
+query(f"""
+insert into ff_drivers(id,branch_id) values ('{du}','{br}');
+insert into ff_profiles(user_id,role) values ('{courier_uid}','driver');
+insert into ff38_driver_links(user_id,driver_id) values ('{courier_uid}','{du}');
+insert into ff38_driver_presence(driver_id,state,checked_in_at,last_seen_at) values ('{du}','ready',now(),now());
+insert into ff_orders(id,branch_id,area_snapshot) values ('{ord_a}','{br}','QA'),('{ord_b}','{br}','QA'),('{ord_c}','{br}','QA');
+""")
+checkout=as_actor(courier_uid,"select public.ff38_clock_out()")
+pause=as_actor(courier_uid,"select public.ff51_driver_set_break(true)")
+# A dispatcher can see the candidate before checkout commits, but must recheck the locked row.
+a,b=race(checkout,f"select public.ff38__offer_next('{ord_a}','{du}')")
+assert json.loads(b.splitlines()[-1])["state"]=="queued"
+assert scalar(f"select count(*) from ff38_dispatch_offers where order_id='{ord_a}'")=="0"
+assert scalar(f"select state from ff38_driver_presence where driver_id='{du}'")=="offline"
+query(f"update ff38_driver_presence set state='ready',checked_in_at=now(),checked_out_at=null,last_seen_at=now() where driver_id='{du}'")
+race(f"select public.ff38__offer_next('{ord_b}','{du}')",checkout,"ينتظر قبولك")
+assert scalar(f"select count(*) from ff38_dispatch_offers where order_id='{ord_b}' and status='offered'")=="1"
+assert scalar(f"select state from ff38_driver_presence where driver_id='{du}'")=="ready"
+query(f"update ff38_dispatch_offers set status='expired' where order_id='{ord_b}'")
+a,b=race(pause,f"select public.ff38__offer_next('{ord_c}','{du}')")
+assert json.loads(b.splitlines()[-1])["state"]=="queued"
+assert scalar(f"select count(*) from ff38_dispatch_offers where order_id='{ord_c}'")=="0"
+query(checkout)
+assert scalar(f"select count(*) from ff51_driver_breaks where driver_id='{du}' and ended_at is null")=="0"
+print("PASS STEP11 actual concurrent checkout/dispatch in both orders, pause/dispatch, no orphan break",flush=True)
+
+
+# STEP11: clock-in must not wait on the branch/order locks held by a dispatcher
+# while it owns the driver's presence row. Normal uncontended sweep remains.
+query("alter table public.ff_orders add column if not exists created_at timestamptz not null default now()")
+query((root/"supabase/tests/step11_clock_in_concurrent_fixture.sql").read_text())
+br2=uid(); d2=uid(); u2=uid(); o2=uid()
+query(f"""
+insert into ff_drivers(id,branch_id) values ('{d2}','{br2}');
+insert into ff_profiles(user_id,role) values ('{u2}','driver');
+insert into ff38_driver_links(user_id,driver_id) values ('{u2}','{d2}');
+insert into ff38_driver_presence(driver_id,state,checked_in_at,checked_out_at,last_seen_at) values ('{d2}','offline',now()-interval '1 hour',now(),now());
+insert into ff_orders(id,branch_id,area_snapshot) values ('{o2}','{br2}','QA');
+""")
+app="step11-clockin-dispatch-lock"
+hold=subprocess.Popen(["psql","-X","-qAt","-v","ON_ERROR_STOP=1","-c",f"begin; select pg_advisory_xact_lock(hashtext('ff38-branch-rr-{br2}')); select pg_sleep(5); commit"],env={**os.environ,"PGAPPNAME":app},stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+try:
+ wait_for(app,"PgSleep")
+ clockin=as_actor(u2,"select public.ff38_clock_in()")
+ out=query("set lock_timeout='1s'; "+clockin)
+ assert json.loads(out.stdout.strip().splitlines()[-1])["state"]=="ready"
+ assert scalar(f"select exists(select 1 from pg_stat_activity where application_name='{app}' and wait_event='PgSleep')")=="t","no real overlap"
+ assert scalar(f"select count(*) from ff38_dispatch_offers where order_id='{o2}'")=="0"
+ hold.communicate(timeout=10);assert hold.returncode==0
+ query(clockin)
+ assert scalar(f"select count(*) from ff38_dispatch_offers where order_id='{o2}' and status='offered'")=="1"
+ print("PASS STEP11 concurrent clock-in while branch locked, no deadlock; normal sweep resumes",flush=True)
+finally:
+ if hold.poll() is None:hold.kill();hold.communicate()

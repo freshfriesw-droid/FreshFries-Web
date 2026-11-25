@@ -38,6 +38,8 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  current_html=current_html[:current_start]+baseline_html[base_start:base_end]+current_html[current_end:]
  current_html=current_html.replace('./scripts/luxe-a07-design.js?v=20261125-step05','./scripts/luxe-a07-design.js')
  current_html=current_html.replace('luxe-shared-photo-menu-20261123.js?v=20261125-step05','luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style')
+ # STEP11: exact A11 cache-version change only.
+ current_html=current_html.replace('luxe-a11-communications.js?v=20261126-step11','luxe-a11-communications.js?v=20261125-a11')
  # STEP10: exact asset cache-version deltas only; no visual guard relaxation.
  current_html=current_html.replace('luxe-a07-elements.js?v=20261125-step10','luxe-a07-elements.js?v=20261125-step07')
  current_html=current_html.replace('luxe-report-center-20261123.js?v=20261125-step10','luxe-report-center-20261123.js?v=20261125-step06')
@@ -67,7 +69,7 @@ changed={str(f.relative_to(base)) for f in list((base/'scripts').glob('*.js'))+l
 step03_scripts={'scripts/luxe-a07-elements.js','scripts/luxe-a07-design.js','scripts/luxe-dashboard-studio.js','scripts/luxe-content-studio.js'}
 if os.environ.get('P2_STEP04_REGRESSION')=='1':
  # No unrelated scripts changed; keep all visual/focus/pixel comparisons intact.
- assert changed==step03_scripts|{'scripts/luxe-a08-dashboard.js','scripts/luxe-shared-photo-menu-20261123.js','scripts/luxe-report-center-20261123.js','scripts/luxe-content-delegation.js'},changed
+ assert changed==step03_scripts|{'scripts/luxe-a08-dashboard.js','scripts/luxe-shared-photo-menu-20261123.js','scripts/luxe-report-center-20261123.js','scripts/luxe-content-delegation.js','scripts/luxe-a11-communications.js'},changed
 elif os.environ.get('P2_STEP03_REGRESSION')=='1':
  assert changed==step03_scripts,changed
 else:
