@@ -45,7 +45,7 @@ fixture="""async role=>{
   if(name==='ff_a07_design_catalog')return window.__a07Catalog||[];
   if(name==='ff_content_catalog_list')return [{key:'driver.attend',screen:'driver',label:'الحضور',original:'الحضور'}];
   if(name==='ff_a07_named_design')return 4321;
-  if(name==='ff_a07_preview_scope')return {applies:args.p_target_device==='mobile',before:{pack:'D01',style_config:{}},after:{pack:args.p_target_device==='mobile'?'D08':'D01',style_config:{}},after_sources:args.p_target_device==='mobile'?{font:-1}:{}};
+  if(name==='ff_a07_preview_scope')return {applies:args.p_target_device==='mobile',before:{pack:'D01',style_config:{elements:{driver_actions:[{key:'clockInBtn',font:'tahoma'}]}}},after:{pack:args.p_target_device==='mobile'?'D08':'D01',style_config:{elements:{driver_actions:[{key:'clockInBtn',font:args.p_target_device==='mobile'?'cairo':'tahoma'}]}}},before_sources:{'elements.driver_actions.clockInBtn.font':17},after_sources:{'elements.driver_actions.clockInBtn.font':args.p_target_device==='mobile'?-1:17}};
   if(name==='ff81_effective_design')return null;
   return [];
  };
@@ -411,6 +411,8 @@ with sync_playwright() as pw:
    assert page.evaluate("()=>window.__a06Calls.filter(c=>c.name==='ff_a07_preview_scope').length")==2
    assert dlg.locator('[data-step03-compare-results] table').count()==2
    assert dlg.locator('[data-step03-compare-results] table').first.get_by_text('المسودة',exact=True).count()==1
+   assert dlg.locator('[data-step03-compare-results] table').first.locator('tbody tr').first.locator('td').all_text_contents()==['إجراءات الموصل / تسجيل الحضور / الخط','Tahoma','#17','Cairo','المسودة'] or dlg.locator('[data-step03-compare-results] table').first.locator('tbody tr').first.locator('td').all_text_contents()[1:]==['Tahoma','#17','Cairo','المسودة']
+   assert dlg.locator('[data-step03-compare-results] table').nth(1).locator('tbody tr').first.locator('td').all_text_contents()[1:]==['Tahoma','#17','Tahoma','#17']
    dlg.locator('[data-scope-target="0-device"]').select_option('desktop')
    assert dlg.locator('[data-step03-compare-results]').locator(':scope > section').count()==0
    assert 'تغيّرت' in dlg.locator('[data-step03-compare-status]').inner_text()
@@ -426,7 +428,7 @@ with sync_playwright() as pw:
    dlg.locator('select[name=device]').select_option('mobile')
    source=dlg.locator('[data-step03-element-source="driver_actions|clockInBtn"]')
    page.wait_for_function("""()=>document.querySelector('[data-step03-element-source="driver_actions|clockInBtn"]')?.textContent.includes('#17')""")
-   assert '#17' in source.text_content()
+   assert 'Cairo' in source.text_content() and '#17' in source.text_content()
    dlg.locator('select[name=device]').select_option('desktop')
    assert '#17' not in source.text_content()
    print('PASS STEP03 per-element source and invalidation of stale scope comparison',flush=True)

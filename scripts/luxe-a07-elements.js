@@ -60,8 +60,9 @@ const defaultRows=g=>groups[g].keys.map(key=>({key,shape:'pack',size:'normal'}))
 const draftRows=g=>groups[g].keys.map(key=>({key,shape:'inherit',size:'inherit',orderMode:'inherit'}));
 const states=new WeakMap();
  const sourceLabel=key=>{const [kind,g,k,p]=key.split('.');return kind==='elements'?[labels[g]||g,k?(itemLabels[k]||k):'',p?(propertyLabels[p]||({shape:'الشكل',size:'الحجم',order:'الترتيب'}[p])||p):''].filter(Boolean).join(' / '):null};
- function sourceText(state,g,k){if(state.sources===null)return 'مصادر الخصائص: اختر نطاقًا محددًا أو انتظر التحقق من المصدر المنشور.';const keys=['shape','size',...Object.keys(properties).filter(p=>safeEffect(p,k)),...(!groups[g].styleOnly?['order']:[])];return 'مصادر الخصائص المنشورة: '+keys.map(p=>{const id=state.sources['elements.'+g+'.'+k+'.'+p];return (propertyLabels[p]||({shape:'الشكل',size:'الحجم',order:'الترتيب'}[p])||p)+' ← '+(id==null?'الأساسي / الحزمة':'#'+id)}).join(' · ')}
- function setSources(form,sources){const state=states.get(form);if(!state)return;state.sources=sources;for(const n of form.querySelectorAll('[data-step03-element-source]')){const [g,k]=n.dataset.step03ElementSource.split('|');n.textContent=sourceText(state,g,k)}}
+ function effectiveValue(style,key){const [kind,g,k,p]=key.split('.');if(kind==='elements'){const rows=style?.elements?.[g];if(!Array.isArray(rows))return null;if(!k)return rows.map(e=>itemLabels[e.key]||e.key).join('، ');const index=rows.findIndex(e=>e.key===k);if(index<0)return null;if(p==='order')return String(index+1);const value=rows[index][p];return properties[p]?.[value]||({shape:shapes,size:sizes}[p]?.[value])||value||null}if(kind==='dashboardPanels')return style?.dashboardPanels?.[g]??null;return style?.[key]??null}
+ function sourceText(state,g,k){if(state.sources===null)return 'مصادر الخصائص: اختر نطاقًا محددًا أو انتظر التحقق من المصدر المنشور.';const keys=['shape','size',...Object.keys(properties).filter(p=>safeEffect(p,k)),...(!groups[g].styleOnly?['order']:[])];return 'القيم الفعلية المنشورة ومصادرها: '+keys.map(p=>{const key='elements.'+g+'.'+k+'.'+p,id=state.sources[key],value=effectiveValue(state.sourceStyle,key);return (propertyLabels[p]||({shape:'الشكل',size:'الحجم',order:'الترتيب'}[p])||p)+' = '+(value??'حسب الحزمة')+' ← '+(id==null?'الأساسي / الحزمة':'#'+id)}).join(' · ')}
+ function setSources(form,sources,style=null){const state=states.get(form);if(!state)return;state.sources=sources;state.sourceStyle=style;for(const n of form.querySelectorAll('[data-step03-element-source]')){const [g,k]=n.dataset.step03ElementSource.split('|');n.textContent=sourceText(state,g,k)}}
 let owned=new Set(),ownedParents=new Set();
 function clearProperties(node){for(const k of Object.keys(properties))delete node.dataset['ffA07El'+k[0].toUpperCase()+k.slice(1)]}
 function shape(node,e){node.dataset.ffA07Shape=e.shape;node.dataset.ffA07Size=e.size;clearProperties(node);for(const [k,options] of Object.entries(properties))if(Object.hasOwn(options,e[k]??'')&&safeEffect(k,e.key))node.dataset['ffA07El'+k[0].toUpperCase()+k.slice(1)]=e[k]}
@@ -115,7 +116,7 @@ function editor(form,anchor){
  section.innerHTML='<summary>ترتيب المناطق والأزرار وخصائص العناصر</summary><p>تغيير مرئي فقط. جميع إجراءات العمل والتحذيرات ثابتة، ولا يمكن حذفها أو إخفاؤها من المحرر.</p><label>مجموعة العناصر<select data-a07-group></select></label><div class="actions"><button type="button" data-a07-undo>تراجع</button><button type="button" data-a07-redo>إعادة</button><button type="button" data-a07-reset>استعادة المجموعة الأصلية</button></div><div data-a07-elements></div>';
  anchor.before(section);
  const select=section.querySelector('[data-a07-group]'),list=section.querySelector('[data-a07-elements]');
- const state={values:{},undo:[],redo:[],sources:null};states.set(form,state);
+ const state={values:{},undo:[],redo:[],sources:null,sourceStyle:null};states.set(form,state);
  const applicable=()=>Object.entries(groups).filter(([g,v])=>(form.elements.screen.value==='all'&&!publicScreen(v.screen))||form.elements.screen.value===v.screen);
  function notify(){form.dispatchEvent(new Event('input',{bubbles:true}))}
  function options(){const old=select.value;select.replaceChildren(...applicable().map(([g])=>new Option(labels[g],g)));if([...select.options].some(o=>o.value===old))select.value=old;render()}
@@ -171,5 +172,5 @@ function preview(root,screen,v,select){
  }
 }
 function selectPreview(form,group,key){states.get(form)?.selectPreview(group,key)}
-window.ffA07Elements={editor,read,set,refresh,preview,selectPreview,visualTarget,setSources,sourceLabel,groups,labels,itemLabels,shapes,sizes,properties,propertyLabels,toneAllowed,defaultRows};
+window.ffA07Elements={editor,read,set,refresh,preview,selectPreview,visualTarget,setSources,sourceLabel,effectiveValue,groups,labels,itemLabels,shapes,sizes,properties,propertyLabels,toneAllowed,defaultRows};
 })();
