@@ -15,6 +15,7 @@ BEGIN
  (o4,n-3,b2,'000'||replace(gen_random_uuid()::text,'-',''),'QA area B',d2,'delivered',c2,ts,ts+interval '15 minutes',9000,700,9700);
  INSERT INTO public.ff38_delivery_tasks(order_id,driver_id,delivered_at) VALUES(o1,d1,ts+interval '20 minutes'),(o2,d1,ts+interval '150 minutes'),(o4,d2,ts+interval '15 minutes');
  INSERT INTO public.ff_order_items(order_id,item_name,quantity,unit_price,line_total) VALUES(o1,'QA chicken',1,1000,1000),(o2,'QA burger',2,1000,2000),(o3,'QA chicken',1,500,500),(o4,'QA hidden',1,9000,9000);
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);
  INSERT INTO public.ff38_order_additions(id,order_id,status,amount,requested_by,invoiced_by,invoiced_at,created_at) VALUES(ad,o1,'invoiced',200,c,m,ts+interval '3 minutes',ts);
  INSERT INTO public.ff38_order_addition_items(addition_id,item_name,quantity,unit_price,line_total) VALUES(ad,'QA addon',1,200,200);
  INSERT INTO public.ff42_driver_settlements(id,settlement_date,branch_id,driver_id,delivered_orders,delivered_order_value,delivered_delivery_fees,invoiced_additions,cash_due,cash_received,notes,status,created_by,updated_by,closed_by,closed_at) VALUES(sett,dy,b1,d1,1,1500,300,200,1500,1400,'QA verified difference','closed',m,m,m,ts);
