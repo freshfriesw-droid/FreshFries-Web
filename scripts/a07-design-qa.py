@@ -488,7 +488,7 @@ with sync_playwright() as pw:
  ctx.route("**/*",lambda route:route.continue_() if route.request.url.startswith(origin) else route.abort())
  page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,"manager")
  page.wait_for_function("()=>!!window.ffA07Design&&!!window.ffDashboardStudio")
- admin=page.evaluate("""async()=>{
+ admin=page.evaluate(r"""async()=>{
   const stamp=new Date().toISOString(),caseRow={id:'qa-case',subject:'QA',description:'QA',status:'open',kind:'customer_complaint',priority:'normal',branch_id:'b1',created_at:stamp};
   const baseRPC=rpc;
   rpc=async(name,args={})=>{
