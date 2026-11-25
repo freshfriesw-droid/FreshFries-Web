@@ -18,6 +18,8 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install playwright==1.51.0 pillow==11.2.1
+      - name: Install pinned Chromium for reproducible pixel comparisons
+        run: python -m playwright install --with-deps chromium
       - name: Load pinned before tree
         run: |
           git fetch --no-tags --depth=1 origin c55c56e4b73f1aa3ae794eeff77c0598d97acc34
