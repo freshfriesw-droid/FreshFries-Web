@@ -729,7 +729,7 @@ with sync_playwright() as playwright:
                     available_sections:['summary','finance','approval'],branches:[],driver_options:[],
                     totals:{orders:7,delivered:4,item_sales:900,delivery_fees:100,net:1000}};
                   rpc=(name,args)=>{
-                    if(name==='ff76_reporting_center')return Promise.resolve({...snapshot,from:args.p_from,to:args.p_to});
+                    if(name==='ff_a10_reporting_center')return Promise.resolve({...snapshot,from:args.p_from,to:args.p_to,access_key:'fixture-manager',generated_at:'2026-11-25T01:00:00Z',filters:{},filter_options:{staff:[],areas:[],items:[]},finance_evidence:{}});
                     if(name==='ff_report_preset_list')return Promise.resolve([]);
                     if(name==='ff76_report_approval_save')return new Promise(resolve=>{window.__oldApproval=resolve});
                     return Promise.resolve([]);
@@ -746,7 +746,7 @@ with sync_playwright() as playwright:
                 assert page.locator("#ff76CSV").is_disabled()
                 page.locator("#ff76Choices input[value=finance]").check()
                 assert page.locator("#ff76Body section").count() == 1
-                assert "رسوم التوصيل المستحقة" in page.locator("#ff76Body").inner_text()
+                assert "رسوم التوصيل" in page.locator("#ff76Body").inner_text() and "تحصيل مثبت" in page.locator("#ff76Body").inner_text()
                 page.locator("#ff76ManagerName").fill("مدير تجريبي")
                 page.locator("#ff76ManagerNotes").fill("ملاحظة لم تحفظ")
                 page.locator("#ff76Trend").select_option("weekly")
