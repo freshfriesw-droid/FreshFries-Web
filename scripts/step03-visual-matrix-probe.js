@@ -61,6 +61,20 @@
      if(!o.original.isConnected||o.original.disabled!==o.disabled||o.original.checked!==o.checked||o.original.value!==o.value||o.original.required!==o.required||o.original.hidden!==o.hidden||o.original.onclick!==o.handler||o.original.getAttribute('role')!==o.role)result.failures.push({screen:o.screen,group:o.group,key:o.key,p,v,why:['operational-state']});
     }
    }
+   // Verify explicit properties together. Size padding yields to independent
+   // spacing and text-scale; optional icon overrides the shape's default icon.
+   result.combined=0;
+   const profiles=[{shape:'pill',size:'large',font:'noto',align:'end',textScale:'large',weight:'strong',spacing:'wide',spaceBlock:'wide',outerGap:'wide',border:'strong',shadow:'soft',tone:'dark',placement:'end',icon:'check',hover:'outline',press:'inset'},{shape:'square',size:'normal',font:'serif',align:'start',textScale:'normal',weight:'normal',spacing:'normal',spaceBlock:'normal',outerGap:'normal',border:'thin',shadow:'none',tone:'light',placement:'start',icon:'none',hover:'none',press:'none'}];
+   for(const profile of profiles){
+    const cfg={};
+    for(const [screen,row] of Object.entries(config)){cfg[screen]={...row,style_config:{elements:{}}};for(const [g,items] of Object.entries(row.style_config?.elements||{}))cfg[screen].style_config.elements[g]=items.map(({key})=>({key,...Object.fromEntries(Object.entries(profile).filter(([p])=>permitted(p,key)))}))}
+    el().refresh(roots,cfg);
+    for(const o of records){
+     for(const [p,v] of Object.entries(profile)){if(!permitted(p,o.key))continue;const why=p==='size'?(o.target.dataset.ffA07Size===v?null:['size binding',o.target.dataset.ffA07Size]):verify(o.target,p,v);
+      result.combined++;if(why)result.failures.push({screen:o.screen,group:o.group,key:o.key,p,v,profile:true,why});}
+     if(!o.original.isConnected||o.original.disabled!==o.disabled||o.original.checked!==o.checked||o.original.value!==o.value||o.original.required!==o.required||o.original.hidden!==o.hidden||o.original.onclick!==o.handler||o.original.getAttribute('role')!==o.role)result.failures.push({screen:o.screen,group:o.group,key:o.key,profile:true,why:['operational-state']});
+    }
+   }
   }finally{el().refresh(roots,config);stable.remove()}
   window.__step03Matrix.push(result);
   return result.failures.length;
