@@ -1,0 +1,46 @@
+DO $qa$
+DECLARE m uuid:=gen_random_uuid();u uuid:=gen_random_uuid();x uuid:=gen_random_uuid();b uuid:=gen_random_uuid();b2 uuid:=gen_random_uuid();g bigint;g2 bigint;rev bigint;rev2 bigint;res jsonb; denied boolean;passes int:=0;
+BEGIN
+ BEGIN
+ INSERT INTO public.ff_branches(id,code,name) VALUES(b,'qa-'||b,'QA branch'),(b2,'qa-'||b2,'QA other');
+ INSERT INTO auth.users(id) VALUES(m),(u),(x);
+ INSERT INTO public.ff_profiles(user_id,display_name,role,active) VALUES(m,'QA manager','manager',true),(u,'QA cashier','cashier',true),(x,'QA other cashier','cashier',true) ON CONFLICT(user_id) DO UPDATE SET role=excluded.role,active=true;
+ INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(u,b),(x,b2);
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);SET LOCAL ROLE authenticated;
+ g:=public.ff_a09_set_grant(u,b,'cashier',ARRAY['view','edit','preview','review'],now()-interval '1 minute',now()+interval '1 hour',ARRAY['colors','buttons','layout']);
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',u::text,true);SET LOCAL ROLE authenticated;
+ IF (SELECT edit_kinds FROM public.ff82_my_grant())<>ARRAY['colors','buttons','layout'] THEN RAISE EXCEPTION 'Grant not active';END IF;passes:=passes+1;
+ IF EXISTS(SELECT FROM public.ff82_delegate_catalog()) THEN RAISE EXCEPTION 'Text capability leaked';END IF;passes:=passes+1;
+ res:=public.ff82_delegate_draft('cashier.title','غير مصرح');IF res->>'ok'<>'false' THEN RAISE EXCEPTION 'Text write leaked';END IF;passes:=passes+1;
+ res:=public.ff_a09_design_draft('mobile','{"accent":"red","button":"round","layout":"single"}','QA delegated',NULL);IF res->>'ok'<>'true' THEN RAISE EXCEPTION 'Draft %',res;END IF;rev:=(res->>'revision')::bigint;passes:=passes+1;
+ IF NOT EXISTS(SELECT FROM public.ff_a09_design_history('mobile') WHERE id=rev AND branch_id=b AND role_scope='cashier' AND screen_scope='cashier' AND published_at IS NULL) THEN RAISE EXCEPTION 'History scope';END IF;passes:=passes+1;
+ IF (public.ff_a07_effective_designs(b,'mobile')->'cashier'->>'id')=rev::text THEN RAISE EXCEPTION 'Unpublished draft leaked';END IF;passes:=passes+1;
+ res:=public.ff_a09_design_draft('mobile','{"quickActions":[]}','QA not allowed',NULL);IF res->>'ok'<>'false' THEN RAISE EXCEPTION 'Unexpected property accepted';END IF;passes:=passes+1;
+ res:=public.ff_a09_design_draft('mobile','{"accent":"navy"}','QA revision',rev);IF res->>'ok'<>'true' THEN RAISE EXCEPTION 'Own draft revision %',res;END IF;rev2:=(res->>'revision')::bigint;passes:=passes+1;
+ res:=public.ff_a09_design_review(rev2,'QA review');IF res->>'ok'<>'true' THEN RAISE EXCEPTION 'Review denied %',res;END IF;passes:=passes+1;
+ denied:=false;BEGIN PERFORM public.ff_ui_publish(rev2);EXCEPTION WHEN OTHERS THEN denied:=true;END;IF NOT denied THEN RAISE EXCEPTION 'Delegated publish';END IF;passes:=passes+1;
+ denied:=false;BEGIN PERFORM public.ff_ui_rollback(rev2);EXCEPTION WHEN OTHERS THEN denied:=true;END;IF NOT denied THEN RAISE EXCEPTION 'Delegated rollback';END IF;passes:=passes+1;
+ denied:=false;BEGIN PERFORM public.ff_ui_control_trial(rev2,ARRAY[u],1);EXCEPTION WHEN OTHERS THEN denied:=true;END;IF NOT denied THEN RAISE EXCEPTION 'Delegated trial';END IF;passes:=passes+1;
+ denied:=false;BEGIN PERFORM public.ff_a09_set_grant(u,b,'cashier',ARRAY['edit'],now(),now()+interval '1 hour',ARRAY['text']);EXCEPTION WHEN OTHERS THEN denied:=true;END;IF NOT denied THEN RAISE EXCEPTION 'Self escalation';END IF;passes:=passes+1;
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',x::text,true);SET LOCAL ROLE authenticated;
+ IF EXISTS(SELECT FROM public.ff_a09_design_history('mobile')) THEN RAISE EXCEPTION 'Foreign history';END IF;passes:=passes+1;
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',m::text,true);SET LOCAL ROLE authenticated;
+ g2:=public.ff_a09_set_grant(u,b,'cashier',ARRAY['view','edit'],now()-interval '1 minute',now()+interval '1 hour',ARRAY['colors']);
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',u::text,true);SET LOCAL ROLE authenticated;
+ res:=public.ff_a09_design_draft('mobile','{"button":"pill"}','QA wrong kind',NULL);IF res->>'ok'<>'false' THEN RAISE EXCEPTION 'Kind escalation';END IF;passes:=passes+1;
+ res:=public.ff_a09_design_draft('mobile','{"accent":"red"}','QA stale grant',rev2);IF res->>'ok'<>'false' THEN RAISE EXCEPTION 'Old grant reuse %',res;END IF;passes:=passes+1;
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',m::text,true);SET LOCAL ROLE authenticated;
+ PERFORM public.ff_ui_publish(rev2);
+ IF NOT EXISTS(SELECT FROM public.ff82_manager_audit() WHERE design_revision=rev2 AND action='design_review' AND outcome='allowed') THEN RAISE EXCEPTION 'Review audit missing';END IF;passes:=passes+1;
+ PERFORM public.ff82_revoke_grant(g2);
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',u::text,true);SET LOCAL ROLE authenticated;
+ res:=public.ff_a09_design_draft('mobile','{"accent":"red"}','QA revoked',NULL);IF res->>'ok'<>'false' OR EXISTS(SELECT FROM public.ff_a09_design_history('mobile')) THEN RAISE EXCEPTION 'Revocation failed';END IF;passes:=passes+1;
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',m::text,true);SET LOCAL ROLE authenticated;
+ IF NOT EXISTS(SELECT FROM public.ff82_manager_audit() WHERE actor_id=u AND action='design_draft' AND outcome='denied') THEN RAISE EXCEPTION 'Denial audit absent';END IF;passes:=passes+1;
+ RESET ROLE;
+ IF has_function_privilege('anon','public.ff_a09_design_draft(text,jsonb,text,bigint)','EXECUTE') THEN RAISE EXCEPTION 'Anonymous execution';END IF;passes:=passes+1;
+ RAISE EXCEPTION 'QA rollback' USING ERRCODE='ZQ019';
+ EXCEPTION WHEN SQLSTATE 'ZQ019' THEN NULL;END;
+ IF passes<>20 OR EXISTS(SELECT FROM public.ff_branches WHERE id IN(b,b2)) THEN RAISE EXCEPTION 'Incomplete rollback %',passes;END IF;
+END $qa$;
+SELECT 'PASS A09: 20 design delegation, scope, kind, review, revocation, publication, and rollback checks' result;

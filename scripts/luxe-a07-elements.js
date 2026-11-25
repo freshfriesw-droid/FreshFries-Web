@@ -87,5 +87,5 @@ function preview(root,screen,v){
  for(const e of v?.[group]||defaultRows(group)){const n=document.createElement('span');n.className='ff-a07-demo-action';n.textContent=itemLabels[e.key]||e.key;shape(n,e);box.append(n)}
  root.append(box);
 }
-window.ffA07Elements={editor,read,set,refresh,preview};
+window.ffA07Elements={editor,read,set,refresh,preview,groups,labels,itemLabels,shapes,sizes,defaultRows};
 })();

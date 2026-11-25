@@ -1,0 +1,1 @@
+INSERT INTO public.ff_content_catalog(key,screen,label,original) VALUES ('orders.error','orders','مقدمة رسالة تعذر إنشاء الطلب','تعذر إنشاء الطلب') ON CONFLICT(key) DO NOTHING;

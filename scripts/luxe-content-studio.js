@@ -1,4 +1,4 @@
-/* DEC-09 phase 1: fixed content keys, safe plain text, server-authorized releases. */
+/* A09: explicit stable content keys, bounded safe formatting and authorized templates. */
 (()=>{
 'use strict';
 const targets={
@@ -37,14 +37,40 @@ const targets={
  'assembly.refresh':'#ffV12Refresh',
  'reservations.refresh':'#ff49ReservationsRefresh'
 };
+Object.assign(targets,{
+ 'catalog.title':"#ff51CatalogPanel .sectionbar h2",
+ 'customers.title':"#ff51CustomersPanel .sectionbar h2",
+ 'staff.title':"#staffAdminCard .sectionbar h2",
+ 'archive.title':"#ff51ArchivePanel .sectionbar h2",
+ 'ratings.title':"#ff51RatingsPanel .sectionbar h2",
+ 'cases.title':"#ff41Panel .ff41-header h2",
+ 'messages.title':"#ff39Panel .sectionbar h2",
+ 'reservations.title':"#ff49ReservationsPanel .sectionbar h2",
+ 'system.title':"#ff48DiagnosticsPanel .sectionbar h2",
+ 'assembly.title':"#ffV12AssemblyWorkspace .sectionbar h2",
+ 'burger_kitchen.title':"#ffBurgerKitchenWorkspace .ff-burger-head h2",
+ 'orders.cancel':'[data-cancel-order]','orders.add':'[data-open-addition]','orders.add_late':'[data-ff52-late]',
+ 'driver.attend':'#clockInBtn','driver.leave':'#clockOutBtn','driver.break':'#ff51BreakBtn',
+ 'assembly.open':'#ffV12Toggle','assembly.burger':'#ffV12BurgerOpen',
+ 'burger_kitchen.refresh':'#ffBurgerKitchenRefresh','burger_kitchen.finished':'#ffBurgerViewFinished','burger_kitchen.notifications':'#ffBurgerKitchenNotifications',
+ 'catalog.item_save':'#ff51ItemSave','catalog.offer_save':'#ff51OfferSave','archive.export':'#ff51ArchiveExport',
+ 'system.refresh':'#ff48Refresh','system.export':'#ff48Export','dashboard.shortcuts':'#ffA08ShortcutsHeading h3',
+ 'dashboard.branches':'#ffA08Branches h3','dashboard.activity':'#ffA08Activity h3'
+});
+const navKeys=['home','new','orders','late','drivers','driver','cashier','reservations','transfer','routes','messages','cases','offers','attendance','burger','cashier_finished','reports','archive','ratings','catalog','customers','changes','team','assembly_admin','applications','application_alerts','branch_policy','staff_link','studio','data_center','security','integrity','access','readiness','qa','diagnostics'];
+for(const key of navKeys)targets['nav.'+key]='#ffx-nav button[data-key="'+key+'"] > span:first-of-type,#ffx-mobile-nav button[data-key="'+key+'"] > span:first-of-type,#ffx-shortcuts button[data-a08-action="'+key+'"] > span:first-of-type';
+const extraText=new Set(['reports.pdf_title','reports.pdf_note','orders.success','orders.error','notices.new_order']);
 const hintTargets={"orders.hint.phone":"#newPhone","orders.hint.area":"#newArea","orders.hint.fee":"#newFee","orders.hint.notes":"#newNotes","orders.hint.menu":"#ffbMenuSearch","orders.hint.search":"#orderSearch"};
 const hintOriginals=new WeakMap();
-const templates=new Set(['notices.delayed','notices.reminder']);
+const templates=new Set(['notices.delayed','notices.reminder','notices.order_summary']);
+const variableKeys=['order_number','customer_name','driver_name','delivery_fee'];
+const officialLink='[فتح النظام](https://delivery.freshfriesz.com/)';
 const guides={'orders.guidance':{parent:'#ffbTextPanel',original:'راجع الأصناف والكميات في المعاينة قبل الاعتماد.'},'reports.guidance':{parent:'#ff76Center .r-head',original:'اختر الفترة والأقسام المطلوبة، ثم اضغط إعداد التقرير.'}};
-const known=k=>Object.hasOwn(targets,k)||Object.hasOwn(hintTargets,k)||templates.has(k)||Object.hasOwn(guides,k);
+const known=k=>Object.hasOwn(targets,k)||Object.hasOwn(hintTargets,k)||templates.has(k)||Object.hasOwn(guides,k)||extraText.has(k);
 function isGuide(k){return Object.hasOwn(guides,k)}
 function appendInline(node,line){
- for(const part of line.split(/(\*\*[^*\n]+\*\*)/g)){
+ for(const part of line.split(/(\*\*[^*\n]+\*\*|\[فتح النظام\]\(https:\/\/delivery\.freshfriesz\.com\/\))/g)){
+  if(part===officialLink){const link=document.createElement('a');link.href='https://delivery.freshfriesz.com/';link.target='_blank';link.rel='noopener noreferrer';link.textContent='فتح النظام';node.append(link);continue}
   if(part.startsWith('**')&&part.endsWith('**')&&part.length>4){const strong=document.createElement('strong');strong.textContent=part.slice(2,-2);node.append(strong)}
   else node.append(document.createTextNode(part));
  }
@@ -64,12 +90,13 @@ function renderGuide(key,value){
  const body=actor()&&typeof value==='string'&&validText(value,key)?value:guide.original;
  if(node.dataset.source!==body){node.dataset.source=body;formatGuide(node,body)}
 }
-const screens={cashier:'واجهة الكاشير',driver:'واجهة الموصل',notices:'التنبيهات التشغيلية',dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
+const screens={burger_kitchen:'مطبخ البرجر',system:'النظام والأمان',cashier:'واجهة الكاشير',driver:'واجهة الموصل',notices:'التنبيهات التشغيلية',dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
 const roles={all:'كل الأدوار',manager:'المدير العام',supervisor:'المشرف',customer_service:'خدمة العملاء',cashier:'الكاشير',driver:'الموصل',assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر'};
 const originalTitles={manager:'إدارة ذكية، ورؤية أوضح لكل فرع',driver:'توصيلاتك... بوضوح وسرعة',cashier:'كل طلب في وقته الصحيح',customer_service:'خدمة سريعة، وتجربة عميل أجمل',supervisor:'متابعة دقيقة في كل لحظة'};
-const actor=()=>typeof user!=='undefined'&&user?.id&&typeof data!=='undefined'&&data?.role?user.id:'';
-const manager=()=>!!actor()&&data.role==='manager';
-const branch=()=>document.querySelector('#ffx-branch')?.value||(data?.branches?.length===1?data.branches[0].id:null);
+const currentRole=()=>typeof ffV12AssemblyActive!=='undefined'&&ffV12AssemblyActive?'assembly':window.ffBurgerActive?.()?'burger_kitchen':typeof data!=='undefined'?data?.role:null;
+const actor=()=>typeof user!=='undefined'&&user?.id&&currentRole()?user.id:'';
+const manager=()=>!!actor()&&currentRole()==='manager';
+const branch=()=>currentRole()==='assembly'?(typeof ffV12AssemblyPayload!=='undefined'?ffV12AssemblyPayload?.branch?.id||null:null):currentRole()==='burger_kitchen'?(window.ffBurgerContentBranch?.()||null):document.querySelector('#ffx-branch')?.value||(data?.branches?.length===1?data.branches[0].id:null);
 const originals=new WeakMap();
 let values=new Map(),context='',last=0,serial=0,session=0,catalog=[],history=[],busy=false;
 const dialog=document.createElement('dialog');dialog.id='ffContentStudio';dialog.dir='rtl';dialog.setAttribute('aria-labelledby','ffContentHeading');
@@ -78,8 +105,8 @@ dialog.innerHTML='<div class="sectionbar"><h2 id="ffContentHeading">استودي
  '<label>بحث في النصوص<input data-content-search type="search" placeholder="اسم الشاشة أو العنصر"></label><label>تصفية الواجهة<select data-content-screen></select></label>'+
  '<label>العنصر<select data-content-key></select></label><label>الدور<select data-content-role></select></label><label>الفرع<select data-content-branch></select></label>'+
  '<label>النص الجديد<textarea data-content-body maxlength="180" rows="3"></textarea></label>'+
- '<div data-content-tools hidden class="actions"><button type="button" data-content-bold>خط عريض</button><button type="button" data-content-bullet>نقطة قائمة</button><small>تنسيق موثوق فقط؛ لا يسمح بالروابط أو HTML.</small></div>'+
- '<p data-content-vars hidden>المتغير المتاح: {order_number} — المعاينة تستخدم رقمًا تجريبيًا فقط.</p>'+
+ '<div data-content-tools hidden class="actions"><button type="button" data-content-bold>خط عريض</button><button type="button" data-content-bullet>نقطة قائمة</button><small>تنسيق موثوق فقط؛ الرابط الوحيد المسموح: [فتح النظام](https://delivery.freshfriesz.com/)؛ دون HTML.</small></div>'+
+ '<p data-content-vars hidden>المتغيرات المتاحة: {order_number}، {customer_name}، {driver_name}، {delivery_fee} — المعاينة اصطناعية فقط.</p>'+
  '<section class="ff-content-preview"><h3>معاينة قبل / بعد</h3><p>الأصل: <b data-content-original></b></p><p>المسودة: <b data-content-preview></b></p><div data-content-rich-preview hidden></div></section>'+
  '<div class="actions"><button type="button" data-content-save>حفظ مسودة</button><button type="button" data-content-restore>استعادة الأصل كمسودة</button></div>'+
  '<div class="actions"><label>دور الإصدارات<select data-content-history-role></select></label><label>فرع الإصدارات<select data-content-history-branch></select></label></div><label>الإصدارات (أحدث 200 نتيجة في النطاق)<select data-content-history></select></label><p data-content-audit></p>'+
@@ -90,11 +117,13 @@ const q=s=>dialog.querySelector('[data-content-'+s+']');
 const labelFor=k=>catalog.find(x=>x.key===k);
 const selected=()=>history.find(x=>String(x.id)===q('history').value);
 function originalText(key,role=data?.role){return key==='dashboard.title'?(originalTitles[role]||(role==='all'?'العنوان الأصلي بحسب الدور':'مساحة العمل الذكية')):(labelFor(key)?.original||'');}
-function write(key,value){
- const node=document.querySelector(targets[key]);if(!node)return;
+function write(key,value){for(const node of document.querySelectorAll(targets[key]))writeNode(key,node,value)}
+const preserveState=new Set(['driver.break','assembly.open','burger_kitchen.finished']);
+function writeNode(key,node,value){
+ if(value!=null&&!validText(value,key))value=null;
  if(key==='dashboard.title'){
   // paintStatus regenerates the title each cycle, so restore the role-specific source text.
-  const fallback=actor()?originalText(key,data.role):'التحكم في كل التفاصيل، من شاشة واحدة';
+  const fallback=actor()?originalText(key,currentRole()):'التحكم في كل التفاصيل، من شاشة واحدة';
   if(node.textContent!==(value??fallback))node.textContent=value??fallback;
   return;
  }
@@ -113,7 +142,7 @@ function write(key,value){
  for(let i=0;i<saved.length;i++){
   const item=saved[i],text=item[0];
   if(item[2]!==null&&text.data!==item[2])item[1]=text.data;
-  const next=i===0?' '+value:'';
+  const next=i===0?(preserveState.has(key)?item[1]+' — '+value:' '+value+(key==='assembly.title'?' · ':'')):preserveState.has(key)?item[1]:'';
   if(text.data!==next)text.data=next;
   item[2]=next;
  }
@@ -126,7 +155,7 @@ function writeHint(key,body){
  const original=prior&&current===prior.applied?prior.original:current;
  node.setAttribute('placeholder',body);hintOriginals.set(node,{original,applied:body});
 }
-function render(){for(const key of Object.keys(targets))write(key,values.get(key)?.body??null);for(const key of Object.keys(hintTargets))writeHint(key,values.get(key)?.body??null);for(const key of Object.keys(guides))renderGuide(key,values.get(key)?.body??null)}
+function render(){for(const key of Object.keys(targets))write(key,values.get(key)?.body??null);for(const key of navKeys){const b=document.querySelector('#ffx-mobile-nav button[data-key="'+key+'"]');if(b){const label=b.querySelector('span')?.textContent?.trim();if(label){b.setAttribute('aria-label',label);b.title=label}}}for(const key of Object.keys(hintTargets))writeHint(key,values.get(key)?.body??null);for(const key of Object.keys(guides))renderGuide(key,values.get(key)?.body??null)}
 function reset(){
  serial++;session++;context='';last=0;values.clear();catalog=[];history=[];busy=false;
  if(dialog.open)dialog.close();for(const name of ['key','history','branch'])q(name).replaceChildren();
@@ -135,25 +164,33 @@ function reset(){
 }
 async function sync(force=false){
  const who=actor();if(!who){if(context||dialog.open)reset();return}
- const b=branch(),role=data.role,key=[who,role,b].join('|');
+ const b=branch(),role=currentRole(),key=[who,role,b].join('|');
  if(key!==context){serial++;values.clear();if(dialog.open&&(!manager()||(context&&context.split('|')[0]!==who)))reset();context=key;last=0}
  render();
  if(!force&&Date.now()-last<30000)return;
  last=Date.now();const request=++serial;
  try{
   const rows=await rpc('ff_content_effective',{p_branch:b});
-  if(request!==serial||actor()!==who||branch()!==b||data?.role!==role)return;
-  values=new Map((rows||[]).filter(r=>known(r.content_key)).map(r=>[r.content_key,r]));render();
+  if(request!==serial||actor()!==who||branch()!==b||currentRole()!==role)return;
+  values=new Map((rows||[]).filter(r=>known(r.content_key)&&(r.body===null||typeof r.body==='string'&&validText(r.body,r.content_key))).map(r=>[r.content_key,r]));render();
  }catch{/* Old database or network loss: keep confirmed values within the same account/scope only. */}
 }
-function validText(s,key){const clean=templates.has(key)?s.replaceAll('{order_number}',''):isGuide(key)?s.replaceAll('\n',''):s;return !!clean.trim()&&s.length<=(isGuide(key)?1000:180)&&!/[<>{}\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/u.test(clean)&&!/(https?:\/\/|www\.|javascript:|data:|vbscript:|\/\/)/i.test(s)}
+function validText(s,key){
+ if(typeof s!=='string')return false;
+ let clean=s;
+ if(templates.has(key))for(const variable of variableKeys)clean=clean.replaceAll('{'+variable+'}','');
+ else if(isGuide(key))clean=clean.replaceAll('\n','').replaceAll(officialLink,'');
+ return !!clean.trim()&&s.length<=(isGuide(key)?1000:180)&&!/[<>{}\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/u.test(clean)&&!/(https?:\/\/|www\.|javascript:|data:|vbscript:|\/\/)/i.test(clean);
+}
+const sampleVars={order_number:'990001 (تجريبي)',customer_name:'عميل تجريبي',driver_name:'موصل تجريبي',delivery_fee:'500'};
+function substitute(body,vars){return body.replace(/\{([a-z_]+)\}/g,(_,key)=>Object.hasOwn(vars,key)?String(vars[key]??'—'):'—')}
 function preview(){
  const key=q('key').value,original=originalText(key,q('role').value);
  const rich=isGuide(key);q('body').maxLength=rich?1000:180;q('tools').hidden=!rich;q('rich-preview').hidden=!rich;q('preview').parentElement.hidden=rich;
  if(rich){const draft=q('body').value;formatGuide(q('rich-preview'),draft?(validText(draft,key)?draft:'النص غير صالح للمعاينة — أزل الرموز أو الروابط غير المسموح بها.'):'—')}else q('rich-preview').replaceChildren();
  q('vars').hidden=!templates.has(key);
  q('original').textContent=original;
- q('preview').textContent=(templates.has(key)?q('body').value.replaceAll('{order_number}','990001 (تجريبي)'):q('body').value)||'—';
+ q('preview').textContent=(templates.has(key)?substitute(q('body').value,sampleVars):q('body').value)||'—';
 }
 function audit(){
  const row=selected();
@@ -217,7 +254,7 @@ q('key').onchange=selectKey;q('role').onchange=preview;q('body').oninput=preview
 q('load').onclick=()=>{const row=selected();if(!row)return;q('role').value=row.role_scope;q('branch').value=row.branch_id||'';q('body').value=row.body??originalText(row.content_key,row.role_scope);preview()};
 async function draft(restore){
  const key=q('key').value,role=q('role').value,b=q('branch').value||null,body=restore?null:q('body').value.trim();
- if(!key||(!restore&&!validText(body,key))){q('status').textContent='أدخل نصاً عادياً آمناً دون روابط أو رموز برمجية';return}
+ if(!key||(!restore&&!validText(body,key))){q('status').textContent='أدخل نصاً آمناً دون رموز برمجية أو روابط غير معتمدة';return}
  await run(async(token,who)=>{
   const id=await rpc('ff_content_create_draft',{p_key:key,p_role:role,p_branch:b,p_body:body});
   if(token!==session||who!==actor())return;
@@ -241,15 +278,40 @@ if(studio){
  button.onclick=()=>{if(!manager())return;document.getElementById('ffStudio').close();void open()};studio.prepend(button);
 }
 window.addEventListener('ff-luxe-session-reset',reset);
-function notice(key,fallback,number,orderBranch){
- if(!templates.has(key)||!actor()||context!==[actor(),data.role,branch()].join('|'))return fallback;
- // Only a number from the already-authorized alert response may be substituted.
- // A branch-selected template must not be used for a notice from another branch.
- if(branch()&&orderBranch!==branch())return fallback;
- const body=values.get(key)?.body;
- if(typeof body!=='string'||!validText(body,key))return fallback;
- const safe=/^\d{1,20}$/.test(String(number??''))?String(number):'—';
- return body.replaceAll('{order_number}',safe);
+function safeValue(v){
+ if(v==null)return '—';
+ return String(v).replace(/[\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069<>]/gu,'').slice(0,120)||'—';
 }
-window.ffContentStudio={sync,open,notice};
+function currentText(key,fallback,orderBranch=branch()){
+ if(!actor()||context!==[actor(),currentRole(),branch()].join('|')||(branch()&&orderBranch!==branch()))return fallback;
+ const body=values.get(key)?.body;return typeof body==='string'&&validText(body,key)?body:fallback;
+}
+function notice(key,fallback,number,orderBranch){
+ if(!templates.has(key)||!actor()||context!==[actor(),currentRole(),branch()].join('|'))return fallback;
+ if(branch()&&orderBranch!==branch())return fallback;
+ const body=values.get(key)?.body;if(typeof body!=='string'||!validText(body,key))return fallback;
+ const safe=/^\d{1,20}$/.test(String(number??''))?String(number):'—';
+ const vars={order_number:safe};
+ // Customer/driver/fee values are read only from the already-authorized account snapshot.
+ // Only the on-screen summary may include them; notification bodies never include private names or fees.
+ if(key==='notices.order_summary'&&safe!=='—'&&orderBranch&&['manager','supervisor','customer_service','cashier','driver'].includes(currentRole())){
+  const matches=(Array.isArray(data?.orders)?data.orders:[]).filter(o=>String(o.number)===safe&&o.branch_id===orderBranch);
+  if(matches.length===1){
+   const o=matches[0];vars.driver_name=safeValue(o.driver_name);
+   if(['manager','supervisor','customer_service','cashier'].includes(currentRole()))vars.customer_name=safeValue(o.customer_name);
+   if(o.delivery_fee!=null&&Number.isFinite(Number(o.delivery_fee))&&Number(o.delivery_fee)>=0)vars.delivery_fee=String(Number(o.delivery_fee));
+  }
+ }
+ return substitute(body,vars);
+}
+async function reportText(reportBranch){
+ const who=actor(),role=currentRole();if(!who)return {};
+ try{
+  const rows=await rpc('ff_content_effective',{p_branch:reportBranch||null});
+  if(actor()!==who||currentRole()!==role)return {};
+  return Object.fromEntries((rows||[]).filter(r=>['reports.pdf_title','reports.pdf_note'].includes(r.content_key)&&typeof r.body==='string'&&validText(r.body,r.content_key)).map(r=>[r.content_key,r.body]));
+ }catch{return {}}
+}
+window.ffContentStudio={sync,open,notice,text:currentText,reportText};
+setInterval(()=>{if(actor())void sync()},3000);
 })();
