@@ -38,6 +38,10 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  current_html=current_html[:current_start]+baseline_html[base_start:base_end]+current_html[current_end:]
  current_html=current_html.replace('./scripts/luxe-a07-design.js?v=20261125-step05','./scripts/luxe-a07-design.js')
  current_html=current_html.replace('luxe-shared-photo-menu-20261123.js?v=20261125-step05','luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style')
+ # STEP10: exact asset cache-version deltas only; no visual guard relaxation.
+ current_html=current_html.replace('luxe-a07-elements.js?v=20261125-step10','luxe-a07-elements.js?v=20261125-step07')
+ current_html=current_html.replace('luxe-report-center-20261123.js?v=20261125-step10','luxe-report-center-20261123.js?v=20261125-step06')
+ current_html=current_html.replace('luxe-content-studio.js?v=20261125-step10','luxe-content-studio.js?v=20261125-step08')
  current_html=current_html.replace('./scripts/luxe-content-studio.js?v=20261125-step06','./scripts/luxe-content-studio.js')
  current_html=current_html.replace('luxe-report-center-20261123.js?v=20261125-step06','luxe-report-center-20261123.js?v=20261125-a10')
  current_html=current_html.replace("function toast(s){$('toast').textContent=window.ffContentStudio?.decorateMessage(s)??s;","function toast(s){$('toast').textContent=s;")
@@ -56,7 +60,7 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  assert baseline_html.count(parser_before)==1,'missing pinned STEP09 parser block'
  assert current_html.count(parser_after)==1,'unexpected STEP09 parser implementation'
  current_html=current_html.replace(parser_after,parser_before,1)
- assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04–STEP09 audited hooks'
+ assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04–STEP10 audited hooks'
 else:
  assert current_html==baseline_html,'non-CSS application markup or script changed'
 changed={str(f.relative_to(base)) for f in list((base/'scripts').glob('*.js'))+list((base/'assets').glob('*.js')) if f.read_bytes()!=(root/f.relative_to(base)).read_bytes()}
