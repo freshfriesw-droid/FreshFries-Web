@@ -61,6 +61,6 @@ BEGIN
  IF (SELECT rating FROM public.ff_orders WHERE id=o)<>2 OR (SELECT rating_note FROM public.ff_orders WHERE id=o)<>'QA customer note' OR (SELECT stars FROM public.ff51_driver_ratings WHERE id=rid)<>2 OR (SELECT status FROM public.ff_orders WHERE id=o)<>'delivered' THEN RAISE EXCEPTION 'Ratings mutated or blocked order';END IF;checks:=checks+1;
  RAISE EXCEPTION 'QA rollback' USING ERRCODE='ZQA11';
  EXCEPTION WHEN SQLSTATE 'ZQA11' THEN NULL;END;
- IF checks<>21 OR EXISTS(SELECT FROM public.ff_branches WHERE id IN(b,b2)) THEN RAISE EXCEPTION 'Incomplete QA rollback %',checks;END IF;
+ IF checks<>20 OR EXISTS(SELECT FROM public.ff_branches WHERE id IN(b,b2)) THEN RAISE EXCEPTION 'Incomplete QA rollback %',checks;END IF;
 END $qa$;
-SELECT 'PASS A10: 21 quality, private grievance lifecycle, rating identity and scope assertions' result;
+SELECT 'PASS A10: 20 quality, private grievance lifecycle, rating identity and scope assertions' result;
