@@ -1,8 +1,8 @@
 {
   "base": "a4d579a6b2e1f100c24922be1bc0dc522eb9c26a",
   "existing": 125,
-  "added": 428,
-  "total": 553,
+  "added": 516,
+  "total": 641,
   "registered": [
     {
       "key": "orders.control.ffa06discarddraft",
@@ -2799,7 +2799,7 @@
       "screen": "cashier",
       "label": "إرشاد إضافي: أكد الاستلام أولًا، ثم أدخل رقم فاتورة MicroPOS بعد قطعها خارجيًا. لا يصدر هذا النظام فاتورة.",
       "original": "أكد الاستلام أولًا، ثم أدخل رقم فاتورة MicroPOS بعد قطعها خارجيًا. لا يصدر هذا النظام فاتورة.",
-      "selector": "#cashierView .card",
+      "selector": "#cashierView > .card:has(#cashierOrders)",
       "mode": "guide",
       "source": "existing instructional scope"
     },
@@ -3872,6 +3872,816 @@
       "selector": "",
       "mode": "runtime",
       "source": "report center status"
+    },
+    {
+      "key": "orders.hint.ffbmenusearch",
+      "screen": "orders",
+      "label": "تلميح: 🔎 ابحث عن صنف أو عرض",
+      "original": "🔎 ابحث عن صنف أو عرض",
+      "selector": "#ffbMenuSearch",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "login.field.ff71customerphone",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: رقم الهاتف اليمني",
+      "original": "رقم الهاتف اليمني",
+      "selector": "label:has(> #ff71CustomerPhone)",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.ff71customercode",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: رمز التحقق",
+      "original": "رمز التحقق",
+      "selector": "label:has(> #ff71CustomerCode)",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.ff61trackcode",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: رمز المتابعة",
+      "original": "رمز المتابعة",
+      "selector": "label:has(> #ff61TrackCode)",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.join_name",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: الاسم الكامل (ثنائي على الأقل) *",
+      "original": "الاسم الكامل (ثنائي على الأقل) *",
+      "selector": "#ff61ApplyForm label:has(> [name=\"full_name\"])",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.join_email",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: البريد الإلكتروني (اختياري)",
+      "original": "البريد الإلكتروني (اختياري)",
+      "selector": "#ff61ApplyForm label:has(> [name=\"email\"])",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.join_phone",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: رقم الهاتف *",
+      "original": "رقم الهاتف *",
+      "selector": "#ff61ApplyForm label:has(> [name=\"phone\"])",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.join_qualification",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: المؤهل العلمي *",
+      "original": "المؤهل العلمي *",
+      "selector": "#ff61ApplyForm label:has(> [name=\"qualification\"])",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.join_address",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: العنوان *",
+      "original": "العنوان *",
+      "selector": "#ff61ApplyForm label:has(> [name=\"address\"])",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.join_age",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: العمر (بالسنوات) *",
+      "original": "العمر (بالسنوات) *",
+      "selector": "#ff61ApplyForm label:has(> [name=\"age_years\"])",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.join_marital",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: الحالة الاجتماعية *",
+      "original": "الحالة الاجتماعية *",
+      "selector": "#ff61ApplyForm label:has(> [name=\"marital_status\"])",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.join_role",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: الوظيفة المطلوبة *",
+      "original": "الوظيفة المطلوبة *",
+      "selector": "#ff61ApplyForm label:has(> [name=\"requested_role\"])",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.join_experience",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: سنوات الخبرة",
+      "original": "سنوات الخبرة",
+      "selector": "#ff61ApplyForm label:has(> [name=\"experience_years\"])",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.join_message",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: خبرات إضافية أو رسالة للإدارة",
+      "original": "خبرات إضافية أو رسالة للإدارة",
+      "selector": "#ff61ApplyForm label:has(> [name=\"applicant_message\"])",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "staff.field.employee_name",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: الاسم الكامل",
+      "original": "الاسم الكامل",
+      "selector": "#ffEditForm label:has(> [name=\"name\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.employee_username",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: اسم المستخدم",
+      "original": "اسم المستخدم",
+      "selector": "#ffEditForm label:has(> [name=\"username\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.employee_email",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: البريد الإلكتروني",
+      "original": "البريد الإلكتروني",
+      "selector": "#ffEditForm label:has(> [name=\"email\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.employee_phone",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: رقم الجوال",
+      "original": "رقم الجوال",
+      "selector": "#ffEditForm label:has(> [name=\"phone\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.employee_qualification",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: المؤهل العلمي",
+      "original": "المؤهل العلمي",
+      "selector": "#ffEditForm label:has(> [name=\"qualification\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.employee_address",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: العنوان",
+      "original": "العنوان",
+      "selector": "#ffEditForm label:has(> [name=\"address\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.employee_age",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: العمر",
+      "original": "العمر",
+      "selector": "#ffEditForm label:has(> [name=\"age_years\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.employee_marital",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: الحالة الاجتماعية",
+      "original": "الحالة الاجتماعية",
+      "selector": "#ffEditForm label:has(> [name=\"marital_status\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.employee_experience",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: سنوات الخبرة",
+      "original": "سنوات الخبرة",
+      "selector": "#ffEditForm label:has(> [name=\"experience_years\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.employee_password",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: كلمة مرور جديدة (اختياري)",
+      "original": "كلمة مرور جديدة (اختياري)",
+      "selector": "#ffEditForm label:has(> [name=\"password\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.field.employee_message",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: ملاحظات أو معلومات إضافية",
+      "original": "ملاحظات أو معلومات إضافية",
+      "selector": "#ffEditForm label:has(> [name=\"applicant_message\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff2_close",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: ✕",
+      "original": "✕",
+      "selector": "#ff2-close",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.field.ff66_tone_file",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: إضافة ملف نغمة (MP3 / WAV / OGG / M4A، حتى 2MB)",
+      "original": "إضافة ملف نغمة (MP3 / WAV / OGG / M4A، حتى 2MB)",
+      "selector": "label:has(> #ff66-tone-file)",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ffcustomereditsave",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: ✅ حفظ التعديل وإشعار الموصل",
+      "original": "✅ حفظ التعديل وإشعار الموصل",
+      "selector": "#ffCustomerEditSave",
+      "mode": "protected",
+      "source": "scripts/luxe-order-customer-edit-20261123.js"
+    },
+    {
+      "key": "orders.control.ffcustomereditcancel",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: إلغاء",
+      "original": "إلغاء",
+      "selector": "#ffCustomerEditCancel",
+      "mode": "protected",
+      "source": "scripts/luxe-order-customer-edit-20261123.js"
+    },
+    {
+      "key": "orders.field.order_edit_name",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: اسم العميل",
+      "original": "اسم العميل",
+      "selector": "#ffCustomerEditDialog label:has(> [name=\"name\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-order-customer-edit-20261123.js"
+    },
+    {
+      "key": "orders.field.order_edit_phone",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: رقم هاتف العميل",
+      "original": "رقم هاتف العميل",
+      "selector": "#ffCustomerEditDialog label:has(> [name=\"phone\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-order-customer-edit-20261123.js"
+    },
+    {
+      "key": "orders.field.order_edit_area",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: المنطقة",
+      "original": "المنطقة",
+      "selector": "#ffCustomerEditDialog label:has(> [name=\"area\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-order-customer-edit-20261123.js"
+    },
+    {
+      "key": "orders.field.order_edit_address",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: العنوان الكامل",
+      "original": "العنوان الكامل",
+      "selector": "#ffCustomerEditDialog label:has(> [name=\"address\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-order-customer-edit-20261123.js"
+    },
+    {
+      "key": "orders.field.order_edit_reason",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: سبب التعديل",
+      "original": "سبب التعديل",
+      "selector": "#ffCustomerEditDialog label:has(> [name=\"reason\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-order-customer-edit-20261123.js"
+    },
+    {
+      "key": "orders.field.order_edit_customer_note",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: ملاحظة جديدة خاصة بسجل العميل (اختيارية)",
+      "original": "ملاحظة جديدة خاصة بسجل العميل (اختيارية)",
+      "selector": "#ffCustomerEditDialog label:has(> [name=\"customer_note\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-order-customer-edit-20261123.js"
+    },
+    {
+      "key": "archive.field.fflfinishedfrom",
+      "screen": "archive",
+      "label": "توضيح يحفظ النص الأصلي: من تاريخ",
+      "original": "من تاريخ",
+      "selector": "label:has(> #fflFinishedFrom)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-completed-universal-20261123.js"
+    },
+    {
+      "key": "archive.field.fflfinishedto",
+      "screen": "archive",
+      "label": "توضيح يحفظ النص الأصلي: إلى تاريخ",
+      "original": "إلى تاريخ",
+      "selector": "label:has(> #fflFinishedTo)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-completed-universal-20261123.js"
+    },
+    {
+      "key": "archive.field.fflfinishedbranch",
+      "screen": "archive",
+      "label": "توضيح يحفظ النص الأصلي: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(> #fflFinishedBranch)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-completed-universal-20261123.js"
+    },
+    {
+      "key": "archive.control.fflfinishedtoday",
+      "screen": "archive",
+      "label": "توضيح يحفظ النص الأصلي: 📅 اليوم",
+      "original": "📅 اليوم",
+      "selector": "#fflFinishedToday",
+      "mode": "protected",
+      "source": "scripts/luxe-completed-universal-20261123.js"
+    },
+    {
+      "key": "archive.control.fflfinishedapply",
+      "screen": "archive",
+      "label": "توضيح يحفظ النص الأصلي: عرض الفترة",
+      "original": "عرض الفترة",
+      "selector": "#fflFinishedApply",
+      "mode": "protected",
+      "source": "scripts/luxe-completed-universal-20261123.js"
+    },
+    {
+      "key": "archive.hint.fflfinishedsearch",
+      "screen": "archive",
+      "label": "تلميح: 🔎 ابحث في الطلبات المحمّلة: رقم الطلب، هاتف العميل، الموصل",
+      "original": "🔎 ابحث في الطلبات المحمّلة: رقم الطلب، هاتف العميل، الموصل",
+      "selector": "#fflFinishedSearch",
+      "mode": "hint",
+      "source": "scripts/luxe-completed-universal-20261123.js"
+    },
+    {
+      "key": "archive.control.fflfinishedrefresh",
+      "screen": "archive",
+      "label": "توضيح يحفظ النص الأصلي: 🔄 تحديث",
+      "original": "🔄 تحديث",
+      "selector": "#fflFinishedRefresh",
+      "mode": "protected",
+      "source": "scripts/luxe-completed-universal-20261123.js"
+    },
+    {
+      "key": "archive.control.fflfinishedmore",
+      "screen": "archive",
+      "label": "توضيح يحفظ النص الأصلي: عرض 30 طلبًا أقدم",
+      "original": "عرض 30 طلبًا أقدم",
+      "selector": "#fflFinishedMore",
+      "mode": "protected",
+      "source": "scripts/luxe-completed-universal-20261123.js"
+    },
+    {
+      "key": "dashboard.field.fff01date",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: اليوم المطلوب",
+      "original": "اليوم المطلوب",
+      "selector": "label:has(> #ffF01Date)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-f01-operational-day-20261123.js"
+    },
+    {
+      "key": "dashboard.field.fff01compare",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: مقارنة مع",
+      "original": "مقارنة مع",
+      "selector": "label:has(> #ffF01Compare)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-f01-operational-day-20261123.js"
+    },
+    {
+      "key": "dashboard.field.fff01branch",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: الفرع",
+      "original": "الفرع",
+      "selector": "label:has(> #ffF01Branch)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-f01-operational-day-20261123.js"
+    },
+    {
+      "key": "dashboard.control.fff01today",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: اليوم",
+      "original": "اليوم",
+      "selector": "#ffF01Today",
+      "mode": "protected",
+      "source": "scripts/luxe-f01-operational-day-20261123.js"
+    },
+    {
+      "key": "dashboard.control.fff01refresh",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: عرض",
+      "original": "عرض",
+      "selector": "#ffF01Refresh",
+      "mode": "protected",
+      "source": "scripts/luxe-f01-operational-day-20261123.js"
+    },
+    {
+      "key": "reports.field.ffhistoryfrom",
+      "screen": "reports",
+      "label": "توضيح يحفظ النص الأصلي: من تاريخ",
+      "original": "من تاريخ",
+      "selector": "label:has(> #ffHistoryFrom)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-history-period-20261123.js"
+    },
+    {
+      "key": "reports.field.ffhistoryto",
+      "screen": "reports",
+      "label": "توضيح يحفظ النص الأصلي: إلى تاريخ",
+      "original": "إلى تاريخ",
+      "selector": "label:has(> #ffHistoryTo)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-history-period-20261123.js"
+    },
+    {
+      "key": "reports.control.ffhistorytoday",
+      "screen": "reports",
+      "label": "توضيح يحفظ النص الأصلي: اليوم",
+      "original": "اليوم",
+      "selector": "#ffHistoryToday",
+      "mode": "protected",
+      "source": "scripts/luxe-history-period-20261123.js"
+    },
+    {
+      "key": "reports.control.ffhistoryapply",
+      "screen": "reports",
+      "label": "توضيح يحفظ النص الأصلي: اعتماد الفترة",
+      "original": "اعتماد الفترة",
+      "selector": "#ffHistoryApply",
+      "mode": "protected",
+      "source": "scripts/luxe-history-period-20261123.js"
+    },
+    {
+      "key": "finance.field.ff42rangefrom",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: من تاريخ",
+      "original": "من تاريخ",
+      "selector": "label:has(> #ff42RangeFrom)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-history-period-20261123.js"
+    },
+    {
+      "key": "finance.field.ff42rangeto",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: إلى تاريخ",
+      "original": "إلى تاريخ",
+      "selector": "label:has(> #ff42RangeTo)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-history-period-20261123.js"
+    },
+    {
+      "key": "finance.control.ff42rangeapply",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: عرض الفترة",
+      "original": "عرض الفترة",
+      "selector": "#ff42RangeApply",
+      "mode": "protected",
+      "source": "scripts/luxe-history-period-20261123.js"
+    },
+    {
+      "key": "orders.hint.ffrewarditemsearch",
+      "screen": "orders",
+      "label": "تلميح: 🔎 ابحث عن صنف",
+      "original": "🔎 ابحث عن صنف",
+      "selector": "#ffRewardItemSearch",
+      "mode": "hint",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.control.ffrewardissue",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: إصدار كود جديد",
+      "original": "إصدار كود جديد",
+      "selector": "#ffRewardIssue",
+      "mode": "protected",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.control.ffrewardcodesrefresh",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: 📋 الأكواد الصادرة",
+      "original": "📋 الأكواد الصادرة",
+      "selector": "#ffRewardCodesRefresh",
+      "mode": "protected",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.field.reward_issue_kind",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: نوع الكود",
+      "original": "نوع الكود",
+      "selector": "#ffRewardManager label:has(> [name=\"kind\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.field.reward_issue_name",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: اسم العميل",
+      "original": "اسم العميل",
+      "selector": "#ffRewardManager label:has(> [name=\"name\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.field.reward_issue_phone",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: رقم الهاتف",
+      "original": "رقم الهاتف",
+      "selector": "#ffRewardManager label:has(> [name=\"phone\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.field.reward_issue_expiry",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: انتهاء الصلاحية (اختياري)",
+      "original": "انتهاء الصلاحية (اختياري)",
+      "selector": "#ffRewardManager label:has(> [name=\"expiry\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.field.ffrewardservicecode",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: 🎟️ كود خصم",
+      "original": "🎟️ كود خصم",
+      "selector": "label:has(> #ffRewardServiceCode)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.control.ffrewardserviceapply",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: 🔎 عرض أصناف التعويض",
+      "original": "🔎 عرض أصناف التعويض",
+      "selector": "#ffRewardServiceApply",
+      "mode": "protected",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "cashier.field.ffrewardcashiercode",
+      "screen": "cashier",
+      "label": "توضيح يحفظ النص الأصلي: رمز الكود",
+      "original": "رمز الكود",
+      "selector": "label:has(> #ffRewardCashierCode)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "cashier.control.ffrewardcashierapply",
+      "screen": "cashier",
+      "label": "توضيح يحفظ النص الأصلي: إنشاء بطاقة تحضير بالكود",
+      "original": "إنشاء بطاقة تحضير بالكود",
+      "selector": "#ffRewardCashierApply",
+      "mode": "protected",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.control.ffrewardredeembutton",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: ✅ اعتماد واستهلاك الكود مرة واحدة",
+      "original": "✅ اعتماد واستهلاك الكود مرة واحدة",
+      "selector": "#ffRewardRedeemButton",
+      "mode": "protected",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.control.ffrewardredeemclose",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: إلغاء",
+      "original": "إلغاء",
+      "selector": "#ffRewardRedeemClose",
+      "mode": "protected",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.field.reward_redeem_branch",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: الفرع",
+      "original": "الفرع",
+      "selector": "#ffRewardRedeemDialog label:has(> [name=\"branch\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.field.reward_redeem_channel",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: نوع الاستلام",
+      "original": "نوع الاستلام",
+      "selector": "#ffRewardRedeemDialog label:has(> [name=\"channel\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.field.reward_redeem_area",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: عنوان التوصيل أو المنطقة",
+      "original": "عنوان التوصيل أو المنطقة",
+      "selector": "#ffRewardRedeemDialog label:has(> [name=\"area\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.field.reward_redeem_fee",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: أجرة التوصيل (المنتجات مجانية)",
+      "original": "أجرة التوصيل (المنتجات مجانية)",
+      "selector": "#ffRewardRedeemDialog label:has(> [name=\"fee\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.field.reward_redeem_notes",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: ملاحظات (اختياري)",
+      "original": "ملاحظات (اختياري)",
+      "selector": "#ffRewardRedeemDialog label:has(> [name=\"notes\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "orders.field.reward_redeem_verify",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: أؤكد مطابقة اسم العميل ورقمه للكود قبل استهلاكه",
+      "original": "أؤكد مطابقة اسم العميل ورقمه للكود قبل استهلاكه",
+      "selector": "#ffRewardRedeemDialog label:has(> [name=\"verify\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-one-time-rewards-20261123.js"
+    },
+    {
+      "key": "cashier.field.burger_send_branch",
+      "screen": "cashier",
+      "label": "توضيح يحفظ النص الأصلي: الفرع",
+      "original": "الفرع",
+      "selector": "#ffBurgerDialog label:has(> [name=\"branch\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "cashier.field.burger_send_kind",
+      "screen": "cashier",
+      "label": "توضيح يحفظ النص الأصلي: نوع الطلب",
+      "original": "نوع الطلب",
+      "selector": "#ffBurgerDialog label:has(> [name=\"kind\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "cashier.field.burger_send_order",
+      "screen": "cashier",
+      "label": "توضيح يحفظ النص الأصلي: طلب التوصيل المرتبط",
+      "original": "طلب التوصيل المرتبط",
+      "selector": "#ffBurgerDialog label:has(> [name=\"order\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "cashier.field.burger_send_invoice",
+      "screen": "cashier",
+      "label": "توضيح يحفظ النص الأصلي: رقم فاتورة الكاشير (اختياري)",
+      "original": "رقم فاتورة الكاشير (اختياري)",
+      "selector": "#ffBurgerDialog label:has(> [name=\"invoice\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "cashier.field.burger_send_notes",
+      "screen": "cashier",
+      "label": "توضيح يحفظ النص الأصلي: الملاحظات (إن وجدت)",
+      "original": "الملاحظات (إن وجدت)",
+      "selector": "#ffBurgerDialog label:has(> [name=\"notes\"])",
+      "mode": "protected_label",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "dashboard.control.hero_sub",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: لوحة تشغيل فاخرة وسريعة، مصممة لتسهيل العمل في الفروع الثلاثة.",
+      "original": "لوحة تشغيل فاخرة وسريعة، مصممة لتسهيل العمل في الفروع الثلاثة.",
+      "selector": "#ffx-hero-sub",
+      "mode": "text",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ffx_motion",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: انتقالات سلسة",
+      "original": "انتقالات سلسة",
+      "selector": ".ffx-switchrow:has(> #ffx-motion) > span",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ffx_fast",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: إظهار الإجراءات السريعة",
+      "original": "إظهار الإجراءات السريعة",
+      "selector": ".ffx-switchrow:has(> #ffx-fast) > span",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "messages.field.ff39requireack",
+      "screen": "messages",
+      "label": "توضيح يحفظ النص الأصلي: يلزم تأكيد الموظف «اطلعت على الرسالة»",
+      "original": "يلزم تأكيد الموظف «اطلعت على الرسالة»",
+      "selector": "label:has(> #ff39RequireAck)",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "login.control.ff61consent",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: أوافق على استخدام هذه البيانات لمراجعة طلب الانضمام وحفظها بصورة مقيدة لدى إدارة المطعم.",
+      "original": "أوافق على استخدام هذه البيانات لمراجعة طلب الانضمام وحفظها بصورة مقيدة لدى إدارة المطعم.",
+      "selector": "label:has(> #ff61Consent) > span",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.control.join_title",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: طلب الانضمام إلى فريق فريش فرايز",
+      "original": "طلب الانضمام إلى فريق فريش فرايز",
+      "selector": "#ff61ApplyPanel > h3",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.control.join_intro",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: إرسال الطلب لا يُنشئ حساب دخول. تراجع الإدارة البيانات أولًا، ثم تحدد الدور والفرع وتوافق أو ترفض مع تسجيل السبب.",
+      "original": "إرسال الطلب لا يُنشئ حساب دخول. تراجع الإدارة البيانات أولًا، ثم تحدد الدور والفرع وتوافق أو ترفض مع تسجيل السبب.",
+      "selector": "#ff61ApplyPanel > p.muted",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.control.tracking_title",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: متابعة حالة الطلب",
+      "original": "متابعة حالة الطلب",
+      "selector": "#ff61StatusPanel > h3",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.control.tracking_intro",
+      "screen": "login",
+      "label": "توضيح يحفظ النص الأصلي: احتفظ برمز المتابعة السري الذي ظهر بعد التقديم، ولا تشاركه مع الآخرين. عند الموافقة يُنشأ حسابك وتستلم كلمة المرور الأولية من الإدارة، ولا تُعرض هنا.",
+      "original": "احتفظ برمز المتابعة السري الذي ظهر بعد التقديم، ولا تشاركه مع الآخرين. عند الموافقة يُنشأ حسابك وتستلم كلمة المرور الأولية من الإدارة، ولا تُعرض هنا.",
+      "selector": "#ff61StatusPanel > p.muted",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
     }
   ],
   "previousRegistryCoverage": [
@@ -5483,11 +6293,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "ffx-hero-sub",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "ffx-kpis",
       "screen": "dashboard",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -5506,51 +6311,6 @@
       "id": "ffx-overdue",
       "screen": "dashboard",
       "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "newBranch",
-      "screen": "orders",
-      "reason": "duplicate, variable or existing field; not guessed"
-    },
-    {
-      "id": "newPhone",
-      "screen": "orders",
-      "reason": "duplicate, variable or existing field; not guessed"
-    },
-    {
-      "id": "newArea",
-      "screen": "orders",
-      "reason": "duplicate, variable or existing field; not guessed"
-    },
-    {
-      "id": "newFee",
-      "screen": "orders",
-      "reason": "duplicate, variable or existing field; not guessed"
-    },
-    {
-      "id": "newNotes",
-      "screen": "orders",
-      "reason": "duplicate, variable or existing field; not guessed"
-    },
-    {
-      "id": "newCustomerName",
-      "screen": "orders",
-      "reason": "duplicate, variable or existing field; not guessed"
-    },
-    {
-      "id": "newChannel",
-      "screen": "orders",
-      "reason": "duplicate, variable or existing field; not guessed"
-    },
-    {
-      "id": "newFullAddress",
-      "screen": "orders",
-      "reason": "duplicate, variable or existing field; not guessed"
-    },
-    {
-      "id": "ffbMenuSearch",
-      "screen": "orders",
-      "reason": "duplicate, variable or existing field; not guessed"
     },
     {
       "id": "cashierOrders",
@@ -5818,82 +6578,12 @@
       "reason": "public or login; separate safe public read policy not established"
     },
     {
-      "id": "ff71CustomerPhone",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff71CustomerCode",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff61TrackCode",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
       "id": "loginStatus",
       "screen": "login",
       "reason": "public or login; separate safe public read policy not established"
     },
     {
       "id": "ff71CustomerMessage",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "join_name",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "join_email",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "join_phone",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "join_qualification",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "join_address",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "join_age",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "join_marital",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "join_role",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "join_experience",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "join_message",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff61Consent",
       "screen": "login",
       "reason": "public or login; separate safe public read policy not established"
     },
@@ -5921,66 +6611,6 @@
       "id": "ff28Role",
       "screen": "customer_portal",
       "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "order_cancel",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "employee_name",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "employee_username",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "employee_email",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "employee_phone",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "employee_qualification",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "employee_address",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "employee_age",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "employee_marital",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "employee_experience",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "employee_password",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "employee_message",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
       "id": "ffx-branch",
@@ -6018,22 +6648,7 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "ff2-close",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "ffx-pref-close",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-motion",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-fast",
       "screen": "system",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
@@ -6058,16 +6673,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "ff66-tone-file",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ff39RequireAck",
-      "screen": "messages",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "ff4-overdue",
       "screen": "dashboard",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -6078,28 +6683,8 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "order_open_addition",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_late_addition",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "burger_order_timer",
       "screen": "burger_kitchen",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffCustomerEditSave",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffCustomerEditCancel",
-      "screen": "orders",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
@@ -6133,36 +6718,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "order_edit_name",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_edit_phone",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_edit_area",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_edit_address",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_edit_reason",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_edit_customer_note",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "ffUnifiedMenuSearch",
       "screen": "orders",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -6183,228 +6738,8 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "fflFinishedFrom",
-      "screen": "archive",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "fflFinishedTo",
-      "screen": "archive",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "fflFinishedBranch",
-      "screen": "archive",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "fflFinishedToday",
-      "screen": "archive",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "fflFinishedApply",
-      "screen": "archive",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "fflFinishedSearch",
-      "screen": "archive",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "fflFinishedRefresh",
-      "screen": "archive",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "fflFinishedMore",
-      "screen": "archive",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "ffCompletedDetailClose",
       "screen": "archive",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffF01Date",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffF01Compare",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffF01Branch",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffF01Today",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffF01Refresh",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffHistoryFrom",
-      "screen": "reports",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffHistoryTo",
-      "screen": "reports",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffHistoryToday",
-      "screen": "reports",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffHistoryApply",
-      "screen": "reports",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ff42RangeFrom",
-      "screen": "finance",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ff42RangeTo",
-      "screen": "finance",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ff42RangeApply",
-      "screen": "finance",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffRewardItemSearch",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffRewardIssue",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffRewardCodesRefresh",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "reward_issue_kind",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "reward_issue_name",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "reward_issue_phone",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "reward_issue_expiry",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffRewardServiceCode",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffRewardServiceApply",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffRewardCashierCode",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffRewardCashierApply",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffRewardRedeemButton",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffRewardRedeemClose",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "reward_redeem_branch",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "reward_redeem_channel",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "reward_redeem_area",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "reward_redeem_fee",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "reward_redeem_notes",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "reward_redeem_verify",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "burger_send_branch",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "burger_send_kind",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "burger_send_order",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "burger_send_invoice",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "burger_send_notes",
-      "screen": "cashier",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
@@ -6678,5 +7013,5 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     }
   ],
-  "warning": "Remaining entries include data/status regions, conditional controls, and uncovered static content; not claimed complete."
+  "warning": "Remaining visual IDs require classification or conditional-render proof; no assertion of complete content coverage."
 }

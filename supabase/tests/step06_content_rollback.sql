@@ -10,7 +10,7 @@ BEGIN
  INSERT INTO public.ff_profiles(user_id,display_name,role,active) VALUES(m,'QA STEP06 manager','manager',true),(c,'QA STEP06 cashier A','cashier',true),(d,'QA STEP06 cashier B','cashier',true),(i,'QA STEP06 inactive','cashier',false)
  ON CONFLICT(user_id) DO UPDATE SET role=excluded.role,active=excluded.active;
  INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(c,b),(d,b2);
- SELECT count(*) INTO n FROM public.ff_content_catalog;IF n<553 THEN RAISE EXCEPTION 'catalog count %',n;END IF;checks:=checks+1;
+ SELECT count(*) INTO n FROM public.ff_content_catalog;IF n<641 THEN RAISE EXCEPTION 'catalog count %',n;END IF;checks:=checks+1;
  IF EXISTS(SELECT 1 FROM public.ff_content_catalog WHERE NOT public.ff83_valid_content(key,'نص آمن للاختبار') OR NOT public.ff83_valid_content(key,NULL)) THEN RAISE EXCEPTION 'catalog validation mismatch';END IF;checks:=checks+1;
  FOR bad IN SELECT x FROM unnest(ARRAY['<script>alert(1)</script>','www.evil.example','https://evil.example','javascript:alert(1)','data:text/html','&#x3c;script&#x3e;','&lt;script&gt;','{password}','{phone}','نص'||chr(8203),'نص'||chr(8232),'نص'||chr(8238),'نص'||chr(65279),'نص'||chr(8291),'نص'||chr(173),repeat('أ',181)]) x LOOP
   IF public.ff83_valid_content('orders.cancel',bad) OR public.ff83_valid_content('login.title',bad) THEN RAISE EXCEPTION 'unsafe content accepted %',bad;END IF;checks:=checks+1;

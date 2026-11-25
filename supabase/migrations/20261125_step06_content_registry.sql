@@ -447,16 +447,106 @@ INSERT INTO public.ff_content_catalog(key,screen,label,original) VALUES
 ('reports.approval_success','reports','نص: تم توثيق اعتماد المدير وتاريخ حفظه.','تم توثيق اعتماد المدير وتاريخ حفظه.'),
 ('reports.approval_error','reports','نص: فشل الاعتماد','فشل الاعتماد')
 ON CONFLICT(key) DO NOTHING;
+INSERT INTO public.ff_content_catalog(key,screen,label,original) VALUES
+('orders.hint.ffbmenusearch','orders','تلميح: 🔎 ابحث عن صنف أو عرض','🔎 ابحث عن صنف أو عرض'),
+('login.field.ff71customerphone','login','توضيح يحفظ النص الأصلي: رقم الهاتف اليمني','رقم الهاتف اليمني'),
+('login.field.ff71customercode','login','توضيح يحفظ النص الأصلي: رمز التحقق','رمز التحقق'),
+('login.field.ff61trackcode','login','توضيح يحفظ النص الأصلي: رمز المتابعة','رمز المتابعة'),
+('login.field.join_name','login','توضيح يحفظ النص الأصلي: الاسم الكامل (ثنائي على الأقل) *','الاسم الكامل (ثنائي على الأقل) *'),
+('login.field.join_email','login','توضيح يحفظ النص الأصلي: البريد الإلكتروني (اختياري)','البريد الإلكتروني (اختياري)'),
+('login.field.join_phone','login','توضيح يحفظ النص الأصلي: رقم الهاتف *','رقم الهاتف *'),
+('login.field.join_qualification','login','توضيح يحفظ النص الأصلي: المؤهل العلمي *','المؤهل العلمي *'),
+('login.field.join_address','login','توضيح يحفظ النص الأصلي: العنوان *','العنوان *'),
+('login.field.join_age','login','توضيح يحفظ النص الأصلي: العمر (بالسنوات) *','العمر (بالسنوات) *'),
+('login.field.join_marital','login','توضيح يحفظ النص الأصلي: الحالة الاجتماعية *','الحالة الاجتماعية *'),
+('login.field.join_role','login','توضيح يحفظ النص الأصلي: الوظيفة المطلوبة *','الوظيفة المطلوبة *'),
+('login.field.join_experience','login','توضيح يحفظ النص الأصلي: سنوات الخبرة','سنوات الخبرة'),
+('login.field.join_message','login','توضيح يحفظ النص الأصلي: خبرات إضافية أو رسالة للإدارة','خبرات إضافية أو رسالة للإدارة'),
+('staff.field.employee_name','staff','توضيح يحفظ النص الأصلي: الاسم الكامل','الاسم الكامل'),
+('staff.field.employee_username','staff','توضيح يحفظ النص الأصلي: اسم المستخدم','اسم المستخدم'),
+('staff.field.employee_email','staff','توضيح يحفظ النص الأصلي: البريد الإلكتروني','البريد الإلكتروني'),
+('staff.field.employee_phone','staff','توضيح يحفظ النص الأصلي: رقم الجوال','رقم الجوال'),
+('staff.field.employee_qualification','staff','توضيح يحفظ النص الأصلي: المؤهل العلمي','المؤهل العلمي'),
+('staff.field.employee_address','staff','توضيح يحفظ النص الأصلي: العنوان','العنوان'),
+('staff.field.employee_age','staff','توضيح يحفظ النص الأصلي: العمر','العمر'),
+('staff.field.employee_marital','staff','توضيح يحفظ النص الأصلي: الحالة الاجتماعية','الحالة الاجتماعية'),
+('staff.field.employee_experience','staff','توضيح يحفظ النص الأصلي: سنوات الخبرة','سنوات الخبرة'),
+('staff.field.employee_password','staff','توضيح يحفظ النص الأصلي: كلمة مرور جديدة (اختياري)','كلمة مرور جديدة (اختياري)'),
+('staff.field.employee_message','staff','توضيح يحفظ النص الأصلي: ملاحظات أو معلومات إضافية','ملاحظات أو معلومات إضافية'),
+('dashboard.control.ff2_close','dashboard','توضيح يحفظ النص الأصلي: ✕','✕'),
+('system.field.ff66_tone_file','system','توضيح يحفظ النص الأصلي: إضافة ملف نغمة (MP3 / WAV / OGG / M4A، حتى 2MB)','إضافة ملف نغمة (MP3 / WAV / OGG / M4A، حتى 2MB)'),
+('orders.control.ffcustomereditsave','orders','توضيح يحفظ النص الأصلي: ✅ حفظ التعديل وإشعار الموصل','✅ حفظ التعديل وإشعار الموصل'),
+('orders.control.ffcustomereditcancel','orders','توضيح يحفظ النص الأصلي: إلغاء','إلغاء'),
+('orders.field.order_edit_name','orders','توضيح يحفظ النص الأصلي: اسم العميل','اسم العميل'),
+('orders.field.order_edit_phone','orders','توضيح يحفظ النص الأصلي: رقم هاتف العميل','رقم هاتف العميل'),
+('orders.field.order_edit_area','orders','توضيح يحفظ النص الأصلي: المنطقة','المنطقة'),
+('orders.field.order_edit_address','orders','توضيح يحفظ النص الأصلي: العنوان الكامل','العنوان الكامل'),
+('orders.field.order_edit_reason','orders','توضيح يحفظ النص الأصلي: سبب التعديل','سبب التعديل'),
+('orders.field.order_edit_customer_note','orders','توضيح يحفظ النص الأصلي: ملاحظة جديدة خاصة بسجل العميل (اختيارية)','ملاحظة جديدة خاصة بسجل العميل (اختيارية)'),
+('archive.field.fflfinishedfrom','archive','توضيح يحفظ النص الأصلي: من تاريخ','من تاريخ'),
+('archive.field.fflfinishedto','archive','توضيح يحفظ النص الأصلي: إلى تاريخ','إلى تاريخ'),
+('archive.field.fflfinishedbranch','archive','توضيح يحفظ النص الأصلي: الفرع','الفرع'),
+('archive.control.fflfinishedtoday','archive','توضيح يحفظ النص الأصلي: 📅 اليوم','📅 اليوم'),
+('archive.control.fflfinishedapply','archive','توضيح يحفظ النص الأصلي: عرض الفترة','عرض الفترة'),
+('archive.hint.fflfinishedsearch','archive','تلميح: 🔎 ابحث في الطلبات المحمّلة: رقم الطلب، هاتف العميل، الموصل','🔎 ابحث في الطلبات المحمّلة: رقم الطلب، هاتف العميل، الموصل'),
+('archive.control.fflfinishedrefresh','archive','توضيح يحفظ النص الأصلي: 🔄 تحديث','🔄 تحديث'),
+('archive.control.fflfinishedmore','archive','توضيح يحفظ النص الأصلي: عرض 30 طلبًا أقدم','عرض 30 طلبًا أقدم'),
+('dashboard.field.fff01date','dashboard','توضيح يحفظ النص الأصلي: اليوم المطلوب','اليوم المطلوب'),
+('dashboard.field.fff01compare','dashboard','توضيح يحفظ النص الأصلي: مقارنة مع','مقارنة مع'),
+('dashboard.field.fff01branch','dashboard','توضيح يحفظ النص الأصلي: الفرع','الفرع'),
+('dashboard.control.fff01today','dashboard','توضيح يحفظ النص الأصلي: اليوم','اليوم'),
+('dashboard.control.fff01refresh','dashboard','توضيح يحفظ النص الأصلي: عرض','عرض'),
+('reports.field.ffhistoryfrom','reports','توضيح يحفظ النص الأصلي: من تاريخ','من تاريخ'),
+('reports.field.ffhistoryto','reports','توضيح يحفظ النص الأصلي: إلى تاريخ','إلى تاريخ'),
+('reports.control.ffhistorytoday','reports','توضيح يحفظ النص الأصلي: اليوم','اليوم'),
+('reports.control.ffhistoryapply','reports','توضيح يحفظ النص الأصلي: اعتماد الفترة','اعتماد الفترة'),
+('finance.field.ff42rangefrom','finance','توضيح يحفظ النص الأصلي: من تاريخ','من تاريخ'),
+('finance.field.ff42rangeto','finance','توضيح يحفظ النص الأصلي: إلى تاريخ','إلى تاريخ'),
+('finance.control.ff42rangeapply','finance','توضيح يحفظ النص الأصلي: عرض الفترة','عرض الفترة'),
+('orders.hint.ffrewarditemsearch','orders','تلميح: 🔎 ابحث عن صنف','🔎 ابحث عن صنف'),
+('orders.control.ffrewardissue','orders','توضيح يحفظ النص الأصلي: إصدار كود جديد','إصدار كود جديد'),
+('orders.control.ffrewardcodesrefresh','orders','توضيح يحفظ النص الأصلي: 📋 الأكواد الصادرة','📋 الأكواد الصادرة'),
+('orders.field.reward_issue_kind','orders','توضيح يحفظ النص الأصلي: نوع الكود','نوع الكود'),
+('orders.field.reward_issue_name','orders','توضيح يحفظ النص الأصلي: اسم العميل','اسم العميل'),
+('orders.field.reward_issue_phone','orders','توضيح يحفظ النص الأصلي: رقم الهاتف','رقم الهاتف'),
+('orders.field.reward_issue_expiry','orders','توضيح يحفظ النص الأصلي: انتهاء الصلاحية (اختياري)','انتهاء الصلاحية (اختياري)'),
+('orders.field.ffrewardservicecode','orders','توضيح يحفظ النص الأصلي: 🎟️ كود خصم','🎟️ كود خصم'),
+('orders.control.ffrewardserviceapply','orders','توضيح يحفظ النص الأصلي: 🔎 عرض أصناف التعويض','🔎 عرض أصناف التعويض'),
+('cashier.field.ffrewardcashiercode','cashier','توضيح يحفظ النص الأصلي: رمز الكود','رمز الكود'),
+('cashier.control.ffrewardcashierapply','cashier','توضيح يحفظ النص الأصلي: إنشاء بطاقة تحضير بالكود','إنشاء بطاقة تحضير بالكود'),
+('orders.control.ffrewardredeembutton','orders','توضيح يحفظ النص الأصلي: ✅ اعتماد واستهلاك الكود مرة واحدة','✅ اعتماد واستهلاك الكود مرة واحدة'),
+('orders.control.ffrewardredeemclose','orders','توضيح يحفظ النص الأصلي: إلغاء','إلغاء'),
+('orders.field.reward_redeem_branch','orders','توضيح يحفظ النص الأصلي: الفرع','الفرع'),
+('orders.field.reward_redeem_channel','orders','توضيح يحفظ النص الأصلي: نوع الاستلام','نوع الاستلام'),
+('orders.field.reward_redeem_area','orders','توضيح يحفظ النص الأصلي: عنوان التوصيل أو المنطقة','عنوان التوصيل أو المنطقة'),
+('orders.field.reward_redeem_fee','orders','توضيح يحفظ النص الأصلي: أجرة التوصيل (المنتجات مجانية)','أجرة التوصيل (المنتجات مجانية)'),
+('orders.field.reward_redeem_notes','orders','توضيح يحفظ النص الأصلي: ملاحظات (اختياري)','ملاحظات (اختياري)'),
+('orders.field.reward_redeem_verify','orders','توضيح يحفظ النص الأصلي: أؤكد مطابقة اسم العميل ورقمه للكود قبل استهلاكه','أؤكد مطابقة اسم العميل ورقمه للكود قبل استهلاكه'),
+('cashier.field.burger_send_branch','cashier','توضيح يحفظ النص الأصلي: الفرع','الفرع'),
+('cashier.field.burger_send_kind','cashier','توضيح يحفظ النص الأصلي: نوع الطلب','نوع الطلب'),
+('cashier.field.burger_send_order','cashier','توضيح يحفظ النص الأصلي: طلب التوصيل المرتبط','طلب التوصيل المرتبط'),
+('cashier.field.burger_send_invoice','cashier','توضيح يحفظ النص الأصلي: رقم فاتورة الكاشير (اختياري)','رقم فاتورة الكاشير (اختياري)'),
+('cashier.field.burger_send_notes','cashier','توضيح يحفظ النص الأصلي: الملاحظات (إن وجدت)','الملاحظات (إن وجدت)'),
+('dashboard.control.hero_sub','dashboard','توضيح يحفظ النص الأصلي: لوحة تشغيل فاخرة وسريعة، مصممة لتسهيل العمل في الفروع الثلاثة.','لوحة تشغيل فاخرة وسريعة، مصممة لتسهيل العمل في الفروع الثلاثة.'),
+('system.control.ffx_motion','system','توضيح يحفظ النص الأصلي: انتقالات سلسة','انتقالات سلسة'),
+('system.control.ffx_fast','system','توضيح يحفظ النص الأصلي: إظهار الإجراءات السريعة','إظهار الإجراءات السريعة'),
+('messages.field.ff39requireack','messages','توضيح يحفظ النص الأصلي: يلزم تأكيد الموظف «اطلعت على الرسالة»','يلزم تأكيد الموظف «اطلعت على الرسالة»'),
+('login.control.ff61consent','login','توضيح يحفظ النص الأصلي: أوافق على استخدام هذه البيانات لمراجعة طلب الانضمام وحفظها بصورة مقيدة لدى إدارة المطعم.','أوافق على استخدام هذه البيانات لمراجعة طلب الانضمام وحفظها بصورة مقيدة لدى إدارة المطعم.'),
+('login.control.join_title','login','توضيح يحفظ النص الأصلي: طلب الانضمام إلى فريق فريش فرايز','طلب الانضمام إلى فريق فريش فرايز'),
+('login.control.join_intro','login','توضيح يحفظ النص الأصلي: إرسال الطلب لا يُنشئ حساب دخول. تراجع الإدارة البيانات أولًا، ثم تحدد الدور والفرع وتوافق أو ترفض مع تسجيل السبب.','إرسال الطلب لا يُنشئ حساب دخول. تراجع الإدارة البيانات أولًا، ثم تحدد الدور والفرع وتوافق أو ترفض مع تسجيل السبب.'),
+('login.control.tracking_title','login','توضيح يحفظ النص الأصلي: متابعة حالة الطلب','متابعة حالة الطلب'),
+('login.control.tracking_intro','login','توضيح يحفظ النص الأصلي: احتفظ برمز المتابعة السري الذي ظهر بعد التقديم، ولا تشاركه مع الآخرين. عند الموافقة يُنشأ حسابك وتستلم كلمة المرور الأولية من الإدارة، ولا تُعرض هنا.','احتفظ برمز المتابعة السري الذي ظهر بعد التقديم، ولا تشاركه مع الآخرين. عند الموافقة يُنشأ حسابك وتستلم كلمة المرور الأولية من الإدارة، ولا تُعرض هنا.')
+ON CONFLICT(key) DO NOTHING;
 -- Public login/customer labels: global, approved, no private placeholders or scoped content.
 ALTER TABLE public.ff_content_versions ADD CONSTRAINT ff_step06_public_content_scope
-CHECK (content_key NOT IN ('login.title','login.description','login.field.username','login.field.password','login.control.signin','login.control.apply','login.control.track','login.control.customer','login.control.send_code','login.control.verify_code','login.control.apply_submit','login.control.track_submit','customer_portal.title','customer_portal.control.refresh','customer_portal.control.logout','customer_portal.field.name','customer_portal.field.role') OR (role_scope='all' AND branch_id IS NULL));
+CHECK (content_key NOT IN ('login.title','login.description','login.field.username','login.field.password','login.control.signin','login.control.apply','login.control.track','login.control.customer','login.control.send_code','login.control.verify_code','login.control.apply_submit','login.control.track_submit','customer_portal.title','customer_portal.control.refresh','customer_portal.control.logout','customer_portal.field.name','customer_portal.field.role','login.field.ff71customerphone','login.field.ff71customercode','login.field.ff61trackcode','login.field.join_name','login.field.join_email','login.field.join_phone','login.field.join_qualification','login.field.join_address','login.field.join_age','login.field.join_marital','login.field.join_role','login.field.join_experience','login.field.join_message','login.control.ff61consent','login.control.join_title','login.control.join_intro','login.control.tracking_title','login.control.tracking_intro') OR (role_scope='all' AND branch_id IS NULL));
 CREATE OR REPLACE FUNCTION public.ff_step06_public_content(p_screen text)
 RETURNS TABLE(content_key text,body text,revision bigint)
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path='' AS $function$
  SELECT DISTINCT ON(v.content_key) v.content_key,v.body,v.id
  FROM public.ff_content_versions v JOIN public.ff_content_catalog c ON c.key=v.content_key
  WHERE p_screen IN ('login','customer_portal') AND c.screen=p_screen
- AND v.content_key IN ('login.title','login.description','login.field.username','login.field.password','login.control.signin','login.control.apply','login.control.track','login.control.customer','login.control.send_code','login.control.verify_code','login.control.apply_submit','login.control.track_submit','customer_portal.title','customer_portal.control.refresh','customer_portal.control.logout','customer_portal.field.name','customer_portal.field.role')
+ AND v.content_key IN ('login.title','login.description','login.field.username','login.field.password','login.control.signin','login.control.apply','login.control.track','login.control.customer','login.control.send_code','login.control.verify_code','login.control.apply_submit','login.control.track_submit','customer_portal.title','customer_portal.control.refresh','customer_portal.control.logout','customer_portal.field.name','customer_portal.field.role','login.field.ff71customerphone','login.field.ff71customercode','login.field.ff61trackcode','login.field.join_name','login.field.join_email','login.field.join_phone','login.field.join_qualification','login.field.join_address','login.field.join_age','login.field.join_marital','login.field.join_role','login.field.join_experience','login.field.join_message','login.control.ff61consent','login.control.join_title','login.control.join_intro','login.control.tracking_title','login.control.tracking_intro')
  AND v.role_scope='all' AND v.branch_id IS NULL AND v.published_at IS NOT NULL
  AND public.ff83_valid_content(v.content_key,v.body)
  ORDER BY v.content_key,v.published_at DESC,v.id DESC
