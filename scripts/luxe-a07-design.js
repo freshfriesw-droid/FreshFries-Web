@@ -44,6 +44,7 @@ const packOK=p=>/^D[0-9]{2,}$/.test(p||'');
 const cfgOf=v=>v&&typeof v==='object'&&!Array.isArray(v)?v:{};
 const publicScreen=s=>s==='login'||s==='customer_portal';
 const extendedScreen=s=>publicScreen(s)||s==='finance'||s==='branches';
+const extendedRoot=(root,screen)=>extendedScreen(screen)||['ff40AlertsPanel','ff50ChangesPanel','ff49TransferPanel','ffEditDialog','ff45AccessPanel'].includes(root.id);
 const visiblePublicScreen=()=>['customer','applicant'].includes(document.body.dataset.access)?'customer_portal':document.body.dataset.access==='locked'?'login':null;
 let current={},publicRows={},publicKey='',publicAt=0,publicSerial=0,owned=new Set(),ownedDialogs=new Set();
 async function syncPublic(force=false){
@@ -65,7 +66,7 @@ function addLogo(root,screen){
  if(screen==='dashboard'||screen==='assembly'||root.id==='ffBurgerCashierPanel'||root.id==='staffOrders')return;
  const title=root.querySelector('h1,h2,h3');
  if(!title||title.closest('button')||root.querySelector('.ff-a07-logo-inline'))return;
- const img=document.createElement('img');img.className='ff-a07-logo-inline';if(extendedScreen(screen))img.dataset.ffStep03ExtendedLogo='1';img.src=LOGO;img.alt='شعار فريش فرايز';img.loading='lazy';img.width=40;img.height=40;imageFallback(img);
+ const img=document.createElement('img');img.className='ff-a07-logo-inline';if(extendedRoot(root,screen))img.dataset.ffStep03ExtendedLogo='1';img.src=LOGO;img.alt='شعار فريش فرايز';img.loading='lazy';img.width=40;img.height=40;imageFallback(img);
  title.prepend(img);
 }
 function applyLogo(root){
@@ -152,7 +153,7 @@ function refresh(){
    if(seen.has(root))continue;seen.add(root);
    root.dataset.ffA07Screen=screen;
    const row=publicScreen(screen)?publicRows[screen]:current[screen];
-   if(!extendedScreen(screen)||row)addLogo(root,screen);
+   if(!extendedRoot(root,screen)||row)addLogo(root,screen);
    else{root.querySelectorAll('[data-ff-step03-extended-logo]').forEach(n=>n.remove());root.querySelectorAll(':scope > .ff-a07-logo-cover').forEach(n=>{if(!n.children.length)n.remove()});}
    const signature=JSON.stringify([row?.id,row?.pack,row?.style_config,row?.layout_text]);
    if(root.dataset.ffA07Signature!==signature){decorate(root,row);applyCaption(root,row,screen);root.dataset.ffA07Signature=signature}
