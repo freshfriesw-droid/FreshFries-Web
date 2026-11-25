@@ -2685,9 +2685,15 @@ function ff49ParseItemsAndNotes(value, options={}){
   }
   if(/^\d+(?:\.\d+)?$/.test(text)&&meta.phone&&meta.area&&meta.fee===undefined){meta.fee=Number(text);details.push({line,kind:'fee',raw,value:meta.fee});continue}
   if(!meta.area&&meta.phone){meta.area=raw;details.push({line,kind:'area',raw,value:raw});continue}
-  if(!meta.driver&&meta.phone&&meta.area&&meta.fee!==undefined&&!/^(?:بدون|زياده|اضافه|تواصل|يرجي|ارجو|لا\s|مع\s)/u.test(text)){
-   // Positional driver line is only inferred once; explicitly marked notes always stay notes.
-   meta.driver=raw;details.push({line,kind:'driver',raw,value:raw});continue;
+  if(!meta.driver&&meta.phone&&meta.area&&meta.fee!==undefined){
+   // A free-text note after the fee is not automatically a driver name.
+   // Infer only an exact registered name or an unambiguous first name; the explicit driver label remains available.
+   const roster=typeof data!=='undefined'&&Array.isArray(data?.drivers)?data.drivers:[];
+   const candidates=roster.filter(d=>d?.name&&d.active!==false);
+   const exact=candidates.filter(d=>norm(d.name)===text);
+   const matches=exact.length?exact:candidates.filter(d=>norm(d.name).split(' ')[0]===text);
+   if(matches.length>1){fail(raw,line,'اسم الموصل ملتبس؛ اكتب الاسم الكامل المميز');continue;}
+   if(matches.length===1){meta.driver=raw;details.push({line,kind:'driver',raw,value:raw});continue;}
   }
   if(uniqueAlias.some(a=>a.text===text)||/^(?:عرض|برجر|تشكن|استربس|رايس)\s+/u.test(text)){
    fail(raw,line,'يبدو أنه اسم صنف؛ اكتب الكمية أولًا مثل: 1 '+raw);continue;
