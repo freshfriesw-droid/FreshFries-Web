@@ -120,7 +120,7 @@
    apply(version,version?.card_layout??null,roleVersion);appearance.apply(rows);
   }catch{/* Keep the last confirmed design only for the same account and scope. */}
  }
- function reset(){editorActor='';clearSource();appearance.clear();serial++;session++;context='';last=0;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();resetCards(null);status.textContent='';if(dlg.open)dlg.close();apply(null)}
+ function reset(){editorActor='';clearSource();appearance.clear();serial++;session++;context='';last=0;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();appearance.setStyle(form,{});resetCards(null);status.textContent='';if(dlg.open)dlg.close();apply(null)}
  const sampleNav={all:['الرئيسية','الطلبات','المزيد'],manager:['الرئيسية','طلب جديد','الطلبات','تحكم المدير','المزيد'],supervisor:['الرئيسية','الطلبات','المزيد'],customer_service:['الرئيسية','طلب جديد','الطلبات','المزيد'],cashier:['الرئيسية','شاشة الكاشير','المزيد'],driver:['الرئيسية','مهامي','المزيد'],assembly:['الرئيسية','المزيد'],burger_kitchen:['الرئيسية','المزيد']};
  function luminance(hex){
   const parts=/^#([0-9a-f]{6})$/i.exec(hex.trim());if(!parts)return null;
@@ -196,7 +196,7 @@
   const properties=[
    ['اسم المسودة',row=>row.draft_name||'—'],['وصف التعديل',row=>row.draft_description||'—'],['الشاشة',row=>screenLabel(row.screen_scope)],['الدور',row=>roles[row.role_scope]],['الفرع',row=>branch(row.branch_id)],
    ['الجهاز',row=>row.device],['الحزمة',row=>row.pack],['شريط الجوال',row=>row.bar],
-   ['وصف الواجهة',row=>row.layout_text||original],['خصائص المظهر',row=>Object.entries(row.style_config||{}).sort().map(([k,v])=>(appearance.tokens[k]?.[0]||k)+': '+(appearance.tokens[k]?.slice(1).find(x=>x[0]===v)?.[1]||v)).join('\n')||'حسب الحزمة'],['عدد البطاقات',row=>String((row.card_layout??defaults()).length)],['ترتيب البطاقات ومصادرها وأحجامها وألوانها',row=>(row.card_layout??defaults()).map((card,i)=>(i+1)+'. '+card.label+' ['+(metricNames[card.metric]||card.metric)+' · '+(sizes[card.size]||card.size)+' · '+(tones[card.tone]||card.tone)+']').join('\n')||'لا توجد بطاقات']
+   ['وصف الواجهة',row=>row.layout_text||original],['خصائص المظهر',row=>Object.entries(row.style_config||{}).sort().map(([k,v])=>(appearance.tokens[k]?.[0]||(k==='elements'?'ترتيب العناصر وأشكالها':k))+': '+(k==='elements'?JSON.stringify(v):appearance.tokens[k]?.slice(1).find(x=>x[0]===v)?.[1]||v)).join('\n')||'حسب الحزمة'],['عدد البطاقات',row=>String((row.card_layout??defaults()).length)],['ترتيب البطاقات ومصادرها وأحجامها وألوانها',row=>(row.card_layout??defaults()).map((card,i)=>(i+1)+'. '+card.label+' ['+(metricNames[card.metric]||card.metric)+' · '+(sizes[card.size]||card.size)+' · '+(tones[card.tone]||card.tone)+']').join('\n')||'لا توجد بطاقات']
   ];
   for(const [label,value] of properties){
    if(value(left)===value(right))continue;
@@ -246,7 +246,7 @@
   finally{if(valid(token,who)){busy=false;buttons()}}
  }
  function open(){
-  if(!manager()||dlg.open)return;editorActor=actor();session++;form.reset();resetCards(null);records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();status.textContent='';field('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));redraw();dlg.showModal();redraw();void run(async token=>{await refreshCatalog(token);await history(token)});
+  if(!manager()||dlg.open)return;editorActor=actor();session++;form.reset();appearance.setStyle(form,{});resetCards(null);records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();status.textContent='';field('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));redraw();dlg.showModal();redraw();void run(async token=>{await refreshCatalog(token);await history(token)});
  }
  for(const width of [320,360,390,430,768,1024,1440]){
   field('viewport').add(new Option(String(width),String(width),width===390,width===390));
@@ -304,7 +304,7 @@
   await rpc('ff_ui_publish',{p_id:row.id});
   if(valid(token,who)){await history(token,row.id);if(valid(token,who)){status.textContent='نُشر الإصدار رقم '+row.id;sourceRefresh(true);void sync(true)}}
  });
- dlg.querySelector('[data-close]').onclick=()=>dlg.close();dlg.onclose=()=>{if(dlg.open)return;editorActor='';session++;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();resetCards(null);status.textContent='';clearSource()};
+ dlg.querySelector('[data-close]').onclick=()=>dlg.close();dlg.onclose=()=>{if(dlg.open)return;editorActor='';session++;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();appearance.setStyle(form,{});resetCards(null);status.textContent='';clearSource()};
  window.addEventListener('ff-luxe-session-reset',reset);
  document.getElementById('ffx-branch').addEventListener('change',()=>sync(true));
  matchMedia('(max-width:850px)').addEventListener('change',()=>sync(true));
