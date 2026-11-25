@@ -19,6 +19,7 @@ jobs:
       - run: pip install playwright
       - run: python scripts/a11-communications-qa.py
       - run: node scripts/step11-service-worker-qa.cjs
+      - run: node scripts/step12-push-endpoint-qa.mjs
   production:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
