@@ -162,28 +162,49 @@ with sync_playwright() as pw:
     key=item["key"];node_id=cdp.send("DOM.querySelector",{"nodeId":root_id,"selector":"#"+key})["nodeId"]
     assert node_id,key
     locator=page.locator("#"+key)
-    initial=locator.evaluate("n=>({outline:getComputedStyle(n).outline,shadow:getComputedStyle(n).boxShadow,disabled:n.disabled,html:n.innerHTML})")
-    cdp.send("CSS.forcePseudoState",{"nodeId":node_id,"forcedPseudoClasses":["hover"]})
-    hover=locator.evaluate("n=>({outline:getComputedStyle(n).outline,style:getComputedStyle(n).outlineStyle,width:getComputedStyle(n).outlineWidth})")
-    if not item["disabled"]: assert hover["style"]=="solid" and hover["width"]=="2px",(key,hover)
-    else: assert hover["outline"]==initial["outline"],(key,hover)
-    cdp.send("CSS.forcePseudoState",{"nodeId":node_id,"forcedPseudoClasses":[]})
-    page.evaluate("""async key=>{for(const row of Object.values(window.__a07Rows))for(const rows of Object.values(row.style_config.elements))for(const e of rows)if(e.key===key)e.hover='shadow';await ffDashboardStudio.sync(true);ffA07Design.refresh()}""",key)
-    cdp.send("CSS.forcePseudoState",{"nodeId":node_id,"forcedPseudoClasses":["hover"]})
-    shadow=locator.evaluate("n=>getComputedStyle(n).boxShadow")
-    if not item["disabled"]: assert shadow!="none" and "7px" in shadow,(key,shadow)
-    else: assert shadow==initial["shadow"],(key,shadow)
-    cdp.send("CSS.forcePseudoState",{"nodeId":node_id,"forcedPseudoClasses":["active"]})
-    press=locator.evaluate("n=>getComputedStyle(n).boxShadow")
-    if not item["disabled"]: assert "inset" in press,(key,press)
-    else: assert press==initial["shadow"],(key,press)
-    cdp.send("CSS.forcePseudoState",{"nodeId":node_id,"forcedPseudoClasses":[]})
-    assert locator.evaluate("n=>({disabled:n.disabled,html:n.innerHTML})")=={"disabled":initial["disabled"],"html":initial["html"]},key
-    pseudo_results.append({"key":key,"disabled":item["disabled"],"hover_outline":hover,"hover_shadow":shadow,"press":press})
+    saved=locator.evaluate("n=>({disabled:n.disabled,html:n.innerHTML,onclick:n.getAttribute('onclick'),type:n.getAttribute('type')})")
+    def pseudo(*states):
+     cdp.send("CSS.forcePseudoState",{"nodeId":node_id,"forcedPseudoClasses":list(states)})
+     return locator.evaluate("n=>({outline:getComputedStyle(n).outline,style:getComputedStyle(n).outlineStyle,width:getComputedStyle(n).outlineWidth,shadow:getComputedStyle(n).boxShadow,bg:getComputedStyle(n).backgroundColor,fg:getComputedStyle(n).color})")
+    def effects(hover=None,press=None,tone=None):
+     page.evaluate("""async ([key,hover,press,tone])=>{for(const row of Object.values(window.__a07Rows))for(const rows of Object.values(row.style_config.elements))for(const e of rows)if(e.key===key){for(const [p,v] of Object.entries({hover,press,tone}))if(v===null)delete e[p];else e[p]=v;}await ffDashboardStudio.sync(true);ffA07Design.refresh()}""",[key,hover,press,tone])
+    try:
+     # Test both native states of the actual button in the offline fixture.
+     # No click or RPC action; the real disabled state is restored in finally.
+     for disabled in (False,True):
+      locator.evaluate("(n,v)=>{n.disabled=v}",disabled)
+      effects()
+      baseline_hover=pseudo("hover");baseline_press=pseudo("active");pseudo()
+      effects("none","none")
+      assert pseudo("hover")==baseline_hover,(key,disabled,"hover none")
+      assert pseudo("active")==baseline_press,(key,disabled,"press none")
+      pseudo()
+      effects("outline","inset")
+      hover=pseudo("hover")
+      if not disabled: assert hover["style"]=="solid" and hover["width"]=="2px",(key,disabled,hover)
+      else: assert hover==baseline_hover,(key,disabled,hover)
+      press=pseudo("active")
+      if not disabled: assert "inset" in press["shadow"],(key,disabled,press)
+      else: assert press==baseline_press,(key,disabled,press)
+      pseudo()
+      effects("shadow","inset","dark")
+      shadow=pseudo("hover")
+      if not disabled:
+       assert "7px" in shadow["shadow"] and shadow["bg"]=="rgb(34, 34, 34)" and shadow["fg"]=="rgb(255, 255, 255)",(key,shadow)
+      else: assert shadow==baseline_hover,(key,disabled,shadow)
+      assert locator.evaluate("n=>n.disabled")==disabled
+      pseudo_results.append({"key":key,"width":page.viewport_size["width"],"disabled":disabled,"hover_outline":hover,"hover_shadow":shadow,"press":press,"no_effect_matches_native":True})
+      pseudo()
+    finally:
+     locator.evaluate("(n,v)=>{n.disabled=v}",saved["disabled"])
+     pseudo()
+     effects()
+    assert locator.evaluate("n=>({disabled:n.disabled,html:n.innerHTML,onclick:n.getAttribute('onclick'),type:n.getAttribute('type')})")==saved,key
    cdp.detach()
    page.evaluate("""async()=>{document.getElementById('qa-no-transitions')?.remove();window.__a07Rows={};await ffDashboardStudio.sync(true);ffA07Design.refresh()}""")
    (out/"step03-interaction-pseudo-states.json").write_text(json.dumps(pseudo_results,ensure_ascii=False,indent=2))
-   print("PASS STEP03 hover and press on",len(pseudo_results),"registered actual actions",flush=True)
+   assert len(pseudo_results)==18 and len({(x["key"],x["disabled"]) for x in pseudo_results})==18
+   print("PASS STEP03 hover, press and disabled-state protection",len(pseudo_results),"actual action/state cases",flush=True)
    # Reproduce nested independent screen using real registered selectors.
    # One test-only fixture in each workspace: disabled buttons must stay disabled.
    isolation=page.evaluate("""()=>{
@@ -745,6 +766,8 @@ if not alternate:
  for entry in visual_matrix+second:
   for key in entry["entries"]: widths.setdefault(key,set()).add(entry["width"])
  assert len(widths)==662 and all({390,1440}<=v for v in widths.values()), [(k,sorted(v)) for k,v in widths.items() if not {390,1440}<=v]
- evidence={"entries":len(widths),"both_widths":sum({390,1440}<=v for v in widths.values()),"computed":sum(x["computed"] for x in visual_matrix+second),"binding_only":sum(x["bindingOnly"] for x in visual_matrix+second),"combined":sum(x.get("combined",0) for x in visual_matrix+second),"failures":sum(len(x["failures"]) for x in visual_matrix+second)}
+ states=json.loads((out/"step03-interaction-pseudo-states.json").read_text())+json.loads((out/"alternate"/"step03-interaction-pseudo-states.json").read_text())
+ assert len(states)==36 and len({(x["key"],x["width"],x["disabled"]) for x in states})==36
+ evidence={"interactive_cases":len(states),"entries":len(widths),"both_widths":sum({390,1440}<=v for v in widths.values()),"computed":sum(x["computed"] for x in visual_matrix+second),"binding_only":sum(x["bindingOnly"] for x in visual_matrix+second),"combined":sum(x.get("combined",0) for x in visual_matrix+second),"failures":sum(len(x["failures"]) for x in visual_matrix+second)}
  (out/"step03-cross-viewport-summary.json").write_text(json.dumps(evidence,indent=2))
  print("PASS STEP03 every registered entry at both widths",evidence,flush=True)
