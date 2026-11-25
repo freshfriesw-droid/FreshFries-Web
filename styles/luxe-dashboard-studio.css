@@ -137,3 +137,6 @@
 
 /* STEP08: contain residual intrinsic overflow within the scrollable editor, never the modal or page. */
 #ffStudio form{overflow-x:auto;overscroll-behavior-inline:contain}
+
+/* Containing block for positioned preview descendants; controls remain scrollable. */
+#ffStudio form{position:relative;contain:layout;overflow:auto}
