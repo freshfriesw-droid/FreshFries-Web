@@ -55,7 +55,7 @@ async function syncPublic(force=false){
  if(!screen||(!force&&Date.now()-publicAt<30000))return;
  if(typeof client==='undefined'||!client)return;
  publicAt=Date.now();const request=++publicSerial;
- try{const row=await rpc('ff_a07_public_appearance',{p_screen:screen,p_device:device});if(request!==publicSerial||visiblePublicScreen()!==screen||publicKey!==key)return;publicRows=packOK(row?.pack)?{[screen]:row}:{};refresh()}catch{/* Keep only the last published public design for this exact device and screen. */}
+ try{const row=await rpc('ff_a07_public_appearance',{p_screen:screen,p_device:device});if(request!==publicSerial||visiblePublicScreen()!==screen||publicKey!==key||(innerWidth<=850?'mobile':'desktop')!==device)return;publicRows=packOK(row?.pack)?{[screen]:row}:{};refresh()}catch{/* Keep only the last published public design for this exact device and screen. */}
 }
 const LOGO='./assets/ff-official-logo.png',FALLBACK='./assets/ff-icon-192.png';
 const logoPaths={brand:LOGO,mark:FALLBACK},logoOrigins=new WeakMap();
@@ -266,5 +266,6 @@ function gallery(form,packs){
 window.ffA07Design={screens,roleScreens,tokens,selectFields,readStyle,setStyle,gallery,demoCard,decorate,apply,clear,refresh,syncPublic,publicScreen};
 window.addEventListener('ff-luxe-session-reset',clear);
 setInterval(refresh,1500);setInterval(()=>void syncPublic(),1500);
+window.addEventListener('resize',()=>void syncPublic());
 refresh();
 })();

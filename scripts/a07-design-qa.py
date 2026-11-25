@@ -396,6 +396,126 @@ with sync_playwright() as pw:
  page.evaluate("""async()=>{document.body.dataset.access='customer';await ffA07Design.syncPublic(true)}""")
  assert page.locator("#loginOverlay .loginbox").get_attribute("data-ff-a07-pack") is None
  assert page.locator("#ff28Portal").get_attribute("data-ff-a07-pack")=="D05"
+
+ # Public scopes: actual existing login, join and customer portal controls, all
+ # registered entries, no backend writes. Test independently at both breakpoints.
+ page.evaluate("""()=>{window.__step03PublicRows={};window.__step03PublicCalls=[];rpc=async(name,args={})=>{window.__step03PublicCalls.push({name,args});return name==='ff_a07_public_appearance'?window.__step03PublicRows[args.p_screen+'|'+args.p_device]||null:null}}""")
+ public_results=[]
+ for public_screen,access in (("login","locked"),("customer_portal","customer")):
+  for width in (390,1440):
+   page.set_viewport_size({"width":width,"height":850})
+   audit=page.evaluate("""async({screen,access})=>{
+    const device=innerWidth<=850?'mobile':'desktop',defs=ffA07Elements.groups;
+    const dyn={join_name:'full_name',join_email:'email',join_phone:'phone',join_qualification:'qualification',join_address:'address',join_age:'age_years',join_marital:'marital_status',join_role:'requested_role',join_experience:'experience_years',join_message:'applicant_message'};
+    const entries=Object.entries(defs).filter(([g,c])=>c.screen===screen);
+    const keys=entries.flatMap(([g,c])=>c.keys);
+    const original=keys.map(key=>{
+     const n=dyn[key]?document.querySelector('#ff61ApplyForm [name="'+dyn[key]+'"]'):document.getElementById(key);
+     if(!n)return {key};
+     return {key,n,target:ffA07Elements.visualTarget(n),value:n.value,type:n.type,required:n.required,disabled:n.disabled,checked:n.checked,hidden:n.hidden,handler:n.onclick,role:n.getAttribute('role'),name:n.getAttribute('name')};
+    });
+    document.body.dataset.access=access;
+    window.__step03PublicRows={[screen+'|'+device]:{id:990,pack:'D05',style_config:{elements:Object.fromEntries(entries.map(([g,c])=>[g,c.keys.map(key=>({key,shape:'round',size:'normal',align:'center',font:'tahoma',weight:'strong',spacing:'wide',spaceBlock:'wide',outerGap:'wide',border:'strong',shadow:'soft',textScale:'large'}))]))}}};
+    await ffA07Design.syncPublic(true);
+    const missing=original.filter(o=>!o.n).map(o=>o.key),bad=[];
+    for(const o of original.filter(o=>o.n)){
+     const n=o.n,t=ffA07Elements.visualTarget(n),s=getComputedStyle(t);
+     const why=[];
+     if(t!==o.target||!n.isConnected||n.value!==o.value||n.type!==o.type||n.required!==o.required||n.disabled!==o.disabled||n.checked!==o.checked||n.hidden!==o.hidden||n.onclick!==o.handler||n.getAttribute('role')!==o.role||n.getAttribute('name')!==o.name)why.push('native state');
+     if(t.dataset.ffA07ElAlign!=='center'||s.textAlign!=='center')why.push('align');
+     if(t.dataset.ffA07ElFont!=='tahoma'||!s.fontFamily.toLowerCase().includes('tahoma'))why.push('font');
+     if(t.dataset.ffA07ElSpacing!=='wide'||parseFloat(s.paddingInlineStart)!==18)why.push('spacing');
+     if(t.dataset.ffA07ElOuterGap!=='wide'||parseFloat(s.marginBlockStart)!==8)why.push('outer gap');
+     if(t.dataset.ffA07ElSpaceBlock!=='wide'||parseFloat(s.paddingBlockStart)!==12)why.push('block spacing');
+     if(t.dataset.ffA07ElWeight!=='strong'||Number(s.fontWeight)<700)why.push('weight');
+     if(t.dataset.ffA07ElShadow!=='soft'||s.boxShadow==='none')why.push('shadow');
+     if(t.dataset.ffA07ElTextScale!=='large'||t.dataset.ffA07ElBorder!=='strong'||t.dataset.ffA07Shape!=='round')why.push('property binding');
+     if(why.length)bad.push({key:o.key,why});
+    }
+    const other=screen==='login'?'customer_portal':'login';
+    const isolation=[...document.querySelectorAll('[data-ff-a07-screen="'+other+'"] [data-ff-a07-el-align]')].length===0;
+    window.__step03PublicRows={};await ffA07Design.syncPublic(true);
+    const cleanup=original.filter(o=>o.n).every(o=>!o.target.dataset.ffA07ElAlign&&!o.target.dataset.ffA07ElFont&&!o.target.dataset.ffA07Shape);
+    return {screen,device,count:keys.length,missing,bad,isolation,cleanup};
+   }""",{"screen":public_screen,"access":access})
+   public_results.append(audit)
+   assert not audit["missing"] and not audit["bad"] and audit["isolation"] and audit["cleanup"],audit
+ (out/"step03-public-property-audit.json").write_text(json.dumps(public_results,ensure_ascii=False,indent=2))
+ print("PASS STEP03 public mounted properties",sum(x["count"] for x in public_results),flush=True)
+ # A slow mobile response cannot be applied after resizing to desktop.
+ page.set_viewport_size({"width":390,"height":850})
+ page.evaluate("""async()=>{document.body.dataset.access='locked';window.__step03PublicRows={};await ffA07Design.syncPublic(true);window.__step03SlowResolve=null;rpc=async(name,args={})=>{if(name!=='ff_a07_public_appearance')return null;if(args.p_device==='mobile')return new Promise(r=>window.__step03SlowResolve=r);return {id:991,pack:'D08',style_config:{}}};window.__step03Slow=ffA07Design.syncPublic(true)}""")
+ page.wait_for_function("()=>!!window.__step03SlowResolve")
+ page.set_viewport_size({"width":1440,"height":850})
+ page.evaluate("""async()=>{window.__step03SlowResolve({id:992,pack:'D05',style_config:{}});await window.__step03Slow;await ffA07Design.syncPublic(true)}""")
+ assert page.locator("#loginOverlay .loginbox").get_attribute("data-ff-a07-pack")=="D08"
+ print("PASS STEP03 stale public mobile response rejected after resize",flush=True)
+
+ ctx.close()
+
+ # Separate manager session for data-dependent admin controls. Only original
+ # renderer functions and read-only in-memory fixture responses are used.
+ ctx=browser.new_context(viewport={"width":1440,"height":850},service_workers="block",reduced_motion="reduce")
+ ctx.route("**/*",lambda route:route.continue_() if route.request.url.startswith(origin) else route.abort())
+ page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,"manager")
+ page.wait_for_function("()=>!!window.ffA07Design&&!!window.ffDashboardStudio")
+ admin=page.evaluate("""async()=>{
+  const stamp=new Date().toISOString(),caseRow={id:'qa-case',subject:'QA',description:'QA',status:'open',kind:'customer_complaint',priority:'normal',branch_id:'b1',created_at:stamp};
+  const baseRPC=rpc;
+  rpc=async(name,args={})=>{
+   const values={
+    ff41_case_detail:{item:caseRow,events:[]},
+    ff51_manager_catalog:{categories:[{id:'qa-cat',name:'QA'}],items:[{id:'qa-item',category_id:'qa-cat',name:'QA item',price:1000,active:true,parser_aliases:[]}],offers:[{id:'qa-offer',name:'QA offer',price:1000,active:true,items:[]}]},
+    ff51_customer_directory:[{name:'QA',phone:'000000000',area:'QA',last_order_at:stamp,orders_count:1,notes_count:0}],
+    ff52_admin_route_list:[{id:'qa-route',driver_name:'QA',driver_id:'qa-driver',branch_id:'b1',active:true,area_terms:['QA'],start_local:'09:00',end_local:'10:00'}],
+    ff38_admin_staff_list:[{user_id:'qa-assembly',role:'assembly',name:'QA assembly',active:true,branches:['b1']},{user_id:'qa-cashier',role:'cashier',name:'QA cashier',active:true,branches:['b1']}],
+    ff38_admin_permission_matrix:[{key:'create_order',default_allowed:false,effective:false,override:null}],
+    ff38_admin_permission_audit:[],
+    ff49_reservations_list:[{id:'qa-reservation',status:'new',customer_name:'QA',customer_phone:'000000000',branch_id:'b1',pickup_unspecified:true,items:[]}],
+    ff49_visible_transfers:[{id:'qa-transfer',order_id:'qa-order',original_driver_id:'qa-a',new_driver_id:'qa-b',reason:'QA'}],
+    ff50_visible_order_changes:['requested','approved','service_confirmed'].map((status,i)=>({id:'qa-change-'+i,order_id:'qa-order',status,reason:'QA',requested_at:stamp,old_items:[],new_items:[]}))
+   };
+   return Object.hasOwn(values,name)?values[name]:baseRPC(name,args);
+  };
+  for(const id of ['ff41Panel','ff51CatalogPanel','ff51CustomersPanel','ff52RoutesPanel','ff49ReservationsPanel','ff49TransferPanel','ff50ChangesPanel','ff39Panel','ff42Panel','ff47QAPanel','staffAdminCard'])document.getElementById(id)?.classList.remove('hidden');
+  ff41Cases=[caseRow];await ff41ShowDetail(caseRow.id);
+  await ff51LoadCatalog();await ff51LoadCustomers();await ff52LoadRoutes();
+  await loadStaffAdmin();
+  const select=document.getElementById('permissionEmployee');if(![...select.options].some(o=>o.value==='qa-cashier'))select.add(new Option('QA','qa-cashier'));select.value='qa-cashier';await ffLoadPermissions();
+  ff39Mailbox=[{id:'qa-msg1',title:'QA',body:'QA',created_at:stamp,requires_ack:true},{id:'qa-msg2',title:'QA',body:'QA',created_at:stamp,requires_ack:false}];ff39DrawInbox();
+  ff42Rows=[{driver_id:'qa-driver',driver_name:'QA',branch_id:'b1',branch_name:'QA',delivered_orders:1,delivered_order_value:1000}];ff42Render();
+  ff47Detail={run:{state:'open'},cases:[{key:'qa-case',title:'QA',category:'QA',priority:'normal',expected:'QA',state:'pending',notes:''}]};document.getElementById('ff47Category').value='';document.getElementById('ff47Filter').value='';ff47RenderCases();
+  await ff49RefreshReservations();await ff49LoadTransfers();await ff50Refresh();
+  ffA07Design.refresh();
+  const selectors={ff41NextStatus:'#ff41NextStatus',ff41Resolution:'#ff41Resolution',ff41CommentBody:'#ff41CommentBody',case_transition:'button[data-ff41-transition]',case_comment:'button[data-ff41-comment]',case_open:'button[data-ff41-open]',staff_toggle:'button[data-staff-toggle]',staff_assembly_save:'button[data-assembly-save]',staff_assembly_convert:'button[data-assembly-convert]',staff_edit:'button[data-ffedit]',staff_save_access:'button[data-save-access]',staff_permission_save:'button[data-permission-save]',message_ack:'button[data-ff39-ack]',message_read:'button[data-ff39-read]',settlement_select:'button[data-ff42-select]',qa_case_save:'button[data-ff47-save]',reservation_next:'button[data-ff49-reserve-next]',reservation_cancel:'button[data-ff49-reserve-cancel]',transfer_confirm:'button[data-ff49-confirm-transfer]',change_approve:'button[data-ff50-approve]',change_reject:'button[data-ff50-reject]',change_service:'button[data-ff50-service]',change_pos:'button[data-ff50-pos]',catalog_item_edit:'button[data-ff51-item-edit]',catalog_item_toggle:'button[data-ff51-item-toggle]',catalog_offer_edit:'button[data-ff51-offer-edit]',catalog_offer_toggle:'button[data-ff51-offer-toggle]',customer_open:'button[data-ff51-customer]',route_edit:'button[data-ff52-route-edit]'};
+  const rows={},records=[];
+  for(const [g,c] of Object.entries(ffA07Elements.groups)){
+   if(!c.keys.some(k=>Object.hasOwn(selectors,k)))continue;
+   rows[c.screen]??={id:993,pack:'D05',style_config:{elements:{}}};
+   rows[c.screen].style_config.elements[g]=c.keys.map(key=>({key,shape:'round',size:'normal',align:'center',font:'tahoma',weight:'strong',spacing:'wide',spaceBlock:'wide',outerGap:'wide',shadow:'soft',textScale:'large'}));
+   for(const key of c.keys.filter(k=>Object.hasOwn(selectors,k))){
+    const all=[...document.querySelectorAll(selectors[key])],ns=all.filter(n=>n.closest('[data-ff-a07-screen]')?.dataset.ffA07Screen===c.screen);
+    records.push({key,screen:c.screen,unscoped:all.length-ns.length,nodes:ns.map(n=>({n,value:n.value,type:n.type,hidden:n.hidden,disabled:n.disabled,handler:n.onclick,html:n.outerHTML}))});
+   }
+  }
+  window.__a07Rows=rows;await ffDashboardStudio.sync(true);ffA07Design.refresh();
+  const missing=records.filter(r=>!r.nodes.length).map(r=>({key:r.key,unscoped:r.unscoped})),bad=[];
+  for(const r of records)for(const o of r.nodes){
+   const n=o.n,t=ffA07Elements.visualTarget(n),s=getComputedStyle(t),why=[];
+   if(!n.isConnected||n.value!==o.value||n.type!==o.type||n.hidden!==o.hidden||n.disabled!==o.disabled||n.onclick!==o.handler)why.push('state');
+   if(t.dataset.ffA07ElAlign!=='center'||s.textAlign!=='center')why.push('align');
+   if(!s.fontFamily.toLowerCase().includes('tahoma'))why.push('font');
+   if(parseFloat(s.paddingInlineStart)!==18||parseFloat(s.paddingBlockStart)!==12||parseFloat(s.marginBlockStart)!==8)why.push('spacing');
+   if(Number(s.fontWeight)<700||s.boxShadow==='none')why.push('weight/shadow');
+   if(why.length)bad.push({key:r.key,why});
+  }
+  window.__a07Rows={};await ffDashboardStudio.sync(true);ffA07Design.refresh();
+  const cleanup=records.every(r=>r.nodes.every(o=>!ffA07Elements.visualTarget(o.n).dataset.ffA07ElAlign&&!ffA07Elements.visualTarget(o.n).dataset.ffA07ElFont));
+  return {count:records.length,missing,bad,cleanup,matched:records.map(r=>({key:r.key,screen:r.screen,nodes:r.nodes.length,unscoped:r.unscoped}))};
+ }""")
+ (out/"step03-real-admin-renderers.json").write_text(json.dumps(admin,ensure_ascii=False,indent=2))
+ assert not admin["missing"] and not admin["bad"] and admin["cleanup"],admin
+ print("PASS STEP03 actual administrative renderers",admin["count"],flush=True)
  ctx.close()
  print("PASS STEP03 independent finance, branch, login and customer scopes",flush=True)
  browser.close()
