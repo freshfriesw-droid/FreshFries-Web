@@ -61,9 +61,9 @@
  function renderCardPreview(){
   const preview=dlg.querySelector('[data-card-preview]');preview.replaceChildren();
   const width=Number(field('viewport').value)||390;preview.style.setProperty('--ff-card-columns',width<430?'2':width<768?'3':'4');
-  for(const card of cards){
+  for(const [i,card] of cards.entries()){
    const role=field('role').value;if(role!=='all'&&!a08.cardVisible(card,role,()=>true))continue;
-   const box=document.createElement('div');box.className='ff-card-sample';box.dataset.cardSize=card.size;box.dataset.cardTone=card.tone;
+   const box=document.createElement('div');box.className='ff-card-sample';box.dataset.cardIndex=String(i);box.dataset.cardSize=card.size;box.dataset.cardTone=card.tone;
    const name=document.createElement('b');name.textContent=card.label+(card.icon?' · '+(a08.icons[card.icon]||''):'');
    const value=document.createElement('span');value.textContent=card.permission?'تتطلب صلاحية':card.metric==='available_drivers'&&!['all','manager','supervisor','customer_service'].includes(field('role').value)?'غير متاح':'—';
    box.append(name,value);preview.append(box);
@@ -71,13 +71,13 @@
   dlg.querySelector('[data-card-count]').textContent=(inherit.checked?'الوراثة مفعّلة · البطاقات المعروضة نموذج للترتيب فقط · ':'')+cards.length+' بطاقة — معاينة تخطيطية دون أرقام افتراضية';
  }
  function renderCardEditor(){
-  const list=dlg.querySelector('[data-card-list]');list.replaceChildren();
+  const list=dlg.querySelector('[data-card-list]');const expanded=[...list.querySelectorAll('.ff-a08-card-access')].map(n=>n.open);list.replaceChildren();
   for(let i=0;i<cards.length;i++){
    const card=cards[i],row=document.createElement('section');row.className='ff-card-edit-row';row.draggable=true;
    row.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',String(i));e.dataTransfer.effectAllowed='move'});
    row.addEventListener('dragover',e=>e.preventDefault());
    row.addEventListener('drop',e=>{e.preventDefault();const raw=e.dataTransfer.getData('text/plain'),from=Number(raw);if(/^\d+$/.test(raw)&&Number.isInteger(from)&&from>=0&&from<cards.length&&from!==i)changeCards(()=>cards.splice(i,0,...cards.splice(from,1)))});
-   const input=document.createElement('input');input.maxLength=100;input.required=true;input.value=card.label;input.setAttribute('aria-label','عنوان البطاقة '+(i+1));input.addEventListener('change',()=>{if(busy||!manager())return;inherit.checked=false;rememberCards();card.label=input.value.trim();renderCardPreview();dlg.querySelector('[data-card-undo]').disabled=false;dlg.querySelector('[data-card-redo]').disabled=true});input.addEventListener('input',()=>{const box=dlg.querySelector('[data-card-preview]').children[i]?.querySelector('b');if(box)box.textContent=input.value});
+   const input=document.createElement('input');input.maxLength=100;input.required=true;input.value=card.label;input.setAttribute('aria-label','عنوان البطاقة '+(i+1));input.addEventListener('change',()=>{if(busy||!manager())return;inherit.checked=false;rememberCards();card.label=input.value.trim();renderCardPreview();dlg.querySelector('[data-card-undo]').disabled=false;dlg.querySelector('[data-card-redo]').disabled=true});input.addEventListener('input',()=>{const box=dlg.querySelector('[data-card-preview] [data-card-index="'+i+'"] b');if(box)box.textContent=input.value});
    row.append(input);
    for(const [key,options] of Object.entries({metric:metricNames,size:sizes,tone:tones})){
     const select=document.createElement('select');select.setAttribute('aria-label',({metric:'مصدر المؤشر',size:'مقاس البطاقة',tone:'لون البطاقة'})[key]+' '+(i+1));select.replaceChildren(...Object.entries(options).map(([k,label])=>new Option(label,k)));select.value=card[key];select.onchange=()=>changeCards(()=>{card[key]=select.value;if(key==='metric')card.label=metricNames[select.value]});row.append(select);
@@ -86,7 +86,7 @@
    for(const [label,disabled,action] of [['تقديم',i===0,()=>cards.splice(i-1,0,...cards.splice(i,1))],['تأخير',i===cards.length-1,()=>cards.splice(i+1,0,...cards.splice(i,1))],['نسخ',false,()=>cards.splice(i+1,0,{...card})],['حذف',false,()=>cards.splice(i,1)]]){
     const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.disabled=disabled;btn.onclick=()=>changeCards(action);actions.append(btn);
    }
-   row.append(a08.cardFields(card,i,changeCards));row.append(actions);list.append(row);
+   const access=a08.cardFields(card,i,changeCards);access.open=!!expanded[i];row.append(access);row.append(actions);list.append(row);
   }
   dlg.querySelector('[data-card-undo]').disabled=busy||!undoCards.length;dlg.querySelector('[data-card-redo]').disabled=busy||!redoCards.length;
   renderCardPreview();
@@ -163,7 +163,7 @@
     sourceEl('pack').textContent=row.pack;sourceEl('bar').textContent=Array.from(field('bar').options).find(o=>o.value===row.bar)?.textContent||row.bar;
     sourceEl('caption').textContent=row.layout_text||original;sourceEl('details').hidden=false;
     try{const layers=await rpc('ff_a07_manager_style_layers',{p_screen:screen,p_role:role,p_branch:b,p_device:d});if(request!==sourceSerial||token!==session||who!==actor()||!manager()||!dlg.open)return;sourceEl('layers').textContent=Object.entries(layers?.sources||{}).map(([k,id])=>(appearance.tokens[k]?.[0]||k)+' ← #'+id).join(' · ')||'الخصائص الأساسية للحزمة';
-     if(['all','dashboard'].includes(screen)){const cs=await rpc('ff_a08_manager_card_source',{p_role:role,p_branch:b,p_device:d});if(request!==sourceSerial||token!==session||who!==actor()||!manager()||!dlg.open)return;sourceEl('layers').textContent+=' · البطاقات ← '+(cs?.[0]?.revision?'#'+cs[0].revision:'الافتراضي')}}catch{if(request===sourceSerial)sourceEl('layers').textContent='تعذر التحقق من طبقات الخصائص'}
+     if(['all','dashboard'].includes(screen)){try{const cs=await rpc('ff_a08_manager_card_source',{p_role:role,p_branch:b,p_device:d});if(request!==sourceSerial||token!==session||who!==actor()||!manager()||!dlg.open)return;sourceEl('layers').textContent+=' · البطاقات ← '+(cs?.[0]?.revision?'#'+cs[0].revision:'الافتراضي')}catch{/* Other source details remain valid. */}}}catch{if(request===sourceSerial)sourceEl('layers').textContent='تعذر التحقق من طبقات الخصائص'}
    }catch(e){if(request===sourceSerial&&token===session&&who===actor()&&manager()&&dlg.open){sourceEl('status').textContent='تعذر التحقق من المصدر المنشور. لا تعتبر القيمة المعروضة اعتماداً.';sourceKey=''}}
   },180);
  }
@@ -192,6 +192,7 @@
   renderCardPreview();sourceRefresh();redrawGallery();
   dlg.querySelector('#ffCardEditor').hidden=!['all','dashboard'].includes(field('screen').value);
   a08Panels.hidden=dlg.querySelector('#ffCardEditor').hidden;
+  a08.preview(form);
  }
 
  function selectRecord(row){
