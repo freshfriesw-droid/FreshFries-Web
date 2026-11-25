@@ -10,7 +10,7 @@ const actions=Object.fromEntries([...library].map(([key,value])=>[key,value.labe
 const actionIcons=["home","grid","plus","orders","bike","clock","alert","bell","settings","refresh","user","report","wallet","calendar","folder","message","star","users","check","search","shield","filter","phone"];
 const actionSizes={normal:'عادي',wide:'عريض',full:'عرض كامل'},actionTones={default:'افتراضي',red:'أحمر',black:'أسود',neutral:'محايد'};
 const actionKey=v=>typeof v==='string'?v:v?.key;
-const actionView=v=>{const base=library.get(actionKey(v));return base?{...base,...(typeof v==='object'&&v?v:{}),size:v?.size||'normal',tone:v?.tone||'default'}:null};
+const actionView=v=>{const base=library.get(actionKey(v));return base?{key:base.key,label:typeof v?.label==='string'&&validLabel(v.label)?v.label:base.label,icon:actionIcons.includes(v?.icon)?v.icon:base.icon,size:Object.hasOwn(actionSizes,v?.size)?v.size:'normal',tone:Object.hasOwn(actionTones,v?.tone)?v.tone:'default'}:null};
 const validLabel=v=>typeof v==='string'&&v.trim().length>0&&v.length<=100&&!/[<>{}\u0000-\u001f\u007f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/u.test(v)&&!/(https?:\/\/|www\.|javascript:|data:|vbscript:|\/\/)/i.test(v);
 const standard=['new','orders','drivers','late','reports','assembly_admin','rewards','messages','driver','cashier','settings'];
 const statusNames={new:'جديد',sent:'مسند',delivered:'منجز',cancelled:'ملغى',assigned:'مسند',preparing:'قيد التحضير',ready:'جاهز',on_way:'في الطريق',arrived:'وصل'};
