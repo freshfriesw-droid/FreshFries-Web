@@ -3388,30 +3388,37 @@ doc.addEventListener('keydown',event=>{
 
 // FF66: shared ringtone catalog (private Supabase Storage; server-side RLS).
 // FF74 manager-controlled global notification tones.
-let ff74Busy=false,ff74LoadedFor='',ff74LastCheck=0;
+let ff74Busy=false,ff74Saving=false,ff74LoadedFor='',ff74LastCheck=0,ff74Epoch=0;
 const ff74Manager=()=>ff66Ready()&&typeof data!=='undefined'&&data?.role==='manager';
 const ff74From=t=>t?.type==='uploaded'&&t.tone_id?'tone:'+t.tone_id:t?.type==='built_in'&&['soft','digital','classic','double','urgent'].includes(t.key)?t.key:null;
 const ff74As=v=>String(v).startsWith('tone:')?{type:'uploaded',tone_id:String(v).slice(5)}:{type:'built_in',key:v};
-function ff74Controls(){for(const id of ['ffx-sound','ffx-delay-sound']){const el=$x(id);if(el){el.disabled=!ff74Manager();el.title=ff74Manager()?'تحديد المدير ينطبق على جميع الموظفين':'اختيار النغمة للمدير فقط';}}}
+function ff74Controls(){for(const id of ['ffx-sound','ffx-delay-sound']){const el=$x(id);if(el){el.disabled=!ff74Manager()||ff74Saving;el.title=ff74Manager()?'تحديد المدير ينطبق على جميع الموظفين':'اختيار النغمة للمدير فقط';}}}
+function ff74Reset(){ff74Epoch++;ff74Busy=false;ff74Saving=false;ff74LoadedFor='';ff74LastCheck=0;ff74Controls()}
 async function ff74Refresh(force=false){
- if(!ff66Ready()){ff74LoadedFor='';ff74Controls();return}
- if(ff74Busy||(!force&&ff74LoadedFor===String(user.id)&&Date.now()-ff74LastCheck<20000))return;
- ff74Busy=true;const viewer=String(user.id);
- try{const {data:cfg,error}=await client.rpc('ff74_get_global_tones');if(error)throw error;
-  if(!ff66Ready()||String(user.id)!==viewer)return;
+ if(!ff66Ready()){ff74Reset();return}
+ if(ff74Busy||ff74Saving||(!force&&ff74LoadedFor===String(user.id)&&Date.now()-ff74LastCheck<20000))return;
+ ff74Busy=true;const viewer=String(user.id),connection=client,epoch=++ff74Epoch;
+ const current=()=>ff66Ready()&&String(user.id)===viewer&&client===connection&&ff74Epoch===epoch;
+ try{const {data:cfg,error}=await connection.rpc('ff74_get_global_tones');if(error)throw error;if(!current())return;
   const a=ff74From(cfg?.new_order),b=ff74From(cfg?.delay);
   if(a)prefs.sound=a;if(b)prefs.delaySound=b;
   ff74LoadedFor=viewer;ff74LastCheck=Date.now();ff66ShowChoices();applyPrefs();ff74Controls();
- }catch(e){console.warn('FF74 centralized tones unavailable',e);ff74Controls()}
- finally{ff74Busy=false}
+ }catch(e){if(current()){console.warn('FF74 centralized tones unavailable',e);ff74Controls()}}
+ finally{if(ff74Epoch===epoch)ff74Busy=false}
 }
 async function ff74Change(which,value){
  if(!ff74Manager()){showToast('اختيار النغمات للمدير فقط');await ff74Refresh(true);return}
- const previous={sound:prefs.sound,delaySound:prefs.delaySound};prefs[which]=value;applyPrefs();ff74Controls();
- try{const {data:cfg,error}=await client.rpc('ff74_set_global_tones',{p_new_order:ff74As(prefs.sound),p_delay:ff74As(prefs.delaySound)});if(error)throw error;
+ if(ff74Saving||!['sound','delaySound'].includes(which))return;
+ if(!['soft','digital','classic','double','urgent'].includes(value)&&!ff66Rows.some(r=>r.is_active&&'tone:'+r.id===value))return;
+ const previous={sound:prefs.sound,delaySound:prefs.delaySound},viewer=String(user.id),connection=client,epoch=++ff74Epoch;
+ const current=()=>ff74Manager()&&String(user.id)===viewer&&client===connection&&ff74Epoch===epoch;
+ ff74Busy=false;ff74Saving=true;prefs[which]=value;applyPrefs();ff74Controls();
+ try{const {data:cfg,error}=await connection.rpc('ff74_set_global_tones',{p_new_order:ff74As(prefs.sound),p_delay:ff74As(prefs.delaySound)});if(error)throw error;
+  if(!current())return;
   prefs.sound=ff74From(cfg?.new_order)||prefs.sound;prefs.delaySound=ff74From(cfg?.delay)||prefs.delaySound;
-  ff74LastCheck=Date.now();applyPrefs();ff74Controls();showToast('تم اعتماد النغمة لجميع الموظفين');
- }catch(e){Object.assign(prefs,previous);applyPrefs();ff74Controls();showToast('تعذر اعتماد النغمة: '+(e.message||e),null,true)}
+  ff74LastCheck=Date.now();ff66ShowChoices();applyPrefs();showToast('تم اعتماد النغمة لجميع الموظفين');
+ }catch(e){if(current()){Object.assign(prefs,previous);ff66ShowChoices();applyPrefs();showToast('تعذر اعتماد النغمة: '+(e.message||e),null,true)}}
+ finally{if(ff74Epoch===epoch){ff74Saving=false;ff74Controls()}}
 }
 for(const [id,key]of [['ffx-sound','sound'],['ffx-delay-sound','delaySound']])$x(id).addEventListener('change',e=>void ff74Change(key,e.target.value));
 window.addEventListener('focus',()=>void ff74Refresh(true));
@@ -3424,13 +3431,12 @@ function ff66Reset(){ff66Epoch++;ff66Loading=false;ff66Rows=[];ff66Urls.clear();
 function ff66SetStatus(message){const el=$x('ff66-tone-status');if(el)el.textContent=message;}
 function ff66ShowChoices(){
  const active=ff66Rows.filter(r=>r.is_active);
- for(const k of ['sound','delaySound']){if(String(prefs[k]).startsWith('tone:')&&!active.some(r=>'tone:'+r.id===prefs[k])){
-   prefs[k]='soft';storePrefs();
- }}
  for(const id of ['ffx-sound','ffx-delay-sound']){
   const select=$x(id);select.querySelectorAll('option[data-ff66-tone]').forEach(option=>option.remove());
   for(const row of active){const option=new Option('🎵 '+row.name,'tone:'+row.id);option.dataset.ff66Tone=row.id;select.add(option);}
-  select.value=id==='ffx-sound'?prefs.sound:prefs.delaySound;
+  const chosen=id==='ffx-sound'?prefs.sound:prefs.delaySound;
+  if(String(chosen).startsWith('tone:')&&!active.some(r=>'tone:'+r.id===chosen)){const missing=new Option('نغمة مشتركة غير متاحة — البديل المحلي',chosen);missing.dataset.ff66Tone='unavailable';missing.disabled=true;select.add(missing)}
+  select.value=chosen;
  }
  const manager=ff74Manager();
  $x('ff66-manager').hidden=!manager;
@@ -3466,10 +3472,11 @@ async function ff66Load(force=false){
   if(!current())return;
   for(const [id,audio] of ffLuxeTonePlayers)if(!nextUrls.has(id)||audio.src!==nextUrls.get(id)){try{audio.pause();audio.removeAttribute('src');audio.load()}catch{}ffLuxeTonePlayers.delete(id)}
   ff66Rows=nextRows;ff66Urls=nextUrls;ff66LastLoaded=Date.now();ff66SetStatus('المكتبة متاحة: '+active.length+' نغمة مشتركة.');ff66ShowChoices();await ff74Refresh(true);
- }catch(e){if(current()){ff66SetStatus('تعذر تحميل المكتبة؛ تستخدم النغمة المحلية عند عدم توفر الملف.');}}
+ }catch(e){if(current()){ff66Urls.clear();for(const audio of ffLuxeTonePlayers.values()){try{audio.pause();audio.removeAttribute('src');audio.load()}catch{}}ffLuxeTonePlayers.clear();ff66SetStatus('تعذر تحميل المكتبة؛ تستخدم النغمة المحلية عند عدم توفر الملف.');}}
  finally{if(ff66Epoch===epoch)ff66Loading=false}
 }
 const ffLuxeTonePlayers=new Map();
+window.addEventListener('ff-luxe-session-reset',()=>{ff66Reset();ff74Reset();window.ffLuxeStopAlertAudio?.();for(const id of ['ffx-sound','ffx-delay-sound'])$x(id)?.querySelectorAll('option[data-ff66-tone]').forEach(o=>o.remove());$x('ff66-tone-list')?.replaceChildren()});
 function ff66PlayTone(kind){
  if(!ff66Ready()||ff66User!==String(user.id))return false;
  const id=String(kind).slice(5),url=ff66Urls.get(id),viewer=String(user.id),epoch=ff66Epoch;

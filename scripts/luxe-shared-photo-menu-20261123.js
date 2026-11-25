@@ -48,7 +48,7 @@ function createTile(item,opts={}){
  const root=document.createElement('div');root.className='ffl-picker-tile';root.dataset.cardStyle=['compact','large'].includes(item.card_style)?item.card_style:'standard';
  const product=document.createElement('button');product.type='button';product.className='ffl-picker-product';product.setAttribute('aria-label','إضافة '+String(item.name||'صنف'));
  const pic=imageUrl(item);let media;
- if(pic){media=document.createElement('img');media.loading='lazy';media.alt='صورة '+String(item.name||'صنف');media.onerror=()=>{if(media.isConnected)media.replaceWith(placeholder(item));else media.dataset.ffMediaFailed='1'};media.src=pic}
+ if(pic){media=document.createElement('img');media.loading='lazy';media.alt='صورة '+String(item.name||'صنف');media.onerror=()=>{if(media.parentNode)media.replaceWith(placeholder(item));else media.dataset.ffMediaFailed='1'};media.src=pic}
  else media=placeholder(item);
  const name=document.createElement('span');name.className='ffb-v2-name';name.textContent=String(item.name||'صنف');
  const price=document.createElement('span');price.className='ffb-v2-price';

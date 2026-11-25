@@ -31,9 +31,9 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  for asset in ('scripts/luxe-a08-dashboard.js','scripts/luxe-dashboard-studio.js','styles/luxe-a08-dashboard.css'):
   current_html=current_html.replace('./'+asset+'?v=20261125-step04','./'+asset)
  # STEP05: only the explicitly audited tone lifecycle and asset URLs differ.
- current_start=current_html.index('let ff66Rows=[]')
+ current_start=current_html.index('let ff74Busy=false,ff74')
  current_end=current_html.index('$x(\'ff66-tone-refresh\').onclick=',current_start)
- base_start=baseline_html.index('let ff66Rows=[]')
+ base_start=baseline_html.index('let ff74Busy=false,ff74')
  base_end=baseline_html.index('$x(\'ff66-tone-refresh\').onclick=',base_start)
  current_html=current_html[:current_start]+baseline_html[base_start:base_end]+current_html[current_end:]
  current_html=current_html.replace('./scripts/luxe-a07-design.js?v=20261125-step05','./scripts/luxe-a07-design.js')
