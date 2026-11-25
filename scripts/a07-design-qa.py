@@ -1,13 +1,18 @@
 """A07 offline Chromium regression: all 16 packs on the seven actual role workspaces."""
 import json
 import re
+import sys
+import subprocess
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
 from playwright.sync_api import sync_playwright
 root=Path(__file__).resolve().parents[1]
-out=root/"a07-evidence";out.mkdir(exist_ok=True)
+alternate="--alternate" in sys.argv
+out=root/"a07-evidence"
+if alternate: out=out/"alternate"
+out.mkdir(parents=True,exist_ok=True)
 # Audit the current registry rather than an old hard-coded snapshot.
 _registry_source=(root/"scripts/luxe-a07-elements.js").read_text()
 def registry_dict(name):
@@ -90,6 +95,7 @@ with sync_playwright() as pw:
   assert len(signatures)==16,(role,"distinct packs",len(signatures))
   if role in ("cashier","driver"):
    assert page.locator("#a07-status-probe").evaluate("n=>getComputedStyle(n).borderTopColor")==status_probe
+  if alternate: page.set_viewport_size({"width":390,"height":850})
   # Audit actual mounted controls, not just registered keys or synthetic stand-ins.
   # The full output explicitly distinguishes unavailable and computed mismatches.
   # No operational click, data modification or real backend request occurs.
@@ -577,7 +583,7 @@ with sync_playwright() as pw:
 
  # Separate manager session for data-dependent admin controls. Only original
  # renderer functions and read-only in-memory fixture responses are used.
- ctx=browser.new_context(viewport={"width":1440,"height":850},service_workers="block",reduced_motion="reduce")
+ ctx=browser.new_context(viewport={"width":390 if alternate else 1440,"height":850},service_workers="block",reduced_motion="reduce")
  ctx.route("**/*",lambda route:route.continue_() if route.request.url.startswith(origin) else route.abort())
  ctx.add_init_script(path=root/'scripts/step03-visual-matrix-probe.js');page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,"manager")
  page.wait_for_function("()=>!!window.ffA07Design&&!!window.ffDashboardStudio")
@@ -650,6 +656,7 @@ with sync_playwright() as pw:
   ctx.route("**/*",lambda route:route.continue_() if route.request.url.startswith(origin) else route.abort())
   ctx.add_init_script(path=root/'scripts/step03-visual-matrix-probe.js');page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,role)
   page.wait_for_function("()=>!!window.ffA07Design&&!!window.ffDashboardStudio")
+  if alternate: page.set_viewport_size({"width":1440,"height":850})
   extra=page.evaluate(r"""async({role,dyn})=>{
    const base=rpc,stamp=new Date().toISOString(),writes=[];
    const mk=(id,num,extra={})=>({id,number:num,order_number:num,branch_id:'b1',driver_id:'qa-driver',driver_name:'QA',phase:'assigned',status:'sent',cashier_stage:'waiting',created_at:stamp,customer_name:'QA',phone:'000',area:'QA',items:[{qty:1,name:'QA item',price:1000}],...extra});
@@ -731,3 +738,13 @@ assert len(set(k for x in visual_matrix for k in x['entries']))==662, 'visual ma
 failures=[f for x in visual_matrix for f in x['failures']]
 assert not failures, ('STEP03 computed property mismatch',len(failures),failures[:25])
 print("PASS A07",len(results),"actual role/width/pack checks, gallery and reset",flush=True)
+if not alternate:
+ subprocess.run([sys.executable,__file__,"--alternate"],check=True)
+ second=json.loads((out/"alternate"/"step03-computed-property-matrix.json").read_text())
+ widths={}
+ for entry in visual_matrix+second:
+  for key in entry["entries"]: widths.setdefault(key,set()).add(entry["width"])
+ assert len(widths)==662 and all({390,1440}<=v for v in widths.values()), [(k,sorted(v)) for k,v in widths.items() if not {390,1440}<=v]
+ evidence={"entries":len(widths),"both_widths":sum({390,1440}<=v for v in widths.values()),"computed":sum(x["computed"] for x in visual_matrix+second),"binding_only":sum(x["bindingOnly"] for x in visual_matrix+second),"combined":sum(x.get("combined",0) for x in visual_matrix+second),"failures":sum(len(x["failures"]) for x in visual_matrix+second)}
+ (out/"step03-cross-viewport-summary.json").write_text(json.dumps(evidence,indent=2))
+ print("PASS STEP03 every registered entry at both widths",evidence,flush=True)
