@@ -136,6 +136,48 @@ with sync_playwright() as pw:
   assert not [x for x in audit if x["failures"]],(role,[x for x in audit if x["failures"]])
   print("STEP03 actual mounted audit",role,"matched",sum(x["matched"]>0 for x in audit),"computed mismatches",sum(bool(x["failures"]) for x in audit),flush=True)
   if role=="manager":
+   # Force genuine Chromium pseudo states without dispatching operational clicks.
+   interaction=page.evaluate("""async()=>{
+    const keys=[...ffA07Elements.toneAllowed],rows={};
+    for(const [group,c] of Object.entries(ffA07Elements.groups)){
+     if(!c.keys.some(k=>keys.includes(k)))continue;
+     rows[c.screen]??={id:996,pack:'D01',style_config:{elements:{}}};
+     rows[c.screen].style_config.elements[group]=c.keys.map(key=>({key,shape:'pack',size:'normal',...(keys.includes(key)?{hover:'outline',press:'inset'}:{})}));
+    }
+    window.__a07Rows=rows;await ffDashboardStudio.sync(true);ffA07Design.refresh();
+    const style=document.createElement('style');style.id='qa-no-transitions';style.textContent='[data-ff-a07-screen] *{transition:none!important}';document.head.append(style);
+    return keys.map(key=>{const n=document.getElementById(key);return {key,exists:!!n,disabled:n?.disabled,scope:n?.closest('[data-ff-a07-screen]')?.dataset.ffA07Screen,hover:n?.dataset.ffA07ElHover,press:n?.dataset.ffA07ElPress}});
+   }""")
+   assert all(x["exists"] and x.get("hover")=="outline" and x.get("press")=="inset" for x in interaction),interaction
+   cdp=ctx.new_cdp_session(page);cdp.send("DOM.enable");cdp.send("CSS.enable")
+   root_id=cdp.send("DOM.getDocument")["root"]["nodeId"]
+   pseudo_results=[]
+   for item in interaction:
+    key=item["key"];node_id=cdp.send("DOM.querySelector",{"nodeId":root_id,"selector":"#"+key})["nodeId"]
+    assert node_id,key
+    locator=page.locator("#"+key)
+    initial=locator.evaluate("n=>({outline:getComputedStyle(n).outline,shadow:getComputedStyle(n).boxShadow,disabled:n.disabled,html:n.innerHTML})")
+    cdp.send("CSS.forcePseudoState",{"nodeId":node_id,"forcedPseudoClasses":["hover"]})
+    hover=locator.evaluate("n=>({outline:getComputedStyle(n).outline,style:getComputedStyle(n).outlineStyle,width:getComputedStyle(n).outlineWidth})")
+    if not item["disabled"]: assert hover["style"]=="solid" and hover["width"]=="2px",(key,hover)
+    else: assert hover["outline"]==initial["outline"],(key,hover)
+    cdp.send("CSS.forcePseudoState",{"nodeId":node_id,"forcedPseudoClasses":[]})
+    page.evaluate("""async key=>{for(const row of Object.values(window.__a07Rows))for(const rows of Object.values(row.style_config.elements))for(const e of rows)if(e.key===key)e.hover='shadow';await ffDashboardStudio.sync(true);ffA07Design.refresh()}""",key)
+    cdp.send("CSS.forcePseudoState",{"nodeId":node_id,"forcedPseudoClasses":["hover"]})
+    shadow=locator.evaluate("n=>getComputedStyle(n).boxShadow")
+    if not item["disabled"]: assert shadow!="none" and "7px" in shadow,(key,shadow)
+    else: assert shadow==initial["shadow"],(key,shadow)
+    cdp.send("CSS.forcePseudoState",{"nodeId":node_id,"forcedPseudoClasses":["active"]})
+    press=locator.evaluate("n=>getComputedStyle(n).boxShadow")
+    if not item["disabled"]: assert "inset" in press,(key,press)
+    else: assert press==initial["shadow"],(key,press)
+    cdp.send("CSS.forcePseudoState",{"nodeId":node_id,"forcedPseudoClasses":[]})
+    assert locator.evaluate("n=>({disabled:n.disabled,html:n.innerHTML})")=={"disabled":initial["disabled"],"html":initial["html"]},key
+    pseudo_results.append({"key":key,"disabled":item["disabled"],"hover_outline":hover,"hover_shadow":shadow,"press":press})
+   cdp.detach()
+   page.evaluate("""async()=>{document.getElementById('qa-no-transitions')?.remove();window.__a07Rows={};await ffDashboardStudio.sync(true);ffA07Design.refresh()}""")
+   (out/"step03-interaction-pseudo-states.json").write_text(json.dumps(pseudo_results,ensure_ascii=False,indent=2))
+   print("PASS STEP03 hover and press on",len(pseudo_results),"registered actual actions",flush=True)
    # Reproduce nested independent screen using real registered selectors.
    # One test-only fixture in each workspace: disabled buttons must stay disabled.
    isolation=page.evaluate("""()=>{
