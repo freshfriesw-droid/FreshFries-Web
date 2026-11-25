@@ -154,6 +154,9 @@ assert.doesNotMatch(html+get(operationalFiles[0]).toString('utf8')+guardedReset,
 assert.match(guardedReset,/rpc\('ff_a12_reset_preview'/,'Preview must be available');
 assert.match(guardedReset,/rpc\('ff_a12_reset_execute'/,'Scoped server backup and reset missing');
 assert.match(guardedReset,/rpc\('ff_a12_restore'/,'Server-side recovery missing');
+assert.match(guardedReset,/rpc\('ff_a12_legacy_preview'/,'Legacy cohort preview missing');
+assert.match(guardedReset,/rpc\('ff_a12_legacy_execute'/,'Legacy cohort backup/reset missing');
+assert.match(guardedReset,/rpc\('ff_a12_legacy_restore'/,'Legacy cohort recovery missing');
 assert.match(guardedReset,/p_token:p\.result\.token/,'Exact preview token required');
 assert.match(guardedReset,/backup_saved!==true/,'Server must confirm backup saved');
 assert.match(guardedReset,/exact_match!==true/,'Server must confirm recovery equality');

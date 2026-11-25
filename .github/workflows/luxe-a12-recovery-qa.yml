@@ -44,7 +44,7 @@ jobs:
                   return response.read()
           for i in range(10):
               try:
-                  marker='20261125-a12'
+                  marker='20261125-a12-legacy'
                   assert marker in get('?qa='+marker).decode()
                   assert get(path+'?v='+marker)==Path(path).read_bytes()
                   print('PASS live production exact A12 script bytes and index marker')

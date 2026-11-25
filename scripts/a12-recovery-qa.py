@@ -16,6 +16,13 @@ fixture=fixture.replace("window.__a06Calls.push({name,args});", """window.__a06C
   return {ok:true,backup_saved:true,batch_id:'batch1',removed:{orders:1,items:1,events:1,desks:1},remaining_selected:{orders:0,items:0,events:0,desks:0},total_before:82,total_after:81};
  }
  if(name==='ff_a12_restore'){window.a12Restored=args;window.a12Batches[0].restored_at='2026-11-25';return {ok:true,exact_match:true,restored:{orders:1,items:1,events:1,desks:1}}}
+ if(name==='ff_a12_legacy_batches')return window.a12LegacyBatches||[];
+ if(name==='ff_a12_legacy_preview')return {counts:{'public.ff_orders':3,'public.ff_order_items':5,'public.ff38_order_additions':2,'public.ff38_order_addition_items':4,'public.ff_push_jobs':7},total_orders:82,eligible_orders:3,registered_total:82,orders:[{id:'legacy1',number:990001,type:'delivery',date:args.p_from}],blockers:window.a12LegacyBlocked?{protected_reward_codes:1}:{},token:'legacy-'+args.p_branch+'-'+args.p_from};
+ if(name==='ff_a12_legacy_execute'){
+  window.a12LegacyReset=args;window.a12LegacyBatches=[{id:'legacy-batch',branch_id:args.p_branch,order_type:args.p_type,date_from:args.p_from,date_to:args.p_to,counts:{'public.ff_orders':3,'public.ff38_order_additions':2},restored_at:null}];
+  return {ok:true,backup_saved:true,batch_id:'legacy-batch',removed:{'public.ff_orders':3,'public.ff38_order_additions':2},remaining_selected:{'public.ff_orders':0,'public.ff38_order_additions':0},total_before:82,total_after:79};
+ }
+ if(name==='ff_a12_legacy_restore'){window.a12LegacyRestored=args;window.a12LegacyBatches[0].restored_at='2026-11-25';return {ok:true,exact_match:true,restored:{'public.ff_orders':3,'public.ff38_order_additions':2}}}
  if(name==='ff_a12_create_fixture'){window.a12Fixture=args;return {test_only:true,number:-2}}
  """)
 server=ThreadingHTTPServer(('127.0.0.1',0),partial(SimpleHTTPRequestHandler,directory=root));Thread(target=server.serve_forever,daemon=True).start()
@@ -50,6 +57,43 @@ with sync_playwright() as pw:
  page.locator('#ffA12Recovery summary').click()
  page.locator('#ffA12FixtureConfirm').fill('إنشاء طلب اختبار');page.locator('#ffA12Fixture').click()
  expect(page.locator('#ffA12PreviewResult')).to_contain_text('#-2')
+ # Legacy scope has independent batches, phrases, date defaults and the full dependency counts.
+ page.locator('#ffA12Scope').select_option('legacy')
+ expect(page.locator('#ffA12List')).to_be_enabled()
+ expect(page.locator('#ffA12FixturePanel')).to_be_hidden()
+ expect(page.locator('#ffA12From')).to_have_value('2026-11-13')
+ expect(page.locator('#ffA12To')).to_have_value('2026-11-23')
+ expect(page.locator('#ffA12Batch')).to_have_value('')
+ expect(page.locator('#ffA12Execute')).to_be_disabled()
+ page.evaluate('window.a12LegacyBlocked=true')
+ page.locator('#ffA12Preview').click();expect(page.locator('#ffA12PreviewResult')).to_contain_text('protected_reward_codes')
+ page.locator('#ffA12Confirm').fill('تصفير البيانات التجريبية السابقة')
+ expect(page.locator('#ffA12Execute')).to_be_disabled()
+ page.evaluate('window.a12LegacyBlocked=false')
+ page.locator('#ffA12Preview').click();expect(page.locator('#ffA12PreviewResult')).to_contain_text('أصناف الإضافات: 4')
+ page.locator('#ffA12Confirm').fill('تصفير طلبات الاختبار فقط')
+ expect(page.locator('#ffA12Execute')).to_be_disabled()
+ page.locator('#ffA12Confirm').fill('تصفير البيانات التجريبية السابقة')
+ expect(page.locator('#ffA12Execute')).to_be_enabled()
+ page.locator('#ffA12Scope').select_option('synthetic')
+ expect(page.locator('#ffA12List')).to_be_enabled()
+ expect(page.locator('#ffA12Execute')).to_be_disabled()
+ page.locator('#ffA12Scope').select_option('legacy')
+ expect(page.locator('#ffA12List')).to_be_enabled()
+ page.locator('#ffA12Preview').click();expect(page.locator('#ffA12PreviewResult')).to_contain_text('أصناف الإضافات: 4')
+ page.locator('#ffA12Confirm').fill('تصفير البيانات التجريبية السابقة')
+ page.locator('#ffA12Execute').click();expect(page.locator('#ffA12PreviewResult')).to_contain_text('legacy-batch')
+ assert page.evaluate("window.a12LegacyReset.p_branch")=='b2'
+ assert page.evaluate("window.a12LegacyReset.p_token")=='legacy-b2-2026-11-13'
+ expect(page.locator('#ffA12Batch')).to_have_value('legacy-batch')
+ page.locator('#ffA12RestoreConfirm').fill('استرجاع نسخة الاختبار')
+ expect(page.locator('#ffA12Restore')).to_be_disabled()
+ page.locator('#ffA12RestoreConfirm').fill('استرجاع البيانات التجريبية السابقة')
+ page.locator('#ffA12Restore').click()
+ expect(page.locator('#ffA12PreviewResult')).to_contain_text('التطابق الكامل')
+ expect(page.locator('#ffA12BatchInfo')).to_contain_text('سبق استرجاعها')
+ assert page.evaluate("window.a12LegacyRestored.p_batch")=='legacy-batch'
+ expect(page.locator('#ffA12Restore')).to_be_disabled()
  for width in (320,390,768,1440):
   page.set_viewport_size({'width':width,'height':850});page.screenshot(path=out/f'recovery-{width}.png',animations='disabled')
  page.evaluate("()=>{window.dispatchEvent(new Event('ff-luxe-session-reset'));user=null;data=null}")
@@ -59,6 +103,6 @@ with sync_playwright() as pw:
  p.evaluate("document.getElementById('ff62DataCenter').showModal()")
  expect(p.locator('#ffA12Recovery')).to_be_hidden()
  assert not p.evaluate("window.__a06Calls.some(x=>x.name.startsWith('ff_a12_'))")
- print('PASS A12 isolated responsive manager recovery, blocked/stale preview, confirmation, exact restore, session clearing and nonmanager isolation')
+ print('PASS A12 both development scopes, independent batches and confirmation, blocked/stale preview, exact restore, session clearing and nonmanager isolation')
  ctx.close();browser.close()
 server.shutdown()
