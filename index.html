@@ -482,7 +482,8 @@ body.ffx-menu-open .ffx-screen-dimmer{display:block!important}
 </style><link rel="stylesheet" href="./styles/luxe-operations.css">
 <link rel="stylesheet" href="./assets/luxe-report-center-20261123.css"><link rel="stylesheet" href="./styles/ffx-nav-groups.css"><link rel="stylesheet" href="./styles/luxe-dashboard-studio.css"><link rel="stylesheet" href="./styles/luxe-content-studio.css"><link rel="stylesheet" href="./styles/luxe-content-delegation.css">
 <style id="ff-a02-card-design">.ffb-v2-tile[data-card-style=compact] .ffb-v2-item{height:auto!important;min-height:102px!important}.ffb-v2-tile[data-card-style=compact] :is(img,.ffb-placeholder),.ffl-picker-tile[data-card-style=compact] :is(img,.ffb-placeholder){height:46px!important}.ffl-picker-tile[data-card-style=compact] .ffl-picker-product{min-height:90px!important}.ffb-v2-tile[data-card-style=large] .ffb-v2-item{height:auto!important;min-height:190px!important}.ffb-v2-tile[data-card-style=large] :is(img,.ffb-placeholder),.ffl-picker-tile[data-card-style=large] :is(img,.ffb-placeholder){height:115px!important}</style><link rel="stylesheet" href="./styles/luxe-a06-navigation.css">
-<link rel="stylesheet" href="./styles/luxe-a07-design.css"></head>
+<link rel="stylesheet" href="./styles/luxe-a07-design.css">
+<link rel="stylesheet" href="./styles/luxe-a08-dashboard.css"></head>
 <body class="ff-booting" data-access="locked"><div id="ff65Boot" role="status" aria-live="polite" style="text-align:center;padding:20px"><div id="ff65BootMessage">جارِ استعادة جلسة فريش فرايز…</div><noscript><p style="font-size:14px">يلزم تفعيل JavaScript في المتصفح لاستخدام نظام فريش فرايز.</p></noscript></div>
 <script id="ff-luxe-boot-watchdog">
 (()=>{
@@ -3292,7 +3293,7 @@ const dash=S('section',{id:'ffx-dashboard'});
 dash.innerHTML=`<div class="ffx-hero"><div><div class="ffx-eyebrow">FRESH FRIES • CONTROL CENTER</div><h1 id="ffx-hero-title">التحكم في كل التفاصيل، من شاشة واحدة</h1><p id="ffx-hero-sub">لوحة تشغيل فاخرة وسريعة، مصممة لتسهيل العمل في الفروع الثلاثة.</p><div class="ffx-hero-actions" style="margin-top:16px"><button class="primary" id="ffx-hero-new">${icon('plus','sm')} طلب جديد</button><button class="ffx-outline-light" id="ffx-hero-reserve">📅 حجز للاستلام</button><button class="ffx-outline-light" id="ffx-hero-overdue">${icon('alert','sm')} الطلبات المتأخرة</button></div></div><img class="ffx-hero-logo" src="${FF_OFFICIAL_LOGO}" alt="" aria-hidden="true"></div>
 <div class="ffx-section-head"><div><h2>نظرة عامة على التشغيل</h2><p>المؤشرات المعروضة تخص البيانات المتاحة لحسابك فقط</p></div><div class="flex"><select id="ffx-branch" class="ffx-branch" aria-label="تصفية الفرع"><option value="">كل الفروع المتاحة</option></select><button id="ffx-kpi-reload" class="ffx-smallbtn">${icon('refresh','sm')} تحديث</button></div></div>
 <div class="ffx-kpi-grid" id="ffx-kpis"></div>
-<div class="ffx-grid2"><div class="ffx-panel"><div class="ffx-panel-head"><div><h3>الطلبات الجاري تنفيذها</h3><p class="ffx-mini">آخر الطلبات الظاهرة لحسابك</p></div><button class="ffx-link" data-ffx-nav="orders">عرض الكل ${icon('arrow','sm')}</button></div><div id="ffx-order-list" class="ffx-list"></div></div><div class="ffx-panel"><div class="ffx-panel-head"><div><h3>الوصول السريع</h3><p class="ffx-mini">انتقل بلمسة واحدة</p></div>${icon('grid')}</div><div class="ffx-action-row" id="ffx-shortcuts"></div><div style="border-top:1px solid var(--ffx-line);margin-top:20px;padding-top:15px"><div class="ffx-panel-head"><h3>حالة النظام</h3><span class="ffx-status" id="ffx-connection-state">بانتظار الاتصال</span></div><p class="ffx-mini" id="ffx-last-update">لا تتوفر بيانات حية قبل تسجيل الدخول.</p></div></div></div>
+<div class="ffx-grid2"><div class="ffx-panel"><div class="ffx-panel-head"><div><h3>الطلبات الجاري تنفيذها</h3><p class="ffx-mini">آخر الطلبات الظاهرة لحسابك</p></div><button class="ffx-link" data-ffx-nav="orders">عرض الكل ${icon('arrow','sm')}</button></div><div id="ffx-order-list" class="ffx-list"></div></div><div class="ffx-panel"><div class="ffx-panel-head" id="ffA08ShortcutsHeading"><div><h3>الوصول السريع</h3><p class="ffx-mini">انتقل بلمسة واحدة</p></div>${icon('grid')}</div><div class="ffx-action-row" id="ffx-shortcuts"></div><div style="border-top:1px solid var(--ffx-line);margin-top:20px;padding-top:15px"><div class="ffx-panel-head"><h3>حالة النظام</h3><span class="ffx-status" id="ffx-connection-state">بانتظار الاتصال</span></div><p class="ffx-mini" id="ffx-last-update">لا تتوفر بيانات حية قبل تسجيل الدخول.</p></div></div></div>
 <div class="ffx-panel" id="ffx-overdue" style="margin-top:16px"><div class="ffx-panel-head"><div><h3>مركز الطلبات المتأخرة</h3><p class="ffx-mini">تحذيرات حية تفتح الطلب المرتبط مباشرة، حسب صلاحياتك</p></div><div class="flex"><span id="ffx-overdue-count" class="ffx-status danger">—</span><button class="ffx-link" id="ffx-open-alerts">عرض مركز المتابعة</button></div></div><div id="ffx-overdue-list" class="ffx-list"><div class="ffx-empty">يتم عرض التنبيهات بعد تسجيل الدخول وتحديث بيانات التشغيل.</div></div></div>`;
 main.insertBefore(dash,main.firstChild);
 const menu=S('nav',{id:'ffx-mobile-nav','aria-label':'تنقل الجوال'});
@@ -3702,7 +3703,21 @@ function navigate(key){closeNav();if(!['home','refresh','logout','settings'].inc
 if(key==='new'){scrollToEl($x('ffbTextPanel')||$x('serviceOnly'));requestAnimationFrame(()=>$x('ffbQuickInput')?.focus({preventScroll:true}));window.dispatchEvent(new Event('ff:open-order'));return}if(key==='orders'){scrollToEl($x('staffOrders'));return}if(key==='offers'){scrollToEl($x(data.role==='driver'?'driverOffers':'openOffers'));return}if(key==='attendance'){scrollToEl($x('clockInBtn'));return}if(key==='burger'){const b=$x('ffBurgerPanelToggle');if(b?.getAttribute('aria-expanded')!=='true')b?.click();scrollToEl($x('ffBurgerCashierPanel'));return}if(key==='cashier_finished'){const b=$x('fflCashierFinishedToggle')||$x('ffCompletedToggle');if(b?.getAttribute('aria-expanded')!=='true')b?.click();scrollToEl(b);return}if(key==='branch_policy'){$x('ffA05BranchPolicyBtn')?.click();return}if(key==='staff_link'){scrollToEl($x('managerLinks'));return}if(key==='applications'||key==='application_alerts'){$x(key==='applications'?'ff61ManageShortcut':'ff63NotificationsShortcut')?.click();return}if(key==='drivers'){scrollToEl($x('driversRoster'));return}if(key==='cashier'){scrollToEl($x('cashierView'));return}if(key==='driver'){scrollToEl($x('driverView'));return}if(key==='studio'){window.ffDashboardStudio?.open();return}if(key==='data_center'){$x('ff62DataCenter').showModal();return}if(key==='team'){scrollToEl($x('staffAdminCard'));return}if(key==='rewards'){const codeArea=$x('ffRewardManager');if(codeArea){codeArea.hidden=false;scrollToEl(codeArea)}return}if(key==='assembly_admin'){scrollToEl($x('staffAdminList'));return}if(key==='late'){scrollToEl($x('ffx-overdue'));void updateOverdue(true);return}
 if(key==='reports'){window.ff76OpenReports?.();return}const btn=originalButton(key);if(btn){btn.click();const panel=btn.id.replace('Btn','Panel');setTimeout(()=>{const id={catalog:'ff51CatalogPanel',customers:'ff51CustomersPanel',archive:'ff51ArchivePanel',ratings:'ff51RatingsPanel',changes:'ff50ChangesPanel',reservations:'ff49ReservationsPanel',transfer:'ff49TransferPanel',routes:'ff52RoutesPanel',reports:'ff40ReportsPanel',settlements:'ff42Panel',messages:'ff39Panel',cases:'ff41Panel',security:'ff43SecurityPanel',integrity:'ff44IntegrityPanel',access:'ff45AccessPanel',readiness:'ff46ReadinessPanel',qa:'ff47QAPanel',diagnostics:'ff48DiagnosticsPanel'}[key];scrollToEl($x(id)||$x(panel)||btn)},100)}}
 const quickKeys=[['طلب جديد','plus','new'],['الطلبات','orders','orders'],['الموصلون','bike','drivers'],['المتأخرة','alert','late'],['مركز التقارير الإداري','report','reports'],['حسابات التجميع','grid','assembly_admin'],['🎟️ الأكواد','star','rewards'],['الرسائل','message','messages'],['بوابة الموصل','bike','driver'],['الكاشير','wallet','cashier'],['الإعدادات','settings','settings']];
-let scSig='';function drawShortcuts(){const root=$x('ffx-shortcuts');if(!root)return;const sig=prefs.fast+'|'+quickKeys.map(k=>roleAllowed(k[2])?1:0).join('');if(sig===scSig&&root.childNodes.length)return;scSig=sig;root.replaceChildren();if(!prefs.fast){root.innerHTML='<div class="ffx-empty" style="grid-column:1/-1">الاختصارات السريعة معطلة من التفضيلات.</div>';return}for(const [title,ic,key]of quickKeys){if(!roleAllowed(key)&&key!=='settings')continue;const b=S('button',{type:'button',class:'ffx-action'});b.innerHTML=`${icon(ic)}<span>${title}</span>`;b.onclick=()=>navigate(key);root.append(b)}if(!root.children.length)root.innerHTML='<div class="ffx-empty">لا تتوفر اختصارات.</div>'}
+const extraQuickKeys=[['الحجوزات','plus','reservations'],['الحضور','clock','attendance'],['العروض','bell','offers'],['الشكاوى والتظلمات','message','cases'],['العملاء','users','customers'],['البرجر','grid','burger'],['المنتهية للكاشير','orders','cashier_finished']];
+let scSig='';function drawShortcuts(){
+ const root=$x('ffx-shortcuts');if(!root)return;
+ const style=cardStyleForScope(),enabled=style.dashboardPanels?.shortcuts!==false;
+ root.hidden=!enabled;$x('ffA08ShortcutsHeading').hidden=!enabled;
+ const library=[...quickKeys,...extraQuickKeys];
+ const chosen=Array.isArray(style.quickActions)?style.quickActions.flatMap(k=>library.filter(x=>x[2]===k)):quickKeys;
+ const visible=chosen.filter(x=>roleAllowed(x[2]));
+ const sig=JSON.stringify([enabled,prefs.fast,visible.map(x=>x[2]),kpiScope()]);
+ if(sig===scSig&&root.childNodes.length)return;scSig=sig;root.replaceChildren();
+ if(!enabled)return;
+ if(!prefs.fast){root.innerHTML='<div class="ffx-empty" style="grid-column:1/-1">الاختصارات السريعة معطلة من التفضيلات.</div>';return}
+ for(const [title,ic,key]of visible){const b=S('button',{type:'button',class:'ffx-action'});b.dataset.a08Action=key;b.innerHTML=icon(ic)+'<span>'+h(title)+'</span>';b.onclick=()=>{if(roleAllowed(key))navigate(key)};root.append(b)}
+ if(!root.children.length)root.innerHTML='<div class="ffx-empty">لا تتوفر اختصارات ضمن صلاحياتك.</div>';
+}
 const mobileRoutes={
  manager:[['الرئيسية','home','home'],['التشغيل','orders','orders'],['التقارير','report','reports'],['تحكم المدير','grid','studio']],
  supervisor:[['الرئيسية','home','home'],['الطلبات','orders','orders'],['الموصلون','bike','drivers'],['التقارير','report','reports']],
@@ -3721,9 +3736,15 @@ window.addEventListener('ff-luxe-session-reset',()=>{activeKey='home';navSig='';
 function setBranchOptions(){const sel=$x('ffx-branch');if(!sel||!userLogged())return;const prev=sel.value;const bs=Array.isArray(data.branches)?data.branches:[];const ids=Array.from(sel.options).slice(1).map(o=>o.value);if(bs.length===ids.length&&bs.every((b,i)=>b.id===ids[i]))return;sel.innerHTML='<option value="">كل الفروع المتاحة</option>'+bs.map(b=>`<option value="${h(b.id)}">${h(b.name)}</option>`).join('');sel.value=bs.some(b=>String(b.id)===prev)?prev:''}
 function visibleOrders(){if(!userLogged())return[];const branch=$x('ffx-branch').value;return (Array.isArray(data.orders)?data.orders:[]).filter(o=>!branch||o.branch_id===branch)}
 let dailyKpi={key:'',request:0,last:0,pending:false,values:null,error:false};
-let activeCardLayout=null;
-window.ffApplyCardLayout=layout=>{activeCardLayout=Array.isArray(layout)?layout.map(x=>({...x})):null;paintKpis()};
-function kpiScope(){return userLogged()?[user.id,data.role,$x('ffx-branch').value].join('|'):''}
+let activeCardLayout=null,activeCardStyle={},activeCardContext='',activeCardSource=null,kpiRenderSignature='';
+function cardContextKey(){return (userLogged()?[user.id,data.role,$x('ffx-branch').value].join('|'):'')+'|'+(matchMedia('(max-width:850px)').matches?'mobile':'desktop')}
+function cardStyleForScope(){return activeCardContext===cardContextKey()?activeCardStyle:{}}
+window.ffApplyCardLayout=(layout,style={},source=null)=>{
+ activeCardLayout=Array.isArray(layout)?layout.map(x=>({...x})):null;
+ activeCardStyle=style&&typeof style==='object'?style:{};activeCardContext=cardContextKey();activeCardSource=source;
+ paintKpis();drawShortcuts()
+};
+function kpiScope(){return userLogged()?[user.id,data.role,$x('ffx-branch').value,JSON.stringify(selfPermissions||{})].join('|'):''}
 function clearDailyKpi(){dailyKpi={key:'',request:dailyKpi.request+1,last:0,pending:false,values:null,error:false}}
 function ensureDailyKpi(){const key=kpiScope();if(key!==dailyKpi.key){clearDailyKpi();dailyKpi.key=key}}
 async function refreshDailyKpi(force=false){
@@ -3741,31 +3762,56 @@ async function refreshDailyKpi(force=false){
 function paintKpis(){
  const target=$x('ffx-kpis');if(!target)return;
  ensureDailyKpi();
- const v=dailyKpi.values,role=data?.role;
+ const role=data?.role,v=(['supervisor','customer_service'].includes(role)&&!canAction('view_reports'))?null:dailyKpi.values;
+ const scopeMatches=activeCardContext===cardContextKey(),style=cardStyleForScope();
+ const layout=scopeMatches?activeCardLayout:null;
+ if(['single','double','triple'].includes(style.layout))target.dataset.a08Cols=style.layout;else delete target.dataset.a08Cols;
+ if(scopeMatches&&activeCardSource!=null)target.dataset.a08Source=String(activeCardSource);else delete target.dataset.a08Source;
  const ordersKey=role==='driver'?'driver':role==='cashier'?'cashier':roleAllowed('orders')?'orders':roleAllowed('reports')?'reports':null;
  const scopedKey=role==='driver'?'driver':role==='cashier'?'cashier':roleAllowed('late')?'late':ordersKey;
  const defaults=[
  {metric:'orders_today',label:'طلبات اليوم التشغيلي',icon:'orders',key:ordersKey,color:'#d31c2b',bg:'#ffeced'},
  {metric:'late_today',label:'طلبات اليوم المتأخرة (60 دقيقة)',icon:'clock',key:scopedKey,color:'#b21b25',bg:'#ffeced'},
  {metric:'completed_today',label:'طلبات اليوم المنجزة',icon:'orders',key:ordersKey,color:'#141414',bg:'#efefef'},
- {metric:'available_drivers',label:'الموصلون المتاحون الآن',icon:'users',key:role==='driver'?'driver':'drivers',color:'#141414',bg:'#efefef'}
+ {metric:'available_drivers',label:'الموصلون المتاحون الآن',icon:'users',key:'drivers',color:'#141414',bg:'#efefef'}
  ];
- const entries=activeCardLayout===null?defaults:activeCardLayout.flatMap(card=>{const base=defaults.find(d=>d.metric===card.metric);return base?[{...base,label:card.label,size:card.size,tone:card.tone}]:[]});
- target.innerHTML=entries.map(e=>{
- const value=v?.[e.metric],known=typeof value==='number'&&Number.isFinite(value)&&value>=0,available=known&&e.key&&roleAllowed(e.key);
+ const entries=layout===null?defaults:layout.flatMap(card=>{
+  const base=defaults.find(d=>d.metric===card.metric);
+  if(!base||(window.ffA08Dashboard&&!window.ffA08Dashboard.cardVisible(card,role,canAction)))return [];
+  return [{...base,label:card.label,size:card.size,tone:card.tone,icon:window.ffA08Dashboard?.icons?.[card.icon]?card.icon:base.icon}]
+ });
+ const cards=entries.map(e=>{
+  const allowedRoster=e.metric!=='available_drivers'||['manager','supervisor','customer_service'].includes(role);
+  const value=allowedRoster?v?.[e.metric]:null,known=typeof value==='number'&&Number.isFinite(value)&&value>=0;
+  const available=!!(known&&e.key&&roleAllowed(e.key));
+  const hint=known?(e.metric==='available_drivers'?'جاهزون ومتصلون':'اليوم '+v.business_day):dailyKpi.error?'غير متاح أو غير مصرح':v?'غير متاح لهذا الدور':'بانتظار البيانات';
+  return {e,value,known,available,hint}
+ });
+ const branch=$x('ffx-branch').value||null;
+ window.ffA08Dashboard?.sync(v,{key:kpiScope()?kpiScope()+'|'+cardContextKey():'',role,branch,branchName:(data?.branches||[]).find(b=>b.id===branch)?.name,style,allowed:new Set(cards.filter(c=>c.available).map(c=>c.e.metric))});
+ const sig=JSON.stringify(cards);
+ if(sig===kpiRenderSignature&&target.children.length===cards.length)return;
+ kpiRenderSignature=sig;
+ const focused=document.activeElement?.closest('#ffx-kpis [data-ffx-metric]');
+ const focusedMetric=focused?.dataset.ffxMetric;
+ target.innerHTML=cards.map(({e,value,known,available,hint})=>{
  const tag=available?'button':'div',action=available?'type="button" data-ffx-kpi="'+e.key+'"':'';
- const hint=known?(e.metric==='available_drivers'?'جاهزون ومتصلون':'اليوم '+v.business_day):dailyKpi.error?'غير متاح أو غير مصرح':v?'غير متاح لهذا الدور':'بانتظار البيانات';
- return `<${tag} ${action} data-ffx-metric="${e.metric}" data-card-size="${h(e.size||'normal')}" data-card-tone="${h(e.tone||'default')}" class="ffx-kpi" style="--kpi-color:${e.color};--kpi-wash:${e.bg}"><div class="ffx-kpi-top"><span class="ffx-kpi-label">${h(e.label)}</span><span class="ffx-kpi-icon">${icon(e.icon)}</span></div><div class="ffx-kpi-value">${known?h(value):'—'}</div><span class="ffx-kpi-footer">${h(hint)}${available?icon('arrow','sm'):''}</span></${tag}>`;
+ return '<'+tag+' '+action+' data-ffx-metric="'+e.metric+'" data-card-size="'+h(e.size||'normal')+'" data-card-tone="'+h(e.tone||'default')+'" class="ffx-kpi" style="--kpi-color:'+e.color+';--kpi-wash:'+e.bg+'"><div class="ffx-kpi-top"><span class="ffx-kpi-label">'+h(e.label)+'</span><span class="ffx-kpi-icon">'+icon(e.icon)+'</span></div><div class="ffx-kpi-value">'+(known?h(value):'—')+'</div><span class="ffx-kpi-footer">'+h(hint)+(available?icon('arrow','sm'):'')+'</span></'+tag+'>';
  }).join('');
- target.querySelectorAll('[data-ffx-kpi]').forEach(b=>b.onclick=()=>navigate(b.dataset.ffxKpi));
+ target.querySelectorAll('[data-ffx-kpi]').forEach(b=>b.onclick=()=>{
+  const route=b.dataset.ffxKpi,metric=b.dataset.ffxMetric;if(!roleAllowed(route))return;
+  const go=()=>{if(roleAllowed(route))navigate(metric==='completed_today'&&roleAllowed('cashier_finished')?'cashier_finished':route)};
+  if(window.ffA08Dashboard)window.ffA08Dashboard.open(metric,b.querySelector('.ffx-kpi-label').textContent,go,b);else go()
+ });
+ if(focusedMetric)target.querySelector('button[data-ffx-metric="'+focusedMetric+'"]')?.focus({preventScroll:true});
 }
-window.addEventListener('ff-luxe-session-reset',()=>{activeCardLayout=null;clearDailyKpi();paintKpis()});
+window.addEventListener('ff-luxe-session-reset',()=>{activeCardLayout=null;activeCardStyle={};activeCardSource=null;activeCardContext='';kpiRenderSignature='';clearDailyKpi();paintKpis();drawShortcuts()});
 function paintOrders(){const container=$x('ffx-order-list');const active=visibleOrders().filter(o=>o.phase!=='delivered'&&!['cancelled','delivered'].includes(o.status));if(!userLogged()){container.innerHTML='<div class="ffx-empty">بعد تسجيل الدخول ستظهر الطلبات الحية المتاحة لحسابك.</div>';return}if(!active.length){container.innerHTML='<div class="ffx-empty">لا توجد طلبات مفتوحة ضمن الفرع المحدد.</div>';return}container.innerHTML=active.slice(0,5).map(o=>{const state=o.phase||'unassigned',tags={unassigned:'بانتظار الإسناد',assigned:'بانتظار الاستلام',on_way:'في الطريق',arrived:'وصل العميل'},status=tags[state]||String(o.status||'قيد التنفيذ'),cl=state==='unassigned'?'waiting':state==='arrived'?'good':'';return `<div class="ffx-order"><div class="ffx-order-main"><strong>طلب #${h(o.number)} <span class="ffx-status ${cl}">${h(status)}</span></strong><p>${h((data?.branches||[]).find(b=>b.id===o.branch_id)?.name||'الفرع')}${o.area?' • '+h(o.area):''} • ${h(o.driver_name||'موصل غير محدد')}</p></div><button class="ffx-smallbtn" data-ffx-order="${h(o.number)}">متابعة ${icon('arrow','sm')}</button></div>`}).join('');container.querySelectorAll('[data-ffx-order]').forEach(b=>b.onclick=()=>focusOrder(b.dataset.ffxOrder))}
 function focusOrder(num){if(roleAllowed('orders')){const search=$x('orderSearch');if(search){search.value=num;search.dispatchEvent(new Event('input',{bubbles:true}))}navigate('orders')}else if(roleAllowed('driver'))navigate('driver');else if(roleAllowed('cashier'))navigate('cashier');else showToast('تفاصيل الطلب غير متاحة لهذا الدور')}
 function paintStatus(){const online=userLogged();$x('ffx-connection-state').textContent=online?'متصل بالحساب':'غير مسجل';$x('ffx-last-update').textContent=online?`تعرض هذه الصفحة بيانات الحساب الحالي. يتم تحديثها مع دورة النظام الأساسية.`:'تسجيل الدخول مطلوب لعرض البيانات الحية.';$x('ffx-live').innerHTML=`<i class="ffx-live-dot" style="background:${online?'#ff3b4a':'#8a8a90'}"></i> ${online?'بيانات حية':'غير متصل'}`;$x('ffx-profile-name').textContent=online?String(user?.email||user?.phone||'مستخدم'): 'نظام فريش فرايز';$x('ffx-profile-role').textContent=online?({manager:'المدير العام',driver:'بوابة الموصل',cashier:'الكاشير',customer_service:'خدمة العملاء',supervisor:'المشرف'}[data.role]||data.role):'لم يتم تسجيل الدخول';$x('ffx-hero-title').textContent=online?({manager:'إدارة ذكية، ورؤية أوضح لكل فرع',driver:'توصيلاتك... بوضوح وسرعة',cashier:'كل طلب في وقته الصحيح',customer_service:'خدمة سريعة، وتجربة عميل أجمل',supervisor:'متابعة دقيقة في كل لحظة'}[data.role]||'مساحة العمل الذكية'):'التحكم في كل التفاصيل، من شاشة واحدة';$x('ffx-hero-new').style.display=roleAllowed('new')?'':'none';$x('ffx-hero-reserve').style.display=roleAllowed('reservations')&&['manager','customer_service'].includes(data?.role)?'':'none';doc.querySelectorAll('[data-ffx-nav="orders"]').forEach(b=>b.hidden=!roleAllowed('orders'));$x('ffx-hero-overdue').style.display=roleAllowed('late')?'':'none';$x('ffx-overdue').style.display=roleAllowed('late')?'':'none'}
 function paintAll(){if(currentKey!==key()){currentKey=key();prefs=readPrefs();ff66Reset();applyPrefs()}setSidebarNav();drawMobile();setBranchOptions();ensureAlertScope();paintKpis();void refreshDailyKpi();paintOrders();drawShortcuts();paintStatus();window.ffDashboardStudio?.sync();window.ffContentStudio?.sync();window.ffContentDelegation?.sync();updateBadge()}
-$x('ffx-branch').onchange=()=>{setSidebarNav();ensureAlertScope();paintKpis();void refreshDailyKpi();paintOrders();void updateOverdue(true)};
-$x('ffx-refresh').onclick=()=>navigate('refresh');$x('ffx-kpi-reload').onclick=()=>navigate('refresh');$x('ffx-bell').onclick=()=>roleAllowed('late')?navigate('late'):roleAllowed('messages')?navigate('messages'):showToast('لا توجد تنبيهات متاحة لحسابك');
+$x('ffx-branch').onchange=()=>{setSidebarNav();ensureAlertScope();paintKpis();drawShortcuts();void refreshDailyKpi();paintOrders();void updateOverdue(true)};
+$x('ffx-refresh').onclick=()=>navigate('refresh');$x('ffx-kpi-reload').onclick=()=>{void refreshDailyKpi(true);navigate('refresh')};$x('ffx-bell').onclick=()=>roleAllowed('late')?navigate('late'):roleAllowed('messages')?navigate('messages'):showToast('لا توجد تنبيهات متاحة لحسابك');
 $x('ffx-hero-new').onclick=()=>navigate('new');$x('ffx-hero-reserve').onclick=()=>{if(['manager','customer_service'].includes(data?.role))ff49OpenReservations();else showToast('الحجز متاح لخدمة العملاء والمدير فقط')};$x('ffx-hero-overdue').onclick=()=>navigate('late');$x('ffx-open-alerts').onclick=()=>{const b=originalButton('late');if($x('ff40AlertsBtn')&&!$x('ff40AlertsBtn').classList.contains('hidden'))$x('ff40AlertsBtn').click();setTimeout(()=>{const el=$x('ff40AlertsPanel');if(el&&!el.classList.contains('hidden'))scrollToEl(el)},120)};
 doc.querySelectorAll('[data-ffx-nav]').forEach(b=>b.onclick=()=>navigate(b.dataset.ffxNav));
 let lastAlertAt=0,alertsLoading=false,alertsInitialized=false,activeKeys=new Set(),lastRepeated=new Map(),alertScope='',alertSerial=0;
@@ -5493,4 +5539,5 @@ center.append(box);
 })();
 </script><script src="./scripts/luxe-a07-elements.js" defer></script>
 <script src="./scripts/luxe-a07-design.js" defer></script>
+<script src="./scripts/luxe-a08-dashboard.js" defer></script>
 <script src="./scripts/luxe-dashboard-studio.js" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script><script defer src="scripts/luxe-a05-branch-policy.js"></script><script defer src="./scripts/luxe-a06-navigation.js"></script></body></html>
