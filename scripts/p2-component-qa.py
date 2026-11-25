@@ -39,6 +39,7 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  current_html=current_html.replace('./scripts/luxe-a07-design.js?v=20261125-step05','./scripts/luxe-a07-design.js')
  current_html=current_html.replace('luxe-shared-photo-menu-20261123.js?v=20261125-step05','luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style')
  current_html=current_html.replace('./scripts/luxe-content-studio.js?v=20261125-step06','./scripts/luxe-content-studio.js')
+ current_html=current_html.replace('luxe-report-center-20261123.js?v=20261125-step06','luxe-report-center-20261123.js?v=20261125-a10')
  assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04, STEP05 and STEP06 asset version'
 else:
  assert current_html==baseline_html,'non-CSS application markup or script changed'
@@ -46,7 +47,7 @@ changed={str(f.relative_to(base)) for f in list((base/'scripts').glob('*.js'))+l
 step03_scripts={'scripts/luxe-a07-elements.js','scripts/luxe-a07-design.js','scripts/luxe-dashboard-studio.js','scripts/luxe-content-studio.js'}
 if os.environ.get('P2_STEP04_REGRESSION')=='1':
  # No unrelated scripts changed; keep all visual/focus/pixel comparisons intact.
- assert changed==step03_scripts|{'scripts/luxe-a08-dashboard.js','scripts/luxe-shared-photo-menu-20261123.js'},changed
+ assert changed==step03_scripts|{'scripts/luxe-a08-dashboard.js','scripts/luxe-shared-photo-menu-20261123.js','scripts/luxe-report-center-20261123.js'},changed
 elif os.environ.get('P2_STEP03_REGRESSION')=='1':
  assert changed==step03_scripts,changed
 else:

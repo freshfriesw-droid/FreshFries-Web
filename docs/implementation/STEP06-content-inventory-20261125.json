@@ -1,8 +1,8 @@
 {
   "base": "a4d579a6b2e1f100c24922be1bc0dc522eb9c26a",
   "existing": 125,
-  "added": 318,
-  "total": 443,
+  "added": 428,
+  "total": 553,
   "registered": [
     {
       "key": "orders.control.ffa06discarddraft",
@@ -172,7 +172,7 @@
       "label": "حقل: السعر بالريال",
       "original": "السعر بالريال",
       "selector": "label:has(+ #ff51ItemPrice)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -190,7 +190,7 @@
       "label": "حقل: سعر العرض",
       "original": "سعر العرض",
       "selector": "label:has(+ #ff51OfferPrice)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -235,7 +235,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(> #ff76Branch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-report-center-20261123.js"
     },
     {
@@ -325,7 +325,7 @@
       "label": "حقل: الحالة",
       "original": "الحالة",
       "selector": "label:has(+ #ff51ArchiveStatus)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -334,7 +334,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(+ #ff51ArchiveBranch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -343,7 +343,7 @@
       "label": "حقل: فرع تقييمات الموصلين",
       "original": "فرع تقييمات الموصلين",
       "selector": "label:has(+ #ff51RatingBranch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -424,7 +424,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(+ #ff41Branch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -478,7 +478,7 @@
       "label": "حقل: النوع",
       "original": "النوع",
       "selector": "label:has(+ #ff41FilterKind)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -487,7 +487,7 @@
       "label": "حقل: الحالة",
       "original": "الحالة",
       "selector": "label:has(+ #ff41FilterStatus)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -505,7 +505,7 @@
       "label": "حقل: المستلمون",
       "original": "المستلمون",
       "selector": "label:has(+ #ff39Role)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -514,7 +514,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(+ #ff39Branch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -595,7 +595,7 @@
       "label": "حقل: تاريخ التسليم",
       "original": "تاريخ التسليم",
       "selector": "label:has(+ #ff42Day)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -604,7 +604,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(+ #ff42Branch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -613,7 +613,7 @@
       "label": "حقل: النقد الواجب توريده (ريال يمني)",
       "original": "النقد الواجب توريده (ريال يمني)",
       "selector": "label:has(+ #ff42CashDue)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -631,7 +631,7 @@
       "label": "حقل: النقد المستلم فعليًا (ريال يمني)",
       "original": "النقد المستلم فعليًا (ريال يمني)",
       "selector": "label:has(+ #ff42CashReceived)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -649,7 +649,7 @@
       "label": "حقل: توضيح المدفوعات غير النقدية أو فروقات التوريد",
       "original": "توضيح المدفوعات غير النقدية أو فروقات التوريد",
       "selector": "label:has(+ #ff42Notes)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -712,7 +712,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(> #ffA05PolicyBranch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a05-branch-policy.js"
     },
     {
@@ -721,7 +721,7 @@
       "label": "حقل: وقت السريان (اختياري)",
       "original": "وقت السريان (اختياري)",
       "selector": "label:has(> #ffA05Effective)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a05-branch-policy.js"
     },
     {
@@ -730,7 +730,7 @@
       "label": "حقل: سبب التغيير",
       "original": "سبب التغيير",
       "selector": "label:has(> #ffA05Reason)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a05-branch-policy.js"
     },
     {
@@ -748,7 +748,7 @@
       "label": "حقل: اليوم",
       "original": "اليوم",
       "selector": "label:has(> #ffA05Day)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a05-branch-policy.js"
     },
     {
@@ -757,7 +757,7 @@
       "label": "حقل: فتح",
       "original": "فتح",
       "selector": "label:has(> #ffA05Open)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a05-branch-policy.js"
     },
     {
@@ -766,7 +766,7 @@
       "label": "حقل: إغلاق",
       "original": "إغلاق",
       "selector": "label:has(> #ffA05CloseTime)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a05-branch-policy.js"
     },
     {
@@ -775,7 +775,7 @@
       "label": "حقل: تبديل الوردية (اختياري)",
       "original": "تبديل الوردية (اختياري)",
       "selector": "label:has(> #ffA05Shift)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a05-branch-policy.js"
     },
     {
@@ -784,7 +784,7 @@
       "label": "حقل: المنطقة",
       "original": "المنطقة",
       "selector": "label:has(> #ffA05Area)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a05-branch-policy.js"
     },
     {
@@ -793,7 +793,7 @@
       "label": "حقل: الرسم بالريال",
       "original": "الرسم بالريال",
       "selector": "label:has(> #ffA05Tariff)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a05-branch-policy.js"
     },
     {
@@ -820,7 +820,7 @@
       "label": "حقل: رقم النسخة",
       "original": "رقم النسخة",
       "selector": "label:has(> #ff47Version)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -829,7 +829,7 @@
       "label": "حقل: عنوان الجولة",
       "original": "عنوان الجولة",
       "selector": "label:has(> #ff47Title)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -847,7 +847,7 @@
       "label": "حقل: الجولات المحفوظة",
       "original": "الجولات المحفوظة",
       "selector": "label:has(> #ff47Runs)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -883,7 +883,7 @@
       "label": "حقل: القسم",
       "original": "القسم",
       "selector": "label:has(> #ff47Category)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -892,7 +892,7 @@
       "label": "حقل: النتيجة",
       "original": "النتيجة",
       "selector": "label:has(> #ff47Filter)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -973,7 +973,7 @@
       "label": "حقل: من تاريخ",
       "original": "من تاريخ",
       "selector": "label:has(+ #ff44From)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -982,7 +982,7 @@
       "label": "حقل: إلى تاريخ",
       "original": "إلى تاريخ",
       "selector": "label:has(+ #ff44To)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1117,7 +1117,7 @@
       "label": "حقل: فلتر الفرع",
       "original": "فلتر الفرع",
       "selector": "label:has(+ #ff40AlertBranch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1135,7 +1135,7 @@
       "label": "حقل: بحث الموظفين",
       "original": "بحث الموظفين",
       "selector": "label:has(> #ffA05StaffSearch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1144,7 +1144,7 @@
       "label": "حقل: الدور",
       "original": "الدور",
       "selector": "label:has(> #ffA05StaffRole)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1153,7 +1153,7 @@
       "label": "حقل: الحالة",
       "original": "الحالة",
       "selector": "label:has(> #ffA05StaffActive)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1162,7 +1162,7 @@
       "label": "حقل: الفرز",
       "original": "الفرز",
       "selector": "label:has(> #ffA05StaffSort)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1171,7 +1171,7 @@
       "label": "حقل: الموظف",
       "original": "الموظف",
       "selector": "label:has(+ #permissionEmployee)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1414,7 +1414,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(+ #orderBranchFilter)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1423,7 +1423,7 @@
       "label": "حقل: الحالة",
       "original": "الحالة",
       "selector": "label:has(+ #orderStatusFilter)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1450,7 +1450,7 @@
       "label": "حقل: الموصل المرشح",
       "original": "الموصل المرشح",
       "selector": "label:has(+ #ff49ManualDriver)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1459,7 +1459,7 @@
       "label": "حقل: سبب اختيار الموصل",
       "original": "سبب اختيار الموصل",
       "selector": "label:has(+ #ff49ManualReason)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1495,7 +1495,7 @@
       "label": "حقل: الأصناف (العدد أولًا، مع السعر أو اسم من المنيو)",
       "original": "الأصناف (العدد أولًا، مع السعر أو اسم من المنيو)",
       "selector": "label:has(+ #ff52LateItems)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1567,7 +1567,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(+ #ff52RouteBranch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1576,7 +1576,7 @@
       "label": "حقل: الموصل",
       "original": "الموصل",
       "selector": "label:has(+ #ff52RouteDriver)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1630,7 +1630,7 @@
       "label": "حقل: بريد الموظف",
       "original": "بريد الموظف",
       "selector": "label:has(+ #addEmail)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1639,7 +1639,7 @@
       "label": "حقل: اسم الموظف",
       "original": "اسم الموظف",
       "selector": "label:has(+ #addName)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1657,7 +1657,7 @@
       "label": "حقل: الدور",
       "original": "الدور",
       "selector": "label:has(+ #addRole)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1666,7 +1666,7 @@
       "label": "حقل: الفرع (للموصل والكاشير ونقطة التجميع)",
       "original": "الفرع (للموصل والكاشير ونقطة التجميع)",
       "selector": "label:has(+ #addBranch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1720,7 +1720,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(> #ff60-branch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1819,7 +1819,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(> #ff4-branch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1828,7 +1828,7 @@
       "label": "حقل: الحالة",
       "original": "الحالة",
       "selector": "label:has(> #ff4-state)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1891,7 +1891,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(> #ff5-branch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1936,7 +1936,7 @@
       "label": "حقل: الحالة التالية",
       "original": "الحالة التالية",
       "selector": "label:has(+ #ff41NextStatus)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -1945,7 +1945,7 @@
       "label": "حقل: الحل أو الملاحظة (إلزامي عند «تم الحل»)",
       "original": "الحل أو الملاحظة (إلزامي عند «تم الحل»)",
       "selector": "label:has(+ #ff41Resolution)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -2008,7 +2008,7 @@
       "label": "حقل: حجم الواجهة",
       "original": "حجم الواجهة",
       "selector": "label:has(+ #ffx-density)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -2017,7 +2017,7 @@
       "label": "حقل: الوضع الليلي تلقائيًا",
       "original": "الوضع الليلي تلقائيًا",
       "selector": "label:has(+ #ffx-auto)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -2035,7 +2035,7 @@
       "label": "حقل: صوت الطلب الجديد والتنبيه",
       "original": "صوت الطلب الجديد والتنبيه",
       "selector": "label:has(+ #ffx-sound)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -2044,7 +2044,7 @@
       "label": "حقل: صوت التأخير",
       "original": "صوت التأخير",
       "selector": "label:has(+ #ffx-delay-sound)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -2053,7 +2053,7 @@
       "label": "حقل: إعادة تنبيه التأخير (دقائق)",
       "original": "إعادة تنبيه التأخير (دقائق)",
       "selector": "label:has(+ #ffx-repeat)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -2098,7 +2098,7 @@
       "label": "حقل: اسم النغمة",
       "original": "اسم النغمة",
       "selector": "label:has(> #ff66-tone-name)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -2170,7 +2170,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(+ #ff40ReportBranch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "index.html"
     },
     {
@@ -2377,7 +2377,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(> #ffA11GrantBranch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a11-communications.js"
     },
     {
@@ -2413,7 +2413,7 @@
       "label": "حقل: نطاق البيانات",
       "original": "نطاق البيانات",
       "selector": "label:has(> #ffA12Scope)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a12-recovery.js"
     },
     {
@@ -2422,7 +2422,7 @@
       "label": "حقل: الفرع",
       "original": "الفرع",
       "selector": "label:has(> #ffA12Branch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a12-recovery.js"
     },
     {
@@ -2431,7 +2431,7 @@
       "label": "حقل: نوع الطلب",
       "original": "نوع الطلب",
       "selector": "label:has(> #ffA12Type)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a12-recovery.js"
     },
     {
@@ -2440,7 +2440,7 @@
       "label": "حقل: من تاريخ (توقيت صنعاء)",
       "original": "من تاريخ (توقيت صنعاء)",
       "selector": "label:has(> #ffA12From)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a12-recovery.js"
     },
     {
@@ -2449,7 +2449,7 @@
       "label": "حقل: إلى تاريخ",
       "original": "إلى تاريخ",
       "selector": "label:has(> #ffA12To)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a12-recovery.js"
     },
     {
@@ -2485,7 +2485,7 @@
       "label": "حقل: اختر نسخة",
       "original": "اختر نسخة",
       "selector": "label:has(> #ffA12Batch)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a12-recovery.js"
     },
     {
@@ -2503,7 +2503,7 @@
       "label": "حقل: النوع",
       "original": "النوع",
       "selector": "label:has(> #ffA12FixtureType)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a12-recovery.js"
     },
     {
@@ -2512,7 +2512,7 @@
       "label": "حقل: تاريخ الاختبار",
       "original": "تاريخ الاختبار",
       "selector": "label:has(> #ffA12FixtureDate)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a12-recovery.js"
     },
     {
@@ -2521,7 +2521,7 @@
       "label": "حقل: اكتب: إنشاء طلب اختبار",
       "original": "اكتب: إنشاء طلب اختبار",
       "selector": "label:has(> #ffA12FixtureConfirm)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a12-recovery.js"
     },
     {
@@ -2548,7 +2548,7 @@
       "label": "حقل: مدة التفويض بالساعات",
       "original": "مدة التفويض بالساعات",
       "selector": "label:has(> #ffA11GrantHours)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-a11-communications.js"
     },
     {
@@ -2593,7 +2593,7 @@
       "label": "حقل: القرار",
       "original": "القرار",
       "selector": "label:has(> #ffA10GrantAllowed)",
-      "mode": "label",
+      "mode": "protected_label",
       "source": "scripts/luxe-report-center-20261123.js"
     },
     {
@@ -2865,6 +2865,1013 @@
       "selector": "#ff39Panel",
       "mode": "guide",
       "source": "existing instructional scope"
+    },
+    {
+      "key": "driver.action.offer_accept",
+      "screen": "driver",
+      "label": "توضيح مع الحفاظ على النص الأصلي: قبول العرض — النص حسب الحالة",
+      "original": "قبول العرض — النص حسب الحالة",
+      "selector": ":is(#driverView,#ff52RoutesPanel,#ffA10DriverFeedback) button[data-accept]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "driver.action.offer_reject",
+      "screen": "driver",
+      "label": "توضيح مع الحفاظ على النص الأصلي: رفض العرض — النص حسب الحالة",
+      "original": "رفض العرض — النص حسب الحالة",
+      "selector": ":is(#driverView,#ff52RoutesPanel,#ffA10DriverFeedback) button[data-reject]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "driver.action.offer_check_reject",
+      "screen": "driver",
+      "label": "توضيح مع الحفاظ على النص الأصلي: التحقق من إذن الرفض — النص حسب الحالة",
+      "original": "التحقق من إذن الرفض — النص حسب الحالة",
+      "selector": ":is(#driverView,#ff52RoutesPanel,#ffA10DriverFeedback) button[data-check-reject]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "driver.action.driver_on_way",
+      "screen": "driver",
+      "label": "توضيح مع الحفاظ على النص الأصلي: في الطريق — النص حسب الحالة",
+      "original": "في الطريق — النص حسب الحالة",
+      "selector": ":is(#driverView,#ff52RoutesPanel,#ffA10DriverFeedback) button[data-progress][data-phase=\"on_way\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "driver.action.driver_arrived",
+      "screen": "driver",
+      "label": "توضيح مع الحفاظ على النص الأصلي: وصلت — النص حسب الحالة",
+      "original": "وصلت — النص حسب الحالة",
+      "selector": ":is(#driverView,#ff52RoutesPanel,#ffA10DriverFeedback) button[data-progress][data-phase=\"arrived\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "driver.action.driver_delivered",
+      "screen": "driver",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تم التسليم — النص حسب الحالة",
+      "original": "تم التسليم — النص حسب الحالة",
+      "selector": ":is(#driverView,#ff52RoutesPanel,#ffA10DriverFeedback) button[data-progress][data-phase=\"delivered\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.order_customer_edit",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تعديل العميل — النص حسب الحالة",
+      "original": "تعديل العميل — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-ff-customer-edit]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.order_auto",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إسناد آلي — النص حسب الحالة",
+      "original": "إسناد آلي — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-auto]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.order_manual",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إسناد يدوي — النص حسب الحالة",
+      "original": "إسناد يدوي — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-manual]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.order_change",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: طلب تعديل — النص حسب الحالة",
+      "original": "طلب تعديل — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-ff50-change]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.order_reassign",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إعادة إسناد — النص حسب الحالة",
+      "original": "إعادة إسناد — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-ff52-reassign]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.order_transfer",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: نقل الموصل — النص حسب الحالة",
+      "original": "نقل الموصل — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-ff49-transfer]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.addition_preview",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: معاينة الإضافة — النص حسب الحالة",
+      "original": "معاينة الإضافة — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-ff75-preview-addition]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.addition_save",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إرسال الإضافة — النص حسب الحالة",
+      "original": "إرسال الإضافة — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-save-addition]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.addition_close",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إغلاق — النص حسب الحالة",
+      "original": "إغلاق — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-close-addition]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "cases.action.case_transition",
+      "screen": "cases",
+      "label": "توضيح مع الحفاظ على النص الأصلي: حفظ الحالة — النص حسب الحالة",
+      "original": "حفظ الحالة — النص حسب الحالة",
+      "selector": ":is(#ff41Panel,#ff41Dialog) button[data-ff41-transition]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "cases.action.case_comment",
+      "screen": "cases",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إرسال التعليق — النص حسب الحالة",
+      "original": "إرسال التعليق — النص حسب الحالة",
+      "selector": ":is(#ff41Panel,#ff41Dialog) button[data-ff41-comment]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.order_toggle_reject",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: صلاحية رفض الموصل — النص حسب الحالة",
+      "original": "صلاحية رفض الموصل — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-toggle-reject]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.order_cancel_addition",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إلغاء الإضافة — النص حسب الحالة",
+      "original": "إلغاء الإضافة — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-cancel-addition]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.order_invoice_addition",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: توثيق الفاتورة — النص حسب الحالة",
+      "original": "توثيق الفاتورة — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-invoice-addition]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.order_invoice_late",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: توثيق الإضافة المتأخرة — النص حسب الحالة",
+      "original": "توثيق الإضافة المتأخرة — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-ff52-invoice]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "driver.action.driver_accept_addition",
+      "screen": "driver",
+      "label": "توضيح مع الحفاظ على النص الأصلي: قبول الإضافة — النص حسب الحالة",
+      "original": "قبول الإضافة — النص حسب الحالة",
+      "selector": ":is(#driverView,#ff52RoutesPanel,#ffA10DriverFeedback) button[data-ff52-accept]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "driver.action.driver_reject_addition",
+      "screen": "driver",
+      "label": "توضيح مع الحفاظ على النص الأصلي: رفض الإضافة — النص حسب الحالة",
+      "original": "رفض الإضافة — النص حسب الحالة",
+      "selector": ":is(#driverView,#ff52RoutesPanel,#ffA10DriverFeedback) button[data-ff52-reject]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "driver.action.driver_pickup_addition",
+      "screen": "driver",
+      "label": "توضيح مع الحفاظ على النص الأصلي: استلام الإضافة — النص حسب الحالة",
+      "original": "استلام الإضافة — النص حسب الحالة",
+      "selector": ":is(#driverView,#ff52RoutesPanel,#ffA10DriverFeedback) button[data-ff52-pickup]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "cashier.action.cashier_receive",
+      "screen": "cashier",
+      "label": "توضيح مع الحفاظ على النص الأصلي: استلام الطلب — النص حسب الحالة",
+      "original": "استلام الطلب — النص حسب الحالة",
+      "selector": ":is(#cashierView,#ffBurgerCashierPanel) button[data-ff49-receive]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "cashier.action.cashier_invoice",
+      "screen": "cashier",
+      "label": "توضيح مع الحفاظ على النص الأصلي: توثيق فاتورة الطلب — النص حسب الحالة",
+      "original": "توثيق فاتورة الطلب — النص حسب الحالة",
+      "selector": ":is(#cashierView,#ffBurgerCashierPanel) button[data-ff49-invoice]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "cashier.action.cashier_burger",
+      "screen": "cashier",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إرسال أمر برجر — النص حسب الحالة",
+      "original": "إرسال أمر برجر — النص حسب الحالة",
+      "selector": ":is(#cashierView,#ffBurgerCashierPanel) button[data-ff-burger-notify]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "cashier.action.cashier_invoice_addition",
+      "screen": "cashier",
+      "label": "توضيح مع الحفاظ على النص الأصلي: توثيق فاتورة الإضافة — النص حسب الحالة",
+      "original": "توثيق فاتورة الإضافة — النص حسب الحالة",
+      "selector": ":is(#cashierView,#ffBurgerCashierPanel) button[data-invoice-addition]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "cashier.action.cashier_invoice_late",
+      "screen": "cashier",
+      "label": "توضيح مع الحفاظ على النص الأصلي: توثيق الإضافة المتأخرة — النص حسب الحالة",
+      "original": "توثيق الإضافة المتأخرة — النص حسب الحالة",
+      "selector": ":is(#cashierView,#ffBurgerCashierPanel) button[data-ff52-invoice]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "assembly.action.assembly_filter_all",
+      "screen": "assembly",
+      "label": "توضيح مع الحفاظ على النص الأصلي: الجميع — النص حسب الحالة",
+      "original": "الجميع — النص حسب الحالة",
+      "selector": ":is(#ffV12AssemblyWorkspace) button[data-assembly-filter=\"all\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "assembly.action.assembly_filter_printed",
+      "screen": "assembly",
+      "label": "توضيح مع الحفاظ على النص الأصلي: بانتظار التحضير — النص حسب الحالة",
+      "original": "بانتظار التحضير — النص حسب الحالة",
+      "selector": ":is(#ffV12AssemblyWorkspace) button[data-assembly-filter=\"printed\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "assembly.action.assembly_filter_preparing",
+      "screen": "assembly",
+      "label": "توضيح مع الحفاظ على النص الأصلي: قيد التحضير — النص حسب الحالة",
+      "original": "قيد التحضير — النص حسب الحالة",
+      "selector": ":is(#ffV12AssemblyWorkspace) button[data-assembly-filter=\"preparing\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "assembly.action.assembly_filter_ready",
+      "screen": "assembly",
+      "label": "توضيح مع الحفاظ على النص الأصلي: جاهز — النص حسب الحالة",
+      "original": "جاهز — النص حسب الحالة",
+      "selector": ":is(#ffV12AssemblyWorkspace) button[data-assembly-filter=\"ready\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "assembly.action.assembly_filter_late",
+      "screen": "assembly",
+      "label": "توضيح مع الحفاظ على النص الأصلي: متأخر — النص حسب الحالة",
+      "original": "متأخر — النص حسب الحالة",
+      "selector": ":is(#ffV12AssemblyWorkspace) button[data-assembly-filter=\"late\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "assembly.action.assembly_filter_priority",
+      "screen": "assembly",
+      "label": "توضيح مع الحفاظ على النص الأصلي: الأولوية — النص حسب الحالة",
+      "original": "الأولوية — النص حسب الحالة",
+      "selector": ":is(#ffV12AssemblyWorkspace) button[data-assembly-filter=\"priority\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "burger_kitchen.action.burger_filter_all",
+      "screen": "burger_kitchen",
+      "label": "توضيح مع الحفاظ على النص الأصلي: المعلقة — النص حسب الحالة",
+      "original": "المعلقة — النص حسب الحالة",
+      "selector": ":is(#ffBurgerKitchenWorkspace) button[data-ff-burger-filter=\"all\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "burger_kitchen.action.burger_filter_sent",
+      "screen": "burger_kitchen",
+      "label": "توضيح مع الحفاظ على النص الأصلي: جديدة — النص حسب الحالة",
+      "original": "جديدة — النص حسب الحالة",
+      "selector": ":is(#ffBurgerKitchenWorkspace) button[data-ff-burger-filter=\"sent\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "burger_kitchen.action.burger_filter_preparing",
+      "screen": "burger_kitchen",
+      "label": "توضيح مع الحفاظ على النص الأصلي: قيد التحضير — النص حسب الحالة",
+      "original": "قيد التحضير — النص حسب الحالة",
+      "selector": ":is(#ffBurgerKitchenWorkspace) button[data-ff-burger-filter=\"preparing\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "burger_kitchen.action.burger_filter_late",
+      "screen": "burger_kitchen",
+      "label": "توضيح مع الحفاظ على النص الأصلي: متأخرة — النص حسب الحالة",
+      "original": "متأخرة — النص حسب الحالة",
+      "selector": ":is(#ffBurgerKitchenWorkspace) button[data-ff-burger-filter=\"late\"]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "staff.action.staff_toggle",
+      "screen": "staff",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تفعيل الحساب — النص حسب الحالة",
+      "original": "تفعيل الحساب — النص حسب الحالة",
+      "selector": ":is(#staffAdminCard) button[data-staff-toggle]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "staff.action.staff_assembly_save",
+      "screen": "staff",
+      "label": "توضيح مع الحفاظ على النص الأصلي: حساب التجميع — النص حسب الحالة",
+      "original": "حساب التجميع — النص حسب الحالة",
+      "selector": ":is(#staffAdminCard) button[data-assembly-save]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "staff.action.staff_assembly_convert",
+      "screen": "staff",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تحويل إلى التجميع — النص حسب الحالة",
+      "original": "تحويل إلى التجميع — النص حسب الحالة",
+      "selector": ":is(#staffAdminCard) button[data-assembly-convert]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "staff.action.staff_edit",
+      "screen": "staff",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تعديل الموظف — النص حسب الحالة",
+      "original": "تعديل الموظف — النص حسب الحالة",
+      "selector": ":is(#staffAdminCard) button[data-ffedit]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "staff.action.staff_save_access",
+      "screen": "staff",
+      "label": "توضيح مع الحفاظ على النص الأصلي: حفظ الوصول — النص حسب الحالة",
+      "original": "حفظ الوصول — النص حسب الحالة",
+      "selector": ":is(#staffAdminCard) button[data-save-access]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "staff.action.staff_permission_save",
+      "screen": "staff",
+      "label": "توضيح مع الحفاظ على النص الأصلي: حفظ الصلاحية — النص حسب الحالة",
+      "original": "حفظ الصلاحية — النص حسب الحالة",
+      "selector": ":is(#staffAdminCard) button[data-permission-save]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "messages.action.message_ack",
+      "screen": "messages",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تأكيد الاطلاع — النص حسب الحالة",
+      "original": "تأكيد الاطلاع — النص حسب الحالة",
+      "selector": ":is(#ff39Panel,#ff39Dialog) button[data-ff39-ack]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "messages.action.message_read",
+      "screen": "messages",
+      "label": "توضيح مع الحفاظ على النص الأصلي: عرض الرسالة — النص حسب الحالة",
+      "original": "عرض الرسالة — النص حسب الحالة",
+      "selector": ":is(#ff39Panel,#ff39Dialog) button[data-ff39-read]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "cases.action.case_open",
+      "screen": "cases",
+      "label": "توضيح مع الحفاظ على النص الأصلي: فتح البلاغ — النص حسب الحالة",
+      "original": "فتح البلاغ — النص حسب الحالة",
+      "selector": ":is(#ff41Panel,#ff41Dialog) button[data-ff41-open]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "finance.action.settlement_select",
+      "screen": "finance",
+      "label": "توضيح مع الحفاظ على النص الأصلي: عرض التسوية — النص حسب الحالة",
+      "original": "عرض التسوية — النص حسب الحالة",
+      "selector": ":is(#ff42Panel,#ffA10FeeEvidence) button[data-ff42-select]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "system.action.qa_case_save",
+      "screen": "system",
+      "label": "توضيح مع الحفاظ على النص الأصلي: حفظ نتيجة الاختبار — النص حسب الحالة",
+      "original": "حفظ نتيجة الاختبار — النص حسب الحالة",
+      "selector": ":is(#ff47QAPanel) button[data-ff47-save]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "reservations.action.reservation_next",
+      "screen": "reservations",
+      "label": "توضيح مع الحفاظ على النص الأصلي: المرحلة التالية — النص حسب الحالة",
+      "original": "المرحلة التالية — النص حسب الحالة",
+      "selector": ":is(#ff49ReservationsPanel) button[data-ff49-reserve-next]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "reservations.action.reservation_cancel",
+      "screen": "reservations",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إلغاء الحجز — النص حسب الحالة",
+      "original": "إلغاء الحجز — النص حسب الحالة",
+      "selector": ":is(#ff49ReservationsPanel) button[data-ff49-reserve-cancel]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.transfer_confirm",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تأكيد النقل — النص حسب الحالة",
+      "original": "تأكيد النقل — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-ff49-confirm-transfer]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.change_approve",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: الموافقة — النص حسب الحالة",
+      "original": "الموافقة — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-ff50-approve]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.change_reject",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: الرفض — النص حسب الحالة",
+      "original": "الرفض — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-ff50-reject]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.change_service",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إجراء خدمة العملاء — النص حسب الحالة",
+      "original": "إجراء خدمة العملاء — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-ff50-service]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.change_pos",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تأكيد MicroPOS — النص حسب الحالة",
+      "original": "تأكيد MicroPOS — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-ff50-pos]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "catalog.action.catalog_item_edit",
+      "screen": "catalog",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تعديل الصنف — النص حسب الحالة",
+      "original": "تعديل الصنف — النص حسب الحالة",
+      "selector": ":is(#ff51CatalogPanel) button[data-ff51-item-edit]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "catalog.action.catalog_item_toggle",
+      "screen": "catalog",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تفعيل الصنف — النص حسب الحالة",
+      "original": "تفعيل الصنف — النص حسب الحالة",
+      "selector": ":is(#ff51CatalogPanel) button[data-ff51-item-toggle]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "catalog.action.catalog_offer_edit",
+      "screen": "catalog",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تعديل العرض — النص حسب الحالة",
+      "original": "تعديل العرض — النص حسب الحالة",
+      "selector": ":is(#ff51CatalogPanel) button[data-ff51-offer-edit]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "catalog.action.catalog_offer_toggle",
+      "screen": "catalog",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تفعيل العرض — النص حسب الحالة",
+      "original": "تفعيل العرض — النص حسب الحالة",
+      "selector": ":is(#ff51CatalogPanel) button[data-ff51-offer-toggle]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "customers.action.customer_open",
+      "screen": "customers",
+      "label": "توضيح مع الحفاظ على النص الأصلي: فتح العميل — النص حسب الحالة",
+      "original": "فتح العميل — النص حسب الحالة",
+      "selector": ":is(#ff51CustomersPanel) button[data-ff51-customer]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "driver.action.route_edit",
+      "screen": "driver",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تعديل التوجيه — النص حسب الحالة",
+      "original": "تعديل التوجيه — النص حسب الحالة",
+      "selector": ":is(#driverView,#ff52RoutesPanel,#ffA10DriverFeedback) button[data-ff52-route-edit]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "dashboard.action.lifecycle_action",
+      "screen": "dashboard",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إجراء المرحلة — النص حسب الحالة",
+      "original": "إجراء المرحلة — النص حسب الحالة",
+      "selector": ":is(#ffx-dashboard,#ff60-panel,#ff5-modal) button[data-ff60-action]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "dashboard.action.watch_tab",
+      "screen": "dashboard",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تبويب المتابعة — النص حسب الحالة",
+      "original": "تبويب المتابعة — النص حسب الحالة",
+      "selector": ":is(#ffx-dashboard,#ff60-panel,#ff5-modal) button[data-ff5-tab]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "dashboard.action.watch_find",
+      "screen": "dashboard",
+      "label": "توضيح مع الحفاظ على النص الأصلي: فتح الطلب — النص حسب الحالة",
+      "original": "فتح الطلب — النص حسب الحالة",
+      "selector": ":is(#ffx-dashboard,#ff60-panel,#ff5-modal) button[data-ff5-find]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "cashier.action.cashier_customer_edit",
+      "screen": "cashier",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تعديل بيانات العميل — النص حسب الحالة",
+      "original": "تعديل بيانات العميل — النص حسب الحالة",
+      "selector": ":is(#cashierView,#ffBurgerCashierPanel) button[data-ff-customer-edit]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "dashboard.action.dashboard_order_follow",
+      "screen": "dashboard",
+      "label": "توضيح مع الحفاظ على النص الأصلي: متابعة الطلب — النص حسب الحالة",
+      "original": "متابعة الطلب — النص حسب الحالة",
+      "selector": ":is(#ffx-dashboard,#ff60-panel,#ff5-modal) button[data-ffx-order]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "cashier.action.cashier_cancel_ack",
+      "screen": "cashier",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إقرار مراجعة الإلغاء — النص حسب الحالة",
+      "original": "إقرار مراجعة الإلغاء — النص حسب الحالة",
+      "selector": ":is(#cashierView,#ffBurgerCashierPanel) button[data-ff-luxe-ack]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "orders.action.orders_rate_driver_open",
+      "screen": "orders",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تقييم الموصل — النص حسب الحالة",
+      "original": "تقييم الموصل — النص حسب الحالة",
+      "selector": ":is(#staffOrders,#serviceOnly,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel) button[data-ff-luxe-csrate]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "driver.action.driver_grievance_open",
+      "screen": "driver",
+      "label": "توضيح مع الحفاظ على النص الأصلي: فتح التظلم — النص حسب الحالة",
+      "original": "فتح التظلم — النص حسب الحالة",
+      "selector": ":is(#driverView,#ff52RoutesPanel,#ffA10DriverFeedback) button[data-a10-appeal]",
+      "mode": "protected",
+      "source": "A07 dynamic action registry"
+    },
+    {
+      "key": "cashier.stage.printed",
+      "screen": "cashier",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تم قطع الطلب في برنامج الكاشير",
+      "original": "تم قطع الطلب في برنامج الكاشير",
+      "selector": "#cashierView button[data-cashier][data-stage=\"printed\"]",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "cashier.stage.preparing",
+      "screen": "cashier",
+      "label": "توضيح مع الحفاظ على النص الأصلي: بدء التحضير",
+      "original": "بدء التحضير",
+      "selector": "#cashierView button[data-cashier][data-stage=\"preparing\"]",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "cashier.stage.ready",
+      "screen": "cashier",
+      "label": "توضيح مع الحفاظ على النص الأصلي: الطلب جاهز",
+      "original": "الطلب جاهز",
+      "selector": "#cashierView button[data-cashier][data-stage=\"ready\"]",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "cashier.stage.handed_over",
+      "screen": "cashier",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تم تسليم الطلب للموصل",
+      "original": "تم تسليم الطلب للموصل",
+      "selector": "#cashierView button[data-cashier][data-stage=\"handed_over\"]",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "login.title",
+      "screen": "login",
+      "label": "توضيح مع الحفاظ على النص الأصلي: 🔐 دخول نظام Fresh Fries",
+      "original": "🔐 دخول نظام Fresh Fries",
+      "selector": "#loginOverlay .loginbox > h2",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.description",
+      "screen": "login",
+      "label": "توضيح مع الحفاظ على النص الأصلي: أدخل بيانات حسابك لتظهر واجهتك بحسب صلاحياتك وفرعك.",
+      "original": "أدخل بيانات حسابك لتظهر واجهتك بحسب صلاحياتك وفرعك.",
+      "selector": "#loginOverlay .loginbox > p.muted",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.username",
+      "screen": "login",
+      "label": "توضيح مع الحفاظ على النص الأصلي: اسم المستخدم",
+      "original": "اسم المستخدم",
+      "selector": "#loginOverlay label[for=email]",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.field.password",
+      "screen": "login",
+      "label": "توضيح مع الحفاظ على النص الأصلي: كلمة المرور",
+      "original": "كلمة المرور",
+      "selector": "#loginOverlay label:has(+ #password)",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.control.signin",
+      "screen": "login",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تسجيل الدخول",
+      "original": "تسجيل الدخول",
+      "selector": "#loginBtn",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.control.apply",
+      "screen": "login",
+      "label": "توضيح مع الحفاظ على النص الأصلي: 📝 تقديم طلب انضمام",
+      "original": "📝 تقديم طلب انضمام",
+      "selector": "#ff61ApplyToggle",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.control.track",
+      "screen": "login",
+      "label": "توضيح مع الحفاظ على النص الأصلي: 🔎 متابعة طلبي",
+      "original": "🔎 متابعة طلبي",
+      "selector": "#ff61StatusToggle",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.control.customer",
+      "screen": "login",
+      "label": "توضيح مع الحفاظ على النص الأصلي: 👤 متابعة طلباتي",
+      "original": "👤 متابعة طلباتي",
+      "selector": "#ff71CustomerToggle",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.control.send_code",
+      "screen": "login",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إرسال رمز التحقق",
+      "original": "إرسال رمز التحقق",
+      "selector": "#ff71CustomerSend",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.control.verify_code",
+      "screen": "login",
+      "label": "توضيح مع الحفاظ على النص الأصلي: تأكيد الرقم وعرض طلباتي",
+      "original": "تأكيد الرقم وعرض طلباتي",
+      "selector": "#ff71CustomerVerify",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.control.apply_submit",
+      "screen": "login",
+      "label": "توضيح مع الحفاظ على النص الأصلي: إرسال طلب الانضمام",
+      "original": "إرسال طلب الانضمام",
+      "selector": "#ff61ApplySend",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "login.control.track_submit",
+      "screen": "login",
+      "label": "توضيح مع الحفاظ على النص الأصلي: عرض الحالة",
+      "original": "عرض الحالة",
+      "selector": "#ff61TrackSend",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "login"
+    },
+    {
+      "key": "customer_portal.title",
+      "screen": "customer_portal",
+      "label": "توضيح مع الحفاظ على النص الأصلي: العنوان بحسب نوع الحساب",
+      "original": "العنوان بحسب نوع الحساب",
+      "selector": "#ff28Title",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "customer_portal"
+    },
+    {
+      "key": "customer_portal.control.refresh",
+      "screen": "customer_portal",
+      "label": "نص: تحديث",
+      "original": "تحديث",
+      "selector": "#ff28Refresh",
+      "mode": "text",
+      "source": "index.html",
+      "publicScreen": "customer_portal"
+    },
+    {
+      "key": "customer_portal.control.logout",
+      "screen": "customer_portal",
+      "label": "توضيح مع الحفاظ على النص الأصلي: خروج",
+      "original": "خروج",
+      "selector": "#ff28Logout",
+      "mode": "protected",
+      "source": "index.html",
+      "publicScreen": "customer_portal"
+    },
+    {
+      "key": "customer_portal.field.name",
+      "screen": "customer_portal",
+      "label": "توضيح مع الحفاظ على النص الأصلي: الاسم",
+      "original": "الاسم",
+      "selector": "#ff28Portal label:has(> #ff28Name)",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "customer_portal"
+    },
+    {
+      "key": "customer_portal.field.role",
+      "screen": "customer_portal",
+      "label": "توضيح مع الحفاظ على النص الأصلي: الوظيفة المطلوبة",
+      "original": "الوظيفة المطلوبة",
+      "selector": "#ff28Portal label:has(> #ff28Role)",
+      "mode": "protected_label",
+      "source": "index.html",
+      "publicScreen": "customer_portal"
+    },
+    {
+      "key": "reports.section.summary",
+      "screen": "reports",
+      "label": "نص: الملخص اليومي",
+      "original": "الملخص اليومي",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.finance",
+      "screen": "reports",
+      "label": "نص: المبالغ المسجلة ورسوم التوصيل",
+      "original": "المبالغ المسجلة ورسوم التوصيل",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.orders",
+      "screen": "reports",
+      "label": "نص: الطلبات والإلغاءات",
+      "original": "الطلبات والإلغاءات",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.branches",
+      "screen": "reports",
+      "label": "نص: الفروع",
+      "original": "الفروع",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.drivers",
+      "screen": "reports",
+      "label": "نص: أداء الموصلين",
+      "original": "أداء الموصلين",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.staff",
+      "screen": "reports",
+      "label": "نص: موظفو خدمة العملاء",
+      "original": "موظفو خدمة العملاء",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.areas",
+      "screen": "reports",
+      "label": "نص: العملاء والمناطق",
+      "original": "العملاء والمناطق",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.items",
+      "screen": "reports",
+      "label": "نص: الأصناف الأكثر طلباً",
+      "original": "الأصناف الأكثر طلباً",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.ratings",
+      "screen": "reports",
+      "label": "نص: التقييمات",
+      "original": "التقييمات",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.cases",
+      "screen": "reports",
+      "label": "نص: الشكاوى والتظلمات",
+      "original": "الشكاوى والتظلمات",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.attendance",
+      "screen": "reports",
+      "label": "نص: الدوام والاستراحات",
+      "original": "الدوام والاستراحات",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.analytics",
+      "screen": "reports",
+      "label": "نص: التحليلات المتقدمة",
+      "original": "التحليلات المتقدمة",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.comparisons",
+      "screen": "reports",
+      "label": "نص: المقارنات",
+      "original": "المقارنات",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.section.approval",
+      "screen": "reports",
+      "label": "نص: اعتماد المدير",
+      "original": "اعتماد المدير",
+      "selector": "",
+      "mode": "report",
+      "source": "report center, on-screen/PDF heading"
+    },
+    {
+      "key": "reports.success",
+      "screen": "reports",
+      "label": "نص: تم إعداد التقرير",
+      "original": "تم إعداد التقرير",
+      "selector": "",
+      "mode": "runtime",
+      "source": "report center status"
+    },
+    {
+      "key": "reports.error",
+      "screen": "reports",
+      "label": "نص: تعذر إعداد التقرير",
+      "original": "تعذر إعداد التقرير",
+      "selector": "",
+      "mode": "runtime",
+      "source": "report center status"
+    },
+    {
+      "key": "reports.approval_success",
+      "screen": "reports",
+      "label": "نص: تم توثيق اعتماد المدير وتاريخ حفظه.",
+      "original": "تم توثيق اعتماد المدير وتاريخ حفظه.",
+      "selector": "",
+      "mode": "runtime",
+      "source": "report center status"
+    },
+    {
+      "key": "reports.approval_error",
+      "screen": "reports",
+      "label": "نص: فشل الاعتماد",
+      "original": "فشل الاعتماد",
+      "selector": "",
+      "mode": "runtime",
+      "source": "report center status"
     }
   ],
   "previousRegistryCoverage": [
@@ -4806,52 +5813,7 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "loginBtn",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff61ApplyToggle",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff61StatusToggle",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff71CustomerToggle",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff71CustomerSend",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff71CustomerVerify",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff61ApplySend",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff61TrackSend",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
       "id": "email",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "password",
       "screen": "login",
       "reason": "public or login; separate safe public read policy not established"
     },
@@ -4941,21 +5903,6 @@
       "reason": "public or login; separate safe public read policy not established"
     },
     {
-      "id": "ff28Refresh",
-      "screen": "customer_portal",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff28Logout",
-      "screen": "customer_portal",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff28Title",
-      "screen": "customer_portal",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
       "id": "ff28State",
       "screen": "customer_portal",
       "reason": "public or login; separate safe public read policy not established"
@@ -4976,93 +5923,8 @@
       "reason": "public or login; separate safe public read policy not established"
     },
     {
-      "id": "offer_accept",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "offer_reject",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "offer_check_reject",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_on_way",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_arrived",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_delivered",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_customer_edit",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_auto",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_manual",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_change",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_reassign",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_transfer",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "order_cancel",
       "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "addition_preview",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "addition_save",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "addition_close",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "case_transition",
-      "screen": "cases",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "case_comment",
-      "screen": "cases",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
@@ -5216,11 +6078,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "order_toggle_reject",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "order_open_addition",
       "screen": "orders",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -5231,248 +6088,8 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "order_cancel_addition",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_invoice_addition",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "order_invoice_late",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_accept_addition",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_reject_addition",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_pickup_addition",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "cashier_receive",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "cashier_invoice",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "cashier_burger",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "cashier_invoice_addition",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "cashier_invoice_late",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "assembly_filter_all",
-      "screen": "assembly",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "assembly_filter_printed",
-      "screen": "assembly",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "assembly_filter_preparing",
-      "screen": "assembly",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "assembly_filter_ready",
-      "screen": "assembly",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "assembly_filter_late",
-      "screen": "assembly",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "assembly_filter_priority",
-      "screen": "assembly",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "burger_filter_all",
-      "screen": "burger_kitchen",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "burger_filter_sent",
-      "screen": "burger_kitchen",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "burger_filter_preparing",
-      "screen": "burger_kitchen",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "burger_filter_late",
-      "screen": "burger_kitchen",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "burger_order_timer",
       "screen": "burger_kitchen",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "staff_toggle",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "staff_assembly_save",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "staff_assembly_convert",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "staff_edit",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "staff_save_access",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "staff_permission_save",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "message_ack",
-      "screen": "messages",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "message_read",
-      "screen": "messages",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "case_open",
-      "screen": "cases",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "settlement_select",
-      "screen": "finance",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "qa_case_save",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "reservation_next",
-      "screen": "reservations",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "reservation_cancel",
-      "screen": "reservations",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "transfer_confirm",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "change_approve",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "change_reject",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "change_service",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "change_pos",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "catalog_item_edit",
-      "screen": "catalog",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "catalog_item_toggle",
-      "screen": "catalog",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "catalog_offer_edit",
-      "screen": "catalog",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "catalog_offer_toggle",
-      "screen": "catalog",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "customer_open",
-      "screen": "customers",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "route_edit",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "lifecycle_action",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "watch_tab",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "watch_find",
-      "screen": "dashboard",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
@@ -5801,11 +6418,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "cashier_customer_edit",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "assembly_stage_action",
       "screen": "assembly",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -5961,18 +6573,8 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "dashboard_order_follow",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "system_theme_choice",
       "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "cashier_cancel_ack",
-      "screen": "cashier",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
@@ -6036,16 +6638,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "orders_rate_driver_open",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_grievance_open",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "orders_rate_star",
       "screen": "orders",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -6086,5 +6678,5 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     }
   ],
-  "warning": "Static inventory is not proof of mounted coverage; dynamic/public and remaining texts require review."
+  "warning": "Remaining entries include data/status regions, conditional controls, and uncovered static content; not claimed complete."
 }
