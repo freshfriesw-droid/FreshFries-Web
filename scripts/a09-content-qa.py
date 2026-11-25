@@ -62,7 +62,7 @@ with sync_playwright() as pw:
  ctx.route("**/*",lambda r:r.continue_() if r.request.url.startswith(origin) else r.abort())
  page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,"manager")
  page.on("dialog",lambda d:d.accept())
- page.evaluate("""async ()=>{await ffContentDelegation.sync(true);window.__a09OriginalCancel=document.createElement('button');window.__a09OriginalCancel.dataset.cancelOrder='qa-order';window.__a09OriginalCancel.textContent='إلغاء الطلب';document.getElementById('staffOrders').append(window.__a09OriginalCancel);
+ page.evaluate("""async ()=>{await ffContentDelegation.sync(true);window.__a09OriginalCancel=document.querySelector('#staffOrders [data-cancel-order=qa-order]');window.__a09OriginalCancelText=window.__a09OriginalCancel.textContent.trim();
  data.orders=[{id:'qa-order',number:123,branch_id:'b1',customer_name:'عميل مأذون',driver_name:'موصل مأذون',delivery_fee:500}];
  window.__a09Content=[{content_key:'nav.orders',body:'متابعة اختبارية',revision:1},{content_key:'orders.cancel',body:'إلغاء تجريبي',revision:2},{content_key:'orders.guidance',body:'**راجع**\\n- [فتح النظام](https://delivery.freshfriesz.com/)',revision:3},{content_key:'notices.order_summary',body:'طلب {order_number} {customer_name} {driver_name} {delivery_fee}',revision:4},{content_key:'notices.delayed',body:'طلب {order_number} {customer_name}',revision:5},{content_key:'reports.pdf_title',body:'عنوان تقرير اختباري',revision:6},{content_key:'reports.pdf_note',body:'<script>unsafe</script>',revision:7}];await ffContentStudio.sync(true)}""")
  assert page.locator("#staffOrders [data-cancel-order=qa-order]").inner_text().strip()=="إلغاء تجريبي"
@@ -75,7 +75,7 @@ with sync_playwright() as pw:
  assert page.evaluate("()=>ffContentStudio.notice('notices.delayed','fallback',123,'b1')")=="طلب 123 —"
  assert page.evaluate("async ()=>await ffContentStudio.reportText('b1')")=={"reports.pdf_title":"عنوان تقرير اختباري"}
  page.evaluate("""async ()=>{window.__a09Content=[];await ffContentStudio.sync(true)}""")
- assert page.locator("#staffOrders [data-cancel-order=qa-order]").inner_text().strip()=="إلغاء الطلب"
+ assert page.locator("#staffOrders [data-cancel-order=qa-order]").inner_text().strip()==page.evaluate("window.__a09OriginalCancelText")
  assert page.locator('[data-ff-guidance="orders.guidance"] a').count()==0
  page.locator("#ff82Open").click()
  dlg=page.locator("#ff82Delegation")
