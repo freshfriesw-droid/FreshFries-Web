@@ -135,8 +135,11 @@ def check_step09():
    assert "900002" in a.locator("#staffOrders").inner_text()
    # An existing addition editor must preserve the very same textarea and
    # cursor during a second incoming order (different branch again).
-   a.locator('[data-open-addition="qa-existing"]').evaluate("(e)=>e.click()")
-   a.wait_for_function("()=>!!document.querySelector('#additionItemsInput')")
+   # Navigate through the real order route, expanding its collapsed section,
+   # before opening the addition form. A hidden textarea cannot receive focus.
+   a.locator('[data-ffx-nav="orders"]').first.evaluate("(e)=>e.click()")
+   a.locator('[data-open-addition="qa-existing"]').click()
+   a.locator('#additionItemsInput').wait_for(state="visible")
    a.evaluate("""()=>{const e=document.querySelector('#additionItemsInput');e.value='1 تشكن بدون شطة\\nملاحظة: إضافة';e.dispatchEvent(new Event('input',{bubbles:true}));e.focus();e.setSelectionRange(2,7);window.qaAdditionNode=e;}""")
    addition_before=a.evaluate("""()=>({value:qaAdditionNode.value,start:qaAdditionNode.selectionStart,end:qaAdditionNode.selectionEnd,focus:document.activeElement===qaAdditionNode})""")
    assert addition_before["focus"],addition_before
