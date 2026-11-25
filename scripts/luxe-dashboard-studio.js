@@ -48,25 +48,30 @@
   }const constrain=()=>{const pub=appearance.publicScreen(fields.screen.value);fields.role.options[0].disabled=!pub;if(pub){fields.role.value='all';fields.branch.value=''}else if(fields.role.value==='all')fields.role.value='manager';fields.role.disabled=pub;fields.branch.disabled=pub};fields.screen.addEventListener('change',constrain);fields.constrain=constrain;scopeCompare.querySelector('[data-scope-targets]').append(box);scopeTargets.push(fields);
  }
  const scopeStatus=scopeCompare.querySelector('[data-step03-compare-status]'),scopeResults=scopeCompare.querySelector('[data-step03-compare-results]');
- function clearScopeComparison(){scopeStatus.textContent='';scopeResults.replaceChildren()}
+ let scopeSnapshot='';
+ function clearScopeComparison(){scopeSnapshot='';scopeStatus.textContent='';scopeResults.replaceChildren()}
+ const scopeDraft=()=>({p_screen_scope:field('screen').value,p_role_scope:field('role').value,p_branch_scope:field('branch').value||null,p_device_scope:field('device').value,p_pack:field('pack').value,p_style:readStyle()});
+ const scopeSelection=()=>scopeTargets.map(t=>({p_target_screen:t.screen.value,p_target_role:t.role.value,p_target_branch:t.branch.value||null,p_target_device:t.device.value}));
+ const scopeSignature=()=>JSON.stringify([scopeDraft(),scopeSelection()]);
+ function invalidateScopeComparison(){if(scopeSnapshot&&scopeSnapshot!==scopeSignature()){clearScopeComparison();scopeStatus.textContent='تغيّرت المسودة أو النطاقات؛ أعد المعاينة قبل الاعتماد.'}}
  function initScopeComparison(){clearScopeComparison();scopeCompare.open=false;for(const [i,t] of scopeTargets.entries()){t.branch.replaceChildren(...Array.from(field('branch').options,o=>o.cloneNode(true)));t.screen.value=field('screen').value==='all'?'dashboard':field('screen').value;t.role.value=field('role').value==='all'?'manager':field('role').value;t.branch.value=field('branch').value;t.device.value=i?'desktop':'mobile';t.constrain()}}
  scopeCompare.querySelector('[data-step03-compare]').onclick=()=>void run(async(token,who)=>{
   clearScopeComparison();scopeStatus.textContent='جاري حساب طبقات التصميم…';
-  const draft={p_screen_scope:field('screen').value,p_role_scope:field('role').value,p_branch_scope:field('branch').value||null,p_device_scope:field('device').value,p_pack:field('pack').value,p_style:readStyle()};
-  const targets=scopeTargets.map(t=>({p_target_screen:t.screen.value,p_target_role:t.role.value,p_target_branch:t.branch.value||null,p_target_device:t.device.value}));
+  const draft=scopeDraft(),targets=scopeSelection(),snapshot=scopeSignature();scopeSnapshot=snapshot;
   try{
    const rows=await Promise.all(targets.map(t=>rpc('ff_a07_preview_scope',{...draft,...t})));
-   if(!valid(token,who))return;
+   if(!valid(token,who)||scopeSnapshot!==snapshot)return;
+   if(scopeSignature()!==snapshot){invalidateScopeComparison();return}
    for(const [i,row] of rows.entries()){
     if(!row?.before||!row?.after)throw Error('لم تصل نتيجة المعاينة');
-    const target=targets[i],box=document.createElement('section'),heading=document.createElement('h4');heading.textContent='النطاق '+(i+1)+' · '+screenLabel(target.p_target_screen)+' · '+roles[target.p_target_role]+' · '+(target.p_target_device==='mobile'?'جوال':'كمبيوتر');box.append(heading);
+    const target=targets[i],box=document.createElement('section'),heading=document.createElement('h4');heading.textContent='النطاق '+(i+1)+' · '+screenLabel(target.p_target_screen)+' · '+roles[target.p_target_role]+' · '+(target.p_target_branch?(data.branches?.find(b=>b.id===target.p_target_branch)?.name||'فرع محدد'):'دون تخصيص فرع')+' · '+(target.p_target_device==='mobile'?'جوال':'كمبيوتر');box.append(heading);
     const state=document.createElement('p');state.textContent=row.applies?'النطاق مشمول بالمسودة؛ تبقى الأولويات الأكثر تخصيصًا فعالة.':'خارج نطاق المسودة — لا تغيير.';box.append(state);
     const grid=document.createElement('div');grid.className='ff-a07-compare-grid';
     for(const [label,value] of [['قبل',row.before],['بعد',row.after]]){const col=document.createElement('div'),h=document.createElement('b');h.textContent=label;col.append(h,appearance.demoCard(target.p_target_screen,value.pack,value.style_config));grid.append(col)}
-    box.append(grid);const source=document.createElement('p');const changed=Object.entries(row.after_sources||{}).filter(([key,id])=>id===-1).map(([key])=>key);source.textContent='خصائص مصدرها المسودة: '+(changed.join(' · ')||'لا توجد');box.append(source);scopeResults.append(box);
+    box.append(grid);const source=document.createElement('details'),summary=document.createElement('summary');summary.textContent='مصدر كل خاصية قبل وبعد المسودة';source.append(summary);const table=document.createElement('table'),header=table.createTHead().insertRow();for(const label of ['الخاصية','قبل','بعد']){const th=document.createElement('th');th.textContent=label;header.append(th)}const body=table.createTBody(),before=row.before_sources||{},after=row.after_sources||{};for(const key of [...new Set([...Object.keys(before),...Object.keys(after)])].sort()){const tr=body.insertRow(),label=window.ffA07Elements?.sourceLabel(key)||appearance.tokens[key]?.[0]||key;for(const value of [label,sourceRevision(before[key]),sourceRevision(after[key])])tr.insertCell().textContent=value}if(!body.rows.length){const cell=body.insertRow().insertCell();cell.colSpan=3;cell.textContent='الخصائص الأساسية للحزمة'}source.append(table);box.append(source);scopeResults.append(box);
    }
    scopeStatus.textContent='تم حساب النطاقين دون حفظ أي تعديل.';
-  }catch(e){if(valid(token,who)){clearScopeComparison();scopeStatus.textContent='تعذرت المعاينة الفعلية: '+e.message}}
+  }catch(e){if(valid(token,who)&&scopeSnapshot===snapshot){clearScopeComparison();scopeStatus.textContent='تعذرت المعاينة الفعلية: '+e.message}}
  });
  const setStyle=v=>{appearance.setStyle(form,v);a08.set(form,v)};
  const dashboard=document.getElementById('ffx-dashboard'),caption=document.getElementById('ffx-hero-sub'),original=caption.textContent;
@@ -160,7 +165,7 @@
    apply(version,version?.card_layout??null,roleVersion);appearance.apply(rows);
   }catch{/* Keep the last confirmed design only for the same account and scope. */}
  }
- function reset(){editorActor='';clearSource();appearance.clear();serial++;session++;context='';last=0;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();setStyle({});resetCards(null);status.textContent='';if(dlg.open)dlg.close();apply(null)}
+ function reset(){editorActor='';clearScopeComparison();clearSource();appearance.clear();serial++;session++;context='';last=0;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();setStyle({});resetCards(null);status.textContent='';if(dlg.open)dlg.close();apply(null)}
  const sampleNav={all:['الرئيسية','الطلبات','المزيد'],manager:['الرئيسية','طلب جديد','الطلبات','تحكم المدير','المزيد'],supervisor:['الرئيسية','الطلبات','المزيد'],customer_service:['الرئيسية','طلب جديد','الطلبات','المزيد'],cashier:['الرئيسية','شاشة الكاشير','المزيد'],driver:['الرئيسية','مهامي','المزيد'],assembly:['الرئيسية','المزيد'],burger_kitchen:['الرئيسية','المزيد']};
  function luminance(hex){
   const parts=/^#([0-9a-f]{6})$/i.exec(hex.trim());if(!parts)return null;
@@ -168,10 +173,12 @@
   return v[0]*0.2126+v[1]*0.7152+v[2]*0.0722;
  }
  function sourceEl(name){return dlg.querySelector('[data-source-'+name+']')}
+ function sourceRevision(id){return id===-1?'المسودة':id==null?'الأساسي / الحزمة':'#'+id}
  function clearSource(){
   clearTimeout(sourceTimer);sourceSerial++;sourceKey='';
   sourceEl('status').textContent='';sourceEl('details').hidden=true;
   for(const name of ['pack','bar','caption','layers'])sourceEl(name).textContent='';
+  window.ffA07Elements?.setSources(form,null);
  }
  function sourceRefresh(force=false){
   if(!dlg.open||!manager())return;
@@ -189,18 +196,18 @@
     if(request!==sourceSerial||token!==session||who!==actor()||!manager()||!dlg.open)return;
     const row=rows?.[0],deviceLabel={all:'كل الأجهزة',mobile:'الجوال',desktop:'الكمبيوتر'};
     const branchLabel=id=>data.branches?.find(item=>item.id===id)?.name||(id?'فرع محدد':'دون تخصيص فرع');
-    if(!row){sourceEl('status').textContent='التصميم الأساسي للنظام — لا يوجد إصدار منشور مطابق لهذا النطاق ('+roles[role]+' · '+branchLabel(b)+' · '+deviceLabel[d]+').';return}
+    if(!row){sourceEl('status').textContent='التصميم الأساسي للنظام — لا يوجد إصدار منشور مطابق لهذا النطاق ('+roles[role]+' · '+branchLabel(b)+' · '+deviceLabel[d]+').';window.ffA07Elements?.setSources(form,{});return}
     sourceEl('status').textContent='الإصدار #'+row.id+' · '+screenLabel(row.screen_scope)+' · '+roles[row.role_scope]+' · '+branchLabel(row.branch_id)+' · '+deviceLabel[row.device];
     sourceEl('pack').textContent=row.pack;sourceEl('bar').textContent=Array.from(field('bar').options).find(o=>o.value===row.bar)?.textContent||row.bar;
     sourceEl('caption').textContent=row.layout_text||original;sourceEl('details').hidden=false;
-    try{const layers=await rpc('ff_a07_manager_style_layers',{p_screen:screen,p_role:role,p_branch:b,p_device:d});if(request!==sourceSerial||token!==session||who!==actor()||!manager()||!dlg.open)return;const api=window.ffA07Elements;const lines=Object.entries(layers?.sources||{}).map(([k,id])=>{const parts=k.split('.');if(parts[0]==='elements'){const [,group,key,property]=parts;if(key&&property){const rows=layers.style?.elements?.[group]||[],index=rows.findIndex(e=>e.key===key),value=property==='order'?index+1:rows[index]?.[property];const shown=api?.properties[property]?.[value]||({shape:api?.shapes,size:api?.sizes}[property]?.[value])||value;return (api?.labels[group]||group)+' / '+(api?.itemLabels[key]||key)+' / '+(api?.propertyLabels[property]||({shape:'الشكل',size:'الحجم',order:'الترتيب'}[property])||property)+' = '+(shown??'—')+' ← #'+id;}return (api?.labels[group]||group)+' ← #'+id}return (appearance.tokens[k]?.[0]||k)+' = '+(appearance.tokens[k]?.slice(1).find(x=>x[0]===layers.style?.[k])?.[1]||layers.style?.[k]||'—')+' ← #'+id});sourceEl('layers').textContent=lines.join(' · ')||'الخصائص الأساسية للحزمة';
+    try{const layers=await rpc('ff_a07_manager_style_layers',{p_screen:screen,p_role:role,p_branch:b,p_device:d});if(request!==sourceSerial||token!==session||who!==actor()||!manager()||!dlg.open)return;const api=window.ffA07Elements;api?.setSources(form,layers?.sources||{});const lines=Object.entries(layers?.sources||{}).map(([k,id])=>{const parts=k.split('.');if(parts[0]==='elements'){const [,group,key,property]=parts;if(key&&property){const rows=layers.style?.elements?.[group]||[],index=rows.findIndex(e=>e.key===key),value=property==='order'?index+1:rows[index]?.[property];const shown=api?.properties[property]?.[value]||({shape:api?.shapes,size:api?.sizes}[property]?.[value])||value;return (api?.labels[group]||group)+' / '+(api?.itemLabels[key]||key)+' / '+(api?.propertyLabels[property]||({shape:'الشكل',size:'الحجم',order:'الترتيب'}[property])||property)+' = '+(shown??'—')+' ← #'+id;}return (api?.labels[group]||group)+' ← #'+id}return (appearance.tokens[k]?.[0]||k)+' = '+(appearance.tokens[k]?.slice(1).find(x=>x[0]===layers.style?.[k])?.[1]||layers.style?.[k]||'—')+' ← #'+id});sourceEl('layers').textContent=lines.join(' · ')||'الخصائص الأساسية للحزمة';
      if(['all','dashboard'].includes(screen)){try{const cs=await rpc('ff_a08_manager_card_source',{p_role:role,p_branch:b,p_device:d});if(request!==sourceSerial||token!==session||who!==actor()||!manager()||!dlg.open)return;sourceEl('layers').textContent+=' · البطاقات ← '+(cs?.[0]?.revision?'#'+cs[0].revision:'الافتراضي')}catch{/* Other source details remain valid. */}}}catch{if(request===sourceSerial)sourceEl('layers').textContent='تعذر التحقق من طبقات الخصائص'}
    }catch(e){if(request===sourceSerial&&token===session&&who===actor()&&manager()&&dlg.open){sourceEl('status').textContent='تعذر التحقق من المصدر المنشور. لا تعتبر القيمة المعروضة اعتماداً.';sourceKey=''}}
   },180);
  }
  function constrainPublicScope(){const pub=appearance.publicScreen(field('screen').value);if(pub){field('role').value='all';field('branch').value=''}field('role').disabled=busy||pub;field('branch').disabled=busy||pub;for(const t of scopeTargets)t.constrain()}
  function redraw(){
-  constrainPublicScope();
+  constrainPublicScope();invalidateScopeComparison();
   const width=Number(field('viewport').value),role=field('role').value,bar=field('bar').value;
   preview.parentElement.style.width=width+'px';
   preview.dataset.pack=field('pack').value;appearance.decorate(preview,{pack:field('pack').value,style_config:appearance.readStyle(form),id:'preview'});

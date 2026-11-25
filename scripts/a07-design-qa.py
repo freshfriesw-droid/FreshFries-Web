@@ -409,6 +409,21 @@ with sync_playwright() as pw:
    page.wait_for_function("()=>document.querySelector('[data-step03-compare-results]').children.length===2")
    assert dlg.locator("[data-step03-compare-results]").get_by_text("خارج نطاق المسودة — لا تغيير.").count()==1
    assert page.evaluate("()=>window.__a06Calls.filter(c=>c.name==='ff_a07_preview_scope').length")==2
+   assert dlg.locator('[data-step03-compare-results] table').count()==2
+   assert dlg.locator('[data-step03-compare-results] table').first.get_by_text('المسودة',exact=True).count()==1
+   dlg.locator('[data-scope-target="0-device"]').select_option('desktop')
+   assert dlg.locator('[data-step03-compare-results]').locator(':scope > section').count()==0
+   assert 'تغيّرت' in dlg.locator('[data-step03-compare-status]').inner_text()
+   dlg.locator('[data-scope-target="0-device"]').select_option('mobile')
+   dlg.locator('[data-step03-compare]').click()
+   page.wait_for_function("()=>document.querySelector('[data-step03-compare-results]').children.length===2")
+   dlg.locator('select[name=pack]').select_option('D09')
+   assert dlg.locator('[data-step03-compare-results]').locator(':scope > section').count()==0
+   page.evaluate("""()=>ffA07Elements.setSources(document.querySelector('#ffStudio form'),{'elements.driver_actions.clockInBtn.font':17})""")
+   assert '#17' in row.locator('[data-step03-element-source]').inner_text()
+   page.evaluate("()=>ffA07Elements.setSources(document.querySelector('#ffStudio form'),null)")
+   assert '#17' not in row.locator('[data-step03-element-source]').inner_text()
+   print('PASS STEP03 per-element source and invalidation of stale scope comparison',flush=True)
    dlg.locator("input[name=draftName]").fill("مسودة اختبار آمنة")
    dlg.locator("button[type=submit]").click()
    page.wait_for_function("()=>window.__a06Calls.some(c=>c.name==='ff_a07_named_design')")
