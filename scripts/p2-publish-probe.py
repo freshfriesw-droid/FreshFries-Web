@@ -20,6 +20,17 @@ def get(path):
   assert urlparse(r.geturl()).hostname==urlparse(origin).hostname
   assert r.status==200
   return r.read()
+# The live edge injects one Cloudflare Web Analytics beacon immediately before
+# </body>. Permit only that precisely bounded known provider script; every
+# other byte of application HTML must match, at both public URLs.
+beacon=re.compile(rb'<script type="module" src="https://static\.cloudflareinsights\.com/beacon\.min\.js/v[0-9a-f]+" integrity="sha512-[A-Za-z0-9+/=]+" data-cf-beacon=\'\{[^<>\r\n]*\}\' crossorigin="anonymous"></script>\n(?=</body>\s*</html>\s*\Z)')
+def normalized(raw):
+ if raw==html:return raw,0
+ clean,count=beacon.subn(b'',raw)
+ assert count==1,'unexpected or missing Cloudflare beacon'
+ assert clean==html,'application HTML differs after stripping only known edge beacon'
+ return clean,count
+
 for attempt in range(3):
  try:
   remote=get('?qa=20261125-p2-diag-'+str(attempt))
@@ -36,8 +47,10 @@ for attempt in range(3):
    expected=(root/path).read_bytes(); actual=get(path+'?qa=20261125-p2-'+str(attempt))
    assert actual==expected,'public CSS differs: '+path
    print('PASS',path,sha256(actual).hexdigest(),flush=True)
-  assert remote==html or explicit==html,'neither public HTML path is byte-identical; inspect diagnostic evidence'
-  print('PASS exact public HTML and',len(assets),'local CSS assets',sha256(remote).hexdigest(),flush=True)
+  root_html,root_beacon=normalized(remote); index_html,index_beacon=normalized(explicit)
+  assert root_html==index_html==html
+  print('PASS public application HTML exact after Cloudflare-only normalization at both paths; removed beacon counts',root_beacon,index_beacon,flush=True)
+  print('PASS exact application HTML and',len(assets),'local CSS assets',sha256(root_html).hexdigest(),flush=True)
   break
  except (OSError,AssertionError) as exc:
   print('Publish attempt',attempt+1, str(exc),flush=True)
