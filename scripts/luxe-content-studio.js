@@ -19,7 +19,7 @@ const targets={
  "driver.title":"#driverView .card .sectionbar > h2",
  'dashboard.title':'#ffx-hero-title','dashboard.new':'#ffx-hero-new','dashboard.reserve':'#ffx-hero-reserve','dashboard.late':'#ffx-hero-overdue',
  'reports.title':'#ff76Center .r-head h2','reports.subtitle':'#ff76Center .r-head p','reports.run':'#ff76Run',
- 'reports.preview':'#ff76Preview','reports.download':'#ff76Download','reports.share':'#ff76Share','reports.csv':'#ff76CSV','reports.close':'#ff76Close',
+ 'reports.preview':'#ff76Preview','reports.download':'#ff76Download','reports.share':'#ff76Share','reports.csv':'#ff76CSV','reports.excel':'#ff76Excel','reports.close':'#ff76Close',
  'orders.parse':'#ffbApplyText',
  'orders.menu':'#ffbTabMenu',
  'orders.text':'#ffbTabText',
