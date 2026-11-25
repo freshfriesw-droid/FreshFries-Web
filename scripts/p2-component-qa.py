@@ -17,13 +17,29 @@ out=root/'p2-evidence';out.mkdir(exist_ok=True)
 report=json.loads((root/'docs/implementation/P2-css-consolidation-20261125.json').read_text())
 def strip(s):
  return re.sub(r'<style\b[^>]*>[\s\S]*?</style>','',s,flags=re.I).replace('<link rel="stylesheet" href="./styles/luxe-p2-components.css?v=20261125-p2">\n','')
-assert strip((root/'index.html').read_text())==strip((base/'index.html').read_text()),'non-CSS application markup or script changed'
+current_html=strip((root/'index.html').read_text())
+baseline_html=strip((base/'index.html').read_text())
+if os.environ.get('P2_STEP04_REGRESSION')=='1':
+ # STEP04 intentionally changes exactly the shortcut construction and renderer,
+ # plus the three cache-busting asset links. Prove every other byte of markup
+ # and inline JavaScript stays identical to the closed P2 tree.
+ start=current_html.index('// STEP04: central library')
+ end=current_html.index('const mobileRoutes={',start)
+ old_start=baseline_html.index("let scSig='';function drawShortcuts(){")
+ old_end=baseline_html.index('const mobileRoutes={',old_start)
+ current_html=current_html[:start]+baseline_html[old_start:old_end]+current_html[end:]
+ for asset in ('scripts/luxe-a08-dashboard.js','scripts/luxe-dashboard-studio.js','styles/luxe-a08-dashboard.css'):
+  current_html=current_html.replace('./'+asset+'?v=20261125-step04','./'+asset)
+ assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04 shortcut block and asset versions'
+else:
+ assert current_html==baseline_html,'non-CSS application markup or script changed'
 changed={str(f.relative_to(base)) for f in list((base/'scripts').glob('*.js'))+list((base/'assets').glob('*.js')) if f.read_bytes()!=(root/f.relative_to(base)).read_bytes()}
-if os.environ.get('P2_STEP03_REGRESSION')=='1':
- # The exact two editor scripts are intentionally changed by STEP03. All
- # other scripts must remain byte-identical, and ALL 147 visual/focus/pixel
- # comparisons below still run unchanged on the updated application.
- assert changed=={'scripts/luxe-a07-elements.js','scripts/luxe-a07-design.js','scripts/luxe-dashboard-studio.js','scripts/luxe-content-studio.js'},changed
+step03_scripts={'scripts/luxe-a07-elements.js','scripts/luxe-a07-design.js','scripts/luxe-dashboard-studio.js','scripts/luxe-content-studio.js'}
+if os.environ.get('P2_STEP04_REGRESSION')=='1':
+ # No unrelated scripts changed; keep all visual/focus/pixel comparisons intact.
+ assert changed==step03_scripts|{'scripts/luxe-a08-dashboard.js'},changed
+elif os.environ.get('P2_STEP03_REGRESSION')=='1':
+ assert changed==step03_scripts,changed
 else:
  assert not changed,changed
 assert len(report['removed'])>=25
