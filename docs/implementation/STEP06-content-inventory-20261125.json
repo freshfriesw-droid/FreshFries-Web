@@ -3510,8 +3510,8 @@
       "screen": "cashier",
       "label": "توضيح مع الحفاظ على النص الأصلي: تم قطع الطلب في برنامج الكاشير",
       "original": "تم قطع الطلب في برنامج الكاشير",
-      "selector": "#cashierView button[data-cashier][data-stage=\"printed\"]",
-      "mode": "protected",
+      "selector": "#cashierView button[data-ff49-invoice]",
+      "mode": "accessible",
       "source": "index.html"
     },
     {
@@ -6613,7 +6613,7 @@
       "screen": "cashier",
       "label": "توضيح يحفظ النص الأصلي: إجراء البرجر للكاشير — النص الرسمي حسب الحالة",
       "original": "إجراء البرجر للكاشير — النص الرسمي حسب الحالة",
-      "selector": "#ffBurgerCashierPanel .ff-burger-card > button",
+      "selector": "#cashierView #ffBurgerCashierPanel .ff-burger-card > button",
       "mode": "protected",
       "source": "scripts/luxe-burger-kitchen-20261123.js"
     },

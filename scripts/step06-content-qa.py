@@ -61,6 +61,40 @@ with sync_playwright() as pw:
   bad=[r for r in results if r['failures']]
   print('STEP06 actual mounted content',role,'matched',sum(r['matched']>0 for r in results),'failures',len(bad),flush=True)
   if bad:print('STEP06_BINDING_FAILURES',json.dumps(bad,ensure_ascii=False),flush=True)
+
+  # Additional actual renderers: cover conditional order stages, additions, offers, and kitchen cards.
+  if role in ('manager','cashier','driver','assembly','burger_kitchen'):
+   page.evaluate("""async role=>{
+    const now=new Date().toISOString(),br={id:'b1',name:'القاهرة',code:'cairo'},me=user.id;
+    const mk=(id,stage,phase='assigned',more={})=>({id,number:123,branch_id:'b1',driver_id:'qa-driver',driver_name:'QA',phase,status:'sent',cashier_stage:stage,created_at:now,customer_name:'QA',phone:'000',area:'QA',total:1000,delivery_fee:500,items:[{qty:1,name:'برجر',price:500}],...more});
+    const orders=[mk('recv','waiting'),mk('inv','waiting','assigned',{cashier_received_at:now}),mk('print','printed'),mk('prep','preparing'),mk('ready','ready'),mk('road','handed_over'),mk('arrive','handed_over','on_way'),mk('pending','printed'),mk('late','printed'),mk('warning','printed'),mk('await','handed_over','on_way')];
+    const adds=[{id:'add-pending',order_id:'pending',status:'pending',amount:100,items:[]},{id:'add-late',order_id:'late',status:'pending',late_state:'driver_accepted',amount:100,items:[]},{id:'add-warning',order_id:'warning',status:'invoiced',late_state:'invoiced',amount:100,items:[]},{id:'add-await',order_id:'await',status:'pending',late_state:'awaiting_driver',amount:100,items:[]}];
+    const tickets=[{id:'qa-ready',branch_id:'b1',branch_name:'القاهرة',order_kind:'local',status:'ready',invoice_ref:'QA',sent_at:now,accepted_at:now,ready_at:now,items:[]},{id:'qa-prep',branch_id:'b1',branch_name:'القاهرة',order_kind:'local',status:'preparing',invoice_ref:'QA2',sent_at:now,accepted_at:now,kitchen_id:me,items:[{name:'برجر',qty:1,item_notes:'بدون بصل'}]}];
+    const prior=rpc;rpc=async(name,args={})=>name==='ff_v12_assembly_snapshot'?{role:'assembly',branch:br,orders}:name==='ff_burger_list'?tickets:prior(name,args);
+    if(role==='assembly'){await ffV12Refresh(true);window.ffBurgerToggleAssembly();}
+    else if(role==='burger_kitchen'){document.getElementById('ffBurgerKitchenRefresh').click();}
+    else{data.orders=orders;additionReady=true;additionData=adds;selfPermissions={...selfPermissions,edit_order:true,assign_driver:true,cancel_order:true};
+     if(role==='manager'){activeAdditionForm='print';drawOrders()}
+     if(role==='cashier'){drawCashier();document.getElementById('ffBurgerRefresh')?.click();window.ffBurgerOnCashierDraw()}
+     if(role==='driver'){data.offers=[{id:'offer-yes',order_id:'yes',order_number:124,branch_id:'b1',expires_at:new Date(Date.now()+300000).toISOString()},{id:'offer-no',order_id:'no',order_number:125,branch_id:'b1',expires_at:new Date(Date.now()+300000).toISOString()}];rejectPermissionReady=true;rejectPermissions={yes:true,no:false};drawDriver()}
+    }
+   }""",role)
+   if role=='cashier':
+    page.locator('#ffBurgerPanelToggle').click()
+    page.locator('#ffBurgerCashierReady').wait_for(state='attached')
+    # Wait for the synthetic list to refresh, then audit actual cards.
+    page.wait_for_timeout(5300)
+    page.locator('#ffBurgerPanelToggle').evaluate("n=>{if(n.getAttribute('aria-expanded')!=='true')n.click()}")
+    page.evaluate("()=>{document.getElementById('ffBurgerRefresh')?.click();window.ffBurgerOnCashierDraw()}")
+   if role in ('assembly','burger_kitchen','cashier'):
+    page.wait_for_timeout(500)
+   conditional=page.evaluate(audit)
+   observations.extend(dict(role=role+'-conditional',**r) for r in conditional)
+   (out/'binding-audit.json').write_text(json.dumps(observations,ensure_ascii=False,indent=2))
+   bad=[r for r in conditional if r['failures']]
+   print('STEP06 order-state content',role,'matched',sum(r['matched']>0 for r in conditional),'failures',len(bad),flush=True)
+   if bad:print('STEP06_BINDING_FAILURES',json.dumps(bad,ensure_ascii=False),flush=True)
+
   if role=='manager':
    page.evaluate("""async()=>{
     const rules=ffContentStudio.registry().filter(r=>r.message);
