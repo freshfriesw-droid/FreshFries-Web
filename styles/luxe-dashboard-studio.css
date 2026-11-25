@@ -127,7 +127,6 @@
 #ffStudio .ff-a07-gallery-choice>*{min-width:0;max-width:100%}
 #ffStudio .ff-a07-compare-grid>*{min-inline-size:0;max-inline-size:100%;overflow-x:auto}
 @media(max-width:430px){
- #ffStudio{padding:12px}
  #ffStudio form>details,#ffStudio .ff-studio-impact{overflow-x:auto}
  #ffStudio .ff-a07-gallery{grid-template-columns:minmax(0,1fr)}
  #ffStudio .ff-studio-fields{grid-template-columns:minmax(0,1fr)}
