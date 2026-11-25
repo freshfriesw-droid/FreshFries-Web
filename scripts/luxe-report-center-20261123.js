@@ -132,8 +132,8 @@ if(selectedSet.has('ratings'))html.push(section('ratings',cards([['أعلى تق
  '<p class="r-muted">التقييمات اختيارية؛ لا يترتب عليها إلغاء الطلب أو عقوبة تلقائية.</p>'));
 if(selectedSet.has('cases'))html.push(section('cases','<h4>الشكاوى المرتبطة بالطلبات</h4>'+table([['الموضوع',x=>x.subject],['الطلب',x=>x.order_number||'بدون طلب'],['الفرع',x=>x.branch_name],['الحالة',x=>x.status]],r.complaints)+
  '<h4>تظلمات الموصلين</h4>'+table([['التصنيف',x=>x.category],['التفاصيل',x=>x.details],['الحالة',x=>x.status]],r.grievances)+'<h4>تظلمات الموظفين الخاصة</h4>'+table([['الموضوع',x=>x.subject],['الحالة',x=>x.status],['الوقت',x=>stamp(x.created_at)]],r.staff_grievances)));
-if(selectedSet.has('attendance'))html.push(section('attendance','<p class="r-muted">صافي الحضور = مجموع فترات الحضور في اليوم التشغيلي بعد طرح الاستراحات. البيانات القديمة غير الموثقة لا يمكن استرجاعها.</p>'+
- table([['اليوم',x=>x.report_day],['الموصل',x=>x.driver_name],['فترات الحضور',x=>fmt(x.sessions)],['الحضور الفعلي',x=>stamp(x.first_checkin)],['آخر خروج',x=>stamp(x.last_checkout)],['صافي الساعات',x=>fmt(x.work_hours)]],r.attendance)));
+if(selectedSet.has('attendance'))html.push(section('attendance','<p class="r-muted">صافي الحضور = مجموع فترات الحضور في اليوم التشغيلي بعد طرح الاستراحات. أوقات الدخول والخروج المسجلة قد تقع خارج حدود اليوم التشغيلي؛ الساعات المحتسبة مقيدة بتلك الحدود. لا يُفترض خروج لجلسة مفتوحة. البيانات القديمة غير الموثقة لا يمكن استرجاعها.</p>'+
+ table([['اليوم',x=>x.report_day],['الموصل',x=>x.driver_name],['فترات الحضور',x=>fmt(x.sessions)],['دخول مسجل فعليًا',x=>stamp(x.actual_first_checkin)],['خروج مسجل فعليًا',x=>x.open_session?'جلسة مفتوحة':stamp(x.actual_last_checkout)],['بداية الوقت المحتسب',x=>stamp(x.first_checkin)],['نهاية الوقت المحتسب',x=>stamp(x.last_checkout)],['صافي الساعات',x=>fmt(x.work_hours)]],r.attendance)));
 if(selectedSet.has('analytics'))html.push(section('analytics','<h4>الطلبات '+safe(el('ff76Trend').selectedOptions[0]?.textContent)+'</h4>'+barChart(trend(),'orders')+(allowed('finance')?'<h4>الفواتير المسلّمة</h4>'+barChart(trend(),'net'):'')+
 '<h4>أوقات الذروة</h4>'+barChart((r.hourly||[]).map(x=>({label:String(x.hour_of_day).padStart(2,'0')+':00',orders:Number(x.orders)})),'orders')+
 '<p class="r-muted">نسبة الطلبات «المؤجلة» لا تُحسب دون حالة تأجيل مستقلة موثقة في قاعدة البيانات.</p>'));
@@ -289,8 +289,8 @@ function filterText(){const labels=['ff76Branch','ff76Driver','ffA10Staff','ffA1
  // A branch/role hash alone cannot detect row ownership or note changes.
  // Reject a stale file if any identity-bearing/private detail changed. Timers
  // remain an explicitly dated snapshot; time-only changes don't invalidate it.
- const details=['customers','cancellations','free_delivery_orders','fastest','late_orders','invoice_review','low_ratings','internal_low_ratings','driver_feedback','cashier_coordination','complaints','grievances','staff_grievances','approval','settlements','finance_evidence'];
- const canonical=(v)=>Array.isArray(v)?v.map(canonical).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b))):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).filter(k=>k!=='delivery_minutes').sort().map(k=>[k,canonical(v[k])])):v;
+ const details=['customers','cancellations','free_delivery_orders','fastest','late_orders','invoice_review','low_ratings','internal_low_ratings','driver_feedback','cashier_coordination','complaints','grievances','staff_grievances','approval','settlements','finance_evidence','drivers','service_staff','internal_driver_ratings','attendance'];
+ const canonical=(v)=>Array.isArray(v)?v.map(canonical).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b))):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).filter(k=>k!=='delivery_minutes'&&!(v.open_session&&(k==='last_checkout'||k==='work_hours'))).sort().map(k=>[k,canonical(v[k])])):v;
  if(details.some(k=>JSON.stringify(canonical(prior[k]))!==JSON.stringify(canonical(check[k])))){clear();throw Error('تغيرت تفاصيل التقرير؛ أعد إعداده قبل التصدير أو المشاركة')}
  return true}
  function authorized(uid,tag,revision){if(me()!==uid||identity!==tag||revision!==pdfRevision)throw Error('تغير الحساب أو التقرير')}
