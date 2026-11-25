@@ -33,7 +33,7 @@ function cardFields(card,i,change){
 const editorState=new WeakMap();
 function editor(form,anchor){
  const root=make('details');root.id='ffA08Panels';
- root.innerHTML='<summary>الأقسام الثانوية والاختصارات</summary><p>تخصيص الرئيسية فقط؛ لا يمكن إخفاء التحذيرات أو حالة اتصال النظام أو إضافة إجراء غير معرّف.</p><div data-a08-panels></div><label><input type="checkbox" data-a08-custom-actions> تخصيص مكتبة الاختصارات وترتيبها</label><div data-a08-actions></div>';
+ root.innerHTML='<summary>الأقسام الثانوية والاختصارات</summary><p>تخصيص الرئيسية فقط؛ لا يمكن إخفاء التحذيرات أو حالة اتصال النظام أو إضافة إجراء غير معرّف.</p><div data-a08-panels></div><label><input type="checkbox" data-a08-custom-actions> تخصيص مكتبة الاختصارات وترتيبها</label><div data-a08-actions></div><p class="ff-a08-panel-preview" data-a08-preview></p>';
  anchor.after(root);
  const panels=root.querySelector('[data-a08-panels]'),custom=root.querySelector('[data-a08-custom-actions]'),list=root.querySelector('[data-a08-actions]');
  const st={panels:{},quick:undefined};editorState.set(form,st);
@@ -51,15 +51,16 @@ function editor(form,anchor){
   st.quick.forEach((key,i)=>{
    const row=make('div');row.className='ff-a08-action-row';row.append(make('b',actions[key]||key));
    for(const [label,disabled,fn] of [['تقديم',i===0,()=>st.quick.splice(i-1,0,...st.quick.splice(i,1))],['تأخير',i===st.quick.length-1,()=>st.quick.splice(i+1,0,...st.quick.splice(i,1))],['حذف',false,()=>st.quick.splice(i,1)]]){
-    const btn=make('button',label);btn.type='button';btn.disabled=disabled;btn.onclick=()=>{fn();render();notify()};row.append(btn);
+    const btn=make('button',label);btn.type='button';btn.disabled=disabled;btn.onclick=()=>{if(disabled)return;fn();render();notify()};row.append(btn);
    }
    list.append(row);
   });
  }
  custom.onchange=()=>{st.quick=custom.checked?[...standard]:undefined;render();notify()};
- st.render=render;render();
+ st.render=render;st.root=root;render();
  return root;
 }
+function preview(form){const st=editorState.get(form);if(!st)return;const role=form.elements.role.value;const p=st.panels;const show=(k,base)=>k in p?p[k]:base;const list=st.root.querySelector('[data-a08-preview]');list.textContent='معاينة تخطيطية: الأنشطة '+(show('activity',true)?'ظاهرة':'مخفية')+' · الاختصارات '+(show('shortcuts',true)?'ظاهرة':'مخفية')+' · الفروع '+(show('branches',['manager','supervisor'].includes(role))?'ظاهرة':'مخفية')+(Array.isArray(st.quick)?' · '+st.quick.map(k=>actions[k]).join(' ← '):' · المكتبة الأساسية')+'؛ تعرض الإجراءات المصرح بها فقط.'}
 function read(form){const s=editorState.get(form);if(!s||!['all','dashboard'].includes(form.elements.screen.value))return {};const out={};if(Object.keys(s.panels).length)out.dashboardPanels=copy(s.panels);if(Array.isArray(s.quick))out.quickActions=[...s.quick];return out}
 function set(form,style){const s=editorState.get(form);if(!s)return;s.panels=copy(style?.dashboardPanels);s.quick=Array.isArray(style?.quickActions)?[...style.quickActions]:undefined;s.render()}
 const dash=$('ffx-dashboard');if(!dash)return;
@@ -129,5 +130,5 @@ function sync(snapshot,config){
  }
 }
 window.addEventListener('ff-luxe-session-reset',()=>{context=null;close();panelSig='';activity.n.hidden=true;branches.n.hidden=true;activity.body.replaceChildren();branches.body.replaceChildren()});
-window.ffA08Dashboard={cardVisible,cardFields,editor,read,set,sync,open,icons};
+window.ffA08Dashboard={cardVisible,cardFields,editor,read,set,sync,open,icons,preview};
 })();
