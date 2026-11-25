@@ -14,7 +14,7 @@ BEGIN
  IF g.id IS NULL OR p_device IS NULL OR p_device NOT IN ('all','mobile','desktop') OR NOT(g.edit_kinds && ARRAY['colors','buttons','layout','design','fonts','identity','media','cards']::text[]) THEN RETURN NULL; END IF;
  SELECT * INTO v FROM ff_private.a07_resolve(g.screen,g.role_scope,g.branch_id,p_device,NULL);
  style:=ff_private.a07_style_layers(g.screen,g.role_scope,g.branch_id,p_device,NULL)->'style';
- RETURN jsonb_build_object('id',v.id,'pack',coalesce(v.pack,'D01'),'style_config',coalesce(style,'{}'),'screen',g.screen);
+ RETURN jsonb_build_object('id',v.id,'pack',coalesce(v.pack,'D01'),'style_config',coalesce(style,'{}'),'screen',g.screen,'bar',coalesce(v.bar,'labels'),'card_layout',v.card_layout);
 END $function$;
 
 CREATE OR REPLACE FUNCTION public.ff_a09_design_draft(p_device text, p_patch jsonb, p_name text, p_base bigint DEFAULT NULL::bigint)
