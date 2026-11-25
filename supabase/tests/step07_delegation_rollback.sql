@@ -24,7 +24,7 @@ BEGIN
  ('layout','{"designBar":"icons","dialogRadius":"round"}'::jsonb),
  ('colors','{"accent":"red"}'::jsonb),
  ('buttons','{"button":"pill"}'::jsonb),
- ('cards','{"dashboardPanels":[]}'::jsonb)) x(k,p)
+ ('cards','{"dashboardPanels":{"activity":true},"cardLayout":[{"metric":"orders_today","label":"QA STEP07","size":"normal","tone":"default"}]}'::jsonb)) x(k,p)
  LOOP
   PERFORM set_config('request.jwt.claim.sub',mgr::text,true);
   grant_id:=public.ff_a09_set_grant(worker,branch,CASE WHEN kind='cards' THEN 'dashboard' ELSE 'orders' END,ARRAY['view','edit','preview','review'],clock_timestamp()-interval '1 second',clock_timestamp()+interval '5 minutes',ARRAY[kind]);
