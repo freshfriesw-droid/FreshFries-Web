@@ -419,10 +419,16 @@ with sync_playwright() as pw:
    page.wait_for_function("()=>document.querySelector('[data-step03-compare-results]').children.length===2")
    dlg.locator('select[name=pack]').select_option('D09')
    assert dlg.locator('[data-step03-compare-results]').locator(':scope > section').count()==0
-   page.evaluate("""()=>ffA07Elements.setSources(document.querySelector('#ffStudio form'),{'elements.driver_actions.clockInBtn.font':17})""")
-   assert '#17' in row.locator('[data-step03-element-source]').inner_text()
-   page.evaluate("()=>ffA07Elements.setSources(document.querySelector('#ffStudio form'),null)")
-   assert '#17' not in row.locator('[data-step03-element-source]').inner_text()
+   # Exercise the published-source RPC path; do not race the debounced loader
+   # by manually writing the editor's source state.
+   page.evaluate("""()=>{const original=rpc;rpc=async(name,args={})=>{if(name==='ff_a07_manager_source'&&args.p_screen==='driver'&&args.p_device==='mobile')return [{id:17,pack:'D01',screen_scope:'driver',role_scope:'driver',device:'mobile',bar:'labels'}];if(name==='ff_a07_manager_style_layers'&&args.p_screen==='driver'&&args.p_device==='mobile')return {style:{elements:{driver_actions:[{key:'clockInBtn',font:'cairo'}]}},sources:{'elements.driver_actions.clockInBtn.font':17}};return original(name,args)}}""")
+   dlg.locator('select[name=device]').select_option('desktop')
+   dlg.locator('select[name=device]').select_option('mobile')
+   source=dlg.locator('[data-step03-element-source="driver_actions|clockInBtn"]')
+   page.wait_for_function("""()=>document.querySelector('[data-step03-element-source="driver_actions|clockInBtn"]')?.textContent.includes('#17')""")
+   assert '#17' in source.text_content()
+   dlg.locator('select[name=device]').select_option('desktop')
+   assert '#17' not in source.text_content()
    print('PASS STEP03 per-element source and invalidation of stale scope comparison',flush=True)
    dlg.locator("input[name=draftName]").fill("مسودة اختبار آمنة")
    dlg.locator("button[type=submit]").click()
