@@ -553,6 +553,53 @@ with sync_playwright() as pw:
    page.wait_for_function("()=>document.querySelector('#ffStudio select[name=pack]').options.length===17")
    assert dlg.locator("select[name=pack] option[value=D17]").count()==1
    dlg.locator("[data-close]").click()
+
+   # STEP08: selected version impact, limited trial, blocked stale publication and verified release/restore.
+   page.evaluate("""()=>{const base=rpc;window.__step08Versions=[
+    {id:902,screen_scope:'driver',role_scope:'driver',branch_id:'b1',device:'mobile',pack:'D08',bar:'icons',layout_text:'QA new',draft_name:'QA new',draft_description:'',style_config:{font:'tahoma'},card_layout:null,created_at:'2026-11-25T01:00:00Z',published_at:null,previous_id:901},
+    {id:901,screen_scope:'driver',role_scope:'driver',branch_id:'b1',device:'mobile',pack:'D01',bar:'labels',layout_text:'QA old',draft_name:'QA old',draft_description:'',style_config:{},card_layout:null,created_at:'2026-11-25T00:00:00Z',published_at:'2026-11-25T00:01:00Z',previous_id:null}];
+    window.__step08Calls=[];window.__step08Invalid=false;
+    rpc=async(name,args={})=>{
+     if(name==='ff_ui_manager_history')return window.__step08Versions;
+     if(name==='ff_step08_release_impact'){window.__step08Calls.push({name,args});return {id:args.p_id,valid:!window.__step08Invalid,trial_allowed:!window.__step08Invalid,public:false,previous:901,target_count:1,targets:[{account_id:'qa-eligible',account_name:'QA eligible'}]}}
+     if(name==='ff_ui_trial_accounts')return [{account_id:'qa-eligible',account_name:'QA eligible'}];
+     if(name==='ff_ui_control_trial'){window.__step08Calls.push({name,args});return 1}
+     if(name==='ff_ui_publish'){window.__step08Calls.push({name,args});window.__step08Versions.find(v=>v.id===args.p_id).published_at='2026-11-25T03:00:00Z';return null}
+     if(name==='ff_ui_rollback'){window.__step08Calls.push({name,args});window.__step08Versions.unshift({...window.__step08Versions.find(v=>v.id===901),id:903,previous_id:902,published_at:'2026-11-25T04:00:00Z'});return 903}
+     return base(name,args)
+    };ffDashboardStudio.open()}""")
+   page.on('dialog',lambda dialog:dialog.accept())
+   page.wait_for_function("()=>document.querySelector('#ffStudio select[name=version]').options.length===2")
+   dlg.locator('select[name=version]').select_option('902')
+   dlg.locator('[data-release-check]').click()
+   page.wait_for_function("()=>document.querySelector('[data-release-impact]').textContent.includes('الحسابات المؤهلة: 1')")
+   dlg.get_by_text('تجربة محدودة لمسودة',exact=True).click()
+   dlg.locator('[data-accounts]').click()
+   dlg.locator('select[name=accounts]').select_option('qa-eligible')
+   dlg.locator('[data-trial]').click()
+   page.wait_for_function("()=>window.__step08Calls.some(c=>c.name==='ff_ui_control_trial'&&c.args.p_hours===1)")
+   dlg.locator('[data-stop]').click()
+   page.wait_for_function("()=>window.__step08Calls.some(c=>c.name==='ff_ui_control_trial'&&c.args.p_hours===0)")
+   page.evaluate("window.__step08Invalid=true")
+   dlg.locator('[data-publish]').click()
+   page.wait_for_function("()=>document.querySelector('#ffStudio [role=status]').textContent.includes('تعذر اعتماد النشر')")
+   assert not page.evaluate("()=>window.__step08Calls.some(c=>c.name==='ff_ui_publish')")
+   page.evaluate("window.__step08Invalid=false")
+   dlg.locator('[data-publish]').click()
+   page.wait_for_function("()=>document.querySelector('#ffStudio [role=status]').textContent.includes('نُشر الإصدار رقم 902')")
+   dlg.locator('[data-rollback]').click()
+   page.wait_for_function("()=>document.querySelector('#ffStudio [role=status]').textContent.includes('تمت الاستعادة في الإصدار 903')")
+   assert dlg.locator('select[name=version]').input_value()=='903'
+   for width in (320,360,390,430,768,1024,1440):
+    page.set_viewport_size({'width':width,'height':850})
+    diag=dlg.evaluate("""e=>{const r=e.getBoundingClientRect();const f=e.querySelector('form'),fs=getComputedStyle(f),ds=getComputedStyle(e);return {width:e.clientWidth,scroll:e.scrollWidth,form:[f.clientWidth,f.scrollWidth,fs.width,fs.overflowX,fs.position,fs.contain],dialog:[ds.width,ds.padding,ds.overflowX],direct:[...f.children].filter(n=>n.scrollWidth>n.clientWidth+2&&n.clientWidth>0).map(n=>[n.tagName,n.id,String(n.className),n.clientWidth,n.scrollWidth,getComputedStyle(n).overflowX]),overflow:[...e.querySelectorAll('*')].filter(n=>{const x=n.getBoundingClientRect();return x.width>0&&(x.left<r.left-2||x.right>r.right+2)&&!n.closest('.ff-preview-scroll,.ff-a07-preview-holder,[data-a07-before],[data-a07-after]')}).slice(0,15).map(n=>[n.tagName,n.id,String(n.className),Math.round(n.getBoundingClientRect().left),Math.round(n.getBoundingClientRect().right),n.scrollWidth,n.clientWidth])}}""")
+    if diag['scroll']>diag['width']+2:page.screenshot(path=out/f'step08-editor-overflow-{width}.png',animations='disabled')
+    assert diag['scroll']<=diag['width']+2,(width,diag)
+    for control in ('[data-close]','[data-publish]','[data-rollback]','[data-restore]'):
+     assert dlg.locator(control).evaluate("e=>{const r=e.getBoundingClientRect(),p=e.closest('dialog').getBoundingClientRect();return r.width>=1&&r.left>=p.left-2&&r.right<=p.right+2}"),(width,control)
+   print('PASS STEP08 design impact, scoped trial/stop, stale release rejection, publication, restoration, seven widths',flush=True)
+   dlg.locator('[data-close]').click()
+
   page.evaluate("()=>{user=null;data=null;window.dispatchEvent(new Event('ff-luxe-session-reset'))}")
   assert page.locator(selector).get_attribute("data-ff-a07-pack") is None
   page.evaluate("()=>ffDashboardStudio.sync(true)")

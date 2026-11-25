@@ -45,7 +45,10 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  # STEP07: only delegation asset versions change in index; actual visual comparisons stay strict.
  current_html=current_html.replace('./scripts/luxe-content-delegation.js?v=20261125-step07','./scripts/luxe-content-delegation.js?v=20261125-a09-denial')
  current_html=current_html.replace('./scripts/luxe-a07-elements.js?v=20261125-step07','./scripts/luxe-a07-elements.js')
- assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04–STEP07 audited hooks'
+ current_html=current_html.replace('./scripts/luxe-dashboard-studio.js?v=20261125-step08','./scripts/luxe-dashboard-studio.js')
+ current_html=current_html.replace('./scripts/luxe-content-studio.js?v=20261125-step08','./scripts/luxe-content-studio.js')
+ current_html=current_html.replace('./styles/luxe-dashboard-studio.css?v=20261125-step08','./styles/luxe-dashboard-studio.css')
+ assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04–STEP08 audited hooks'
 else:
  assert current_html==baseline_html,'non-CSS application markup or script changed'
 changed={str(f.relative_to(base)) for f in list((base/'scripts').glob('*.js'))+list((base/'assets').glob('*.js')) if f.read_bytes()!=(root/f.relative_to(base)).read_bytes()}

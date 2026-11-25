@@ -114,7 +114,10 @@ with sync_playwright() as pw:
    page.evaluate("""rows=>{window.__step06Catalog=rows;window.__step06History=[];window.__step06Writes=[];const prior=rpc;rpc=async(name,args={})=>{
     if(name==='ff_content_catalog_list')return window.__step06Catalog;
     if(['ff_content_history','ff86_content_history_scoped'].includes(name))return window.__step06History.filter(r=>r.content_key===args.p_key&&(!args.p_role||r.role_scope===args.p_role)&&(!args.p_branch||r.branch_id===args.p_branch)&&(!args.p_global_branch||r.branch_id===null));
-    if(name==='ff_content_create_draft'){window.__step06Writes.push(args);if(window.__denyDraft)return null;const id=window.__step06History.length+1;window.__step06History.unshift({id,content_key:args.p_key,role_scope:args.p_role,branch_id:args.p_branch,body:args.p_body,actor_id:user.id,created_at:'2026-11-25T01:00:00Z',published_at:null});return id}
+    if(name==='ff_content_create_draft'){window.__step06Writes.push(args);if(window.__denyDraft)return null;const id=window.__step06History.length+1;const previous_id=window.__step06History.find(v=>v.content_key===args.p_key&&v.role_scope===args.p_role&&v.branch_id===args.p_branch&&v.published_at)?.id??null;window.__step06History.unshift({id,previous_id,content_key:args.p_key,role_scope:args.p_role,branch_id:args.p_branch,body:args.p_body,actor_id:user.id,created_at:'2026-11-25T01:00:00Z',published_at:null});return id}
+    if(name==='ff_step08_release_impact'){const row=window.__step06History.find(r=>r.id===args.p_id);return {id:row.id,valid:!row.published_at&&!window.__step08Invalid,public:false,target_count:1,targets:[{account_id:user.id,account_name:'QA'}],trial_allowed:!row.published_at,previous:row.previous_id}}
+     if(name==='ff_step08_content_trial'){window.__step08TextTrial=args;return 1}
+    if(name==='ff_step08_content_restore'){const current=window.__step06History.find(v=>v.id===args.p_current),prior=window.__step06History.find(v=>v.id===current.previous_id),id=window.__step06History.length+1;const next={...prior,id,previous_id:current.id,published_at:'2026-11-25T03:00:00Z',published_by:user.id};window.__step06History.unshift(next);window.__step06Rows=[{content_key:next.content_key,body:next.body,revision:id}];return id}
     if(name==='ff_content_publish'){if(!window.__denyPublish){const row=window.__step06History.find(r=>r.id===args.p_id);row.published_at='2026-11-25T02:00:00Z';row.published_by=user.id;window.__step06Rows=[{content_key:row.content_key,body:row.body,revision:row.id}]}return null}
     return prior(name,args)};
    }""",[{k:r[k] for k in ('key','screen','label','original')} for r in inventory['registered']])
@@ -134,6 +137,20 @@ with sync_playwright() as pw:
    dlg.locator('[data-content-save]').click()
    page.wait_for_function("()=>document.querySelector('[data-content-status]').textContent.includes('حُفظت المسودة')")
    assert page.evaluate("window.__step06Writes.at(-1).p_branch")=='b1'
+   dlg.locator('[data-content-impact-check]').click()
+   page.wait_for_function("()=>document.querySelector('[data-content-impact]').textContent.includes('الحسابات المؤهلة: 1')")
+   dlg.get_by_text('تجربة محدودة للنص المحدد',exact=True).click()
+   dlg.locator('[data-content-accounts-load]').click()
+   dlg.locator('[data-content-accounts]').select_option('qa-manager')
+   dlg.locator('[data-content-trial]').click()
+   page.wait_for_function("()=>window.__step08TextTrial?.p_hours===1")
+   dlg.locator('[data-content-stop]').click()
+   page.wait_for_function("()=>window.__step08TextTrial?.p_hours===0")
+   page.evaluate("window.__step08Invalid=true")
+   dlg.locator('[data-content-publish]').click()
+   page.wait_for_function("()=>document.querySelector('[data-content-status]').textContent.includes('مسودة قديمة')")
+   assert not page.evaluate("()=>window.__step06History.some(v=>v.published_at)")
+   page.evaluate("window.__step08Invalid=false")
    page.evaluate("window.__denyPublish=true")
    dlg.locator('[data-content-publish]').click()
    page.wait_for_function("()=>document.querySelector('[data-content-status]').textContent.includes('لم يثبت نشر')")
@@ -144,6 +161,11 @@ with sync_playwright() as pw:
    page.wait_for_function("()=>window.__step06Writes.at(-1).p_body===null")
    dlg.locator('[data-content-publish]').click()
    page.wait_for_function("()=>document.querySelector('[data-content-status]').textContent.includes('تم نشر النص #2')")
+   assert 'متابعة نقدية اختبارية' in dlg.locator('[data-content-compare]').inner_text()
+   dlg.locator('[data-content-rollback]').click()
+   page.wait_for_function("()=>document.querySelector('[data-content-status]').textContent.includes('تمت الاستعادة في الإصدار #3')")
+   assert page.evaluate("()=>window.__step06Rows[0].body")=='متابعة نقدية اختبارية'
+   print('PASS STEP08 content impact, trial/stop, stale draft, compare and exact previous text restore',flush=True)
    dlg.locator('[data-content-screen]').select_option('login')
    assert dlg.locator('[data-content-role]').is_disabled() and dlg.locator('[data-content-branch]').is_disabled()
    dlg.locator('[data-content-key]').select_option('login.title')

@@ -109,3 +109,33 @@
 #ffCardEditor [data-card-tone=neutral]{background:#f0f0f0;color:#333}
 #ffx-kpis .ffx-kpi-label{overflow-wrap:anywhere}
 @media(max-width:360px){#ffx-kpis [data-card-size=wide]{grid-column:1/-1}}
+
+/* STEP08: constrain the release-history editor at narrow widths. The preview retains its own scroll container. */
+#ffStudio{box-sizing:border-box}
+#ffStudio form{grid-template-columns:minmax(0,1fr);min-width:0}
+#ffStudio form>*,#ffStudio details,#ffStudio label{min-width:0;max-width:100%;overflow-wrap:anywhere}
+#ffStudio input:not([type=checkbox]):not([type=radio]),#ffStudio textarea,#ffStudio select{min-width:0;max-width:100%;width:100%;box-sizing:border-box}
+#ffStudio button{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+#ffStudio table{width:100%;table-layout:fixed;overflow-wrap:anywhere}
+#ffStudio .ff-preview-scroll{width:100%;max-width:100%;min-width:0;overflow:auto}
+
+/* STEP08 small viewport: each wide preview/comparison has its own reachable scroll surface. */
+#ffStudio form{width:100%;max-width:100%;box-sizing:border-box}
+#ffStudio form>*,#ffStudio details,#ffStudio .ff-a07-compare-grid,#ffStudio .ff-a07-gallery{box-sizing:border-box;max-inline-size:100%;min-inline-size:0}
+#ffStudio .sectionbar{display:flex;flex-wrap:wrap;min-width:0;gap:8px}
+#ffStudio .sectionbar h2{min-width:0;max-width:100%;overflow-wrap:anywhere}
+#ffStudio .ff-a07-gallery-choice>*{min-width:0;max-width:100%}
+#ffStudio .ff-a07-compare-grid>*{min-inline-size:0;max-inline-size:100%;overflow-x:auto}
+@media(max-width:430px){
+ #ffStudio form>details,#ffStudio .ff-studio-impact{overflow-x:auto}
+ #ffStudio .ff-a07-gallery{grid-template-columns:minmax(0,1fr)}
+ #ffStudio .ff-studio-fields{grid-template-columns:minmax(0,1fr)}
+ #ffStudio .ff-a07-compare-grid{grid-template-columns:minmax(0,1fr)}
+ #ffStudio .actions>*{min-width:0;max-width:100%;flex-wrap:wrap}
+}
+
+/* STEP08: contain residual intrinsic overflow within the scrollable editor, never the modal or page. */
+#ffStudio form{overflow-x:auto;overscroll-behavior-inline:contain}
+
+/* Containing block for positioned preview descendants; controls remain scrollable. */
+#ffStudio form{position:relative;contain:layout;overflow:auto}

@@ -482,6 +482,7 @@ with sync_playwright() as playwright:
                 page.evaluate("""() => {
                   window.__contentOriginalRpc=rpc;
                   window.__contentCalls=[];
+                  window.__contentImpactChecked=null;
                   window.__contentHistory=[];
                   window.__contentEffective=[];
                   window.__contentOriginalNode=document.querySelector('#ffx-hero-new');
@@ -495,7 +496,14 @@ with sync_playwright() as playwright:
                       window.__contentHistory=[{id:1,content_key:args.p_key,role_scope:args.p_role,branch_id:args.p_branch,body:args.p_body,actor_id:'manager-fixture',created_at:'2026-11-24T12:00:00Z'}];
                       return 1;
                     }
+                    if(name==='ff_step08_release_impact'){
+                      const row=window.__contentHistory.find(r=>r.id===args.p_id);
+                      if(!row||args.p_kind!=='content')throw Error('Unknown release impact fixture');
+                      window.__contentImpactChecked=args.p_id;
+                      return {id:row.id,valid:!row.published_at,public:false,target_count:1,targets:[{account_id:'manager-fixture',account_name:'QA manager'}],trial_allowed:!row.published_at,previous:null};
+                    }
                     if(name==='ff_content_publish'){
+                      if(window.__contentImpactChecked!==args.p_id)throw Error('Impact preflight missing');
                       window.__contentHistory[0].published_at='2026-11-24T12:01:00Z';
                       window.__contentEffective=[{content_key:'dashboard.new',body:window.__contentHistory[0].body,revision:1}];
                       return null;
