@@ -9,12 +9,12 @@ const screens={
  messages:'الرسائل',reservations:'الحجوزات',system:'النظام والأمان',finance:'التسويات النقدية',branches:'الفروع وساعات العمل والأسعار',login:'الدخول وطلب الانضمام',customer_portal:'بوابة العميل'
 };
 const selectors={
- dashboard:'#ffx-dashboard',orders:'#serviceOnly,#staffOrders',cashier:'#cashierView,#ffBurgerCashierPanel',driver:'#driverView',
+ dashboard:'#ffx-dashboard,#ff40AlertsPanel',orders:'#serviceOnly,#staffOrders,#ff50ChangesPanel,#ff49TransferPanel',cashier:'#cashierView,#ffBurgerCashierPanel',driver:'#driverView',
  assembly:'#ffV12AssemblyWorkspace',burger_kitchen:'#ffBurgerKitchenWorkspace',
- catalog:'#ff51CatalogPanel',customers:'#ff51CustomersPanel',reports:'#ff76Center',staff:'#staffAdminCard',
+ catalog:'#ff51CatalogPanel',customers:'#ff51CustomersPanel',reports:'#ff76Center',staff:'#staffAdminCard,#ffEditDialog',
  archive:'#ff51ArchivePanel',ratings:'#ff51RatingsPanel',cases:'#ff41Panel,#ff41Dialog',messages:'#ff39Panel,#ff39Dialog',
  finance:'#ff42Panel',branches:'#ffA05BranchCard,#ffA05BranchDialog',login:'#loginOverlay .loginbox',customer_portal:'#ff28Portal',
- reservations:'#ff49ReservationsPanel',system:'#ff48DiagnosticsPanel,#ff47QAPanel,#ff46ReadinessPanel,#ff44IntegrityPanel,#ff43SecurityPanel,#ff62DataCenter'
+ reservations:'#ff49ReservationsPanel',system:'#ff48DiagnosticsPanel,#ff47QAPanel,#ff46ReadinessPanel,#ff44IntegrityPanel,#ff43SecurityPanel,#ff45AccessPanel,#ff62DataCenter'
 };
 const tokens={
  font:['الخط',['system','الخط المحلي الافتراضي'],['tahoma','Tahoma / Arial'],['cairo','Cairo إن كان مثبتًا'],['noto','Noto Sans Arabic إن كان مثبتًا'],['serif','خط عربي تقليدي']],
