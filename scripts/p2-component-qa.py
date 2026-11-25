@@ -84,13 +84,19 @@ with sync_playwright() as pw:
  browser=pw.chromium.launch(channel='chrome')
  for role in roles:
   oc,old=setup(browser,old_origin,role);nc,new=setup(browser,new_origin,role)
-  if role=='manager':
+  if True:
    a=old.evaluate(inventory);b=new.evaluate(inventory)
    for label,value in [('before',a),('after',b)]:
     for entry in value['overrides']:
-     entry['disposition']='Retained ordered cascade: compare computed role/theme/width styles; inspect source-specific theme, responsive, role or state precedence; not automatically safe to remove.'
-    (out/('css-'+label+'.json')).write_text(json.dumps(value,ensure_ascii=False,indent=2))
-   print('CSSOM before/after:',[(len(x['sheets']),len(x['duplicates']),len(x['overrides']),x['important']) for x in (a,b)],flush=True)
+     r=entry['current']; prev=entry['previous']
+     key=(r['selector']+' '+r['source']+' '+prev['source']).lower()
+     if r['scope']: category='conditional media/supports cascade'
+     elif any(x in key for x in ('hidden','visibility','disabled','active','status','locked','readonly','focus','hover','modal','drawer','nav')): category='interactive state, navigation or visibility cascade'
+     elif any(x in key for x in ('theme','dark','contrast','compact','ffb','luxe','brand','design')): category='brand, theme or component layer precedence'
+     else: category='legacy ordered cascade; removal not demonstrated safe'
+     entry['disposition']=category+'; retained unchanged; compared computed styles and workspace rendering.'
+    (out/('css-'+role+'-'+label+'.json')).write_text(json.dumps(value,ensure_ascii=False,indent=2))
+   print('CSSOM before/after:',role,[(len(x['sheets']),len(x['duplicates']),len(x['overrides']),x['important']) for x in (a,b)],flush=True)
   for width in widths:
    for p in (old,new):p.set_viewport_size({'width':width,'height':850})
    for theme in themes:
@@ -105,12 +111,23 @@ with sync_playwright() as pw:
     for p in (old,new):p.locator('#p2-field').focus()
     focus="""()=>{const s=getComputedStyle(document.activeElement);return [document.activeElement.id,s.outlineStyle,s.outlineWidth,s.outlineColor,s.borderTopColor]}"""
     assert old.evaluate(focus)==new.evaluate(focus),(role,width,theme,'focus parity')
-    for p in (old,new):p.locator('#p2-field').blur()
+    for p in (old,new):
+     p.locator('#p2-field').blur()
+     # Focus on a mobile workspace may scroll either the page or the overflow probe.
+     # Normalize both scroll positions before capturing the same viewport region.
+     p.evaluate("""async()=>{window.scrollTo(0,0);const h=document.getElementById('p2-probe');h.scrollTop=0;h.scrollLeft=0;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));}""")
     if width in (390,1440) and theme in ('classic','dark'):
      # Stable component panel image comparison; actual workspace images recorded separately.
      paths=[out/f'{role}-{width}-{theme}-{side}-components.png' for side in ('before','after')]
-     old.locator('#p2-probe').screenshot(path=paths[0],animations='disabled')
-     new.locator('#p2-probe').screenshot(path=paths[1],animations='disabled')
+     for p,path in zip((old,new),paths):
+      rect=p.locator('#p2-probe').bounding_box()
+      assert rect and rect['y']>=0 and rect['y']+rect['height']<=850,(role,width,theme,rect)
+      # Clip a viewport screenshot in memory rather than locator screenshot,
+      # which may itself scroll the document to bring the fixed element into view.
+      from io import BytesIO
+      shot=Image.open(BytesIO(p.screenshot(animations='disabled')))
+      x,y,w,h=(round(rect[k]) for k in ('x','y','width','height'))
+      shot.crop((x,y,x+w,y+h)).save(path)
      im1,im2=[Image.open(path).convert('RGB') for path in paths]
      assert im1.size==im2.size,(role,width,theme,'panel geometry',im1.size,im2.size)
      assert ImageChops.difference(im1,im2).getbbox() is None,(role,width,theme,'component pixels differ')

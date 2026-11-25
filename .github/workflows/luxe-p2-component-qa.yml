@@ -2,11 +2,15 @@ name: LUXE P2 component cascade QA
 on:
   pull_request:
     paths: ['index.html','styles/**','assets/*.css','scripts/p2-component-qa.py','.github/workflows/luxe-p2-component-qa.yml','docs/implementation/P2-css-consolidation-20261125.json']
+  push:
+    branches: [main]
+    paths: ['styles/luxe-p2-components.css','docs/implementation/P2-css-consolidation-20261125.json','.github/workflows/luxe-p2-component-qa.yml']
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   parity:
+    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,3 +31,10 @@ jobs:
           name: p2-component-parity
           path: p2-evidence/
           if-no-files-found: warn
+  published:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact public HTML and CSS bytes
+        run: python scripts/p2-publish-probe.py
