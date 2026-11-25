@@ -253,16 +253,16 @@ const uid=me(),tag=identity,revision=pdfRevision;pdfPromise=(async()=>{
  await verifyExport(uid,tag,revision);await pdfLibrary();authorized(uid,tag,revision);
  const content=await window.ffContentStudio?.reportText(el('ff76Branch').value||null)||{};authorized(uid,tag,revision);
  const page=document.createElement('div');page.dir='rtl';page.lang='ar';
- page.style.cssText='width:720px;background:#fff;color:#181818;padding:25px;font:14px Tahoma,Arial,sans-serif;line-height:1.7;position:absolute;left:-99999px;top:0';
+ page.style.cssText='width:720px;background:#fff;color:#181818;padding:25px;font:14px Tahoma,Arial,sans-serif;line-height:1.7;position:relative;box-sizing:border-box;max-width:none';
  page.innerHTML='<div style="border-bottom:4px solid #c51b30;padding:10px 0;margin-bottom:15px"><h1>'+safe(content['reports.pdf_title']||'FRESH FRIES LUXE — مركز التقارير')+'</h1><b>'+safe(result.from)+' إلى '+safe(result.to)+'</b><p>'+safe(result.scope)+'</p><p>مصدر البيانات: Supabase · '+safe(stamp(result.generated_at))+'</p><p>الفلاتر: '+safe(filterText())+'</p></div>'+
  '<style>.r-section{border:1px solid #ccc;padding:10px;margin:12px 0;break-inside:auto}.r-section h3{border-right:4px solid #c51b30;padding-right:8px}.r-kpis{display:flex;flex-wrap:wrap;gap:7px}.r-kpi{border:1px solid #ddd;padding:8px;min-width:135px}.r-kpi b{display:block;font-size:18px}.r-scroll{overflow:visible}table{border-collapse:collapse;width:100%;font-size:11px}th,td{text-align:right;border:1px solid #ddd;padding:7px;overflow-wrap:anywhere}th{background:#eee}.r-muted{font-size:11px;color:#444}.r-bars{display:flex;align-items:flex-end;height:150px}.r-barcol{height:150px;width:65px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}.r-bar{width:34px;background:#c51b30}.r-barcol span{font-size:10px}.r-stamp{border:2px dashed #c51b30;padding:9px}</style>'+
  compose(selected())+(content['reports.pdf_note']?'<p class="r-muted">'+safe(content['reports.pdf_note'])+'</p>':'')+'<footer style="margin-top:20px;border-top:1px solid #ddd">فريش فرايز — تقرير تشغيلي لا يثبت التحصيل المالي.</footer>';
- document.body.append(page);
+ const staging=document.createElement('div');staging.style.cssText='position:fixed;left:-10000px;top:0;width:720px;pointer-events:none';staging.append(page);document.body.append(staging);
  try{const blob=await window.html2pdf().set({margin:8,filename:'FreshFries_LUXE_'+result.from+'_'+result.to+'.pdf',
  html2canvas:{scale:1.25,logging:false,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
  pagebreak:{mode:['css','legacy'],avoid:['tr','.r-kpi']}}).from(page).outputPdf('blob');
  authorized(uid,tag,revision);if(!(blob instanceof Blob)||blob.size<500)throw Error('ملف PDF غير صالح');
- pdf=blob;fileName='FreshFries_LUXE_Report_'+result.from+'_'+result.to+'.pdf';return blob}finally{page.remove()}})();
+ pdf=blob;fileName='FreshFries_LUXE_Report_'+result.from+'_'+result.to+'.pdf';return blob}finally{staging.remove()}})();
  try{return await pdfPromise}finally{if(revision===pdfRevision)pdfPromise=null}}
 function saveBlob(){if(!pdf||!me()||!identity.startsWith(me()+':'))return;const url=pdfURL||URL.createObjectURL(pdf),a=document.createElement('a');a.href=url;a.download=fileName;a.click();if(!pdfURL)setTimeout(()=>URL.revokeObjectURL(url),5000)}
 async function download(){if(!pdf||!me())return;const uid=me(),tag=identity,revision=pdfRevision;try{await verifyExport(uid,tag,revision);saveBlob()}catch(e){if(me()===uid)el('ff76Status').textContent=e.message}}
