@@ -166,7 +166,7 @@ function renderDashboardFields(){
  const group=label=>{const d=make('details');d.open=true;d.append(make('summary',label));host.append(d);return d};
  const btn=(parent,label,fn)=>{const b=make('button',label);b.type='button';b.onclick=()=>{if(allowed()){fn();renderDashboardFields();designPreview()}};parent.append(b)};
  const select=(parent,label,choices,value,fn)=>{const wrap=make('label',label),el=make('select');for(const [k,v] of Object.entries(choices))el.add(new Option(v,k));el.value=value;el.onchange=()=>{if(allowed()){fn(el.value);renderDashboardFields();designPreview()}};wrap.append(el);parent.append(wrap)};
- const input=(parent,label,value,fn)=>{const wrap=make('label',label),el=make('input');el.maxLength=100;el.value=value;el.onchange=()=>{if(allowed()&&el.value.trim()){fn(el.value.trim());designPreview()}};wrap.append(el);parent.append(wrap)};
+ const input=(parent,label,value,fn)=>{const wrap=make('label',label),el=make('input');el.maxLength=100;el.value=value;el.onchange=()=>{if(allowed()&&el.value.trim()){fn(el.value.trim());renderDashboardFields();designPreview()}};wrap.append(el);parent.append(wrap)};
  if(hasKind('cards')||hasKind('layout')){
   const d=group('الأقسام الثانوية للرئيسية');
   for(const [key,label] of Object.entries({activity:'الأنشطة الحديثة',shortcuts:'الإجراءات السريعة',branches:'حالة الفروع'}))select(d,label,{'':'دون تغيير','true':'إظهار','false':'إخفاء'},Object.hasOwn(panelPatch,key)?String(panelPatch[key]):'',v=>{if(v==='')delete panelPatch[key];else panelPatch[key]=v==='true'});
