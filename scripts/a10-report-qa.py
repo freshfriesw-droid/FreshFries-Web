@@ -89,7 +89,7 @@ with sync_playwright() as pw:
  items:[{item_name:'=HYPERLINK("bad")',quantity:2,revenue:money?1000:undefined}],
  offer_performance:[{offer_name:'عرض مثبت',orders:1,quantity:2,registered_value:money?1000:undefined}],
  internal_low_ratings:money?[{rating_id:'r1',order_number:123,rater_role:'cashier',stars:2,note:window.a10DetailsChanged?'REPLACED-QA':'PRIVATE-QA'}]:[],
- cashier_coordination:[],days:[{work_day:args.p_from,orders:3,net:money?4000:undefined}],comparison:{today:{orders:3,delivered:2,net:money?4000:undefined}},
+ cashier_coordination:[],attendance:[{report_day:args.p_from,driver_name:'موصل اختبار',sessions:1,actual_first_checkin:'2026-11-24T04:00:00Z',actual_last_checkout:null,open_session:true,first_checkin:'2026-11-24T05:00:00Z',last_checkout:'2026-11-24T23:00:00Z',work_hours:18}],days:[{work_day:args.p_from,orders:3,net:money?4000:undefined}],comparison:{today:{orders:3,delivered:2,net:money?4000:undefined}},
  reservation_summary:{total:1,collected:1},dispatch:{offered:2,accepted:1},assignment_review:{manual_requests:2,assigned_without_manual_record:1,automatic_confirmed:1,manual_confirmed:1,special_direct_confirmed:1,evidence_events:3},additions:{count:1,invoiced_count:1},settlements:money?[]:undefined};
  }
  if(name==='ff_report_preset_list')return window.a10Presets;
@@ -109,6 +109,8 @@ with sync_playwright() as pw:
  assert "أداء العروض" in page.locator('#ff76Body').inner_text()
  assert "إسناد تلقائي مؤكد بالسجل الجديد" in page.locator('#ff76Body').inner_text()
  assert "إسناد مباشر خاص موثق" in page.locator('#ff76Body').inner_text()
+ assert "جلسة مفتوحة" in page.locator('#ff76Body [data-report-section=attendance]').inner_text()
+ assert "خروج مسجل فعليًا" in page.locator('#ff76Body [data-report-section=attendance]').inner_text()
  assert "PRIVATE-QA" in page.locator('#ff76Body').inner_text()
  page.locator('#ff76Branch').select_option('b1');page.locator('#ff76Run').click()
  page.locator('#ff76Body [data-report-section=finance]').wait_for()
