@@ -40,11 +40,13 @@ jobs:
           python3 - <<'PY'
           from urllib.request import Request,urlopen
           from urllib.parse import urlparse
+          import re
           from pathlib import Path
           from hashlib import sha256
           from time import sleep
           root='https://delivery.freshfriesz.com/'
-          marker='20261125-a10'
+          local_html=Path('index.html').read_text(encoding='utf-8')
+          marker='a10-exact-merged-assets'
           paths=['scripts/luxe-report-center-20261123.js','scripts/luxe-completed-universal-20261123.js']
           def get(url):
               with urlopen(Request(root+url,headers={'Cache-Control':'no-cache','User-Agent':'FreshFries-LUXE-release-QA'}),timeout=15) as response:
@@ -55,8 +57,11 @@ jobs:
               try:
                   html=get('?qa='+marker).decode()
                   for relative in paths:
-                      assert relative+'?v='+marker in html
-                      shipped=get(relative+'?v='+marker)
+                      matches=re.findall(r'src="(?:\./)?('+re.escape(relative)+r'\?v=[A-Za-z0-9._-]+)"',local_html)
+                      assert len(matches)==1, (relative,'unique local asset reference',matches)
+                      asset=matches[0]
+                      assert asset in html, (relative,'published asset reference differs',asset)
+                      shipped=get(asset)
                       assert shipped==Path(relative).read_bytes()
                       print('PASS live domain:',relative,sha256(shipped).hexdigest(),flush=True)
                   break
