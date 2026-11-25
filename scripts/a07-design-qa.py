@@ -34,6 +34,7 @@ fixture="""async role=>{
   if(name==='ff_a07_effective_designs')return window.__a07Rows||{};
   if(name==='ff_a07_design_catalog')return window.__a07Catalog||[];
   if(name==='ff_a07_named_design')return 4321;
+  if(name==='ff_a07_preview_scope')return {applies:args.p_target_device==='mobile',before:{pack:'D01',style_config:{}},after:{pack:args.p_target_device==='mobile'?'D08':'D01',style_config:{}},after_sources:args.p_target_device==='mobile'?{font:-1}:{}};
   if(name==='ff81_effective_design')return null;
   return [];
  };
@@ -150,6 +151,11 @@ with sync_playwright() as pw:
    assert dlg.locator("[data-a07-after] [data-ff-a07-shape=pill]").count()>=1
    dlg.locator("[data-a07-redo]").click()
    assert dlg.locator("[data-a07-after] [data-ff-a07-el-weight=strong]").count()>=1
+   dlg.locator("#ffStep03ScopeCompare > summary").click()
+   dlg.locator("[data-step03-compare]").click()
+   page.wait_for_function("()=>document.querySelector('[data-step03-compare-results]').children.length===2")
+   assert dlg.locator("[data-step03-compare-results]").get_by_text("خارج نطاق المسودة — لا تغيير.").count()==1
+   assert page.evaluate("()=>window.__a06Calls.filter(c=>c.name==='ff_a07_preview_scope').length")==2
    dlg.locator("input[name=draftName]").fill("مسودة اختبار آمنة")
    dlg.locator("button[type=submit]").click()
    page.wait_for_function("()=>window.__a06Calls.some(c=>c.name==='ff_a07_named_design')")

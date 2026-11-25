@@ -37,6 +37,37 @@
  dlg.querySelector('[data-card-list]').before(inheritance);
  const inherit=inheritance.querySelector('input');
  const readStyle=()=>({...appearance.readStyle(form),...a08.read(form)});
+ const scopeCompare=document.createElement('details');scopeCompare.id='ffStep03ScopeCompare';
+ scopeCompare.innerHTML='<summary>معاينة متوازية لنطاقين قبل النشر</summary><p>تحسب قاعدة البيانات القيم الفعلية قبل وبعد المسودة وفق الأولوية. المقارنة لا تحفظ أو تنشر شيئًا، وتعرض بيانات اصطناعية فقط.</p><div class="ff-a07-compare-grid" data-scope-targets></div><button type="button" data-step03-compare>معاينة النطاقين</button><p data-step03-compare-status aria-live="polite"></p><div data-step03-compare-results></div>';
+ dlg.querySelector('#ffA07Gallery').after(scopeCompare);
+ const scopeTargets=[];
+ for(let i=0;i<2;i++){
+  const box=document.createElement('section'),h=document.createElement('h4');h.textContent='النطاق '+(i+1);box.append(h);const fields={};
+  for(const [key,label,options] of [['screen','الشاشة',Object.entries(appearance.screens).filter(([k])=>k!=='all')],['role','الدور',Object.entries(roles).filter(([k])=>k!=='all')],['branch','الفرع',[]],['device','الجهاز',[['mobile','الجوال'],['desktop','الكمبيوتر']]]]){
+   const wrap=document.createElement('label');wrap.textContent=label;const select=document.createElement('select');select.dataset.scopeTarget=String(i)+'-'+key;select.replaceChildren(...options.map(([k,v])=>new Option(v,k)));wrap.append(select);box.append(wrap);fields[key]=select;
+  }scopeCompare.querySelector('[data-scope-targets]').append(box);scopeTargets.push(fields);
+ }
+ const scopeStatus=scopeCompare.querySelector('[data-step03-compare-status]'),scopeResults=scopeCompare.querySelector('[data-step03-compare-results]');
+ function clearScopeComparison(){scopeStatus.textContent='';scopeResults.replaceChildren()}
+ function initScopeComparison(){clearScopeComparison();scopeCompare.open=false;for(const [i,t] of scopeTargets.entries()){t.branch.replaceChildren(...Array.from(field('branch').options,o=>o.cloneNode(true)));t.screen.value=field('screen').value==='all'?'dashboard':field('screen').value;t.role.value=field('role').value==='all'?'manager':field('role').value;t.branch.value=field('branch').value;t.device.value=i?'desktop':'mobile'}}
+ scopeCompare.querySelector('[data-step03-compare]').onclick=()=>void run(async(token,who)=>{
+  clearScopeComparison();scopeStatus.textContent='جاري حساب طبقات التصميم…';
+  const draft={p_screen_scope:field('screen').value,p_role_scope:field('role').value,p_branch_scope:field('branch').value||null,p_device_scope:field('device').value,p_pack:field('pack').value,p_style:readStyle()};
+  const targets=scopeTargets.map(t=>({p_target_screen:t.screen.value,p_target_role:t.role.value,p_target_branch:t.branch.value||null,p_target_device:t.device.value}));
+  try{
+   const rows=await Promise.all(targets.map(t=>rpc('ff_a07_preview_scope',{...draft,...t})));
+   if(!valid(token,who))return;
+   for(const [i,row] of rows.entries()){
+    if(!row?.before||!row?.after)throw Error('لم تصل نتيجة المعاينة');
+    const target=targets[i],box=document.createElement('section'),heading=document.createElement('h4');heading.textContent='النطاق '+(i+1)+' · '+screenLabel(target.p_target_screen)+' · '+roles[target.p_target_role]+' · '+(target.p_target_device==='mobile'?'جوال':'كمبيوتر');box.append(heading);
+    const state=document.createElement('p');state.textContent=row.applies?'النطاق مشمول بالمسودة؛ تبقى الأولويات الأكثر تخصيصًا فعالة.':'خارج نطاق المسودة — لا تغيير.';box.append(state);
+    const grid=document.createElement('div');grid.className='ff-a07-compare-grid';
+    for(const [label,value] of [['قبل',row.before],['بعد',row.after]]){const col=document.createElement('div'),h=document.createElement('b');h.textContent=label;col.append(h,appearance.demoCard(target.p_target_screen,value.pack,value.style_config));grid.append(col)}
+    box.append(grid);const source=document.createElement('p');const changed=Object.entries(row.after_sources||{}).filter(([key,id])=>id===-1).map(([key])=>key);source.textContent='خصائص مصدرها المسودة: '+(changed.join(' · ')||'لا توجد');box.append(source);scopeResults.append(box);
+   }
+   scopeStatus.textContent='تم حساب النطاقين دون حفظ أي تعديل.';
+  }catch(e){if(valid(token,who)){clearScopeComparison();scopeStatus.textContent='تعذرت المعاينة الفعلية: '+e.message}}
+ });
  const setStyle=v=>{appearance.setStyle(form,v);a08.set(form,v)};
  const dashboard=document.getElementById('ffx-dashboard'),caption=document.getElementById('ffx-hero-sub'),original=caption.textContent;
  const actor=()=>typeof user!=='undefined'&&user?.id&&typeof data!=='undefined'&&data?.role?user.id:'';
@@ -259,7 +290,7 @@
   finally{if(valid(token,who)){busy=false;buttons()}}
  }
  function open(){
-  if(!manager()||dlg.open)return;editorActor=actor();session++;form.reset();setStyle({});resetCards(null);records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();status.textContent='';field('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));redraw();dlg.showModal();redraw();void run(async token=>{await refreshCatalog(token);await history(token)});
+  if(!manager()||dlg.open)return;editorActor=actor();session++;form.reset();setStyle({});resetCards(null);records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();status.textContent='';field('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));initScopeComparison();redraw();dlg.showModal();redraw();void run(async token=>{await refreshCatalog(token);await history(token)});
  }
  for(const width of [320,360,390,430,768,1024,1440]){
   field('viewport').add(new Option(String(width),String(width),width===390,width===390));
@@ -317,7 +348,7 @@
   await rpc('ff_ui_publish',{p_id:row.id});
   if(valid(token,who)){await history(token,row.id);if(valid(token,who)){status.textContent='نُشر الإصدار رقم '+row.id;sourceRefresh(true);void sync(true)}}
  });
- dlg.querySelector('[data-close]').onclick=()=>dlg.close();dlg.onclose=()=>{if(dlg.open)return;editorActor='';session++;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();setStyle({});resetCards(null);status.textContent='';clearSource()};
+ dlg.querySelector('[data-close]').onclick=()=>dlg.close();dlg.onclose=()=>{if(dlg.open)return;editorActor='';session++;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();setStyle({});resetCards(null);status.textContent='';clearScopeComparison();clearSource()};
  window.addEventListener('ff-luxe-session-reset',reset);
  document.getElementById('ffx-branch').addEventListener('change',()=>sync(true));
  matchMedia('(max-width:850px)').addEventListener('change',()=>sync(true));
