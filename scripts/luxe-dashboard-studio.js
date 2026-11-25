@@ -1,7 +1,7 @@
 /* Centrally published dashboard layouts. Preview uses synthetic cards only. */
 (()=>{
  'use strict';
- const packs=["Fresh Classic", "Midnight Command", "Executive Carbon", "White Studio", "Graphite Pro", "Crimson Edge", "Soft Ivory", "Contrast Plus", "Touch Flow", "Compact Operations", "Control Grid", "Studio Cards", "Mission Control", "Kiosk Focus", "Minimal Black & White", "LUXE Editorial"];
+ const packs=["Fresh Classic", "Midnight Command", "Executive Carbon", "White Studio", "Graphite Pro", "Crimson Edge", "Soft Ivory", "Contrast Plus", "Touch Flow", "Compact Operations", "Control Grid", "Studio Cards", "Mission Control", "Kiosk Focus", "Minimal Black & White", "LUXE Editorial"].map((name,i)=>({code:'D'+String(i+1).padStart(2,'0'),name}));
  const roles={all:'كل الأدوار',manager:'المدير العام',supervisor:'المشرف',customer_service:'خدمة العملاء',cashier:'الكاشير',driver:'الموصل',assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر'};
  const dlg=document.createElement('dialog');
  dlg.id='ffStudio';dlg.dir='rtl';dlg.setAttribute('aria-labelledby','ffStudioTitle');
@@ -221,6 +221,12 @@
   for(const action of ['accounts','stop','trial'])dlg.querySelector('[data-'+action+']').disabled=busy||!row||!!row.published_at;
   dlg.querySelector('[data-load]').disabled=busy||!row;
  }
+ async function refreshCatalog(token){
+  const who=actor();let rows;try{rows=await rpc('ff_a07_design_catalog')}catch{return}
+  if(!valid(token,who)||!Array.isArray(rows)||!rows.length)return;
+  const safe=rows.filter(p=>/^D[0-9]{2,}$/.test(p.code)&&typeof p.name==='string');if(!safe.length)return;
+  const previous=field('pack').value;packs.splice(0,packs.length,...safe);field('pack').replaceChildren(...packs.map(({code,name})=>new Option(code+' · '+name,code)));if(safe.some(p=>p.code===previous))field('pack').value=previous;redraw();
+ }
  async function history(token,selected){
   const who=actor(),rows=await rpc('ff_ui_manager_history');
   if(token!==session||who!==actor()||!manager()||!dlg.open||editorActor!==who)return;
@@ -240,13 +246,13 @@
   finally{if(valid(token,who)){busy=false;buttons()}}
  }
  function open(){
-  if(!manager()||dlg.open)return;editorActor=actor();session++;form.reset();resetCards(null);records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();status.textContent='';field('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));redraw();dlg.showModal();redraw();void run(token=>history(token));
+  if(!manager()||dlg.open)return;editorActor=actor();session++;form.reset();resetCards(null);records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();status.textContent='';field('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));redraw();dlg.showModal();redraw();void run(async token=>{await refreshCatalog(token);await history(token)});
  }
  for(const width of [320,360,390,430,768,1024,1440]){
   field('viewport').add(new Option(String(width),String(width),width===390,width===390));
  }
  for(const [k,label] of Object.entries(roles))field('role').add(new Option(label,k));
- packs.forEach((name,i)=>{const code='D'+String(i+1).padStart(2,'0');field('pack').add(new Option(code+' · '+name,code))});
+ packs.forEach(({code,name})=>field('pack').add(new Option(code+' · '+name,code)));
  form.oninput=redraw;form.addEventListener('change',redraw);field('baseline').onchange=compare;field('version').onchange=()=>{field('accounts').replaceChildren();buttons();compare()};
  form.onsubmit=e=>{e.preventDefault();void run(async(token,who)=>{
   const id=await rpc('ff_a07_named_design',{p_screen:field('screen').value,p_style:appearance.readStyle(form),p_cards:['all','dashboard'].includes(field('screen').value)?copyCards(cards):null,p_name:field('draftName').value,p_description:field('description').value,p_role:field('role').value,p_branch:field('branch').value||null,p_device:field('device').value,p_pack:field('pack').value,p_text:field('caption').value,p_bar:field('bar').value});
