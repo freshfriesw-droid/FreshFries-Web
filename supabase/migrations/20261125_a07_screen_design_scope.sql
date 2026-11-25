@@ -130,3 +130,31 @@ BEGIN
 END $$;
 REVOKE ALL ON FUNCTION public.ff_a07_effective_designs(uuid,text),public.ff_a07_manager_source(text,text,uuid,text),public.ff_a07_named_design(text,text,uuid,text,text,text,text,text,text,jsonb,jsonb) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.ff_a07_effective_designs(uuid,text),public.ff_a07_manager_source(text,text,uuid,text),public.ff_a07_named_design(text,text,uuid,text,text,text,text,text,text,jsonb,jsonb) TO authenticated;
+
+-- Lifecycle audit without exposing content or account passwords.
+CREATE OR REPLACE FUNCTION ff_private.a07_design_audit() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
+BEGIN
+ IF TG_OP='INSERT' THEN
+  INSERT INTO public.ff_audit_log(actor_id,action,entity_type,entity_id,branch_id,details)
+  VALUES(new.actor_id,'a07_design_draft','ui_design',new.id::text,new.branch_id,jsonb_build_object('screen',new.screen_scope,'role',new.role_scope,'device',new.device,'pack',new.pack,'restored_from',new.restored_from));
+ ELSIF old.published_at IS NULL AND new.published_at IS NOT NULL THEN
+  INSERT INTO public.ff_audit_log(actor_id,action,entity_type,entity_id,branch_id,details)
+  VALUES(new.published_by,'a07_design_publish','ui_design',new.id::text,new.branch_id,jsonb_build_object('screen',new.screen_scope,'role',new.role_scope,'device',new.device,'pack',new.pack,'restored_from',new.restored_from));
+ END IF;
+ RETURN new;
+END $$;
+REVOKE ALL ON FUNCTION ff_private.a07_design_audit() FROM PUBLIC,anon,authenticated;
+CREATE TRIGGER ff_a07_design_audit AFTER INSERT OR UPDATE OF published_at ON public.ff_ui_versions FOR EACH ROW EXECUTE FUNCTION ff_private.a07_design_audit();
+CREATE OR REPLACE FUNCTION ff_private.a07_trial_audit() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
+DECLARE b uuid;
+BEGIN
+ SELECT branch_id INTO b FROM public.ff_ui_versions WHERE id=new.version_id;
+ IF TG_OP='INSERT' THEN
+  INSERT INTO public.ff_audit_log(actor_id,action,entity_type,entity_id,branch_id,details) VALUES(new.started_by,'a07_design_trial_start','ui_design',new.version_id::text,b,jsonb_build_object('recipient',new.recipient,'ends_at',new.ends_at));
+ ELSIF old.stopped_at IS NULL AND new.stopped_at IS NOT NULL THEN
+  INSERT INTO public.ff_audit_log(actor_id,action,entity_type,entity_id,branch_id,details) VALUES(new.stopped_by,'a07_design_trial_stop','ui_design',new.version_id::text,b,jsonb_build_object('recipient',new.recipient));
+ END IF;
+ RETURN new;
+END $$;
+REVOKE ALL ON FUNCTION ff_private.a07_trial_audit() FROM PUBLIC,anon,authenticated;
+CREATE TRIGGER ff_a07_trial_audit AFTER INSERT OR UPDATE OF stopped_at ON public.ff_ui_trials FOR EACH ROW EXECUTE FUNCTION ff_private.a07_trial_audit();
