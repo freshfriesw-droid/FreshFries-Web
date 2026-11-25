@@ -332,7 +332,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "1c110d5592d65556787eebb89e3ddaaf"
+      "definition_md5": "cac434bb88ca993b6315c659028237f9",
+      "scope_test": "STEP12 20261125223404: scoped supervisor explicit/implicit branch, central CS and permission revocation; rollback PASS 5"
     },
     {
       "name": "ff40_operations_report",
@@ -2441,5 +2442,5 @@
       "definition_md5": "e36ad6176fc8e89141933210b87fd9c8"
     }
   ],
-  "last_update": "2026-11-26: legacy snapshot scope migration"
+  "last_update": "2026-11-26: legacy snapshot and alerts scope migrations"
 }
