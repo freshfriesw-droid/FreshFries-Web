@@ -14,6 +14,7 @@ BEGIN
  (o3,n-2,b1,'000'||replace(gen_random_uuid()::text,'-',''),'QA area A',d1,'cancelled',c,ts+interval '10 minutes',NULL,500,300,800),
  (o4,n-3,b2,'000'||replace(gen_random_uuid()::text,'-',''),'QA area B',d2,'delivered',c2,ts,ts+interval '15 minutes',9000,700,9700);
  INSERT INTO public.ff38_delivery_tasks(order_id,driver_id,delivered_at) VALUES(o1,d1,ts+interval '20 minutes'),(o2,d1,ts+interval '150 minutes'),(o4,d2,ts+interval '15 minutes');
+ INSERT INTO public.ff_offers(name,price,active) VALUES('QA burger',1000,true);
  INSERT INTO public.ff_order_items(order_id,item_name,quantity,unit_price,line_total) VALUES(o1,'QA chicken',1,1000,1000),(o2,'QA burger',2,1000,2000),(o3,'QA chicken',1,500,500),(o4,'QA hidden',1,9000,9000);
  PERFORM set_config('request.jwt.claim.sub',m::text,true);
  INSERT INTO public.ff38_order_additions(id,order_id,status,amount,requested_by,created_at) VALUES(ad,o1,'pending',0,c,ts);
@@ -41,6 +42,7 @@ BEGIN
  r:=public.ff_a10_reporting_center(dy,dy,b1,NULL,NULL,NULL,NULL,'cancelled');
  IF (r#>>'{totals,orders}')::int<>1 OR (r#>>'{totals,net}')::numeric<>0 THEN RAISE EXCEPTION 'Cancellation filter';END IF;checks:=checks+1;
  r:=public.ff_a10_reporting_center(dy,dy,b1,NULL,NULL,NULL,NULL,NULL);
+ IF (r#>>'{offer_performance,0,offer_name}') IS DISTINCT FROM 'QA burger' OR (r#>>'{offer_performance,0,quantity}')::numeric<>2 OR (r#>>'{offer_performance,0,registered_value}')::numeric<>2000 THEN RAISE EXCEPTION 'Offer attribution %',r->'offer_performance';END IF;checks:=checks+1;
  IF jsonb_array_length(r->'service_staff')<>2 THEN RAISE EXCEPTION 'Same staff names collapsed';END IF;checks:=checks+1;
  IF NOT EXISTS(SELECT FROM jsonb_array_elements_text(r#>'{filter_options,items}') z WHERE z='QA addon') OR EXISTS(SELECT FROM jsonb_array_elements_text(r#>'{filter_options,items}') z WHERE z='QA hidden') THEN RAISE EXCEPTION 'Filter options scope';END IF;checks:=checks+1;
  PERFORM public.ff_a10_report_grant(s,'finance',false);PERFORM public.ff_a10_report_grant(s,'ratings',false);
@@ -58,6 +60,6 @@ BEGIN
  IF has_function_privilege('authenticated','ff_private.a10_report_core(date,date,uuid,uuid,uuid,text,text,text)','EXECUTE') OR has_table_privilege('authenticated','ff_private.a10_fee_evidence','SELECT') OR has_function_privilege('anon','public.ff_a10_reporting_center(date,date,uuid,uuid,uuid,text,text,text)','EXECUTE') THEN RAISE EXCEPTION 'Private source exposed';END IF;checks:=checks+1;
  RAISE EXCEPTION 'QA rollback' USING ERRCODE='ZQA10';
  EXCEPTION WHEN SQLSTATE 'ZQA10' THEN NULL;END;
- IF checks<>20 OR EXISTS(SELECT FROM public.ff_branches WHERE id IN(b1,b2)) THEN RAISE EXCEPTION 'Incomplete QA rollback %',checks;END IF;
+ IF checks<>21 OR EXISTS(SELECT FROM public.ff_branches WHERE id IN(b1,b2)) THEN RAISE EXCEPTION 'Incomplete QA rollback %',checks;END IF;
 END $qa$;
-SELECT 'PASS A10: 20 source reconciliation, midnight, filters, finance evidence, section and branch scope assertions' result;
+SELECT 'PASS A10: 21 source reconciliation, midnight, filters, finance evidence, section and branch scope assertions' result;
