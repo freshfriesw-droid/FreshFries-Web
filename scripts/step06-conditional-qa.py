@@ -97,5 +97,69 @@ with sync_playwright() as pw:
    ctx.close()
   assert covered==keys,sorted(keys-covered)
   print('PASS STEP06 27/27 previously unmounted conditional bindings at width',width,flush=True)
+
+ # Exact public portal and full report content integration, using original renderers.
+ ctx=browser.new_context(viewport={'width':390,'height':850},service_workers='block',reduced_motion='reduce')
+ ctx.route('**/*',lambda r:r.continue_() if r.request.url.startswith(origin) else r.abort())
+ page=ctx.new_page();page.goto(origin,wait_until='load');page.evaluate(fixture,'manager')
+ portal=page.evaluate("""async()=>{
+  const prior=rpc,entries=ffContentStudio.registry().filter(r=>r.publicScreen==='customer_portal'),rows=entries.map((r,i)=>({content_key:r.key,body:'بوابة تجريبية '+i}));
+  window.__portalQA=rows;let current='applicant';
+  rpc=async(name,args={})=>name==='ff49_snapshot'?null:name==='ff28_my_role'?current:name==='ff28_application'?null:name==='ff28_customer'?[]:name==='ff_step06_public_content'?(args.p_screen==='customer_portal'?window.__portalQA:[]):prior(name,args);
+  // Real applicant and customer session render paths; all RPCs synthetic.
+  window.__portalQA=[];await setSession({user:{id:'qa-applicant'}});await ffContentStudio.syncPublic(true);
+  if(document.body.dataset.access!=='applicant'||document.getElementById('ff28Apply').hidden)throw Error('applicant renderer unavailable');
+  const before=entries.map(r=>{const n=document.querySelector(r.selector);return {r,n,txt:[...n.childNodes].filter(c=>c.nodeType===Node.TEXT_NODE).map(c=>c.data).join(''),value:n.value,handler:n.onclick}});
+  window.__portalQA=rows;await ffContentStudio.syncPublic(true);
+  for(const [i,c] of before.entries()){
+   const after=[...c.n.childNodes].filter(n=>n.nodeType===Node.TEXT_NODE).map(n=>n.data).join('');
+   if(!after.includes('بوابة تجريبية '+i)||c.r.mode.startsWith('protected')&&!after.includes(c.txt.trim())||c.n.value!==c.value||c.n.onclick!==c.handler)throw Error('portal binding '+c.r.key);
+  }
+  window.__portalQA=[];await ffContentStudio.syncPublic(true);
+  for(const c of before)if([...c.n.childNodes].filter(n=>n.nodeType===Node.TEXT_NODE).map(n=>n.data).join('')!==c.txt)throw Error('portal restore '+c.r.key);
+  current='customer';window.__portalQA=rows;await setSession({user:{id:'qa-customer'}});await ffContentStudio.syncPublic(true);
+  if(!document.getElementById('ff28Title').textContent.includes('طلباتي')||!document.getElementById('ff28Title').textContent.includes('بوابة تجريبية'))throw Error('customer title');
+  window.__portalQA=[];await ffContentStudio.syncPublic(true);
+  if(document.getElementById('ff28Title').textContent!=='طلباتي')throw Error('customer title restore');
+  return entries.map(r=>r.key)
+ }""")
+ assert len(portal)==5,portal
+ print('PASS STEP06 all 5 customer portal keys, applicant/customer role, original retained/restored',flush=True)
+ ctx.close()
+
+ ctx=browser.new_context(viewport={'width':1440,'height':850},service_workers='block',reduced_motion='reduce')
+ ctx.route('**/*',lambda r:r.continue_() if r.request.url.startswith(origin) else r.abort())
+ page=ctx.new_page();page.goto(origin,wait_until='load')
+ a10tree=ast.parse((root/'scripts/a10-report-qa.py').read_text())
+ page.evaluate(literal('scripts/a10-report-qa.py','fixture'),'manager')
+ init=next(n.args[0].value for n in ast.walk(a10tree) if isinstance(n,ast.Call) and n.args and isinstance(n.func,ast.Attribute) and n.func.attr=='evaluate' and isinstance(n.args[0],ast.Constant) and isinstance(n.args[0].value,str) and 'window.a10Revoked=false;window.a10Escalated=false' in n.args[0].value)
+ init=init.replace('()=>{','async()=>{',1).replace("if(name==='ff_a10_reporting_center'){","if(name==='ff76_report_approval_save'){if(window.qaApprovalError)throw Error('QA approval failure');return {manager_name:args.p_manager_name,notes:args.p_notes,approved_at:new Date().toISOString()}}\n if(name==='ff_a10_reporting_center'){if(window.qaReportError)throw Error('QA report failure');")
+ init=init.replace("window.ff76OpenReports();","window.__a09Content=ffContentStudio.registry().filter(r=>r.mode==='report'||r.mode==='runtime'&&r.key.startsWith('reports.')).map((r,i)=>({content_key:r.key,body:'تقرير تجريبي '+i})); await ffContentStudio.sync(true); window.ff76OpenReports();")
+ page.evaluate(init)
+ page.locator('#ff76Body [data-report-section=finance]').wait_for()
+ report=page.evaluate("""()=>{
+  const rows=window.__a09Content;const checks=rows.filter(r=>r.content_key.startsWith('reports.section.')).map(r=>({key:r.content_key,expected:r.body,actual:document.querySelector('[data-report-section="'+r.content_key.split('.').at(-1)+'"] h3')?.textContent}));
+  return {checks,success:document.getElementById('ff76Status').textContent,expected:rows.find(r=>r.content_key==='reports.success').body,footer:document.querySelector('[data-report-section=finance]').textContent};
+ }""")
+ assert len(report['checks'])==14 and all(x['expected'] in (x['actual'] or '') for x in report['checks']),report['checks']
+ assert report['expected'] in report['success'] and 'المبالغ المسجلة ورسوم التوصيل' in report['footer']
+ page.locator('#ff76ManagerName').fill('QA manager')
+ page.locator('#ff76ManagerNotes').fill('QA note')
+ page.locator('#ff76SaveApproval').evaluate('n=>n.click()')
+ page.wait_for_function("()=>document.querySelector('#ff76ApprovalStatus').textContent.includes(window.__a09Content.find(x=>x.content_key==='reports.approval_success').body)")
+ page.evaluate('window.qaApprovalError=true')
+ page.locator('#ff76SaveApproval').evaluate('n=>n.click()')
+ page.wait_for_function("()=>document.querySelector('#ff76ApprovalStatus').textContent.includes(window.__a09Content.find(x=>x.content_key==='reports.approval_error').body)")
+ page.evaluate('window.qaReportError=true')
+ page.locator('#ff76Run').evaluate('n=>n.click()')
+ page.wait_for_function("()=>document.querySelector('#ff76Status').textContent.includes(window.__a09Content.find(x=>x.content_key==='reports.error').body)")
+ page.evaluate("async()=>{window.qaReportError=false;window.__a09Content=[];await ffContentStudio.sync(true);document.getElementById('ff76Run').click()}")
+ page.locator('#ff76Body [data-report-section=finance]').wait_for()
+ assert 'تقرير تجريبي' not in page.locator('#ff76Body').inner_text()
+ assert 'المبالغ المسجلة ورسوم التوصيل' in page.locator('#ff76Body [data-report-section=finance] h3').inner_text()
+ print('PASS STEP06 all 14 report section titles and 4 report outcome messages, restore, no real writes',flush=True)
+ (out/'public-report.json').write_text(json.dumps({'public_portal':portal,'report':report,'report_outcomes':4},ensure_ascii=False,indent=2))
+ ctx.close()
+
  browser.close()
 server.shutdown()
