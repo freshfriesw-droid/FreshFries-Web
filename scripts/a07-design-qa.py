@@ -52,6 +52,9 @@ with sync_playwright() as pw:
   page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,role)
   page.wait_for_function("()=>!!window.ffA07Design&&!!window.ffDashboardStudio")
   if role=="assembly":page.locator("#ffV12Toggle").click()
+  if role in ("driver","cashier","customer_service"):
+   key={"driver":"attendance","cashier":"cashier","customer_service":"new"}[role]
+   page.locator('#ffx-mobile-nav button[data-key="'+key+'"]').click()
   signatures=set()
   if role in ('cashier','driver'):
    holder='#cashierOrders' if role=='cashier' else '#driverTasks'
@@ -71,6 +74,9 @@ with sync_playwright() as pw:
   if role in ("cashier","driver"):
    assert page.locator("#a07-status-probe").evaluate("n=>getComputedStyle(n).borderTopColor")==status_probe
   if role=="driver":
+   page.set_viewport_size({"width":390,"height":850})
+   page.locator('#ffx-mobile-nav button[data-key="attendance"]').click()
+   assert page.locator("#clockInBtn").is_visible(),"pre-existing attendance workspace must be opened"
    page.evaluate("""async ()=>{window.__a07Button=document.getElementById('clockInBtn');window.__a07Rows={driver:{id:500,pack:'D09',bar:'labels',style_config:{elements:{driver_actions:[{key:'clockInBtn',shape:'pill',size:'large'},{key:'clockOutBtn',shape:'outline',size:'normal'},{key:'ff51BreakBtn',shape:'pack',size:'normal'}]}}}};await ffDashboardStudio.sync(true)}""")
    assert page.locator("#clockInBtn").get_attribute("data-ff-a07-shape")=="pill"
    assert page.locator("#clockInBtn").evaluate("n=>n===window.__a07Button && getComputedStyle(n).order==='1'"),page.evaluate("()=>['clockInBtn','clockOutBtn','ff51BreakBtn'].map(id=>{const n=document.getElementById(id);return {id,order:getComputedStyle(n).order,attr:n.dataset.ffA07Order,parent:n.parentElement.className,display:getComputedStyle(n.parentElement).display,same:n===window.__a07Button}})")
