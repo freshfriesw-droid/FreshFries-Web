@@ -115,7 +115,8 @@ with sync_playwright() as pw:
     if(name==='ff_content_catalog_list')return window.__step06Catalog;
     if(['ff_content_history','ff86_content_history_scoped'].includes(name))return window.__step06History.filter(r=>r.content_key===args.p_key&&(!args.p_role||r.role_scope===args.p_role)&&(!args.p_branch||r.branch_id===args.p_branch)&&(!args.p_global_branch||r.branch_id===null));
     if(name==='ff_content_create_draft'){window.__step06Writes.push(args);if(window.__denyDraft)return null;const id=window.__step06History.length+1;window.__step06History.unshift({id,content_key:args.p_key,role_scope:args.p_role,branch_id:args.p_branch,body:args.p_body,actor_id:user.id,created_at:'2026-11-25T01:00:00Z',published_at:null});return id}
-    if(name==='ff_content_publish'){if(!window.__denyPublish){const row=window.__step06History.find(r=>r.id===args.p_id);row.published_at='2026-11-25T02:00:00Z';row.published_by=user.id;window.__step06Rows=[{content_key:row.content_key,body:row.body,revision:row.id}]}return null}
+    if(name==='ff_step08_release_impact'){const row=window.__step06History.find(r=>r.id===args.p_id);return {id:row.id,valid:!row.published_at,public:false,target_count:1,targets:[{account_id:user.id,account_name:'QA'}],trial_allowed:!row.published_at,previous:row.previous_id}}
+     if(name==='ff_content_publish'){if(!window.__denyPublish){const row=window.__step06History.find(r=>r.id===args.p_id);row.published_at='2026-11-25T02:00:00Z';row.published_by=user.id;window.__step06Rows=[{content_key:row.content_key,body:row.body,revision:row.id}]}return null}
     return prior(name,args)};
    }""",[{k:r[k] for k in ('key','screen','label','original')} for r in inventory['registered']])
    page.on('dialog',lambda d:d.accept())
