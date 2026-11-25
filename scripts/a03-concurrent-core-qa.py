@@ -197,3 +197,32 @@ assert scalar(f"select count(*) from ff38_dispatch_offers where order_id='{ord_c
 query(checkout)
 assert scalar(f"select count(*) from ff51_driver_breaks where driver_id='{du}' and ended_at is null")=="0"
 print("PASS STEP11 actual concurrent checkout/dispatch in both orders, pause/dispatch, no orphan break",flush=True)
+
+
+# STEP11: clock-in must not wait on the branch/order locks held by a dispatcher
+# while it owns the driver's presence row. Normal uncontended sweep remains.
+query("alter table public.ff_orders add column created_at timestamptz not null default now()")
+query((root/"supabase/tests/step11_clock_in_concurrent_fixture.sql").read_text())
+br2=uid(); d2=uid(); u2=uid(); o2=uid()
+query(f"""
+insert into ff_drivers(id,branch_id) values ('{d2}','{br2}');
+insert into ff_profiles(user_id,role) values ('{u2}','driver');
+insert into ff38_driver_links(user_id,driver_id) values ('{u2}','{d2}');
+insert into ff38_driver_presence(driver_id,state,checked_in_at,checked_out_at,last_seen_at) values ('{d2}','offline',now()-interval '1 hour',now(),now());
+insert into ff_orders(id,branch_id,area_snapshot) values ('{o2}','{br2}','QA');
+""")
+app="step11-clockin-dispatch-lock"
+hold=subprocess.Popen(["psql","-X","-qAt","-v","ON_ERROR_STOP=1","-c",f"begin; select pg_advisory_xact_lock(hashtext('ff38-branch-rr-{br2}')); select pg_sleep(5); commit"],env={**os.environ,"PGAPPNAME":app},stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+try:
+ wait_for(app,"PgSleep")
+ clockin=as_actor(u2,"select public.ff38_clock_in()")
+ out=query("set lock_timeout='1s'; "+clockin)
+ assert json.loads(out.stdout.strip().splitlines()[-1])["state"]=="ready"
+ assert scalar(f"select exists(select 1 from pg_stat_activity where application_name='{app}' and wait_event='PgSleep')")=="t","no real overlap"
+ assert scalar(f"select count(*) from ff38_dispatch_offers where order_id='{o2}'")=="0"
+ hold.communicate(timeout=10);assert hold.returncode==0
+ query(clockin)
+ assert scalar(f"select count(*) from ff38_dispatch_offers where order_id='{o2}' and status='offered'")=="1"
+ print("PASS STEP11 concurrent clock-in while branch locked, no deadlock; normal sweep resumes",flush=True)
+finally:
+ if hold.poll() is None:hold.kill();hold.communicate()
