@@ -142,7 +142,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "4a228487ae8fe37f5878125285c1665b"
+      "definition_md5": "24fad27fd56cdb64d1d2369fe6c7d022",
+      "scope_test": "20261125230009: cashier lifecycle desk scope 12 assertions + regressions PASS"
     },
     {
       "name": "ff38_cashier_set_stage",
@@ -151,7 +152,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d836ee468789119f87269bc5543d2552"
+      "definition_md5": "8e0f463ac08988505080d9c65bf9cf44",
+      "scope_test": "20261125230009: cashier lifecycle desk scope 12 assertions + regressions PASS"
     },
     {
       "name": "ff38_clock_in",
@@ -560,7 +562,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "31e8899b7c1807d1b794b3cd5274bb52"
+      "definition_md5": "d76459ffcb85bbd603004a0da3d81f3b",
+      "scope_test": "20261125230009: cashier lifecycle desk scope 12 assertions + regressions PASS"
     },
     {
       "name": "ff49_cashier_receive",
@@ -569,7 +572,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "dc9ed8755ce6546f0c090f8b99024dc6"
+      "definition_md5": "dee997e9f785b28452a975883b35cd31",
+      "scope_test": "20261125230009: cashier lifecycle desk scope 12 assertions + regressions PASS"
     },
     {
       "name": "ff49_catalog",
@@ -652,7 +656,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "8ec086eb92bd06a77f08c699fd912b73"
+      "definition_md5": "8063faae3e35c230a58b93099ef4fab6",
+      "scope_test": "20261125230009: cashier lifecycle desk scope 12 assertions + regressions PASS"
     },
     {
       "name": "ff50_change_cashier_decide",
@@ -661,7 +666,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "2dd7621cba366be556b4abf5be42b7ec"
+      "definition_md5": "66ca92cb9f452a26b94773722174da52",
+      "scope_test": "20261125230009: cashier lifecycle desk scope 12 assertions + regressions PASS"
     },
     {
       "name": "ff50_change_request",
@@ -850,7 +856,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "59f3f3f8063891c3568f877db0a9506a"
+      "definition_md5": "3bf673d28d9cf4431077d83ecef27dbe",
+      "scope_test": "20261125230009: guard added; positive late addition roundtrip regression passed; negative dedicated late invoice case pending"
     },
     {
       "name": "ff52_list_additions",
@@ -1076,7 +1083,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "279b403fe61b34a852fb30af1cb3bfb0"
+      "definition_md5": "71f12daa834f1d5ccd0ce3551f631a8b",
+      "scope_test": "20261125230009: cashier lifecycle desk scope 12 assertions + regressions PASS"
     },
     {
       "name": "ff71_admin_link_assembly",
@@ -2450,5 +2458,5 @@
       "definition_md5": "e36ad6176fc8e89141933210b87fd9c8"
     }
   ],
-  "last_update": "2026-11-26: legacy finance and transfer desk scope"
+  "last_update": "2026-11-26: cashier lifecycle desk isolation"
 }
