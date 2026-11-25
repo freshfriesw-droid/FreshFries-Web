@@ -1,8 +1,9 @@
 /* A09: narrow content/design delegation. No permission changes to operational actions. */
 (()=>{
 'use strict';
-const actor=()=>typeof user!=='undefined'&&user?.id&&typeof data!=='undefined'&&data?.role?user.id:'';
-const manager=()=>!!actor()&&data.role==='manager';
+const role=()=>typeof ffV12AssemblyActive!=='undefined'&&ffV12AssemblyActive?'assembly':window.ffBurgerActive?.()?'burger_kitchen':typeof data!=='undefined'?data?.role:null;
+const actor=()=>typeof user!=='undefined'&&user?.id&&role()?user.id:'';
+const manager=()=>!!actor()&&role()==='manager';
 const capLabels={view:'مشاهدة',edit:'تحرير المسودة',preview:'معاينة',review:'مراجعة'};
 const screens={cashier:'الكاشير',driver:'الموصل',burger_kitchen:'مطبخ البرجر',system:'النظام والأمان',notices:'التنبيهات التشغيلية',dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
 const kinds={text:'النصوص',colors:'الألوان والحدود',buttons:'الأزرار والأيقونات',layout:'التخطيط والكثافة'};
@@ -23,7 +24,8 @@ dialog.innerHTML='<div class="sectionbar"><h2 id="ff82Title">التفويض ال
 document.body.append(dialog);
 const q=n=>dialog.querySelector('[data-d-'+n+']');
 const button=document.createElement('button');button.type='button';button.id='ff82Open';button.className='ffx-outline-light';button.textContent='التفويض المتدرج';button.hidden=true;
-document.querySelector('.ffx-hero-actions')?.append(button);
+function mountButton(){const host=role()==='assembly'?document.getElementById('ffV12AssemblyWorkspace'):role()==='burger_kitchen'?document.getElementById('ffBurgerKitchenWorkspace'):document.querySelector('.ffx-hero-actions');if(host&&!host.contains(button))host.append(button)}
+mountButton();
 let grant=null,context='',last=0,request=0,session=0,busy=false,accounts=[],grants=[],catalog=[],history=[],designHistory=[],designContext=null,elementPatch={};
 const hasKind=k=>!!grant&&(grant.edit_kinds||['text']).includes(k);
 const hasDesign=()=>Object.keys(tokenKinds).some(hasKind);
@@ -39,19 +41,19 @@ function grantWindow(g){
 function localDate(t){const d=new Date(t);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)}
 function options(el,items){el.replaceChildren(...items.map(([value,label])=>new Option(label,String(value))))}
 function clear(){clearDesign();request++;session++;grant=null;context='';last=0;busy=false;accounts=[];grants=[];catalog=[];history=[];button.hidden=true;if(dialog.open)dialog.close();for(const n of ['account','grants','key','history'])q(n).replaceChildren();for(const n of ['audit','reviews','body','scope','original','sample','status'])q(n).textContent='';for(const n of ['text','note','revision'])q(n).value=''}
-function key(){return actor()+'|'+(data?.role||'')}
+function key(){return actor()+'|'+(role()||'')}
 async function sync(force=false){
  const who=actor();if(!who){if(context)clear();return}
- const k=key();if(k!==context){clear();context=k}
+ const k=key();if(k!==context){clear();context=k}mountButton();
  if(manager()){button.hidden=false;return}
  if(grant&&!enabled(grant.capabilities[0])){grant=null;button.hidden=true;invalidateDialog()}
- if(!force&&Date.now()-last<15000)return;
+ if(!force&&Date.now()-last<5000)return;
  last=Date.now();const seq=++request;
- try{const rows=await rpc('ff82_my_grant');if(seq!==request||key()!==k)return;const next=rows?.[0]||null;const changed=grant?.id!==next?.id;grant=next&&next.role_scope===data.role?next:null;button.hidden=!grant;if(dialog.open&&(!grant||changed))invalidateDialog()}
+ try{const rows=await rpc('ff82_my_grant');if(seq!==request||key()!==k)return;const next=rows?.[0]||null;const changed=grant?.id!==next?.id;grant=next&&next.role_scope===role()?next:null;button.hidden=!grant;if(dialog.open&&(!grant||changed))invalidateDialog()}
  catch{if(seq===request&&key()===k){grant=null;button.hidden=true;invalidateDialog()}}
 }
 function guard(token,who){return dialog.open&&token===session&&who===actor()&&context===key()}
-function controls(){for(const el of dialog.querySelectorAll('button:not([data-d-close]),input,select,textarea'))el.disabled=busy;if(!busy&&hasDesign()&&dialog.open){const row=designSelected();q('design-base').disabled=!row||!!row.published_at||row.actor_id!==actor();renderElements()}}
+function controls(){for(const el of dialog.querySelectorAll('button:not([data-d-close]),input,select,textarea'))el.disabled=busy;if(!busy&&hasDesign()&&dialog.open&&!q('design').hidden){const row=designSelected();q('design-base').disabled=!row||!!row.published_at||row.actor_id!==actor();renderElements()}}
 async function run(fn){if(busy||!actor())return;const token=session,who=actor();busy=true;controls();try{await fn(token,who)}catch(e){if(guard(token,who))status(e.message||'تعذر تنفيذ الإجراء')}finally{if(guard(token,who)){busy=false;controls()}}}
 for(const [kind,label] of Object.entries(kinds)){const box=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.value=kind;input.checked=kind==='text';box.append(input,document.createTextNode(label));q('kinds').append(box)}
 for(const [cap,label] of Object.entries(capLabels)){const box=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.value=cap;input.checked=cap==='view';box.append(input,document.createTextNode(label));q('caps').append(box)}
@@ -77,9 +79,9 @@ function preview(){
 }
 async function loadHistory(token,who){const k=q('key').value;history=[];options(q('history'),[]);if(k){const rows=await rpc('ff82_delegate_history',{p_key:k});if(!guard(token,who)||q('key').value!==k)return;history=rows||[];options(q('history'),history.map(r=>[r.id,'#'+r.id+' · '+(r.published_at?'منشور':'مسودة')]))}preview()}
 async function workerRefresh(token,who){
- const rows=await rpc('ff82_my_grant');if(!guard(token,who))return;grant=rows?.[0]?.role_scope===data.role?rows[0]:null;
+ const rows=await rpc('ff82_my_grant');if(!guard(token,who))return;grant=rows?.[0]?.role_scope===role()?rows[0]:null;
  if(!grant){button.hidden=true;invalidateDialog();return}
- q('scope').textContent=(roles[grant.role_scope]||grant.role_scope)+' · '+(data.branches?.find(b=>b.id===grant.branch_id)?.name||grant.branch_id)+' · '+(screens[grant.screen]||grant.screen)+' · ينتهي '+new Date(grant.ends_at).toLocaleString('ar-YE');
+ q('scope').textContent=(roles[grant.role_scope]||grant.role_scope)+' · '+(data?.branches?.find(b=>b.id===grant.branch_id)?.name||grant.branch_id)+' · '+(screens[grant.screen]||grant.screen)+' · ينتهي '+new Date(grant.ends_at).toLocaleString('ar-YE');
  q('edit').hidden=!enabled('edit');q('review').hidden=!enabled('review');q('preview').hidden=!enabled('preview');
  q('text-section').hidden=!hasKind('text');q('design').hidden=!hasDesign();
  if(hasDesign()){await loadDesignHistory(token,who);if(!guard(token,who))return}
