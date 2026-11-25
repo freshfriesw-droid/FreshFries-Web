@@ -127,7 +127,7 @@ with sync_playwright() as pw:
  page.locator('#ff76PresetName').fill('اختبار قالب الأصناف')
  page.locator('#ff76SavePreset').click()
  page.wait_for_function("()=>document.querySelector('#ff76PresetStatus').textContent.includes('حُفظ')")
- page.locator('#ff76Mode').select_option('all')
+ page.locator('#ff76Mode').select_option('full')
  page.locator('#ff76UsePreset').click()
  assert page.locator('#ff76Body [data-report-section]').count()==1
  assert page.locator('#ff76Body [data-report-section=items]').count()==1
