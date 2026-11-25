@@ -166,27 +166,27 @@ function renderElements(){
 function renderDashboardFields(){
  const host=q('dashboard-fields');host.replaceChildren();
  if(grant?.screen!=='dashboard'||!enabled('edit'))return;
- const selected=designSelected(),own=q('design-base').checked&&selected&&!selected.published_at&&selected.actor_id===actor(),base=own?selected:designContext;
+ const selected=designSelected(),own=q('design-base').checked&&selected&&!selected.published_at&&selected.actor_id===actor(),base=own?{...designContext,...selected,card_layout:selected.card_layout??designContext?.card_layout,style_config:{...designContext?.style_config,...selected.style_config}}:designContext;
  const allowed=()=>!busy&&enabled('edit')&&grant?.screen==='dashboard';
  const make=(tag,txt)=>{const n=document.createElement(tag);if(txt!==undefined)n.textContent=txt;return n};
  const group=label=>{const d=make('details');d.open=true;d.append(make('summary',label));host.append(d);return d};
  const btn=(parent,label,fn)=>{const b=make('button',label);b.type='button';b.onclick=()=>{if(allowed()){fn();renderDashboardFields();designPreview()}};parent.append(b)};
  const select=(parent,label,choices,value,fn)=>{const wrap=make('label',label),el=make('select');for(const [k,v] of Object.entries(choices))el.add(new Option(v,k));el.value=value;el.onchange=()=>{if(allowed()){fn(el.value);renderDashboardFields();designPreview()}};wrap.append(el);parent.append(wrap)};
- const input=(parent,label,value,fn)=>{const wrap=make('label',label),el=make('input');el.maxLength=100;el.value=value;el.onchange=()=>{if(allowed()&&el.value.trim()){fn(el.value.trim());renderDashboardFields();designPreview()}};wrap.append(el);parent.append(wrap)};
+ const input=(parent,label,value,fn)=>{const wrap=make('label',label),el=make('input');el.maxLength=100;el.value=value;el.onchange=()=>{if(allowed()&&el.value.trim()){fn(el.value.trim());designPreview()}};wrap.append(el);parent.append(wrap)};
  if(hasKind('cards')||hasKind('layout')){
   const d=group('الأقسام الثانوية للرئيسية');
   for(const [key,label] of Object.entries({activity:'الأنشطة الحديثة',shortcuts:'الإجراءات السريعة',branches:'حالة الفروع'}))select(d,label,{'':'دون تغيير','true':'إظهار','false':'إخفاء'},Object.hasOwn(panelPatch,key)?String(panelPatch[key]):'',v=>{if(v==='')delete panelPatch[key];else panelPatch[key]=v==='true'});
  }
  if(hasKind('cards')){
   const d=group('بطاقات المؤشرات — بياناتها التشغيلية وصلاحياتها محفوظة'),defaults=()=>Object.entries(cardMetrics).map(([metric,label])=>({metric,label,size:'normal',tone:'default'})),rows=cardPatch??(Array.isArray(base?.card_layout)?clone(base.card_layout):defaults());
-  const change=fn=>{cardPatch=clone(rows);fn(cardPatch)};
+  const change=fn=>{cardPatch=clone(cardPatch??rows);fn(cardPatch)};
   btn(d,'إضافة بطاقة',()=>change(a=>a.push(defaults()[0])));btn(d,'استعادة البطاقات الأربع كمسودة',()=>{cardPatch=defaults()});
   rows.forEach((row,i)=>{const box=make('div');box.className='ff-a07-element-row';box.append(make('strong','بطاقة '+(i+1)));select(box,'المؤشر',cardMetrics,row.metric,v=>change(a=>{a[i].metric=v;a[i].label=cardMetrics[v]}));input(box,'اسم البطاقة',row.label,v=>change(a=>a[i].label=v));select(box,'المقاس',sizes,row.size,v=>change(a=>a[i].size=v));select(box,'اللون',tones,row.tone,v=>change(a=>a[i].tone=v));select(box,'الأيقونة',{'':'افتراضية',...(window.ffA08Dashboard?.icons||{})},row.icon||'',v=>change(a=>{if(v)a[i].icon=v;else delete a[i].icon}));
    if(i>0)btn(box,'تقديم',()=>change(a=>a.splice(i-1,0,...a.splice(i,1))));if(i<rows.length-1)btn(box,'تأخير',()=>change(a=>a.splice(i+1,0,...a.splice(i,1))));btn(box,'نسخ',()=>change(a=>a.splice(i+1,0,clone(a[i]))));btn(box,'حذف',()=>change(a=>a.splice(i,1)));d.append(box)});
  }
  if(hasKind('buttons')||hasKind('layout')){
   const d=group('اختصارات مكتبة الإجراءات — لا تمنح صلاحيات تشغيلية'),lib=window.ffStep04ActionLibrary||[],byKey=new Map(lib.map(x=>[x.key,x])),standard=['new','orders','drivers','late','reports','assembly_admin','rewards','messages','driver','cashier','settings'],raw=actionPatch??(Array.isArray(base?.style_config?.quickActions)?base.style_config.quickActions:standard),rows=raw.map(x=>{const key=typeof x==='string'?x:x.key,b=byKey.get(key);return b?{key,label:x.label||b.label,icon:x.icon||b.icon,size:x.size||'normal',tone:x.tone||'default'}:null}).filter(Boolean);
-  const change=fn=>{actionPatch=clone(rows);fn(actionPatch)};
+  const change=fn=>{actionPatch=clone(actionPatch??rows);fn(actionPatch)};
   const available=Object.fromEntries(lib.filter(x=>!rows.some(r=>r.key===x.key)).map(x=>[x.key,x.label]));
   select(d,'إضافة اختصار',{'':'اختر إجراءً',...available},'',v=>{if(byKey.has(v)){const x=byKey.get(v);change(a=>a.push({key:v,label:x.label,icon:x.icon,size:'normal',tone:'default'}))}});
   rows.forEach((row,i)=>{const box=make('div');box.className='ff-a07-element-row';box.append(make('strong',byKey.get(row.key)?.label||row.key));input(box,'اسم الاختصار',row.label,v=>change(a=>a[i].label=v));select(box,'المقاس',sizes,row.size,v=>change(a=>a[i].size=v));select(box,'اللون',tones,row.tone,v=>change(a=>a[i].tone=v));if(i>0)btn(box,'تقديم',()=>change(a=>a.splice(i-1,0,...a.splice(i,1))));if(i<rows.length-1)btn(box,'تأخير',()=>change(a=>a.splice(i+1,0,...a.splice(i,1))));btn(box,'حذف',()=>change(a=>a.splice(i,1)));d.append(box)});
