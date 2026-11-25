@@ -547,10 +547,11 @@ with sync_playwright() as playwright:
                 assert guide.locator("strong").text_content() == "راجع المعاينة"
                 assert guide.locator("li").text_content() == "الكمية الصحيحة"
                 assert "لا تدمج صنفين" in page.locator("#ffbTextPanel > p.muted").text_content()
-                page.evaluate("window.dispatchEvent(new Event('ff-luxe-session-reset'))")
+                # Restore the original RPC before synthetic logout so the periodic content
+                # refresh cannot re-fetch a test-only response for the retained fixture user.
+                page.evaluate("() => {rpc=window.__guideOriginalRpc;window.dispatchEvent(new Event('ff-luxe-session-reset'));}")
                 assert guide.locator("strong").count() == 0
                 assert "راجع الأصناف" in guide.text_content()
-                page.evaluate("() => {rpc=window.__guideOriginalRpc;}")
                 # DEC-09: update field label/hint without changing the order value or element.
                 page.evaluate("""async () => {
                   window.__orderContentRpc=rpc;
@@ -570,10 +571,11 @@ with sync_playwright() as playwright:
                 assert page.locator("#newFee").get_attribute("placeholder") == "أدخل المبلغ بالريال"
                 assert page.locator("#newFee").input_value() == "500"
                 assert page.evaluate("window.__orderContentField === document.getElementById('newFee')")
-                page.evaluate("window.dispatchEvent(new Event('ff-luxe-session-reset'))")
+                # In the real logout, the old user's RPC/session cannot return the mock
+                # overrides again. Revoke the synthetic response before testing reset.
+                page.evaluate("() => {rpc=window.__orderContentRpc;window.dispatchEvent(new Event('ff-luxe-session-reset'));}")
                 assert page.locator('label[for="newFee"]').text_content().strip() == "رسوم التوصيل"
                 assert page.locator("#newFee").get_attribute("placeholder") == "اكتب الأجرة أو 0 للمجاني"
-                page.evaluate("() => {rpc=window.__orderContentRpc;}")
                 # DEC-10: manager grant/revoke and staff draft/review; revoked UI closes.
                 page.evaluate("""() => {
                   const old=rpc;window.__qaDelegationOriginalRpc=old;window.__qaDelegation=null;window.__qaDelegationCalls=[];
