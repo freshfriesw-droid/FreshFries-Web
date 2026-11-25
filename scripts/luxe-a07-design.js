@@ -9,9 +9,9 @@ const screens={
  messages:'الرسائل',reservations:'الحجوزات',system:'النظام والأمان',finance:'التسويات النقدية',branches:'الفروع وساعات العمل والأسعار',login:'الدخول وطلب الانضمام',customer_portal:'بوابة العميل'
 };
 const selectors={
- dashboard:'#ffx-dashboard,#ff40AlertsPanel,#ff60-panel,#ff4-panel,#ff5-modal',orders:'#serviceOnly,#staffOrders,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel,#ffbConfirmLayer,#auditCard,#staffView .card:has(#orderSearch)',cashier:'#cashierView,#ffBurgerCashierPanel',driver:'#driverView,#ff52RoutesPanel',
+ dashboard:'#ffx-dashboard,#ff40AlertsPanel,#ff60-panel,#ff4-panel,#ff5-modal',orders:'#serviceOnly,#staffOrders,#ff50ChangesPanel,#ff49TransferPanel,#ff49ManualPanel,#ff52LatePanel,#ffbConfirmLayer,#auditCard,#staffView .card:has(#orderSearch),#ffCustomerEditDialog,#ffUnifiedMenuDialog',cashier:'#cashierView,#ffBurgerCashierPanel',driver:'#driverView,#ff52RoutesPanel',
  assembly:'#ffV12AssemblyWorkspace',burger_kitchen:'#ffBurgerKitchenWorkspace',
- catalog:'#ff51CatalogPanel',customers:'#ff51CustomersPanel',reports:'#ff76Center,#ff40ReportsPanel',staff:'#staffAdminCard,#ffEditDialog,#managerLinks',
+ catalog:'#ff51CatalogPanel',customers:'#ff51CustomersPanel',reports:'#ff76Center,#ff40ReportsPanel,#ff76PdfDialog',staff:'#staffAdminCard,#ffEditDialog,#managerLinks',
  archive:'#ff51ArchivePanel',ratings:'#ff51RatingsPanel',cases:'#ff41Panel,#ff41Dialog',messages:'#ff39Panel,#ff39Dialog',
  finance:'#ff42Panel',branches:'#ffA05BranchCard,#ffA05BranchDialog',login:'#loginOverlay .loginbox',customer_portal:'#ff28Portal',
  reservations:'#ff49ReservationsPanel',system:'#ff48DiagnosticsPanel,#ff47QAPanel,#ff46ReadinessPanel,#ff44IntegrityPanel,#ff43SecurityPanel,#ff45AccessPanel,#ff62DataCenter'
@@ -46,7 +46,7 @@ const packOK=p=>/^D[0-9]{2,}$/.test(p||'');
 const cfgOf=v=>v&&typeof v==='object'&&!Array.isArray(v)?v:{};
 const publicScreen=s=>s==='login'||s==='customer_portal';
 const extendedScreen=s=>publicScreen(s)||s==='finance'||s==='branches';
-const extendedRoot=(root,screen)=>extendedScreen(screen)||['ff40AlertsPanel','ff50ChangesPanel','ff49TransferPanel','ffEditDialog','ff45AccessPanel','ff60-panel','ff4-panel','ff5-modal','ff49ManualPanel','ff52LatePanel','ffbConfirmLayer','ff52RoutesPanel','managerLinks','auditCard','ff40ReportsPanel'].includes(root.id)||root.matches('#staffView .card:has(#orderSearch)');
+const extendedRoot=(root,screen)=>extendedScreen(screen)||['ff40AlertsPanel','ff50ChangesPanel','ff49TransferPanel','ffEditDialog','ff45AccessPanel','ff60-panel','ff4-panel','ff5-modal','ff49ManualPanel','ff52LatePanel','ffbConfirmLayer','ff52RoutesPanel','managerLinks','auditCard','ff40ReportsPanel','ff76PdfDialog','ffCustomerEditDialog','ffUnifiedMenuDialog'].includes(root.id)||root.matches('#staffView .card:has(#orderSearch)');
 const visiblePublicScreen=()=>['customer','applicant'].includes(document.body.dataset.access)?'customer_portal':document.body.dataset.access==='locked'?'login':null;
 let current={},publicRows={},publicKey='',publicAt=0,publicSerial=0,owned=new Set(),ownedDialogs=new Set();
 async function syncPublic(force=false){

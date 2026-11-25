@@ -196,3 +196,10 @@
 :is([data-ff-a07-pack],[data-ff-a07-element-scope]) [data-ff-a07-el-placement="end"]{justify-self:end;align-self:end;max-inline-size:100%}
 :is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(input,textarea)[data-ff-a07-el-tone]::placeholder{color:currentColor;opacity:.85}
 :is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(input,textarea,select)[data-ff-a07-el-tone]:focus-visible{outline:3px solid currentColor;outline-offset:-3px}
+
+/* Synthetic examples remain distinct from live actions and customer data. */
+.ff-a07-demo [data-step03-kind="field"]{background:var(--a07-bg);color:var(--a07-ink);border:1px solid currentColor;text-align:start}
+.ff-a07-demo [data-step03-kind="region"]{background:var(--a07-bg);color:var(--a07-ink);border:1px solid currentColor;min-height:64px;flex-basis:100%}
+.ff-a07-demo [data-step03-kind="status"],.ff-a07-demo [data-step03-kind="timer"]{background:#fff0d5;color:#754600;border:1px solid #b76b00;font-variant-numeric:tabular-nums}
+.ff-a07-demo [data-step03-kind="tab"]{border:2px solid currentColor}
+.ff-step03-preview-sample{display:block;font-size:.88em;opacity:.9;margin-block-start:4px;overflow-wrap:anywhere}
