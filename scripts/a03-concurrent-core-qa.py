@@ -58,6 +58,12 @@ assert os.environ.get("PGHOST") in ("127.0.0.1","localhost")
 assert scalar("select current_database()")=="a03_qa"
 root=Path(__file__).resolve().parents[1]
 subprocess.run(["psql","-X","-v","ON_ERROR_STOP=1","-f",str(root/"supabase/tests/a03_concurrent_core_fixture.sql")],check=True,timeout=30)
+# STEP10: load the exact dispatcher replacement from the new migration.
+# Its report-core replacement and RLS are exercised separately on Supabase.
+migration=(root/"supabase/migrations/20261125_step10_dispatch_report_evidence.sql").read_text()
+start=migration.index("DO $migration$")
+end=migration.index(" d:=pg_get_functiondef('ff_private.a10_report_core",start)
+query(migration[start:end]+"\nEND $migration$;")
 branch=uid(); normal=uid(); special=uid(); user=uid(); order=uid()
 query(f"""
 insert into ff_drivers(id,branch_id) values ('{normal}','{branch}'),('{special}','{branch}');
@@ -71,6 +77,8 @@ a,b=race(f"select public.ff38__offer_next('{order}')",f"select public.ff38__offe
 assert json.loads(a.splitlines()[0])["state"]=="offered"
 assert json.loads(b.splitlines()[-1])["state"]=="pending"
 assert scalar(f"select count(*) from ff38_dispatch_offers where order_id='{order}' and status='offered'")=="1"
+assert scalar(f"select count(*) from ff_audit_log where entity_id='{order}' and action='step10_dispatch_evidence' and details->>'mode'='automatic' and details->>'kind'='offer'")=="1"
+print("PASS STEP10 concurrent dispatch evidence: one successful offer and one source event",flush=True)
 offer=scalar(f"select id from ff38_dispatch_offers where order_id='{order}'")
 reply=f"select set_config('request.jwt.claim.sub','{user}',true); select public.ff38_driver_reply('{offer}',true,null)"
 a,b=race(reply,reply,"العرض غير متاح")
@@ -128,3 +136,24 @@ assert scalar(f"select status from ff_orders where id='{order}'")=="delivered"
 assert scalar(f"select count(*) from ff60_workflow_events where order_id='{order}' and event_type='cashier' and actor_id='{cashier}'")=="4"
 assert scalar(f"select count(*) from ff60_workflow_events where order_id='{order}' and event_type='courier' and actor_id='{user}'")=="3"
 print("PASS A03 lifecycle concurrency: idempotent receipt, immutable invoice, single transitions, pending addition guard, handoff before departure, audited completion",flush=True)
+
+
+# STEP10: load exact A10 fee evidence function into a disposable minimal schema.
+query("""
+create table public.ff42_driver_settlements(id uuid primary key,status text,cash_received numeric,delivered_delivery_fees numeric);
+create or replace function public.ff_is_manager() returns boolean language sql stable as $$ select exists(select 1 from public.ff_profiles where user_id=auth.uid() and role='manager' and active) $$;
+""")
+fee_source=(root/"supabase/migrations/20261125_a10_reporting_scope.sql").read_text()
+fee_start=fee_source.index("CREATE TABLE ff_private.a10_fee_evidence")
+fee_func=fee_source.index("CREATE OR REPLACE FUNCTION public.ff_a10_confirm_fee",fee_start)
+fee_end=fee_source.index("CREATE OR REPLACE FUNCTION public.ff_a10_fee_history",fee_func)
+fee_table=fee_source[fee_start:fee_func]
+fee_table="\n".join(line for line in fee_table.splitlines() if not line.startswith("REVOKE ALL"))
+query(fee_table+fee_source[fee_func:fee_end])
+manager=uid(); settlement=uid()
+query(f"insert into ff_profiles(user_id,role) values ('{manager}','manager');insert into ff42_driver_settlements values ('{settlement}','closed',800,300)")
+race(as_actor(manager,f"select public.ff_a10_confirm_fee('{settlement}',200,'QA first evidence')"),as_actor(manager,f"select public.ff_a10_confirm_fee('{settlement}',250,'QA corrected evidence')"))
+assert scalar(f"select count(*) from ff_private.a10_fee_evidence where settlement_id='{settlement}'")=="2"
+assert scalar(f"select amount from ff_private.a10_fee_evidence where settlement_id='{settlement}' order by id desc limit 1")=="250"
+assert scalar(f"select cash_received from ff42_driver_settlements where id='{settlement}'")=="800"
+print("PASS STEP10 concurrent confirmed fee: both evidence revisions retained, latest ordered, settlement unchanged",flush=True)
