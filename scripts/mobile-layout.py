@@ -394,7 +394,7 @@ with sync_playwright() as playwright:
                 studio = page.locator("#ffStudio")
                 assert studio.is_visible()
                 # DEC-06: edit, duplicate, order, remove, undo, and reset the four real metric types.
-                studio.locator("#ffCardEditor summary").click()
+                studio.locator("#ffCardEditor > summary").click()
                 editor = studio.locator("#ffCardEditor")
                 rows = editor.locator(".ff-card-edit-row")
                 assert rows.count() == 4
@@ -418,7 +418,7 @@ with sync_playwright() as playwright:
                 editor.locator("[data-card-default]").click()
                 assert rows.count() == 4
                 assert editor.locator("[data-card-redo]").is_disabled()
-                studio.locator("#ffCardEditor summary").click()
+                studio.locator("#ffCardEditor > summary").click()
                 # DEC-03: verify effective published source against concrete role/device scopes.
                 page.evaluate("""() => {
                   const before=rpc;
