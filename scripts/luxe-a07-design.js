@@ -62,7 +62,7 @@ const logoPaths={brand:LOGO,mark:FALLBACK},logoOrigins=new WeakMap();
 function imageFallback(img){
  if(img.dataset.ffA07Fallback)return;
  img.dataset.ffA07Fallback='1';
- const fallback=()=>{if(!img.dataset.ffA07Tried){img.dataset.ffA07Tried='1';img.src=FALLBACK}}; img.addEventListener('error',fallback,{once:true});if(img.complete&&!img.naturalWidth)fallback();
+ const fallback=()=>{if(!img.dataset.ffA07Tried){img.dataset.ffA07Tried='1';if(img.getAttribute('src')!==FALLBACK)img.src=FALLBACK}}; img.addEventListener('error',fallback);if(img.complete&&!img.naturalWidth)fallback();
 }
 function addLogo(root,screen){
  if(screen==='dashboard'||screen==='assembly'||root.id==='ffBurgerCashierPanel'||root.id==='staffOrders')return;
@@ -121,7 +121,7 @@ function activeScreen(){
 function dialogStyle(){
  const next=new Set();
  for(const el of document.querySelectorAll('#ffbConfirmLayer .ffb-v2-dialog,dialog.ff-luxe-rate-dialog')){
-  const screen=el.matches('.ffb-v2-dialog')?'orders':activeScreen(),style=current[screen]?.style_config||{};
+  const screen=el.matches('.ffb-v2-dialog')?'orders':(el.closest('[data-ff-a07-screen]')?.dataset.ffA07Screen||activeScreen()),style=current[screen]?.style_config||{};
   for(const key of ['dialogRadius','dialogPadding','ratingScale']){
    const attr='a07'+key[0].toUpperCase()+key.slice(1);delete el.dataset[attr];
    if(tokens[key].slice(1).some(o=>o[0]===style[key]))el.dataset[attr]=style[key];
@@ -144,7 +144,7 @@ function menuLogo(){
  decorate(box,row);
  const dark=style.surface==='dark'||(style.surface!=='light'&&(document.body.classList.contains('ffx-dark')||(!special&&style.surface!=='light')||['D02','D08','D11','D13'].includes(row?.pack)));
  const img=box.querySelector('img'),src=logoPaths[dark&&style.logoDarkAsset?style.logoDarkAsset:style.logoAsset]||LOGO;
- if(img.getAttribute('src')!==src){delete img.dataset.ffA07Tried;img.src=src}
+ if(img.dataset.ffA07DesiredMenuAsset!==src){img.dataset.ffA07DesiredMenuAsset=src;delete img.dataset.ffA07Tried;if(img.getAttribute('src')!==src)img.src=src}
  for(const root of owned)if(root.dataset.ffA07Screen===screen&&root.dataset.a07LogoPosition==='menu')root.dataset.ffStep03LogoInMenu='1';
 }
 function refresh(){
