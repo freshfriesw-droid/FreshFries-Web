@@ -17,7 +17,7 @@ const selectors={
  reservations:'#ff49ReservationsPanel',system:'#ff48DiagnosticsPanel,#ff47QAPanel,#ff46ReadinessPanel,#ff44IntegrityPanel,#ff43SecurityPanel,#ff45AccessPanel,#ff62DataCenter'
 };
 // Shared controls use an element-only scope: do not restyle shell containers or add logos.
-const elementSelectors={dashboard:'#ffx-topbar,#ffx-sidebar,#ff2-dialog,#ff3-guide',system:'#ffx-preferences'};
+const elementSelectors={dashboard:'#ffx-topbar,#ffx-sidebar,#ff2-dialog,#ff3-guide,#ffF01Panel',system:'#ffx-preferences,#ffA12Recovery',orders:'#ffRewardManager,#ffRewardService',cashier:'#ffRewardCashier',archive:'#fflCashierFinished,#ffCompletedDetailDialog',cases:'#ffCaseAlertDialog',reports:'#ffHistoryPeriod',finance:'#ff42RangeReport'};
 const tokens={
  font:['الخط',['system','الخط المحلي الافتراضي'],['tahoma','Tahoma / Arial'],['cairo','Cairo إن كان مثبتًا'],['noto','Noto Sans Arabic إن كان مثبتًا'],['serif','خط عربي تقليدي']],
  scale:['حجم النص',['normal','عادي'],['large','كبير'],['xlarge','أكبر']],
@@ -153,7 +153,7 @@ function refresh(){
  for(const [screen,selector] of Object.entries(selectors)){
   for(const root of document.querySelectorAll(selector)){
    if(seen.has(root))continue;seen.add(root);
-   root.dataset.ffA07Screen=screen;
+   root.dataset.ffA07Screen=screen;delete root.dataset.ffA07ElementScope;
    const row=publicScreen(screen)?publicRows[screen]:current[screen];
    if(!extendedRoot(root,screen)||row)addLogo(root,screen);
    else{root.querySelectorAll('[data-ff-step03-extended-logo]').forEach(n=>n.remove());root.querySelectorAll(':scope > .ff-a07-logo-cover').forEach(n=>{if(!n.children.length)n.remove()});}
@@ -162,6 +162,9 @@ function refresh(){
   }
  }
  const elementOnly=new Set();
+ const shared=[[$('ffBurgerDialog'),activeScreen()==='assembly'?'assembly':'cashier'],[$('ffRewardRedeemDialog'),(typeof data!=='undefined'&&data?.role==='cashier')?'cashier':'orders']];
+ if(activeScreen()==='assembly'){const panel=$('ffBurgerCashierPanel');if(panel){resetNode(panel);delete panel.dataset.ffA07Signature;seen.delete(panel);shared.push([panel,'assembly']);}}
+ for(const [root,screen] of shared){if(!root||seen.has(root))continue;seen.add(root);elementOnly.add(root);root.dataset.ffA07Screen=screen;if(packOK(current[screen]?.pack))root.dataset.ffA07ElementScope='1';else delete root.dataset.ffA07ElementScope;}
  for(const [screen,selector] of Object.entries(elementSelectors))for(const root of document.querySelectorAll(selector)){
   if(seen.has(root))continue;seen.add(root);elementOnly.add(root);root.dataset.ffA07Screen=screen;
   if(packOK(current[screen]?.pack))root.dataset.ffA07ElementScope='1';else delete root.dataset.ffA07ElementScope;
