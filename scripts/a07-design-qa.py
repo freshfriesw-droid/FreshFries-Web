@@ -528,7 +528,9 @@ with sync_playwright() as pw:
    page.wait_for_function("()=>document.querySelector('#ffStudio select[name=pack]').options.length===17")
    assert dlg.locator("select[name=pack] option[value=D17]").count()==1
    dlg.locator("[data-close]").click()
-  page.evaluate("()=>window.dispatchEvent(new Event('ff-luxe-session-reset'))")
+  page.evaluate("()=>{user=null;data=null;window.dispatchEvent(new Event('ff-luxe-session-reset'))}")
+  assert page.locator(selector).get_attribute("data-ff-a07-pack") is None
+  page.evaluate("()=>ffDashboardStudio.sync(true)")
   assert page.locator(selector).get_attribute("data-ff-a07-pack") is None
   print("PASS A07",role,47,"role/width/pack checks",flush=True)
   collect_visual(page);ctx.close()

@@ -1,0 +1,43 @@
+name: LUXE official deployed application parity
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'scripts/**'
+      - 'styles/**'
+      - 'assets/**'
+      - '.github/workflows/luxe-official-domain-parity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify official apex HTTPS and exact approved application
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Reuse the proven P2/STEP03 exact-byte check without altering the
+          # deployed files or the existing subdomain verification.
+          python3 - <<'PY'
+          from pathlib import Path
+          src=Path('scripts/p2-publish-probe.py').read_text()
+          old="origin='https://delivery.freshfriesz.com/'"
+          assert src.count(old)==1
+          src=src.replace(old,"origin='https://freshfriesz.com/'")
+          old="  assert urlparse(r.geturl()).hostname==urlparse(origin).hostname"
+          assert src.count(old)==1
+          src=src.replace(old, """  final=urlparse(r.geturl())
+            # An HTTPS redirect from the explicitly requested apex to its
+            # existing deployment is acceptable only with exact source parity.
+            assert final.scheme=='https'
+            assert final.hostname in ('freshfriesz.com','delivery.freshfriesz.com'), final.hostname
+            print('HTTPS',path,'->',r.geturl(),flush=True)""".replace('\n    ','\n'))
+          Path('scripts/.step03-apex-probe.py').write_text(src)
+          PY
+          python3 -m py_compile scripts/.step03-apex-probe.py
+          python3 scripts/.step03-apex-probe.py

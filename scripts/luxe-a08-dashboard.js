@@ -5,7 +5,13 @@ const $=id=>document.getElementById(id),make=(tag,txt)=>{const n=document.create
 const roles={manager:'المدير العام',supervisor:'المشرف',customer_service:'خدمة العملاء',cashier:'الكاشير',driver:'الموصل',assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر'};
 const permissions={view_reports:'عرض التقارير',manage_drivers:'إدارة الموصلين',create_order:'إنشاء الطلب',assign_driver:'إسناد الطلب',edit_order:'تعديل الطلب',cancel_order:'إلغاء الطلب'};
 const icons={orders:'طلبات',clock:'ساعة',users:'مستخدمون',alert:'تنبيه',star:'نجمة',grid:'شبكة',bike:'دراجة',report:'تقرير'};
-const actions={new:'طلب جديد',orders:'متابعة الطلبات',drivers:'الموصلون',late:'المتأخرة',reports:'التقارير',assembly_admin:'حسابات التجميع',rewards:'الأكواد',messages:'الرسائل',driver:'بوابة الموصل',cashier:'الكاشير',settings:'الإعدادات',reservations:'الحجوزات',attendance:'الدوام',offers:'العروض',cases:'الشكاوى والتظلمات',customers:'العملاء',burger:'البرجر',cashier_finished:'المنتهية للكاشير'};
+const library=new Map((window.ffStep04ActionLibrary||[]).map(x=>[x.key,x]));
+const actions=Object.fromEntries([...library].map(([key,value])=>[key,value.label]));
+const actionIcons=["home","grid","plus","orders","bike","clock","alert","bell","settings","refresh","user","report","wallet","calendar","folder","message","star","users","check","search","shield","filter","phone"];
+const actionSizes={normal:'عادي',wide:'عريض',full:'عرض كامل'},actionTones={default:'افتراضي',red:'أحمر',black:'أسود',neutral:'محايد'};
+const actionKey=v=>typeof v==='string'?v:v?.key;
+const actionView=v=>{const base=library.get(actionKey(v));return base?{key:base.key,label:typeof v?.label==='string'&&validLabel(v.label)?v.label:base.label,icon:actionIcons.includes(v?.icon)?v.icon:base.icon,size:Object.hasOwn(actionSizes,v?.size)?v.size:'normal',tone:Object.hasOwn(actionTones,v?.tone)?v.tone:'default'}:null};
+const validLabel=v=>typeof v==='string'&&v.trim().length>0&&v.length<=100&&!/[<>{}\u0000-\u001f\u007f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/u.test(v)&&!/(https?:\/\/|www\.|javascript:|data:|vbscript:|\/\/)/i.test(v);
 const standard=['new','orders','drivers','late','reports','assembly_admin','rewards','messages','driver','cashier','settings'];
 const statusNames={new:'جديد',sent:'مسند',delivered:'منجز',cancelled:'ملغى',assigned:'مسند',preparing:'قيد التحضير',ready:'جاهز',on_way:'في الطريق',arrived:'وصل'};
 const number=v=>typeof v==='number'&&Number.isFinite(v)&&v>=0?String(v):'—';
@@ -33,36 +39,72 @@ function cardFields(card,i,change){
 const editorState=new WeakMap();
 function editor(form,anchor){
  const root=make('details');root.id='ffA08Panels';
- root.innerHTML='<summary>الأقسام الثانوية والاختصارات</summary><p>تخصيص الرئيسية فقط؛ لا يمكن إخفاء التحذيرات أو حالة اتصال النظام أو إضافة إجراء غير معرّف.</p><div data-a08-panels></div><label><input type="checkbox" data-a08-custom-actions> تخصيص مكتبة الاختصارات وترتيبها</label><div data-a08-actions></div><p class="ff-a08-panel-preview" data-a08-preview></p>';
+ root.innerHTML='<summary>الأقسام الثانوية ومكتبة الإجراءات</summary><p>اختصارات إضافية للرئيسية، لا تحذف الإجراء الأصلي من شاشة العمل أو تمنح صلاحية جديدة. لا يمكن إخفاء التحذيرات الإلزامية أو حالة الاتصال.</p><div data-a08-panels></div><label><input type="checkbox" data-a08-custom-actions> تخصيص مكتبة الاختصارات وترتيبها</label><div class="actions" data-a08-history><button type="button" data-a08-undo>تراجع الاختصارات</button><button type="button" data-a08-redo>إعادة الاختصارات</button><button type="button" data-a08-default>الاختصارات الافتراضية</button></div><div data-a08-actions></div><p class="ff-a08-panel-preview" data-a08-preview></p><div class="ff-step04-preview" data-a08-action-preview aria-label="معاينة الاختصارات غير التفاعلية"></div>';
  anchor.after(root);
  const panels=root.querySelector('[data-a08-panels]'),custom=root.querySelector('[data-a08-custom-actions]'),list=root.querySelector('[data-a08-actions]');
- const st={panels:{},quick:undefined};editorState.set(form,st);
+ const st={panels:{},quick:undefined,undo:[],redo:[],busy:false};editorState.set(form,st);
+ const snapshot=()=>Array.isArray(st.quick)?copy(st.quick):undefined;
+ const allowed=()=>!st.busy&&typeof user!=='undefined'&&!!user?.id&&typeof data!=='undefined'&&data?.role==='manager';
  const notify=()=>form.dispatchEvent(new Event('input',{bubbles:true}));
  const fields={activity:'الأنشطة الحديثة',shortcuts:'الإجراءات السريعة',branches:'حالة الفروع'};
+ function refreshButtons(){
+  for(const n of root.querySelectorAll('button,input,select'))n.disabled=st.busy||n.dataset.boundary==='true';
+  root.querySelector('[data-a08-undo]').disabled=st.busy||!st.undo.length;
+  root.querySelector('[data-a08-redo]').disabled=st.busy||!st.redo.length;
+ }
+ function changed(fn){if(!allowed())return;st.undo.push(snapshot());st.redo=[];fn();render();notify()}
+ function history(from,to){if(!allowed()||!from.length)return;to.push(snapshot());st.quick=from.pop();render();notify()}
+ root.querySelector('[data-a08-undo]').onclick=()=>history(st.undo,st.redo);
+ root.querySelector('[data-a08-redo]').onclick=()=>history(st.redo,st.undo);
+ root.querySelector('[data-a08-default]').onclick=()=>changed(()=>{st.quick=[...standard]});
  function render(){
   panels.replaceChildren();
   for(const [key,label] of Object.entries(fields)){
    const wrap=make('label',label),sel=make('select');sel.setAttribute('aria-label',label);sel.add(new Option('وراثة الإعداد',''));sel.add(new Option('إظهار','true'));sel.add(new Option('إخفاء','false'));sel.value=key in st.panels?String(st.panels[key]):'';
-   sel.onchange=()=>{if(sel.value==='')delete st.panels[key];else st.panels[key]=sel.value==='true';notify()};wrap.append(sel);panels.append(wrap);
+   sel.onchange=()=>{if(!allowed())return;if(sel.value==='')delete st.panels[key];else st.panels[key]=sel.value==='true';notify()};wrap.append(sel);panels.append(wrap);
   }
   custom.checked=Array.isArray(st.quick);list.hidden=!custom.checked;list.replaceChildren();
-  if(!custom.checked)return;
-  const add=make('select');add.setAttribute('aria-label','إجراء سريع من المكتبة');add.add(new Option('إضافة إجراء…',''));for(const [k,v] of Object.entries(actions))if(!st.quick.includes(k))add.add(new Option(v,k));add.onchange=()=>{if(add.value){st.quick.push(add.value);render();notify()}};list.append(add);
-  st.quick.forEach((key,i)=>{
-   const row=make('div');row.className='ff-a08-action-row';row.append(make('b',actions[key]||key));
-   for(const [label,disabled,fn] of [['تقديم',i===0,()=>st.quick.splice(i-1,0,...st.quick.splice(i,1))],['تأخير',i===st.quick.length-1,()=>st.quick.splice(i+1,0,...st.quick.splice(i,1))],['حذف',false,()=>st.quick.splice(i,1)]]){
-    const btn=make('button',label);btn.type='button';btn.disabled=disabled;btn.onclick=()=>{if(disabled)return;fn();render();notify()};row.append(btn);
+  if(!custom.checked){refreshButtons();return}
+  const add=make('select');add.setAttribute('aria-label','إجراء سريع من المكتبة');add.add(new Option('إضافة إجراء…',''));
+  for(const [k,v] of Object.entries(actions))if(!st.quick.some(x=>actionKey(x)===k))add.add(new Option(v,k));
+  add.onchange=()=>{if(library.has(add.value))changed(()=>st.quick.push(add.value))};list.append(add);
+  st.quick.forEach((raw,i)=>{
+   const entry=actionView(raw);if(!entry)return;
+   const row=make('div');row.className='ff-a08-action-row';row.dataset.a08EditorAction=entry.key;row.draggable=!st.busy;
+   const title=make('b',actions[entry.key]);title.title='معرف الإجراء الثابت: '+entry.key;row.append(title);
+   row.addEventListener('dragstart',e=>{if(!allowed()){e.preventDefault();return}e.dataTransfer.setData('application/x-ff-step04-index',String(i));e.dataTransfer.effectAllowed='move'});
+   row.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('application/x-ff-step04-index'))e.preventDefault()});
+   row.addEventListener('drop',e=>{e.preventDefault();const value=e.dataTransfer.getData('application/x-ff-step04-index'),from=Number(value);if(/^\d+$/.test(value)&&from>=0&&from<st.quick.length&&from!==i)changed(()=>st.quick.splice(i,0,...st.quick.splice(from,1)))});
+   const label=make('input');label.type='text';label.maxLength=100;label.required=true;label.value=entry.label;label.setAttribute('aria-label','نص الاختصار '+(i+1));
+   label.oninput=()=>label.setCustomValidity(validLabel(label.value)?'':'أدخل نصًا آمنًا من 1 إلى 100 حرف دون روابط أو رموز تحكم');
+   label.onchange=()=>{if(validLabel(label.value)&&label.value.trim()!==entry.label)changed(()=>{st.quick[i]={...entry,label:label.value.trim()}})};row.append(label);
+   for(const [prop,label,options] of [['icon','أيقونة الاختصار',Object.fromEntries(actionIcons.map(x=>[x,icons[x]||x]))],['size','مقاس الاختصار',actionSizes],['tone','لون الاختصار',actionTones]]){
+    const select=make('select');select.setAttribute('aria-label',label+' '+(i+1));Object.entries(options).forEach(([k,v])=>select.add(new Option(v,k)));select.value=entry[prop];
+    select.onchange=()=>changed(()=>{st.quick[i]={...entry,[prop]:select.value}});row.append(select);
+   }
+   for(const [label,disabled,fn] of [['تقديم',i===0,()=>st.quick.splice(i-1,0,...st.quick.splice(i,1))],['تأخير',i===st.quick.length-1,()=>st.quick.splice(i+1,0,...st.quick.splice(i,1))],['نسخ',false,()=>st.quick.splice(i+1,0,{...entry})],['حذف',false,()=>st.quick.splice(i,1)]]){
+    const btn=make('button',label);btn.type='button';btn.dataset.boundary=String(disabled);btn.onclick=()=>{if(!disabled)changed(fn)};row.append(btn);
    }
    list.append(row);
   });
+  refreshButtons();
  }
- custom.onchange=()=>{st.quick=custom.checked?[...standard]:undefined;render();notify()};
- st.render=render;st.root=root;render();
+ custom.onchange=()=>changed(()=>{st.quick=custom.checked?[...standard]:undefined});
+ st.render=render;st.root=root;st.refreshButtons=refreshButtons;render();
  return root;
 }
-function preview(form){const st=editorState.get(form);if(!st)return;const role=form.elements.role.value;const p=st.panels;const show=(k,base)=>k in p?p[k]:base;const list=st.root.querySelector('[data-a08-preview]');list.textContent='معاينة تخطيطية: الأنشطة '+(show('activity',true)?'ظاهرة':'مخفية')+' · الاختصارات '+(show('shortcuts',true)?'ظاهرة':'مخفية')+' · الفروع '+(show('branches',['manager','supervisor'].includes(role))?'ظاهرة':'مخفية')+(Array.isArray(st.quick)?' · '+st.quick.map(k=>actions[k]).join(' ← '):' · المكتبة الأساسية')+'؛ تعرض الإجراءات المصرح بها فقط.'}
-function read(form){const s=editorState.get(form);if(!s||!['all','dashboard'].includes(form.elements.screen.value))return {};const out={};if(Object.keys(s.panels).length)out.dashboardPanels=copy(s.panels);if(Array.isArray(s.quick))out.quickActions=[...s.quick];return out}
-function set(form,style){const s=editorState.get(form);if(!s)return;s.panels=copy(style?.dashboardPanels);s.quick=Array.isArray(style?.quickActions)?[...style.quickActions]:undefined;s.render()}
+function preview(form){
+ const st=editorState.get(form);if(!st)return;
+ const role=form.elements.role.value,p=st.panels,show=(k,base)=>k in p?p[k]:base,list=st.root.querySelector('[data-a08-preview]');
+ const rows=(Array.isArray(st.quick)?st.quick:standard).map(actionView).filter(Boolean);
+ list.textContent='معاينة تخطيطية: الأنشطة '+(show('activity',true)?'ظاهرة':'مخفية')+' · الاختصارات '+(show('shortcuts',true)?'ظاهرة':'مخفية')+' · الفروع '+(show('branches',['manager','supervisor'].includes(role))?'ظاهرة':'مخفية')+(Array.isArray(st.quick)?' · '+rows.map(x=>x.label).join(' ← '):' · المكتبة الأساسية')+'؛ تعرض في التشغيل الإجراءات المصرح بها فقط.';
+ const grid=st.root.querySelector('[data-a08-action-preview]');grid.replaceChildren();
+ grid.hidden=!show('shortcuts',true);grid.dataset.width=Number(form.elements.viewport?.value||390)<430?'narrow':'wide';
+ if(!grid.hidden)for(const entry of rows){const sample=make('span',entry.label);sample.dataset.a08Size=entry.size;sample.dataset.a08Tone=entry.tone;sample.title=actions[entry.key]+' · '+entry.icon;grid.append(sample)}
+}
+function read(form){const s=editorState.get(form);if(!s||!['all','dashboard'].includes(form.elements.screen.value))return {};const out={};if(Object.keys(s.panels).length)out.dashboardPanels=copy(s.panels);if(Array.isArray(s.quick))out.quickActions=copy(s.quick);return out}
+function set(form,style){const s=editorState.get(form);if(!s)return;s.panels=copy(style?.dashboardPanels);s.quick=Array.isArray(style?.quickActions)?copy(style.quickActions):undefined;s.undo=[];s.redo=[];s.render()}
+function setBusy(form,busy){const s=editorState.get(form);if(!s)return;s.busy=!!busy;for(const row of s.root.querySelectorAll('.ff-a08-action-row'))row.draggable=!s.busy;s.refreshButtons()}
 const dash=$('ffx-dashboard');if(!dash)return;
 function panel(id,title){
  const n=make('section');n.id=id;n.className='ffx-panel ff-a08-panel';n.hidden=true;n.append(make('h3',title));const body=make('div');body.className='ff-a08-panel-body';n.append(body);dash.append(n);return {n,body};
@@ -130,5 +172,5 @@ function sync(snapshot,config){
  }
 }
 window.addEventListener('ff-luxe-session-reset',()=>{context=null;close();panelSig='';activity.n.hidden=true;branches.n.hidden=true;activity.body.replaceChildren();branches.body.replaceChildren()});
-window.ffA08Dashboard={cardVisible,cardFields,editor,read,set,sync,open,icons,preview};
+window.ffA08Dashboard={cardVisible,cardFields,editor,read,set,setBusy,sync,open,icons,preview};
 })();

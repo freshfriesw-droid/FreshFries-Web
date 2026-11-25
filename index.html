@@ -484,7 +484,7 @@ body.ffx-menu-open .ffx-screen-dimmer{display:block!important}
 <link rel="stylesheet" href="./assets/luxe-report-center-20261123.css"><link rel="stylesheet" href="./styles/ffx-nav-groups.css"><link rel="stylesheet" href="./styles/luxe-dashboard-studio.css"><link rel="stylesheet" href="./styles/luxe-content-studio.css"><link rel="stylesheet" href="./styles/luxe-content-delegation.css">
 <style id="ff-a02-card-design">.ffb-v2-tile[data-card-style=compact] .ffb-v2-item{height:auto!important;min-height:102px!important}.ffb-v2-tile[data-card-style=compact] :is(img,.ffb-placeholder),.ffl-picker-tile[data-card-style=compact] :is(img,.ffb-placeholder){height:46px!important}.ffl-picker-tile[data-card-style=compact] .ffl-picker-product{min-height:90px!important}.ffb-v2-tile[data-card-style=large] .ffb-v2-item{height:auto!important;min-height:190px!important}.ffb-v2-tile[data-card-style=large] :is(img,.ffb-placeholder),.ffl-picker-tile[data-card-style=large] :is(img,.ffb-placeholder){height:115px!important}</style><link rel="stylesheet" href="./styles/luxe-a06-navigation.css">
 <link rel="stylesheet" href="./styles/luxe-a07-design.css">
-<link rel="stylesheet" href="./styles/luxe-a08-dashboard.css"></head>
+<link rel="stylesheet" href="./styles/luxe-a08-dashboard.css?v=20261125-step04"></head>
 <body class="ff-booting" data-access="locked"><div id="ff65Boot" role="status" aria-live="polite" style="text-align:center;padding:20px"><div id="ff65BootMessage">جارِ استعادة جلسة فريش فرايز…</div><noscript><p style="font-size:14px">يلزم تفعيل JavaScript في المتصفح لاستخدام نظام فريش فرايز.</p></noscript></div>
 <script id="ff-luxe-boot-watchdog">
 (()=>{
@@ -3720,18 +3720,36 @@ if(key==='new'){scrollToEl($x('ffbTextPanel')||$x('serviceOnly'));requestAnimati
 if(key==='reports'){window.ff76OpenReports?.();return}const btn=originalButton(key);if(btn){btn.click();const panel=btn.id.replace('Btn','Panel');setTimeout(()=>{const id={catalog:'ff51CatalogPanel',customers:'ff51CustomersPanel',archive:'ff51ArchivePanel',ratings:'ff51RatingsPanel',changes:'ff50ChangesPanel',reservations:'ff49ReservationsPanel',transfer:'ff49TransferPanel',routes:'ff52RoutesPanel',reports:'ff40ReportsPanel',settlements:'ff42Panel',messages:'ff39Panel',cases:'ff41Panel',security:'ff43SecurityPanel',integrity:'ff44IntegrityPanel',access:'ff45AccessPanel',readiness:'ff46ReadinessPanel',qa:'ff47QAPanel',diagnostics:'ff48DiagnosticsPanel'}[key];scrollToEl($x(id)||$x(panel)||btn)},100)}}
 const quickKeys=[['طلب جديد','plus','new'],['الطلبات','orders','orders'],['الموصلون','bike','drivers'],['المتأخرة','alert','late'],['مركز التقارير الإداري','report','reports'],['حسابات التجميع','grid','assembly_admin'],['🎟️ الأكواد','star','rewards'],['الرسائل','message','messages'],['بوابة الموصل','bike','driver'],['الكاشير','wallet','cashier'],['الإعدادات','settings','settings']];
 const extraQuickKeys=[['الحجوزات','plus','reservations'],['الحضور','clock','attendance'],['العروض','bell','offers'],['الشكاوى والتظلمات','message','cases'],['العملاء','users','customers'],['البرجر','grid','burger'],['المنتهية للكاشير','orders','cashier_finished']];
+// STEP04: central library is derived from the existing navigable sections.
+const shortcutLibrary=new Map([...groups.flatMap(g=>g.items),...quickKeys,...extraQuickKeys,['تحديث البيانات','refresh','refresh']].map(row=>[row[2],Object.freeze({key:row[2],label:row[0],icon:row[1]})]));
+window.ffStep04ActionLibrary=Object.freeze([...shortcutLibrary.values()]);
+const step04Icons=new Set(["home","grid","plus","orders","bike","clock","alert","bell","settings","refresh","user","report","wallet","calendar","folder","message","star","users","check","search","shield","filter","phone"]);
+const step04Allowed=key=>key==='refresh'?userLogged():roleAllowed(key);
+function step04Entry(raw){
+ const key=typeof raw==='string'?raw:raw?.key, base=shortcutLibrary.get(key);
+ if(!base)return null;
+ if(typeof raw==='string')return base;
+ if(!raw||Array.isArray(raw)||typeof raw!=='object')return null;
+ const label=typeof raw.label==='string'&&raw.label.trim()&&raw.label.length<=100&&!/[<>{}\u0000-\u001f\u007f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/u.test(raw.label)&&!/(https?:\/\/|www\.|javascript:|data:|vbscript:|\/\/)/i.test(raw.label)?raw.label.trim():base.label;
+ return {...base,label,icon:step04Icons.has(raw.icon)?raw.icon:base.icon,size:['normal','wide','full'].includes(raw.size)?raw.size:'normal',tone:['default','red','black','neutral'].includes(raw.tone)?raw.tone:'default'};
+}
 let scSig='';function drawShortcuts(){
  const root=$x('ffx-shortcuts');if(!root)return;
  const style=cardStyleForScope(),enabled=style.dashboardPanels?.shortcuts!==false;
  root.hidden=!enabled;$x('ffA08ShortcutsHeading').hidden=!enabled;
- const library=[...quickKeys,...extraQuickKeys];
- const chosen=Array.isArray(style.quickActions)?style.quickActions.flatMap(k=>library.filter(x=>x[2]===k)):quickKeys;
- const visible=chosen.filter(x=>roleAllowed(x[2]));
- const sig=JSON.stringify([enabled,prefs.fast,visible.map(x=>x[2]),kpiScope()]);
+ const chosen=(Array.isArray(style.quickActions)?style.quickActions:quickKeys.map(x=>x[2])).map(step04Entry).filter(Boolean);
+ const visible=chosen.filter(x=>step04Allowed(x.key));
+ const scope=cardContextKey(),auth=kpiScope(),sig=JSON.stringify([enabled,prefs.fast,visible,scope,auth]);
  if(sig===scSig&&root.childNodes.length)return;scSig=sig;root.replaceChildren();
  if(!enabled)return;
  if(!prefs.fast){root.innerHTML='<div class="ffx-empty" style="grid-column:1/-1">الاختصارات السريعة معطلة من التفضيلات.</div>';return}
- for(const [title,ic,key]of visible){const b=S('button',{type:'button',class:'ffx-action'});b.dataset.a08Action=key;b.innerHTML=icon(ic)+'<span>'+h(title)+'</span>';b.onclick=()=>{if(roleAllowed(key))navigate(key)};root.append(b)}
+ for(const entry of visible){
+  const {key,label,icon:ic,size,tone}=entry,b=S('button',{type:'button',class:'ffx-action'});
+  b.dataset.a08Action=key;if(size)b.dataset.a08Size=size;if(tone)b.dataset.a08Tone=tone;
+  b.innerHTML=icon(ic)+'<span>'+h(label)+'</span>';
+  b.onclick=()=>{if(b.isConnected&&scSig===sig&&scope===cardContextKey()&&auth===kpiScope()&&step04Allowed(key))navigate(key)};
+  root.append(b)
+ }
  if(!root.children.length)root.innerHTML='<div class="ffx-empty">لا تتوفر اختصارات ضمن صلاحياتك.</div>';
 }
 const mobileRoutes={
@@ -5543,5 +5561,5 @@ const reset=resetUI;resetUI=function(){mode='';document.body.classList.remove('f
 </style>
 <script src="./scripts/luxe-a07-elements.js" defer></script>
 <script src="./scripts/luxe-a07-design.js" defer></script>
-<script src="./scripts/luxe-a08-dashboard.js" defer></script>
-<script src="./scripts/luxe-dashboard-studio.js" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js?v=20261125-a09-denial" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script><script defer src="scripts/luxe-a05-branch-policy.js"></script><script defer src="./scripts/luxe-a06-navigation.js"></script><script defer src="./scripts/luxe-a11-communications.js?v=20261125-a11"></script><script defer src="./scripts/luxe-a12-recovery.js?v=20261125-a12-legacy"></script></body></html>
+<script src="./scripts/luxe-a08-dashboard.js?v=20261125-step04" defer></script>
+<script src="./scripts/luxe-dashboard-studio.js?v=20261125-step04" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js?v=20261125-a09-denial" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script><script defer src="scripts/luxe-a05-branch-policy.js"></script><script defer src="./scripts/luxe-a06-navigation.js"></script><script defer src="./scripts/luxe-a11-communications.js?v=20261125-a11"></script><script defer src="./scripts/luxe-a12-recovery.js?v=20261125-a12-legacy"></script></body></html>

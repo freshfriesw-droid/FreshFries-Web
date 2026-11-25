@@ -26,3 +26,17 @@
 .ff-a08-panel-preview{padding:8px;border:1px dashed currentColor;border-radius:var(--ff-p2-radius-sm,8px);margin-block:8px;line-height:1.6;overflow-wrap:anywhere}
 @media(max-width:850px){#ffx-kpis[data-a08-cols="triple"]{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:360px){#ffx-kpis[data-a08-cols="double"],#ffx-kpis[data-a08-cols="triple"]{grid-template-columns:minmax(0,1fr)}#ffx-kpis [data-card-size="wide"]{grid-column:1/-1}}
+
+/* STEP04: optional copied shortcuts use only approved presentation tokens. */
+#ffx-shortcuts [data-a08-size="wide"],.ff-step04-preview [data-a08-size="wide"]{grid-column:span 2}
+#ffx-shortcuts [data-a08-size="full"],.ff-step04-preview [data-a08-size="full"]{grid-column:1/-1}
+#ffx-shortcuts .ffx-action[data-a08-tone="red"],.ff-step04-preview [data-a08-tone="red"]{background:#ad1726;color:#fff;border-color:#ad1726}
+#ffx-shortcuts .ffx-action[data-a08-tone="black"],.ff-step04-preview [data-a08-tone="black"]{background:#202124;color:#fff;border-color:#202124}
+#ffx-shortcuts .ffx-action[data-a08-tone="neutral"],.ff-step04-preview [data-a08-tone="neutral"]{background:#eee;color:#242424;border-color:#aaa}
+#ffx-shortcuts .ffx-action[data-a08-size]{min-width:0;min-height:44px;overflow-wrap:anywhere}
+#ffA08Panels .ff-a08-action-row input,#ffA08Panels .ff-a08-action-row select{flex:1 1 160px;width:100%;min-width:0;max-width:100%;min-height:44px}
+#ffA08Panels .ff-a08-action-row[draggable=true]{cursor:grab}
+.ff-step04-preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;max-width:100%;margin-block:8px}
+.ff-step04-preview[data-width=narrow]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ff-step04-preview span{display:grid;place-items:center;text-align:center;overflow-wrap:anywhere;min-width:0;min-height:44px;padding:6px;border:1px solid currentColor;border-radius:8px}
+@media(max-width:360px){#ffx-shortcuts [data-a08-size=wide]{grid-column:1/-1}}
