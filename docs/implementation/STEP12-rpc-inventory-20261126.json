@@ -16,7 +16,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "c13011c864cb487da48912deb1aded87"
+      "definition_md5": "4fc0b2158060fedb91b7fe01ac5a6cfd",
+      "scope_test": "20261125230344: cashier workflow/cancel/document/change/dispatch, 14 live rollback assertions PASS"
     },
     {
       "name": "ff27_quality",
@@ -133,7 +134,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "e96bfd4ec4b06d62d6197f1e1eecbe1d"
+      "definition_md5": "a41fb3a576b0285fe23bdb290cb43da2",
+      "scope_test": "20261125230344: cashier workflow/cancel/document/change/dispatch, 14 live rollback assertions PASS"
     },
     {
       "name": "ff38_cashier_invoice_addition",
@@ -180,7 +182,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "cd4ab6631b65f07c05bdfe3e0b18b30e"
+      "definition_md5": "436f419ea3fed78dae87a8e537173679",
+      "scope_test": "20261125230344: cashier workflow/cancel/document/change/dispatch, 14 live rollback assertions PASS"
     },
     {
       "name": "ff38_driver_progress",
@@ -676,7 +679,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f8ce47bbfa0d62e4f37107eb13d56fb9"
+      "definition_md5": "aef2d9b3649bce1fc3c7b12e819318d2",
+      "scope_test": "20261125230344: cashier workflow/cancel/document/change/dispatch, 14 live rollback assertions PASS"
     },
     {
       "name": "ff50_change_service_confirm",
@@ -685,7 +689,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "fda58081ec4e74299aa3d7a82cf74d98"
+      "definition_md5": "70a405bcc26a99f03f89e065af1284a1",
+      "scope_test": "20261125230344: cashier workflow/cancel/document/change/dispatch, 14 live rollback assertions PASS"
     },
     {
       "name": "ff50_visible_order_changes",
@@ -857,7 +862,7 @@
       "authenticated": true,
       "config": "search_path=\"\"",
       "definition_md5": "3bf673d28d9cf4431077d83ecef27dbe",
-      "scope_test": "20261125230009: guard added; positive late addition roundtrip regression passed; negative dedicated late invoice case pending"
+      "scope_test": "Dedicated wrong-desk late invoice rejection, pending preserved, permitted invoice and delivery completed; live rollback PASS"
     },
     {
       "name": "ff52_list_additions",
@@ -930,7 +935,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5e0fd203a83762fff19dcc16b657993d"
+      "definition_md5": "fe352bf5930e845f1cc9e29a6be30261",
+      "scope_test": "20261125230344: cashier workflow/cancel/document/change/dispatch, 14 live rollback assertions PASS"
     },
     {
       "name": "ff60_manual_reoffer",
@@ -948,7 +954,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "b81c99c68033c43ec3dc17ff19bd2007"
+      "definition_md5": "9ebe81c69b3a69eb107f6c17edb651f0",
+      "scope_test": "20261125230344: cashier workflow/cancel/document/change/dispatch, 14 live rollback assertions PASS"
     },
     {
       "name": "ff60_read_policy",
@@ -1930,7 +1937,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "cb0cffed4cf4de5b3e8a61201adf2896"
+      "definition_md5": "e62a798bcf2de2b3b365bb2f47def476",
+      "scope_test": "20261125230344: cashier workflow/cancel/document/change/dispatch, 14 live rollback assertions PASS"
     },
     {
       "name": "ff_luxe_cancel_assigned",
@@ -1939,7 +1947,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "eb9eada6c3b238078561b785b69f8f6e"
+      "definition_md5": "e7f60d6b7e658e34759afaf6c693a054",
+      "scope_test": "20261125230344: cashier workflow/cancel/document/change/dispatch, 14 live rollback assertions PASS"
     },
     {
       "name": "ff_luxe_cashier_cancel_alerts",
@@ -2458,5 +2467,5 @@
       "definition_md5": "e36ad6176fc8e89141933210b87fd9c8"
     }
   ],
-  "last_update": "2026-11-26: cashier lifecycle desk isolation"
+  "last_update": "2026-11-26: cashier workflow, cancellation and delegated operation isolation"
 }
