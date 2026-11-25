@@ -32,6 +32,8 @@ fixture="""async role=>{
   if(name==='ff80_dashboard_metrics')return {role,business_day:'2026-11-25',orders_today:1,late_today:0,completed_today:0,available_drivers:0};
   if(name==='ff49_catalog')return [{id:'qa-item',name:'تشكن فرايز',price:1500,active:true,parser_aliases:['تشكن']}];
   if(name==='ff_a07_effective_designs')return window.__a07Rows||{};
+  if(name==='ff_a07_design_catalog')return window.__a07Catalog||[];
+  if(name==='ff_a07_named_design')return 4321;
   if(name==='ff81_effective_design')return null;
   return [];
  };
@@ -51,6 +53,9 @@ with sync_playwright() as pw:
   page.wait_for_function("()=>!!window.ffA07Design&&!!window.ffDashboardStudio")
   if role=="assembly":page.locator("#ffV12Toggle").click()
   signatures=set()
+  if role in ('cashier','driver'):
+   holder='#cashierOrders' if role=='cashier' else '#driverTasks'
+   status_probe=page.locator(holder).evaluate('e=>{const n=document.createElement("article");n.className="item ff-luxe-cancelled";n.id="a07-status-probe";e.append(n);return getComputedStyle(n).borderTopColor}')
   for width in (320,360,390,430,768,1024,1440):
    page.set_viewport_size({"width":width,"height":850})
    for i in (range(1,17) if width in (390,1440) else (1,8,16)):
@@ -63,6 +68,21 @@ with sync_playwright() as pw:
     signatures.add(result["signature"]);results.append({"role":role,"width":width,"pack":pack})
     if i in (1,16) and width in (390,1440):page.screenshot(path=out/f"{role}-{width}-{pack}.png",animations="disabled")
   assert len(signatures)==16,(role,"distinct packs",len(signatures))
+  if role in ("cashier","driver"):
+   assert page.locator("#a07-status-probe").evaluate("n=>getComputedStyle(n).borderTopColor")==status_probe
+  if role=="driver":
+   page.evaluate("""async ()=>{window.__a07Button=document.getElementById('clockInBtn');window.__a07Rows={driver:{id:500,pack:'D09',bar:'labels',style_config:{elements:{driver_actions:[{key:'clockInBtn',shape:'pill',size:'large'},{key:'clockOutBtn',shape:'outline',size:'normal'},{key:'ff51BreakBtn',shape:'pack',size:'normal'}]}}}};await ffDashboardStudio.sync(true)}""")
+   assert page.locator("#clockInBtn").get_attribute("data-ff-a07-shape")=="pill"
+   assert page.locator("#clockInBtn").evaluate("n=>n===window.__a07Button && getComputedStyle(n).order==='1'")
+   assert page.locator("#clockInBtn").is_visible()
+   assert page.locator("#clockOutBtn").is_visible()
+   assert page.locator("#cashierView").get_attribute("data-ff-a07-pack") is None
+  if role in ("manager","customer_service"):
+   page.set_viewport_size({"width":390,"height":850})
+   page.evaluate("""async ()=>{document.getElementById('newItems').value='1 تشكن بدون شطة';document.getElementById('ffbQuickInput').value='نص محفوظ';window.__a07Rows={orders:{id:501,pack:'D10',bar:'labels',style_config:{density:'compact'}}};await ffDashboardStudio.sync(true)}""")
+   assert page.locator("#newItems").input_value()=="1 تشكن بدون شطة"
+   assert page.locator("#ffbQuickInput").input_value()=="نص محفوظ"
+   assert page.locator("#cashierView").get_attribute("data-ff-a07-pack") is None
   if role=="manager":
    page.evaluate("()=>window.ffDashboardStudio.open()")
    dlg=page.locator("#ffStudio");assert dlg.is_visible()
@@ -78,6 +98,32 @@ with sync_playwright() as pw:
    assert dlg.locator("[data-a07-after] [data-a07-surface=dark]").count()==1
    dlg.locator("select[name=viewport]").select_option("390")
    page.screenshot(path=out/"manager-gallery.png",animations="disabled")
+   dlg.locator("select[name=screen]").select_option("driver")
+   dlg.locator("select[name=role]").select_option("driver")
+   dlg.locator("#ffA07Elements summary").click()
+   dlg.locator("[data-a07-group]").select_option("driver_actions")
+   first=dlg.locator(".ff-a07-element-row").first
+   assert first.get_attribute("data-element-key")=="ff51BreakBtn"
+   first.get_by_role("button",name="تأخير").click()
+   assert dlg.locator(".ff-a07-element-row").first.get_attribute("data-element-key")=="clockInBtn"
+   dlg.locator(".ff-a07-element-row").first.locator("select").first.select_option("pill")
+   dlg.locator("[data-a07-undo]").click()
+   assert dlg.locator(".ff-a07-element-row").first.locator("select").first.input_value()=="pack"
+   dlg.locator("[data-a07-redo]").click()
+   assert dlg.locator(".ff-a07-element-row").first.locator("select").first.input_value()=="pill"
+   assert dlg.locator("[data-a07-after] [data-ff-a07-shape=pill]").count()>=1
+   dlg.locator("input[name=draftName]").fill("مسودة اختبار آمنة")
+   dlg.locator("button[type=submit]").click()
+   page.wait_for_function("()=>window.__a06Calls.some(c=>c.name==='ff_a07_named_design')")
+   payload=page.evaluate("()=>window.__a06Calls.filter(c=>c.name==='ff_a07_named_design').at(-1).args")
+   assert payload["p_screen"]=="driver" and payload["p_style"]["elements"]["driver_actions"][0]["key"]=="clockInBtn"
+   assert payload["p_style"]["elements"]["driver_actions"][0]["shape"]=="pill"
+   assert len(payload["p_style"]["elements"]["driver_actions"])==3
+   assert not page.evaluate("()=>window.__a06Calls.some(c=>['ff_ui_publish','ff_ui_control_trial'].includes(c.name))")
+   dlg.locator("[data-close]").click()
+   page.evaluate("""()=>{window.__a07Catalog=Array.from({length:17},(_,i)=>({code:'D'+String(i+1).padStart(2,'0'),name:'QA '+(i+1)}));ffDashboardStudio.open()}""")
+   page.wait_for_function("()=>document.querySelector('#ffStudio select[name=pack]').options.length===17")
+   assert dlg.locator("select[name=pack] option[value=D17]").count()==1
    dlg.locator("[data-close]").click()
   page.evaluate("()=>window.dispatchEvent(new Event('ff-luxe-session-reset'))")
   assert page.locator(selector).get_attribute("data-ff-a07-pack") is None
