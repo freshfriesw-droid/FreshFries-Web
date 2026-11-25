@@ -151,4 +151,4 @@
 [data-a07-logo-width="56"]{--a07-exact-logo:56px}
 [data-a07-logo-width="64"]{--a07-exact-logo:64px}
 [data-a07-logo-width="80"]{--a07-exact-logo:80px}
-[data-a07-logo-width] :is(.ff-a07-logo-inline,.ffx-hero-logo,.ff-assembly-brand>img){inline-size:var(--a07-exact-logo)!important;block-size:var(--a07-exact-logo)!important;max-inline-size:100%;object-fit:contain}
+[data-a07-logo-width] :is(.ff-a07-logo-inline,.ffx-hero-logo,.ff-assembly-brand>img,[data-ff-a07-managed-logo]){inline-size:var(--a07-exact-logo)!important;block-size:var(--a07-exact-logo)!important;max-inline-size:100%;object-fit:contain}

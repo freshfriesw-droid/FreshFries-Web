@@ -54,10 +54,11 @@ function addLogo(root,screen){
  title.prepend(img);
 }
 function applyLogo(root){
- const logos=[...root.querySelectorAll('.ff-a07-logo-inline,.ffx-hero-logo,.ff-assembly-brand>img')].filter(img=>img.closest('[data-ff-a07-screen]')===root);
+ const logos=[...root.querySelectorAll('.ff-a07-logo-inline,.ffx-hero-logo,.ff-assembly-brand>img,[data-ff-a07-managed-logo]')].filter(img=>img.closest('[data-ff-a07-screen]')===root);
  const dark=root.dataset.a07Surface==='dark'||(root.dataset.a07Surface!=='light'&&(document.body.classList.contains('ffx-dark')||['D02','D08','D11','D13'].includes(root.dataset.ffA07Pack)));
  for(const img of logos){
   if(!logoOrigins.has(img))logoOrigins.set(img,{src:img.getAttribute('src'),parent:img.parentNode,next:img.nextSibling,desired:null});
+  img.dataset.ffA07ManagedLogo='1';
   const o=logoOrigins.get(img),choice=dark&&root.dataset.a07LogoDarkAsset?root.dataset.a07LogoDarkAsset:root.dataset.a07LogoAsset;
   const src=logoPaths[choice]||o.src;
   if(src&&src!==o.desired){o.desired=src;delete img.dataset.ffA07Tried;if(img.getAttribute('src')!==src)img.src=src}

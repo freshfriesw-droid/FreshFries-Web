@@ -73,6 +73,13 @@ with sync_playwright() as pw:
   assert len(signatures)==16,(role,"distinct packs",len(signatures))
   if role in ("cashier","driver"):
    assert page.locator("#a07-status-probe").evaluate("n=>getComputedStyle(n).borderTopColor")==status_probe
+  if role=="assembly":
+   page.evaluate("""async()=>{window.__a07Rows={assembly:{id:510,pack:'D01',bar:'labels',style_config:{logoPosition:'cover',logoAsset:'mark',logoWidth:'56'}}};await ffDashboardStudio.sync(true)}""")
+   logo=page.locator("#ffV12AssemblyWorkspace > .ff-a07-logo-cover img")
+   assert logo.count()==1 and logo.get_attribute("src").endswith("ff-icon-192.png")
+   page.evaluate("""async()=>{window.ffA07Design.refresh();window.__a07Rows.assembly.style_config={};await ffDashboardStudio.sync(true)}""")
+   assert page.locator("#ffV12AssemblyWorkspace > .ff-a07-logo-cover").count()==0
+   assert page.locator("#ffV12AssemblyWorkspace .ff-assembly-brand>img").count()==1
   if role=="driver":
    page.set_viewport_size({"width":390,"height":850})
    page.locator('#ffx-mobile-nav button[data-key="attendance"]').click()
