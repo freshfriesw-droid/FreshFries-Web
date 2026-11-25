@@ -340,6 +340,27 @@ assert.equal(labelled.meta.driver,'أحْمَد  علي');
 assert.equal(labelled.meta.phone,'777123456');
 assert.equal(labelled.meta.fee,500);
 assert.equal(labelled.notes,'بَدون   شطّة | استلام  مسائي');
+
+const positionalParse=vm.runInNewContext(parserSource+'\nff49ParseItemsAndNotes',{
+  ff49Catalog:menuNames.map((name,id)=>({id:id+1,name,price:1000})),
+  data:{drivers:[{name:'أحمد علي',active:true},{name:'أحمد سالم',active:true},{name:'فؤاد المسوري',active:true},{name:'خالد محمد',active:false}]}
+});
+const positionalBase='1 تشكن\n777123456\nشارع القاهرة\n500\n';
+const unlabelled=positionalParse(positionalBase+'اتصل بالعميل عند الوصول');
+assert.equal(unlabelled.notes,'اتصل بالعميل عند الوصول');
+assert.equal(unlabelled.meta.driver,undefined);
+const knownCourier=positionalParse(positionalBase+'فؤاد المسوري\nاتصل بالعميل');
+assert.equal(knownCourier.meta.driver,'فؤاد المسوري');
+assert.equal(knownCourier.notes,'اتصل بالعميل');
+assert.equal(positionalParse(positionalBase+'فؤاد').meta.driver,'فؤاد');
+const ambiguousCourier=positionalParse(positionalBase+'أحمد\nملاحظة: اتصل',{allowPartial:true});
+assert.equal(ambiguousCourier.errors.length,1);
+assert.equal(ambiguousCourier.errors[0].line,5);
+assert.equal(ambiguousCourier.notes,'اتصل');
+assert.equal(ambiguousCourier.meta.driver,undefined);
+assert.equal(positionalParse(positionalBase+'خالد محمد').notes,'خالد محمد');
+assert.equal(positionalParse(positionalBase+'اسم الموصل: اسم غير مسجل').meta.driver,'اسم غير مسجل');
+
 for(const input of ['رسوم التوصيل:', 'العميل:', 'الموصل:', 'عنوان:', 'رقم الهاتف:']){
   const empty=parseQuick('١ تشكن\n'+input,{allowPartial:true});
   assert.equal(empty.errors.length,1,input);

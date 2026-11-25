@@ -48,7 +48,15 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  current_html=current_html.replace('./scripts/luxe-dashboard-studio.js?v=20261125-step08','./scripts/luxe-dashboard-studio.js')
  current_html=current_html.replace('./scripts/luxe-content-studio.js?v=20261125-step08','./scripts/luxe-content-studio.js')
  current_html=current_html.replace('./styles/luxe-dashboard-studio.css?v=20261125-step08','./styles/luxe-dashboard-studio.css')
- assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04–STEP08 audited hooks'
+ # STEP09: permit only the exact reviewed positional-courier parser correction.
+ # This normalization is for the source equality guard only; real browser
+ # rendering below still uses the unmodified candidate and pinned baseline.
+ parser_before="  if(!meta.driver&&meta.phone&&meta.area&&meta.fee!==undefined&&!/^(?:بدون|زياده|اضافه|تواصل|يرجي|ارجو|لا\\s|مع\\s)/u.test(text)){\n   // Positional driver line is only inferred once; explicitly marked notes always stay notes.\n   meta.driver=raw;details.push({line,kind:'driver',raw,value:raw});continue;\n  }"
+ parser_after="  if(!meta.driver&&meta.phone&&meta.area&&meta.fee!==undefined){\n   // A free-text note after the fee is not automatically a driver name.\n   // Infer only an exact registered name or an unambiguous first name; the explicit driver label remains available.\n   const roster=typeof data!=='undefined'&&Array.isArray(data?.drivers)?data.drivers:[];\n   const candidates=roster.filter(d=>d?.name&&d.active!==false);\n   const exact=candidates.filter(d=>norm(d.name)===text);\n   const matches=exact.length?exact:candidates.filter(d=>norm(d.name).split(' ')[0]===text);\n   if(matches.length>1){fail(raw,line,'اسم الموصل ملتبس؛ اكتب الاسم الكامل المميز');continue;}\n   if(matches.length===1){meta.driver=raw;details.push({line,kind:'driver',raw,value:raw});continue;}\n  }"
+ assert baseline_html.count(parser_before)==1,'missing pinned STEP09 parser block'
+ assert current_html.count(parser_after)==1,'unexpected STEP09 parser implementation'
+ current_html=current_html.replace(parser_after,parser_before,1)
+ assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04–STEP09 audited hooks'
 else:
  assert current_html==baseline_html,'non-CSS application markup or script changed'
 changed={str(f.relative_to(base)) for f in list((base/'scripts').glob('*.js'))+list((base/'assets').glob('*.js')) if f.read_bytes()!=(root/f.relative_to(base)).read_bytes()}
