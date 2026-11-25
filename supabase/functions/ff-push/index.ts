@@ -55,6 +55,8 @@ async function authorizedUser(req:Request):Promise<string|null>{
  });
  const {data:{user},error}=await sb.auth.getUser(token);
  if(error||!user)return null;
+ const {data:sessionValid,error:sessionError}=await sb.rpc("ff_step12_session_valid");
+ if(sessionError||sessionValid!==true)return null;
  const {data:profile}=await admin.from("ff_profiles").select("active,role").eq("user_id",user.id).maybeSingle();
  if(!profile?.active||!["manager","supervisor","customer_service","cashier","driver","assembly","burger_kitchen"].includes(profile.role))return null;
  return user.id;
