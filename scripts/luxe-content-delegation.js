@@ -68,7 +68,7 @@ async function managerRefresh(token,who){
  accounts=a||[];grants=g||[];
  options(q('account'),accounts.map((x,i)=>[i,x.display_name+' · '+(roles[x.role]||x.role)+' · '+x.branch_name]));
  options(q('grants'),grants.map(x=>[x.id,'#'+x.id+' · '+(accounts.find(a=>a.user_id===x.recipient&&a.branch_id===x.branch_id)?.display_name||x.recipient)+' · '+(screens[x.screen]||x.screen)+' · '+(x.edit_kinds||['text']).map(k=>kinds[k]||k).join('/')+' · '+grantWindow(x)]));
- lines(q('audit'),(audit||[]).map(x=>'#'+x.id+' · '+new Date(x.created_at).toLocaleString('ar-YE')+' · '+x.action+' · '+x.outcome+' · '+x.reason+(x.design_revision?' · تصميم #'+x.design_revision:'')+' · '+x.actor_id));
+ lines(q('audit'),(audit||[]).map(x=>'#'+x.id+' · '+new Date(x.created_at).toLocaleString('ar-YE')+' · '+x.action+' · '+x.outcome+' · '+x.reason+(x.design_revision?' · تصميم #'+x.design_revision:'')+(x.attempted_revision!=null?' · الإصدار المطلوب #'+x.attempted_revision:'')+(x.effect==='no_change'?' · الأثر: لم يتغير أي إصدار أو تفويض':x.effect?' · الأثر: '+x.effect:'')+' · '+x.actor_id));
 }
 function selection(){return history.find(x=>String(x.id)===q('history').value)}
 function preview(){
