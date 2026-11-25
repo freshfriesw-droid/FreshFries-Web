@@ -38,6 +38,10 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  current_html=current_html[:current_start]+baseline_html[base_start:base_end]+current_html[current_end:]
  current_html=current_html.replace('./scripts/luxe-a07-design.js?v=20261125-step05','./scripts/luxe-a07-design.js')
  current_html=current_html.replace('luxe-shared-photo-menu-20261123.js?v=20261125-step05','luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style')
+ # STEP10: exact asset cache-version deltas only; no visual guard relaxation.
+ current_html=current_html.replace('luxe-a07-elements.js?v=20261125-step10','luxe-a07-elements.js?v=20261125-step07')
+ current_html=current_html.replace('luxe-report-center-20261123.js?v=20261125-step10','luxe-report-center-20261123.js?v=20261125-step06')
+ current_html=current_html.replace('luxe-content-studio.js?v=20261125-step10','luxe-content-studio.js?v=20261125-step08')
  current_html=current_html.replace('./scripts/luxe-content-studio.js?v=20261125-step06','./scripts/luxe-content-studio.js')
  current_html=current_html.replace('luxe-report-center-20261123.js?v=20261125-step06','luxe-report-center-20261123.js?v=20261125-a10')
  current_html=current_html.replace("function toast(s){$('toast').textContent=window.ffContentStudio?.decorateMessage(s)??s;","function toast(s){$('toast').textContent=s;")
@@ -56,7 +60,7 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  assert baseline_html.count(parser_before)==1,'missing pinned STEP09 parser block'
  assert current_html.count(parser_after)==1,'unexpected STEP09 parser implementation'
  current_html=current_html.replace(parser_after,parser_before,1)
- assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04–STEP09 audited hooks'
+ assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04–STEP10 audited hooks'
 else:
  assert current_html==baseline_html,'non-CSS application markup or script changed'
 changed={str(f.relative_to(base)) for f in list((base/'scripts').glob('*.js'))+list((base/'assets').glob('*.js')) if f.read_bytes()!=(root/f.relative_to(base)).read_bytes()}
@@ -100,7 +104,7 @@ inventory="""()=>{const rows=[],sheets=[],inaccessible=[];
 # Sample each shared component plus actual operational order/status classes; do not
 # put test elements inside order queues where polling might mutate them.
 probe="""()=>{let host=document.getElementById('p2-probe');
- if(!host){host=document.createElement('section');host.id='p2-probe';host.setAttribute('aria-label','Synthetic component test');host.style.cssText='position:fixed;inset-inline:4px;top:4px;z-index:2147483600;max-height:80vh;overflow:auto;padding:8px;background:var(--ffb-surface);color:var(--ffb-ink)';host.innerHTML=`
+ if(!host){host=document.createElement('section');host.id='p2-probe';host.setAttribute('aria-label','Synthetic component test');host.style.cssText='position:fixed;inset-inline:4px;top:4px;z-index:2147483600;max-height:80vh;overflow:auto;padding:8px;background:var(--ffb-surface);color:var(--ffb-ink);isolation:isolate;contain:paint;transform:translateZ(0)';host.innerHTML=`
  <div class="card" data-p2="card"><h3>اختبار المكونات</h3><div class="sectionbar" data-p2="section"><h2>القسم</h2><button class="primary" data-p2="primary">حفظ</button></div>
  <div class="actions" data-p2="actions"><button data-p2="button">إجراء</button><button class="dark" data-p2="dark">داكن</button><button class="good" data-p2="good">تأكيد</button><button class="outline" data-p2="outline">رجوع</button><button disabled data-p2="disabled">معطل</button></div>
  <label for="p2-field">الاسم</label><input id="p2-field" data-p2="field" value="طلب تجريبي"><label for="p2-select">الفرع</label><select id="p2-select" data-p2="select"><option>القاهرة</option></select><label for="p2-text">ملاحظة</label><textarea id="p2-text" data-p2="textarea">ملاحظة</textarea>
@@ -118,8 +122,8 @@ def compare(a,b,label):
  assert a.keys()==b.keys(),(label,'element coverage',sorted(a.keys()^b.keys()))
  diff=[(k,p,a[k][p],b[k][p]) for k in a for p in a[k] if a[k][p]!=b[k][p]]
  assert not diff,(label,diff[:35])
-def setup(browser,origin,role):
- c=browser.new_context(viewport={'width':390,'height':850},service_workers='block',reduced_motion='reduce',locale='ar')
+def setup(browser,origin,role,width=390):
+ c=browser.new_context(viewport={'width':width,'height':850},service_workers='block',reduced_motion='reduce',locale='ar')
  c.route('**/*',lambda r:r.continue_() if r.request.url.startswith(origin) else r.abort())
  p=c.new_page()
  # Synchronize the wall clock in both browser contexts. The real timers still run.
@@ -130,15 +134,15 @@ def setup(browser,origin,role):
  # The special-role bar is populated by the A06 asynchronous scope refresh.
  # Require readiness independently in both trees; never hide a failing bar to compare.
  if role in ('assembly','burger_kitchen'):
-  p.wait_for_function("()=>{const n=document.getElementById('ffA06SpecialNav');return n&&!n.hidden&&n.querySelectorAll('button').length>=5&&getComputedStyle(n).display==='flex'}",timeout=10000)
- if role in ('driver','cashier','customer_service'):
+  p.wait_for_function("()=>{const n=document.getElementById('ffA06SpecialNav');return n&&!n.hidden&&n.querySelectorAll('button').length>=5&&(getComputedStyle(n).display!=='none')===matchMedia('(max-width: 850px)').matches}",timeout=10000)
+ if role in ('driver','cashier','customer_service') and width<=850:
   key={'driver':'attendance','cashier':'cashier','customer_service':'new'}[role]
   p.locator('#ffx-mobile-nav button[data-key="'+key+'"]').click()
  return c,p
 rows=[]
 with sync_playwright() as pw:
  # Deterministic software rasterization for both pinned trees. Keep exact RGB comparison.
- browser=pw.chromium.launch(channel='chrome',args=['--disable-gpu','--disable-lcd-text','--disable-font-subpixel-positioning','--force-color-profile=srgb'])
+ browser=pw.chromium.launch(**({'channel':'chrome'} if os.environ.get('P2_CURRENT_CHROME')=='1' else {}),args=['--disable-gpu','--disable-lcd-text','--disable-font-subpixel-positioning','--force-color-profile=srgb'])
  for role in roles:
   oc,old=setup(browser,old_origin,role);nc,new=setup(browser,new_origin,role)
   if True:
@@ -178,10 +182,17 @@ with sync_playwright() as pw:
      # Normalize both scroll positions before capturing the same viewport region.
      p.evaluate("""async()=>{window.scrollTo(0,0);const h=document.getElementById('p2-probe');h.scrollTop=0;h.scrollLeft=0;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));}""")
     if width in (390,1440) and theme in ('classic','dark'):
-     # Stable component panel image comparison; actual workspace images recorded separately.
+     # Stable component panel image comparison; the synthetic panel uses its own paint layer to avoid blending with unrelated workspace pixels. Actual workspace images recorded separately.
      paths=[out/f'{role}-{width}-{theme}-{side}-components.png' for side in ('before','after')]
      for attempt in range(1,4):
-      for p,path in zip((old,new),paths):
+      fresh=[]
+      for origin,path in zip((old_origin,new_origin),paths):
+       context,p=setup(browser,origin,role,width)
+       fresh.append(context)
+       p.evaluate("""t=>{document.body.classList.remove('ffx-dark','ffx-contrast','ffx-compact');if(t!=='classic')document.body.classList.add('ffx-'+t);document.body.classList.toggle('ffx-compact',t==='contrast')}""",theme)
+       p.evaluate(probe)
+       p.evaluate("()=>document.fonts.ready")
+       p.evaluate("()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
        rect=p.locator('#p2-probe').bounding_box()
        assert rect and rect['y']>=0 and rect['y']+rect['height']<=850,(role,width,theme,rect)
        # Clip a viewport screenshot in memory rather than locator screenshot,
@@ -190,6 +201,7 @@ with sync_playwright() as pw:
        shot=Image.open(BytesIO(p.screenshot(animations='disabled')))
        x,y,w,h=(round(rect[k]) for k in ('x','y','width','height'))
        shot.crop((x,y,x+w,y+h)).save(path)
+      for context in fresh:context.close()
       im1,im2=[Image.open(path).convert('RGB') for path in paths]
       assert im1.size==im2.size,(role,width,theme,'panel geometry',im1.size,im2.size)
       difference=ImageChops.difference(im1,im2)

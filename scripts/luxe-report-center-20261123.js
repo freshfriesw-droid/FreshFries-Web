@@ -31,6 +31,7 @@ root.innerHTML=[
 '<button type="button" id="ff76Download" class="r-plain" disabled>⬇️ تصدير PDF</button>',
 '<button type="button" id="ff76Share" class="r-plain" disabled>📤 مشاركة التقرير</button></div>',
  '<button type="button" id="ff76CSV" class="r-plain" disabled>تصدير الأقسام CSV</button>',
+ '<button type="button" id="ff76Excel" class="r-plain" disabled>تصدير Excel (.xlsx)</button>',
  '<details><summary>قوالب أقسام التقرير</summary><label>اسم القالب<input id="ff76PresetName" maxlength="80"></label><button id="ff76SavePreset" type="button">حفظ الاختيارات</button><label>قوالبي<select id="ff76PresetList"></select></label><button id="ff76UsePreset" type="button">تطبيق القالب</button><p id="ff76PresetStatus" role="status"></p></details>',
 '<details id="ffA10Grants" hidden><summary>تفويض أقسام التقارير — المدير العام</summary><p class="r-muted">التفويض يقيّد الأقسام المتاحة أصلاً للدور؛ لا يوسع الفرع أو صلاحية تشغيلية.</p><div class="r-filters"><label>الحساب<select id="ffA10GrantUser"></select></label><label>القسم<select id="ffA10GrantSection"></select></label><label>القرار<select id="ffA10GrantAllowed"><option value="inherit">افتراضي الدور</option><option value="true">السماح ضمن الدور</option><option value="false">حجب القسم</option></select></label></div><button type="button" id="ffA10GrantSave">حفظ التفويض</button><p id="ffA10GrantStatus" role="status"></p></details>',
 '<p id="ff76Status" class="r-muted" role="status" aria-live="polite">حدد الفترة واضغط إعداد التقرير.</p>',
@@ -48,7 +49,7 @@ const previewDialog=document.createElement('dialog');previewDialog.id='ff76PdfDi
 previewDialog.innerHTML='<header class="r-dialoghead"><b>معاينة PDF الكاملة قبل الإرسال</b><div><button id="ff76DlgDownload">حفظ الملف</button> <button id="ff76DlgShare" class="r-primary">مشاركة الملف</button> <button id="ff76DlgClose">✕ إغلاق</button></div></header><iframe id="ff76PDFFrame" title="معاينة PDF"></iframe>';
 document.body.append(previewDialog);
 function clearPDF(){document.querySelectorAll('[data-ff76-export-layer]').forEach(x=>x.remove());pdfRevision++;pdfPromise=null;if(previewDialog.open)previewDialog.close();if(pdfURL){URL.revokeObjectURL(pdfURL);pdfURL=null}pdf=null;fileName='';previewed=false;el('ff76PDFFrame').removeAttribute('src')}
-function clear(){snapshotArgs=null;reportContent={};el('ffA10Grants').hidden=true;result=null;identity='';clearPDF();el('ff76ManagerName').value='';el('ff76ManagerNotes').value='';el('ff76ApprovalStatus').textContent='';el('ff76Body').textContent='';el('ff76ApprovalBox').hidden=true;el('ff76SaveApproval').disabled=false;['ff76Preview','ff76Download','ff76Share','ff76CSV'].forEach(id=>el(id).disabled=true)}
+function clear(){snapshotArgs=null;reportContent={};el('ffA10Grants').hidden=true;result=null;identity='';clearPDF();el('ff76ManagerName').value='';el('ff76ManagerNotes').value='';el('ff76ApprovalStatus').textContent='';el('ff76Body').textContent='';el('ff76ApprovalBox').hidden=true;el('ff76SaveApproval').disabled=false;['ff76Preview','ff76Download','ff76Share','ff76CSV','ff76Excel'].forEach(id=>el(id).disabled=true)}
 function day(){if(typeof ff40TodayYemen==='function')return ff40TodayYemen();const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day}
 function changeDay(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
 function period(days,offset){const end=changeDay(day(),offset);el('ff76To').value=end;el('ff76From').value=changeDay(end,-days+1);invalidate()}
@@ -95,8 +96,8 @@ if(selectedSet.has('orders'))html.push(section('orders',cards([
 '<h4>تفاصيل طلبات التوصيل المجاني</h4>'+table([['الطلب',x=>x.order_number],['الفرع',x=>x.branch_name],...(allowed('finance')||r.role==='driver'&&allowed('drivers')?[['قيمة الفاتورة',x=>cash(x.total_amount)]]:[]),['تاريخ الإنشاء',x=>stamp(x.created_at)]],r.free_delivery_orders)+
  '<h4>مراحل رحلة الطلب — متوسط الدقائق المسجلة</h4>'+cards([['حتى الإسناد',fmt(r.phase_times?.assignment_minutes)],['من الإسناد حتى الاستلام',fmt(r.phase_times?.pickup_minutes)],['من الاستلام حتى الوصول',fmt(r.phase_times?.travel_minutes)],['من الوصول حتى التسليم',fmt(r.phase_times?.handover_minutes)]])+
  '<h4>مستويات التأخير</h4>'+cards([['أخضر ≤ 30 دقيقة',fmt(r.delay_bands?.green)],['أصفر 31–60 دقيقة',fmt(r.delay_bands?.yellow)],['أحمر أكثر من 60',fmt(r.delay_bands?.red)]])+
- '<h4>عروض الإسناد المسجلة</h4>'+cards([['مرسلة',fmt(r.dispatch?.offered)],['مقبولة',fmt(r.dispatch?.accepted)],['مرفوضة',fmt(r.dispatch?.rejected)],['منتهية',fmt(r.dispatch?.expired)],['مهلة 3 دقائق',fmt(r.dispatch?.three_minute)],['مهلة 10 دقائق',fmt(r.dispatch?.ten_minute)],['طلبات الإسناد اليدوي الموثقة',fmt(r.assignment_review?.manual_requests)],['طلبات مسندة بلا سجل يدوي',fmt(r.assignment_review?.assigned_without_manual_record)],['إسناد مباشر خاص موثق',fmt(r.assignment_review?.special_direct_confirmed)]])+
- '<p class="r-muted">عدم وجود سجل إسناد يدوي لا يثبت وحده أن الإسناد تلقائي أو خاص. لا تُحتسب الحالات غير الموثقة كوقائع مؤكدة.</p>'+
+ '<h4>عروض الإسناد المسجلة</h4>'+cards([['مرسلة',fmt(r.dispatch?.offered)],['مقبولة',fmt(r.dispatch?.accepted)],['مرفوضة',fmt(r.dispatch?.rejected)],['منتهية',fmt(r.dispatch?.expired)],['مهلة 3 دقائق',fmt(r.dispatch?.three_minute)],['مهلة 10 دقائق',fmt(r.dispatch?.ten_minute)],['محاولات الإسناد اليدوي المسجلة',fmt(r.assignment_review?.manual_requests)],['طلبات مسندة بلا سجل يدوي',fmt(r.assignment_review?.assigned_without_manual_record)],['إسناد تلقائي مؤكد بالسجل الجديد',fmt(r.assignment_review?.automatic_confirmed)],['إسناد يدوي مؤكد بالسجل الجديد',fmt(r.assignment_review?.manual_confirmed)],['إسناد مباشر خاص موثق',fmt(r.assignment_review?.special_direct_confirmed)],['أحداث مصدر الإسناد الموثقة',fmt(r.assignment_review?.evidence_events)]])+
+ '<p class="r-muted">عدم وجود سجل إسناد يدوي لا يثبت أن الإسناد تلقائي أو خاص. يبدأ إثبات المصدر من تحديث الخطوة 10؛ الصفر يعني عدم وجود إثبات في السجل الجديد وليس نفي حدوث إسناد تاريخي. تُحسب الطلبات المميزة لكل طريقة، وقد تتداخل الطرق عند إعادة الإسناد.</p>'+
  '<h4>الإضافات</h4>'+cards([['عدد الإضافات',fmt(r.additions?.count)],['المفوترة',fmt(r.additions?.invoiced_count)],...(allowed('finance')||r.role==='driver'&&allowed('drivers')?[['قيمة الإضافات المفوترة',cash(r.additions?.invoiced_value)]]:[]),['متوسط الاعتماد (دقائق)',fmt(r.additions?.avg_minutes)]])+
  (r.invoice_review?'<h4>مراجع MicroPOS غير الموثقة (اختياري)</h4>'+table([['الطلب',x=>x.order_number],['الفرع',x=>x.branch_name]],r.invoice_review)+'<p class="r-muted">غياب المرجع يحتاج مراجعة عند استخدام MicroPOS؛ لا يعني إلغاء أو عجزاً.</p>':'')+
  (!r.partial_order_filter&&!r.filters?.driver&&['manager','supervisor','customer_service'].includes(r.role)?'<h4>حجوزات الاستلام المستقلة</h4>'+cards([['الحجوزات',fmt(r.reservation_summary?.total)],['تم الاستلام',fmt(r.reservation_summary?.collected)],['ملغاة',fmt(r.reservation_summary?.cancelled)],['قيد المتابعة',fmt(r.reservation_summary?.pending)]])+'<p class="r-muted">لا تدخل الحجوزات في توزيع الموصلين أو رسوم التوصيل.</p>':'')));
@@ -131,8 +132,8 @@ if(selectedSet.has('ratings'))html.push(section('ratings',cards([['أعلى تق
  '<p class="r-muted">التقييمات اختيارية؛ لا يترتب عليها إلغاء الطلب أو عقوبة تلقائية.</p>'));
 if(selectedSet.has('cases'))html.push(section('cases','<h4>الشكاوى المرتبطة بالطلبات</h4>'+table([['الموضوع',x=>x.subject],['الطلب',x=>x.order_number||'بدون طلب'],['الفرع',x=>x.branch_name],['الحالة',x=>x.status]],r.complaints)+
  '<h4>تظلمات الموصلين</h4>'+table([['التصنيف',x=>x.category],['التفاصيل',x=>x.details],['الحالة',x=>x.status]],r.grievances)+'<h4>تظلمات الموظفين الخاصة</h4>'+table([['الموضوع',x=>x.subject],['الحالة',x=>x.status],['الوقت',x=>stamp(x.created_at)]],r.staff_grievances)));
-if(selectedSet.has('attendance'))html.push(section('attendance','<p class="r-muted">صافي الحضور = مجموع فترات الحضور في اليوم التشغيلي بعد طرح الاستراحات. البيانات القديمة غير الموثقة لا يمكن استرجاعها.</p>'+
- table([['اليوم',x=>x.report_day],['الموصل',x=>x.driver_name],['فترات الحضور',x=>fmt(x.sessions)],['الحضور الفعلي',x=>stamp(x.first_checkin)],['آخر خروج',x=>stamp(x.last_checkout)],['صافي الساعات',x=>fmt(x.work_hours)]],r.attendance)));
+if(selectedSet.has('attendance'))html.push(section('attendance','<p class="r-muted">صافي الحضور = مجموع فترات الحضور في اليوم التشغيلي بعد طرح الاستراحات. أوقات الدخول والخروج المسجلة قد تقع خارج حدود اليوم التشغيلي؛ الساعات المحتسبة مقيدة بتلك الحدود. لا يُفترض خروج لجلسة مفتوحة. البيانات القديمة غير الموثقة لا يمكن استرجاعها.</p>'+
+ table([['اليوم',x=>x.report_day],['الموصل',x=>x.driver_name],['فترات الحضور',x=>fmt(x.sessions)],['دخول مسجل فعليًا',x=>stamp(x.actual_first_checkin)],['خروج مسجل فعليًا',x=>x.open_session?'جلسة مفتوحة':stamp(x.actual_last_checkout)],['بداية الوقت المحتسب',x=>stamp(x.first_checkin)],['نهاية الوقت المحتسب',x=>stamp(x.last_checkout)],['صافي الساعات',x=>fmt(x.work_hours)]],r.attendance)));
 if(selectedSet.has('analytics'))html.push(section('analytics','<h4>الطلبات '+safe(el('ff76Trend').selectedOptions[0]?.textContent)+'</h4>'+barChart(trend(),'orders')+(allowed('finance')?'<h4>الفواتير المسلّمة</h4>'+barChart(trend(),'net'):'')+
 '<h4>أوقات الذروة</h4>'+barChart((r.hourly||[]).map(x=>({label:String(x.hour_of_day).padStart(2,'0')+':00',orders:Number(x.orders)})),'orders')+
 '<p class="r-muted">نسبة الطلبات «المؤجلة» لا تُحسب دون حالة تأجيل مستقلة موثقة في قاعدة البيانات.</p>'));
@@ -151,7 +152,7 @@ const allowedApproval=allowed('approval')&&result.role==='manager'&&el('ff76From
  el('ffA10Grants').hidden=result.role!=='manager';
  if(result.role==='manager'&&selected().includes('ratings')&&(result.internal_low_ratings||[]).some(x=>x.rating_id)){const box=document.createElement('div');box.className='r-actions';box.dataset.a10Action='quality';const label=document.createElement('label');label.textContent='تصعيد يدوي لتقييم منخفض (لا يصدّر)';const select=document.createElement('select');select.id='ffA10RatingEscalate';for(const r of result.internal_low_ratings.filter(x=>x.rating_id))select.add(new Option('#'+r.order_number+' — '+r.stars+' نجوم · '+r.rater_role,r.rating_id));label.append(select);const btn=document.createElement('button');btn.type='button';btn.textContent='إنشاء متابعة جودة';btn.onclick=async()=>{const note=prompt('اكتب سبب المتابعة التشغيلية دون نقل الملاحظة الخاصة');if(note===null)return;const who=me(),tag=identity;btn.disabled=true;try{const v=await rpc('ff_a10_escalate_rating',{p_rating:select.value,p_note:note});if(who===me()&&tag===identity){el('ff76Status').textContent=v.already_exists?'توجد متابعة سابقة':'تم إنشاء متابعة جودة في مركز الشكاوى';}}catch(e){if(who===me()&&tag===identity)el('ff76Status').textContent=e.message}finally{btn.disabled=false}};box.append(label,btn);el('ff76Body').append(box)}
 el('ff76ApprovalBox').hidden=!allowedApproval;
-['ff76Preview','ff76Download','ff76Share','ff76CSV'].forEach(id=>el(id).disabled=!selected().length)}
+['ff76Preview','ff76Download','ff76Share','ff76CSV','ff76Excel'].forEach(id=>el(id).disabled=!selected().length)}
 async function load(){
  if(!me()||pending)return;
  const from=el('ff76From').value,to=el('ff76To').value,branch=el('ff76Branch').value||null,driver=el('ff76Driver').value||null;
@@ -225,9 +226,8 @@ function csvField(value){
  if(/^[\t\r\n]|^[\s\u0000-\u001f\u061c\u200b-\u200f\u202a-\u202e\u2060-\u206f]*[=+@\-＝＋＠－]/u.test(text))text="'"+text;
  return '"'+text.replace(/"/g,'""')+'"';
 }
-el('ff76CSV').onclick=async()=>{
- if(!result||!selected().length||!identity.startsWith(me()+':'))return;
- const uid=me(),tag=identity,revision=pdfRevision;try{await verifyExport(uid,tag,revision)}catch(e){if(me()===uid)el('ff76Status').textContent=e.message;return}
+// Both files are produced from the same permission-filtered rendered report.
+function exportRows(){
  const rows=[['التقرير',result.from,result.to,result.scope],['مصدر البيانات','Supabase','وقت البيانات',stamp(result.generated_at)],['الفلاتر',filterText()]];
  const scratch=document.createElement('div');scratch.innerHTML=compose(selected());
  for(const section of scratch.querySelectorAll('section')){
@@ -238,17 +238,61 @@ el('ff76CSV').onclick=async()=>{
    else rows.push([node.textContent]);
   }
  }
- const blob=new Blob(['\uFEFF',rows.map(row=>row.map(csvField).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
- const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='FreshFries_'+result.from+'_'+result.to+'.csv';
- link.click();setTimeout(()=>URL.revokeObjectURL(link.href),5000);
-};
+ return rows;
+}
+// Minimal OOXML workbook: inline strings cannot become formulas or hyperlinks.
+// ZIP STORE (no external script or network), UTF-8, RTL, exact displayed values.
+function excelBlob(rows){
+ const encoder=new TextEncoder(),xml=s=>String(s??'').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\ufffe\uffff]/g,'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
+ const col=i=>{let c='';for(i++;i>0;i=Math.floor((i-1)/26))c=String.fromCharCode(65+(i-1)%26)+c;return c};
+ const ns='http://schemas.openxmlformats.org/spreadsheetml/2006/main',rel='http://schemas.openxmlformats.org/officeDocument/2006/relationships',pkg='http://schemas.openxmlformats.org/package/2006/relationships',decl='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+ const width=Math.max(1,...rows.map(r=>r.length));
+ const sheet=decl+'<worksheet xmlns="'+ns+'"><sheetViews><sheetView rightToLeft="1" workbookViewId="0"/></sheetViews><cols><col min="1" max="1" width="42" customWidth="1"/>'+(width>1?'<col min="2" max="'+width+'" width="25" customWidth="1"/>':'')+'</cols><sheetData>'+rows.map((row,i)=>'<row r="'+(i+1)+'">'+row.map((v,j)=>'<c r="'+col(j)+(i+1)+'" t="inlineStr"><is><t xml:space="preserve">'+xml(v)+'</t></is></c>').join('')+'</row>').join('')+'</sheetData></worksheet>';
+ const files=[
+ ['[Content_Types].xml',decl+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>'],
+ ['_rels/.rels',decl+'<Relationships xmlns="'+pkg+'"><Relationship Id="rId1" Type="'+rel+'/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
+ ['xl/workbook.xml',decl+'<workbook xmlns="'+ns+'" xmlns:r="'+rel+'"><bookViews><workbookView/></bookViews><sheets><sheet name="التقرير التشغيلي" sheetId="1" r:id="rId1"/></sheets></workbook>'],
+ ['xl/_rels/workbook.xml.rels',decl+'<Relationships xmlns="'+pkg+'"><Relationship Id="rId1" Type="'+rel+'/worksheet" Target="worksheets/sheet1.xml"/></Relationships>'],
+ ['xl/worksheets/sheet1.xml',sheet]];
+ const crcTable=Uint32Array.from({length:256},(_,i)=>{for(let j=0;j<8;j++)i=(i>>>1)^((i&1)?0xedb88320:0);return i>>>0});
+ const crc32=bytes=>{let crc=0xffffffff;for(const x of bytes)crc=(crc>>>8)^crcTable[(crc^x)&255];return(crc^0xffffffff)>>>0};
+ const header=n=>{const buf=new Uint8Array(n),v=new DataView(buf.buffer);return {buf,u16:(p,x)=>v.setUint16(p,x,true),u32:(p,x)=>v.setUint32(p,x,true)}};
+ const local=[],central=[];let offset=0,centralSize=0;
+ for(const [name,value] of files){
+  const n=encoder.encode(name),bytes=encoder.encode(value),crc=crc32(bytes),l=header(30),c=header(46);
+  l.u32(0,0x04034b50);l.u16(4,20);l.u16(6,0x800);l.u16(12,0x21);l.u32(14,crc);l.u32(18,bytes.length);l.u32(22,bytes.length);l.u16(26,n.length);
+  c.u32(0,0x02014b50);c.u16(4,20);c.u16(6,20);c.u16(8,0x800);c.u16(14,0x21);c.u32(16,crc);c.u32(20,bytes.length);c.u32(24,bytes.length);c.u16(28,n.length);c.u32(42,offset);
+  local.push(l.buf,n,bytes);central.push(c.buf,n);offset+=30+n.length+bytes.length;centralSize+=46+n.length;
+ }
+ const end=header(22);end.u32(0,0x06054b50);end.u16(8,files.length);end.u16(10,files.length);end.u32(12,centralSize);end.u32(16,offset);
+ return new Blob([...local,...central,end.buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+async function exportTable(format){
+ if(!result||!selected().length||!identity.startsWith(me()+':'))return;
+ const uid=me(),tag=identity,revision=pdfRevision;
+ try{
+  await verifyExport(uid,tag,revision);authorized(uid,tag,revision);
+  const rows=exportRows(),blob=format==='xlsx'?excelBlob(rows):new Blob(['\uFEFF',rows.map(row=>row.map(csvField).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='FreshFries_'+result.from+'_'+result.to+'.'+format;
+  link.click();setTimeout(()=>URL.revokeObjectURL(link.href),5000);
+ }catch(e){if(me()===uid)el('ff76Status').textContent=e.message;}
+}
+el('ff76CSV').onclick=()=>exportTable('csv');
+el('ff76Excel').onclick=()=>exportTable('xlsx');
 window.addEventListener('ff-luxe-session-reset',()=>{
  presets=[];el('ff76PresetList').replaceChildren();el('ff76PresetName').value='';el('ff76PresetStatus').textContent='';
 });
 function pdfLibrary(){if(window.html2pdf)return Promise.resolve();if(libPromise)return libPromise;
 libPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js';s.onload=()=>window.html2pdf?resolve():reject(Error('مكتبة PDF غير جاهزة'));s.onerror=()=>reject(Error('مكتبة PDF تحتاج اتصالاً بالإنترنت'));document.head.append(s)}).catch(e=>{libPromise=null;throw e});return libPromise}
 function filterText(){const labels=['ff76Branch','ff76Driver','ffA10Staff','ffA10Area','ffA10Item','ffA10Status'];return labels.filter(id=>el(id).value).map(id=>el(id).selectedOptions[0]?.textContent).filter(Boolean).join(' · ')||'جميع النطاقات المسموحة'}
- async function verifyExport(uid,tag,revision){authorized(uid,tag,revision);if(!result||!identity.startsWith(uid+':'))throw Error('أعد التقرير');if(JSON.stringify(args())!==JSON.stringify(snapshotArgs)){clear();throw Error('تغيرت عوامل التصفية؛ أعد إعداد التقرير')}const prior=result;let check;try{check=await rpc('ff_a10_reporting_center',args())}catch(e){if(me()===uid&&identity===tag){clear();el('ff76Status').textContent='تغيرت الصلاحيات؛ أعد التقرير'}throw e}authorized(uid,tag,revision);if(!check||check.role!==prior.role||check.access_key!==prior.access_key||JSON.stringify(check.available_sections)!==JSON.stringify(prior.available_sections)){clear();throw Error('تغيرت الصلاحيات أو النطاق؛ أعد إعداد التقرير قبل التصدير')}return true}
+ async function verifyExport(uid,tag,revision){authorized(uid,tag,revision);if(!result||!identity.startsWith(uid+':'))throw Error('أعد التقرير');if(JSON.stringify(args())!==JSON.stringify(snapshotArgs)){clear();throw Error('تغيرت عوامل التصفية؛ أعد إعداد التقرير')}const prior=result;let check;try{check=await rpc('ff_a10_reporting_center',args())}catch(e){if(me()===uid&&identity===tag){clear();el('ff76Status').textContent='تغيرت الصلاحيات؛ أعد التقرير'}throw e}authorized(uid,tag,revision);if(!check||check.role!==prior.role||check.access_key!==prior.access_key||JSON.stringify(check.available_sections)!==JSON.stringify(prior.available_sections)){clear();throw Error('تغيرت الصلاحيات أو النطاق؛ أعد إعداد التقرير قبل التصدير')}
+ // A branch/role hash alone cannot detect row ownership or note changes.
+ // Reject a stale file if any identity-bearing/private detail changed. Timers
+ // remain an explicitly dated snapshot; time-only changes don't invalidate it.
+ const details=['customers','cancellations','free_delivery_orders','fastest','late_orders','invoice_review','low_ratings','internal_low_ratings','driver_feedback','cashier_coordination','complaints','grievances','staff_grievances','approval','settlements','finance_evidence','drivers','service_staff','internal_driver_ratings','attendance'];
+ const canonical=(v)=>Array.isArray(v)?v.map(canonical).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b))):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).filter(k=>k!=='delivery_minutes'&&!(v.open_session&&(k==='last_checkout'||k==='work_hours'))).sort().map(k=>[k,canonical(v[k])])):v;
+ if(details.some(k=>JSON.stringify(canonical(prior[k]))!==JSON.stringify(canonical(check[k])))){clear();throw Error('تغيرت تفاصيل التقرير؛ أعد إعداده قبل التصدير أو المشاركة')}
+ return true}
  function authorized(uid,tag,revision){if(me()!==uid||identity!==tag||revision!==pdfRevision)throw Error('تغير الحساب أو التقرير')}
 async function producePDF(){if(pdf)return pdf;if(pdfPromise)return pdfPromise;if(!result||!me()||!identity.startsWith(me()+':')||!selected().length)throw Error('أعد التقرير وحدد أقسامه');
 const uid=me(),tag=identity,revision=pdfRevision;pdfPromise=(async()=>{

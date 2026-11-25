@@ -11,13 +11,15 @@ permissions:
 jobs:
   parity:
     if: github.event_name != 'push'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install playwright==1.51.0 pillow==11.2.1
+      - name: Install pinned Chromium for reproducible pixel comparisons
+        run: python -m playwright install --with-deps chromium
       - name: Load pinned before tree
         run: |
           git fetch --no-tags --depth=1 origin c55c56e4b73f1aa3ae794eeff77c0598d97acc34
@@ -35,7 +37,7 @@ jobs:
           cp -a "$RUNNER_TEMP/p2-closed/p2-evidence/." p2-evidence/historical/ || true
           exit "$status"
       - name: Compare current editor against closed P2 default workspaces
-        run: P2_BASELINE="$RUNNER_TEMP/p2-closed" P2_STEP04_REGRESSION=1 python scripts/p2-component-qa.py
+        run: P2_CURRENT_CHROME=1 P2_BASELINE="$RUNNER_TEMP/p2-closed" P2_STEP04_REGRESSION=1 python scripts/p2-component-qa.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
