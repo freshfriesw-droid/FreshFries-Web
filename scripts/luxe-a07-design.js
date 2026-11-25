@@ -3,9 +3,9 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const screens={
- all:'جميع الشاشات',dashboard:'الرئيسية',orders:'الطلبات وخدمة العملاء',cashier:'الكاشير',driver:'الموصل',
+ all:'جميع الشاشات',dashboard:'الرئيسية,#ff60-panel,#ff4-panel,#ff5-modal',orders:'الطلبات وخدمة العملاء,#ff49ManualPanel,#ff52LatePanel,#ffbConfirmLayer',cashier:'الكاشير',driver:'الموصل,#ff52RoutesPanel',
  assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر',catalog:'المنيو والعروض',customers:'العملاء',
- reports:'التقارير',staff:'الموظفون والصلاحيات',archive:'الأرشيف',ratings:'التقييمات',cases:'الشكاوى والتظلمات',
+ reports:'التقارير',staff:'الموظفون والصلاحيات,#managerLinks',archive:'الأرشيف',ratings:'التقييمات',cases:'الشكاوى والتظلمات',
  messages:'الرسائل',reservations:'الحجوزات',system:'النظام والأمان',finance:'التسويات النقدية',branches:'الفروع وساعات العمل والأسعار',login:'الدخول وطلب الانضمام',customer_portal:'بوابة العميل'
 };
 const selectors={
@@ -44,7 +44,7 @@ const packOK=p=>/^D[0-9]{2,}$/.test(p||'');
 const cfgOf=v=>v&&typeof v==='object'&&!Array.isArray(v)?v:{};
 const publicScreen=s=>s==='login'||s==='customer_portal';
 const extendedScreen=s=>publicScreen(s)||s==='finance'||s==='branches';
-const extendedRoot=(root,screen)=>extendedScreen(screen)||['ff40AlertsPanel','ff50ChangesPanel','ff49TransferPanel','ffEditDialog','ff45AccessPanel'].includes(root.id);
+const extendedRoot=(root,screen)=>extendedScreen(screen)||['ff40AlertsPanel','ff50ChangesPanel','ff49TransferPanel','ffEditDialog','ff45AccessPanel','ff60-panel','ff4-panel','ff5-modal','ff49ManualPanel','ff52LatePanel','ffbConfirmLayer','ff52RoutesPanel','managerLinks'].includes(root.id);
 const visiblePublicScreen=()=>['customer','applicant'].includes(document.body.dataset.access)?'customer_portal':document.body.dataset.access==='locked'?'login':null;
 let current={},publicRows={},publicKey='',publicAt=0,publicSerial=0,owned=new Set(),ownedDialogs=new Set();
 async function syncPublic(force=false){
