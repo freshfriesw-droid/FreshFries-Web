@@ -1000,7 +1000,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "53347ddd071982eb8acc2a20c7167ceb"
+      "definition_md5": "3eeb8e87e1dac96cc5e3eaef110c76a4",
+      "scope_test": "20261125230813: 6 desk-specific assertions + 6 attendance regressions PASS on live DB; pinned configuration restored"
     },
     {
       "name": "ff62_cairo_drivers",
@@ -2467,5 +2468,5 @@
       "definition_md5": "e36ad6176fc8e89141933210b87fd9c8"
     }
   ],
-  "last_update": "2026-11-26: cashier workflow, cancellation and delegated operation isolation"
+  "last_update": "2026-11-26: pinned cashier desk scope"
 }
