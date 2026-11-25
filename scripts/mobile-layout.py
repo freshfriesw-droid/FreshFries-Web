@@ -567,7 +567,7 @@ with sync_playwright() as playwright:
                   };
                   await window.ffContentStudio.sync(true);
                 }""")
-                assert page.locator('label[for="newFee"]').text_content().strip() == "أجرة التوصيل الاختبارية"
+                assert page.locator('label[for="newFee"]').text_content().strip() == "رسوم التوصيل — أجرة التوصيل الاختبارية"
                 assert page.locator("#newFee").get_attribute("placeholder") == "أدخل المبلغ بالريال"
                 assert page.locator("#newFee").input_value() == "500"
                 assert page.evaluate("window.__orderContentField === document.getElementById('newFee')")

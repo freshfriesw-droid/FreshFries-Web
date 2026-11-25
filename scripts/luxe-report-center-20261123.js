@@ -8,7 +8,8 @@ const cash = value => value === null || value === undefined ? '—' : fmt(value)
 const stamp = date => date ? new Date(date).toLocaleString('ar-YE',{timeZone:'Asia/Aden',dateStyle:'short',timeStyle:'short'}) : '—';
 const headings = {summary:'الملخص اليومي',finance:'المبالغ المسجلة ورسوم التوصيل',orders:'الطلبات والإلغاءات',branches:'الفروع',drivers:'أداء الموصلين',staff:'موظفو خدمة العملاء',areas:'العملاء والمناطق',items:'الأصناف الأكثر طلباً',ratings:'التقييمات',cases:'الشكاوى والتظلمات',attendance:'الدوام والاستراحات',analytics:'التحليلات المتقدمة',comparisons:'المقارنات',approval:'اعتماد المدير'};
 let result=null,identity='',pdf=null,pdfURL=null,fileName='',pending=false,pdfPromise=null,libPromise=null,previewed=false;
-let reportRequest=0,pdfRevision=0,choiceInitialized=false,snapshotArgs=null;
+let reportRequest=0,pdfRevision=0,choiceInitialized=false,snapshotArgs=null,reportContent={};
+function reportHeading(key,content=reportContent){const custom=content['reports.section.'+key];return custom?(['finance','approval'].includes(key)?headings[key]+' — '+custom:custom):(headings[key]||key)}
 function me(){return typeof user!=='undefined' && user ? user.id : ''}
 const root=document.createElement('section');root.id='ff76Center';root.dir='rtl';root.className='ff76-hidden';
 root.innerHTML=[
@@ -47,7 +48,7 @@ const previewDialog=document.createElement('dialog');previewDialog.id='ff76PdfDi
 previewDialog.innerHTML='<header class="r-dialoghead"><b>معاينة PDF الكاملة قبل الإرسال</b><div><button id="ff76DlgDownload">حفظ الملف</button> <button id="ff76DlgShare" class="r-primary">مشاركة الملف</button> <button id="ff76DlgClose">✕ إغلاق</button></div></header><iframe id="ff76PDFFrame" title="معاينة PDF"></iframe>';
 document.body.append(previewDialog);
 function clearPDF(){document.querySelectorAll('[data-ff76-export-layer]').forEach(x=>x.remove());pdfRevision++;pdfPromise=null;if(previewDialog.open)previewDialog.close();if(pdfURL){URL.revokeObjectURL(pdfURL);pdfURL=null}pdf=null;fileName='';previewed=false;el('ff76PDFFrame').removeAttribute('src')}
-function clear(){snapshotArgs=null;el('ffA10Grants').hidden=true;result=null;identity='';clearPDF();el('ff76ManagerName').value='';el('ff76ManagerNotes').value='';el('ff76ApprovalStatus').textContent='';el('ff76Body').textContent='';el('ff76ApprovalBox').hidden=true;el('ff76SaveApproval').disabled=false;['ff76Preview','ff76Download','ff76Share','ff76CSV'].forEach(id=>el(id).disabled=true)}
+function clear(){snapshotArgs=null;reportContent={};el('ffA10Grants').hidden=true;result=null;identity='';clearPDF();el('ff76ManagerName').value='';el('ff76ManagerNotes').value='';el('ff76ApprovalStatus').textContent='';el('ff76Body').textContent='';el('ff76ApprovalBox').hidden=true;el('ff76SaveApproval').disabled=false;['ff76Preview','ff76Download','ff76Share','ff76CSV'].forEach(id=>el(id).disabled=true)}
 function day(){if(typeof ff40TodayYemen==='function')return ff40TodayYemen();const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day}
 function changeDay(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
 function period(days,offset){const end=changeDay(day(),offset);el('ff76To').value=end;el('ff76From').value=changeDay(end,-days+1);invalidate()}
@@ -59,13 +60,13 @@ function allowed(section){return (result?.available_sections||[]).includes(secti
 function selected(){if(!result)return[];if(el('ff76Mode').value==='full')return result.available_sections;return Array.from(el('ff76Choices').querySelectorAll('input:checked')).map(c=>c.value).filter(allowed)}
 function choices(){const node=el('ff76Choices');node.hidden=el('ff76Mode').value!=='custom';if(!result)return;
 const former=Array.from(node.querySelectorAll('input:checked')).map(n=>n.value);const selectAll=!choiceInitialized;choiceInitialized=true;
-node.innerHTML=result.available_sections.map(key=>'<label><input type="checkbox" value="'+safe(key)+'" '+(selectAll||former.includes(key)?'checked':'')+'>'+safe(headings[key]||key)+'</label>').join('');
+node.innerHTML=result.available_sections.map(key=>'<label><input type="checkbox" value="'+safe(key)+'" '+(selectAll||former.includes(key)?'checked':'')+'>'+safe(reportHeading(key))+'</label>').join('');
 node.querySelectorAll('input').forEach(x=>x.onchange=()=>{clearPDF();draw()})}
 function table(cols,rows){if(!rows?.length)return '<p class="r-muted">لا توجد بيانات موثقة للفترة المختارة.</p>';
 return '<div class="r-scroll"><table><thead><tr>'+cols.map(c=>'<th>'+safe(c[0])+'</th>').join('')+'</tr></thead><tbody>'+
 rows.map(x=>'<tr>'+cols.map(c=>'<td>'+safe(c[1](x)??'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
 function cards(rows){return '<div class="r-kpis">'+rows.map(x=>'<div class="r-kpi"><small>'+safe(x[0])+'</small><b>'+safe(x[1])+'</b></div>').join('')+'</div>'}
-function section(key,html){return '<section class="r-section" data-report-section="'+safe(key)+'"><h3>'+safe(headings[key])+'</h3>'+html+'</section>'}
+function renderSection(key,html,content){return '<section class="r-section" data-report-section="'+safe(key)+'"><h3>'+safe(reportHeading(key,content))+'</h3>'+html+'</section>'}
 function weekly(date){const x=new Date(date+'T12:00:00Z');x.setUTCDate(x.getUTCDate()-((x.getUTCDay()+6)%7));return x.toISOString().slice(0,10)}
 function trend(){const groups=new Map();(result.days||[]).forEach(row=>{const name=el('ff76Trend').value==='monthly'?row.work_day.slice(0,7):el('ff76Trend').value==='weekly'?weekly(row.work_day):row.work_day;const x=groups.get(name)||{label:name,orders:0,net:0};x.orders+=Number(row.orders||0);x.net+=Number(row.net||0);groups.set(name,x)});return Array.from(groups.values()).sort((a,b)=>a.label.localeCompare(b.label))}
 function barChart(rows,key){if(!rows.length)return '<p class="r-muted">بيانات الرسم غير متوفرة.</p>';const max=Math.max(1,...rows.map(x=>Number(x[key]||0)));
@@ -78,8 +79,8 @@ if(Number(t.free_delivery||0)>0)n.push('مراجعة حالات التوصيل �
 if(allowed('attendance')&&!(result.attendance||[]).length)n.push('تفعيل توثيق فترات الدوام لمعرفة ساعات العمل الصافية.');
 if(!n.length)n.push('لا تظهر مؤشرات استثنائية في القواعد الحالية؛ واصل المتابعة.');
 return n}
-function compose(keys){
-if(!result)return '';const r=result,t=r.totals||{},selectedSet=new Set(keys),html=[];
+function compose(keys,content=reportContent){
+if(!result)return '';const section=(key,html)=>renderSection(key,html,content);const r=result,t=r.totals||{},selectedSet=new Set(keys),html=[];
 if(selectedSet.has('summary'))html.push(section('summary',cards([
 ['جميع الطلبات',fmt(t.orders)],['المتأخرة قيد المتابعة',fmt(t.late_pending)],['المنجزة',fmt(t.delivered)],['الملغاة',fmt(t.cancelled)],['قيد المتابعة',fmt(t.pending)],['العملاء الجدد لأول مرة',fmt(t.new_customers)],['المناطق الجديدة',fmt(t.new_areas)],['عملاء سبق لهم الطلب',fmt(t.repeat_customers)],['توصيل مجاني',fmt(t.free_delivery)],['متوسط وقت التوصيل',t.avg_delivery_minutes==null?'—':fmt(t.avg_delivery_minutes)+' دقيقة']
 ])+'<p class="r-muted">اليوم التشغيلي من 08:00 صباحاً إلى 02:00 صباح اليوم التالي بتوقيت صنعاء، دون تصفير البيانات.</p>'));
@@ -168,9 +169,10 @@ async function load(){
  const fo=data.filter_options||{};options('ffA10Staff',fo.staff,'name','id','جميع الموظفين المخولين');options('ffA10Area',(fo.areas||[]).map(x=>({name:x,id:x})),'name','id','جميع المناطق');options('ffA10Item',(fo.items||[]).map(x=>({name:x,id:x})),'name','id','جميع الأصناف');el('ffA10StaffWrap').hidden=!fo.staff?.length;
  if(data.role==='manager')void refreshGrants(request);
  el('ff76DriverWrap').hidden=!(data.driver_options||[]).length;
+ const content=await window.ffContentStudio?.reportText(branch)||{};if(request!==reportRequest||me()!==viewer)return;reportContent=content;
  choices();draw();void refreshPresets(request);
- el('ff76Status').textContent='تقرير '+from+' إلى '+to+' | '+data.scope+' | '+fmt(data.totals.orders)+' طلب. مصدر البيانات: Supabase · '+stamp(data.generated_at)+' · بيانات تشغيلية وليست إقفالات محاسبية.';
- }catch(e){if(request!==reportRequest||me()!==viewer)return;clear();el('ff76Status').textContent='تعذر إعداد التقرير: '+(e.message||e)}finally{if(request===reportRequest){pending=false;el('ff76Run').disabled=false}}
+ el('ff76Status').textContent=(reportContent['reports.success']||'تقرير')+' '+from+' إلى '+to+' | '+data.scope+' | '+fmt(data.totals.orders)+' طلب. مصدر البيانات: Supabase · '+stamp(data.generated_at)+' · بيانات تشغيلية وليست إقفالات محاسبية.';
+ }catch(e){if(request!==reportRequest||me()!==viewer)return;clear();el('ff76Status').textContent=(window.ffContentStudio?.text('reports.error','تعذر إعداد التقرير',branch)||'تعذر إعداد التقرير')+': '+(e.message||e)}finally{if(request===reportRequest){pending=false;el('ff76Run').disabled=false}}
 }
 function open(){if(!me()){typeof toast==='function'&&toast('سجّل الدخول أولاً');return}el('ff40ReportsPanel')?.classList.add('hidden');const special=typeof ffV12AssemblyActive!=='undefined'&&ffV12AssemblyActive?el('ffV12AssemblyWorkspace'):window.ffBurgerActive?.()?el('ffBurgerKitchenWorkspace'):null;if(special&&!special.contains(root))special.append(root);else if(!special&&anchor&&root.parentNode!==anchor.parentNode)anchor.after(root);root.classList.remove('ff76-hidden');
 if(!el('ff76From').value)period(1,0);root.scrollIntoView({behavior:'smooth',block:'start'});if(!result)void load()}
@@ -182,8 +184,8 @@ el('ff76Mode').onchange=()=>{choices();clearPDF();draw()};el('ff76Trend').onchan
 el('ff76SaveApproval').onclick=async()=>{if(!result||!allowed('approval')||result.role!=='manager'||el('ff76From').value!==el('ff76To').value||el('ff76Driver').value||partial())return;
 const uid=me(),tag=identity;el('ff76SaveApproval').disabled=true;
 try{const res=await rpc('ff76_report_approval_save',{p_day:el('ff76To').value,p_branch:el('ff76Branch').value||null,p_notes:el('ff76ManagerNotes').value,p_manager_name:el('ff76ManagerName').value});
-if(me()!==uid||tag!==identity)return;result.approval={...res,manager_notes:res.notes};el('ff76ManagerName').value=result.approval.manager_name||'';el('ff76ManagerNotes').value=result.approval.manager_notes||'';clearPDF();draw();el('ff76ApprovalStatus').textContent='تم توثيق اعتماد المدير وتاريخ حفظه.'}
-catch(e){if(me()===uid&&tag===identity)el('ff76ApprovalStatus').textContent='فشل الاعتماد: '+e.message}finally{if(me()===uid&&tag===identity)el('ff76SaveApproval').disabled=false}};
+if(me()!==uid||tag!==identity)return;result.approval={...res,manager_notes:res.notes};el('ff76ManagerName').value=result.approval.manager_name||'';el('ff76ManagerNotes').value=result.approval.manager_notes||'';clearPDF();draw();el('ff76ApprovalStatus').textContent='تم توثيق اعتماد المدير وتاريخ حفظه.'+(reportContent['reports.approval_success']?' — '+reportContent['reports.approval_success']:'')}
+catch(e){if(me()===uid&&tag===identity)el('ff76ApprovalStatus').textContent='فشل الاعتماد: '+e.message+(reportContent['reports.approval_error']?' — '+reportContent['reports.approval_error']:'')}finally{if(me()===uid&&tag===identity)el('ff76SaveApproval').disabled=false}};
 let grantsData=null;
  async function refreshGrants(request){const who=me();try{const value=await rpc('ff_a10_report_grants');if(request!==reportRequest||who!==me()||result?.role!=='manager')return;grantsData=value;options('ffA10GrantUser',value.accounts,'name','id','اختر حسابًا');options('ffA10GrantSection',Object.entries(headings).map(([id,name])=>({id,name})),'name','id','اختر قسمًا');showGrant()}catch(e){if(request===reportRequest&&who===me())el('ffA10GrantStatus').textContent=e.message}}
  function showGrant(){const g=grantsData?.grants?.find(x=>x.user_id===el('ffA10GrantUser').value&&x.section===el('ffA10GrantSection').value);el('ffA10GrantAllowed').value=g?String(g.allowed):'inherit'}
@@ -256,7 +258,7 @@ const uid=me(),tag=identity,revision=pdfRevision;pdfPromise=(async()=>{
  page.style.cssText='width:720px;background:#fff;color:#181818;padding:25px;font:14px Tahoma,Arial,sans-serif;line-height:1.7;position:relative;box-sizing:border-box;max-width:none';
  page.innerHTML='<div style="border-bottom:4px solid #c51b30;padding:10px 0;margin-bottom:15px"><h1>'+safe(content['reports.pdf_title']||'FRESH FRIES LUXE — مركز التقارير')+'</h1><b>'+safe(result.from)+' إلى '+safe(result.to)+'</b><p>'+safe(result.scope)+'</p><p>مصدر البيانات: Supabase · '+safe(stamp(result.generated_at))+'</p><p>الفلاتر: '+safe(filterText())+'</p></div>'+
  '<style>.r-section{border:1px solid #ccc;padding:10px;margin:12px 0;break-inside:auto}.r-section h3{border-right:4px solid #c51b30;padding-right:8px}.r-kpis{display:flex;flex-wrap:wrap;gap:7px}.r-kpi{border:1px solid #ddd;padding:8px;min-width:135px}.r-kpi b{display:block;font-size:18px}.r-scroll{overflow:visible}table{border-collapse:collapse;width:100%;font-size:11px}th,td{text-align:right;border:1px solid #ddd;padding:7px;overflow-wrap:anywhere}th{background:#eee}.r-muted{font-size:11px;color:#444}.r-bars{display:flex;align-items:flex-end;height:150px}.r-barcol{height:150px;width:65px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}.r-bar{width:34px;background:#c51b30}.r-barcol span{font-size:10px}.r-stamp{border:2px dashed #c51b30;padding:9px}</style>'+
- compose(selected())+(content['reports.pdf_note']?'<p class="r-muted">'+safe(content['reports.pdf_note'])+'</p>':'')+'<footer style="margin-top:20px;border-top:1px solid #ddd">فريش فرايز — تقرير تشغيلي لا يثبت التحصيل المالي.</footer>';
+ compose(selected(),content)+(content['reports.pdf_note']?'<p class="r-muted">'+safe(content['reports.pdf_note'])+'</p>':'')+'<footer style="margin-top:20px;border-top:1px solid #ddd">فريش فرايز — تقرير تشغيلي لا يثبت التحصيل المالي.</footer>';
  const staging=document.createElement('div');staging.dataset.ff76ExportLayer='staging';staging.style.cssText='position:fixed;inset:0;overflow:auto;background:white;z-index:2147483000;pointer-events:none';staging.append(page);document.body.append(staging);
  let overlay;
  try{
