@@ -130,7 +130,7 @@ with sync_playwright() as pw:
    dlg.locator("[data-a07-undo]").click()
    assert dlg.locator("[data-a07-after] [data-ff-a07-el-weight=strong]").count()==0
    dlg.locator("[data-a07-undo]").click()
-   assert dlg.locator(".ff-a07-element-row").first.locator("select").first.input_value()=="pack"
+   assert dlg.locator(".ff-a07-element-row").first.locator("select").first.input_value()=="inherit"
    dlg.locator("[data-a07-redo]").click()
    assert dlg.locator(".ff-a07-element-row").first.locator("select").first.input_value()=="pill"
    assert dlg.locator("[data-a07-after] [data-ff-a07-shape=pill]").count()>=1
@@ -144,6 +144,8 @@ with sync_playwright() as pw:
    assert payload["p_style"]["elements"]["driver_actions"][0]["shape"]=="pill"
    assert len(payload["p_style"]["elements"]["driver_actions"])==3
    assert payload["p_style"]["elements"]["driver_actions"][0]["weight"]=="strong"
+   assert all("orderMode" not in e for e in payload["p_style"]["elements"]["driver_actions"])
+   assert payload["p_style"]["elements"]["driver_actions"][1]["shape"]=="inherit"
    assert not page.evaluate("()=>window.__a06Calls.some(c=>['ff_ui_publish','ff_ui_control_trial'].includes(c.name))")
    dlg.locator("[data-close]").click()
    page.evaluate("""()=>{window.__a07Catalog=Array.from({length:17},(_,i)=>({code:'D'+String(i+1).padStart(2,'0'),name:'QA '+(i+1)}));ffDashboardStudio.open()}""")

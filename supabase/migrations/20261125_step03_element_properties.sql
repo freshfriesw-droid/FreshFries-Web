@@ -12,14 +12,16 @@ BEGIN
   SELECT array_agg(k) INTO allowed FROM jsonb_array_elements_text(spec->g.key->'keys') k;
   IF jsonb_array_length(g.value)<>cardinality(allowed) THEN RETURN false; END IF;
   IF coalesce((spec->g.key->>'styleOnly')::boolean,false) AND (SELECT array_agg(a.row->>'key' ORDER BY a.ord) FROM jsonb_array_elements(g.value) WITH ORDINALITY a(row,ord)) IS DISTINCT FROM allowed THEN RETURN false; END IF;
+  IF (SELECT count(*) FROM jsonb_array_elements(g.value) a WHERE a->>'orderMode'='inherit') NOT IN (0,cardinality(allowed)) THEN RETURN false; END IF;
   seen:='{}';
   FOR e IN SELECT * FROM jsonb_array_elements(g.value) LOOP
    IF jsonb_typeof(e)<>'object' THEN RETURN false; END IF;
-   IF NOT (e ?& ARRAY['key','shape','size']) OR EXISTS(SELECT 1 FROM jsonb_object_keys(e) k WHERE k NOT IN ('key','shape','size','font','weight','spacing','border','shadow','tone'))
+   IF NOT (e ?& ARRAY['key','shape','size']) OR EXISTS(SELECT 1 FROM jsonb_object_keys(e) k WHERE k NOT IN ('key','shape','size','font','weight','spacing','border','shadow','tone','orderMode'))
       OR NOT coalesce(e->>'key'=ANY(allowed),false) OR coalesce(e->>'key'=ANY(seen),true)
       OR NOT coalesce(e->>'shape' IN ('inherit','pack','square','round','pill','outline','icon_label'),false)
       OR NOT coalesce(e->>'size' IN ('inherit','normal','large'),false) THEN RETURN false;END IF;
    IF EXISTS(SELECT 1 FROM jsonb_each(e) x WHERE x.key NOT IN ('key','shape','size') AND NOT CASE x.key
+      WHEN 'orderMode' THEN x.value='"inherit"'::jsonb
       WHEN 'font' THEN x.value IN ('"system"'::jsonb,'"tahoma"'::jsonb,'"serif"'::jsonb)
       WHEN 'weight' THEN x.value IN ('"normal"'::jsonb,'"strong"'::jsonb)
       WHEN 'spacing' THEN x.value IN ('"normal"'::jsonb,'"wide"'::jsonb)
@@ -54,11 +56,12 @@ BEGIN
    SELECT 1 FROM jsonb_array_elements(new_rows) b
    LEFT JOIN LATERAL (SELECT a FROM jsonb_array_elements(coalesce(p_exact->g.key,'[]')) a WHERE a->>'key'=b->>'key') ex ON true
    LEFT JOIN LATERAL (SELECT a FROM jsonb_array_elements(coalesce(p_inherited->g.key,'[]')) a WHERE a->>'key'=b->>'key') inh ON true
-   WHERE (b-ARRAY['key','shape','size']) IS DISTINCT FROM
-     ((coalesce(inh.a,'{}')||coalesce(ex.a,'{}'))-ARRAY['key','shape','size'])
+   WHERE (b-ARRAY['key','shape','size','orderMode']) IS DISTINCT FROM
+     ((coalesce(inh.a,'{}')||coalesce(ex.a,'{}'))-ARRAY['key','shape','size','orderMode'])
   ) THEN RETURN NULL; END IF;
-  SELECT jsonb_agg((b.row-ARRAY['font','weight','spacing','border','shadow','tone'])||
-     (coalesce((SELECT a FROM jsonb_array_elements(coalesce(p_exact->g.key,'[]')) a WHERE a->>'key'=b.row->>'key'),'{}')-ARRAY['key','shape','size']) ORDER BY b.ord)
+  IF EXISTS(SELECT 1 FROM jsonb_array_elements(new_rows) b WHERE b ? 'orderMode') AND NOT ('layout'=ANY(p_kinds)) THEN RETURN NULL; END IF;
+  SELECT jsonb_agg((b.row-ARRAY['font','weight','spacing','border','shadow','tone','orderMode'])||
+     (coalesce((SELECT a FROM jsonb_array_elements(coalesce(p_exact->g.key,'[]')) a WHERE a->>'key'=b.row->>'key'),'{}')-ARRAY['key','shape','size','orderMode']) || CASE WHEN NOT ('layout'=ANY(p_kinds)) AND (p_exact->g.key->0->>'orderMode'='inherit' OR p_exact->g.key IS NULL) THEN '{"orderMode":"inherit"}'::jsonb WHEN 'layout'=ANY(p_kinds) AND b.row->>'orderMode'='inherit' THEN '{"orderMode":"inherit"}'::jsonb ELSE '{}'::jsonb END ORDER BY b.ord)
   INTO new_rows FROM jsonb_array_elements(new_rows) WITH ORDINALITY b(row,ord);
   out_rows:=out_rows||jsonb_build_object(g.key,new_rows);
  END LOOP;
@@ -86,12 +89,12 @@ AS $function$
   FROM candidates c CROSS JOIN LATERAL jsonb_each(coalesce(c.style->'elements','{}')) e
   WHERE ff_private.a07_valid_elements(jsonb_build_object(e.key,e.value),p_screen)
  ), element_groups AS (
-  SELECT DISTINCT ON (key) key,value,revision FROM eligible_groups ORDER BY key,rank_order
+  SELECT DISTINCT ON (key) key,value,revision FROM eligible_groups ORDER BY key,((value->0->>'orderMode') IS NOT DISTINCT FROM 'inherit'),rank_order
  ), element_properties AS (
   SELECT DISTINCT ON (g.key,r.row->>'key',p.key)
    g.key AS group_key,r.row->>'key' AS element_key,p.key AS property,p.value,g.revision
   FROM eligible_groups g CROSS JOIN LATERAL jsonb_array_elements(g.value) r(row)
-  CROSS JOIN LATERAL jsonb_each(r.row-'key') p
+  CROSS JOIN LATERAL jsonb_each(r.row-ARRAY['key','orderMode']) p
   WHERE p.value <> '"inherit"'::jsonb
   ORDER BY g.key,r.row->>'key',p.key,g.rank_order
  ), resolved_groups AS (
@@ -104,6 +107,7 @@ AS $function$
  UNION ALL
  SELECT 'elements.'||g.key||'.'||(r.row->>'key')||'.order',g.revision
  FROM element_groups g CROSS JOIN LATERAL jsonb_array_elements(g.value) r(row)
+ WHERE (g.value->0->>'orderMode') IS DISTINCT FROM 'inherit'
  )
  SELECT jsonb_build_object(
  'style',coalesce((SELECT jsonb_object_agg(key,value) FROM properties),'{}') ||

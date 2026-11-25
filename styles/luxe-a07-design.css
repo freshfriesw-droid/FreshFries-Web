@@ -129,3 +129,5 @@
 [data-ff-a07-pack] [data-ff-a07-el-tone="dark"]:not(:disabled){background:#222!important;color:#fff!important}
 
 .ff-step03-preview-group{margin-block:8px;min-width:0}.ff-step03-preview-group h4{margin:4px 0;font-size:1em}.ff-step03-preview-group .ff-a07-preview-actions{flex-wrap:wrap}.ff-step03-preview-group button{max-width:100%;white-space:normal;cursor:pointer}
+
+[data-step03-inherit-order]{display:block;margin-block:8px;max-width:100%}

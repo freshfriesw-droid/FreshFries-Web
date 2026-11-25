@@ -12,6 +12,7 @@ const sizes={inherit:'وراثة من النطاق الأعم',normal:'عادي'
 const properties={"font":{"system":"افتراضي الجهاز","tahoma":"Tahoma","serif":"تقليدي"},"weight":{"normal":"عادي","strong":"بارز"},"spacing":{"normal":"عادي","wide":"واسع"},"border":{"thin":"رفيعة","strong":"بارزة"},"shadow":{"none":"بدون","soft":"خفيف"},"tone":{"navy":"كحلي","red":"أحمر","light":"فاتح","dark":"داكن"}},propertyLabels={"font":"الخط","weight":"وزن الخط","spacing":"التباعد","border":"سمك الحدود","shadow":"الظل","tone":"الألوان"},toneAllowed=new Set(["ff76Run","ff76Preview","ff76Download","ff76Share","ffx-hero-new","ffx-hero-reserve","ff51ArchiveRefresh","ff51ArchiveExport","ff51CustomerFind"]);
 const copy=v=>JSON.parse(JSON.stringify(v||{}));
 const defaultRows=g=>groups[g].keys.map(key=>({key,shape:'pack',size:'normal'}));
+const draftRows=g=>groups[g].keys.map(key=>({key,shape:'inherit',size:'inherit',orderMode:'inherit'}));
 const states=new WeakMap();
 let owned=new Set(),ownedParents=new Set();
 function clearProperties(node){for(const k of Object.keys(properties))delete node.dataset['ffA07El'+k[0].toUpperCase()+k.slice(1)]}
@@ -63,20 +64,21 @@ function editor(form,anchor){
   section.querySelector('[data-a07-redo]').disabled=!state.redo.length;
   section.querySelector('[data-a07-reset]').disabled=!g||!state.values[g];
   if(!g){list.textContent='لا توجد مجموعة قابلة لإعادة الترتيب لهذه الشاشة.';return}
-  const rows=state.values[g]||defaultRows(g);
-  const modify=(i,fn)=>change(()=>{const next=copy(state.values[g]||defaultRows(g));fn(next,i);state.values[g]=next});
+  const rows=state.values[g]||draftRows(g);
+  if(!groups[g].styleOnly){const inheritOrder=document.createElement('button');inheritOrder.type='button';inheritOrder.dataset.step03InheritOrder='1';inheritOrder.textContent='وراثة ترتيب المجموعة';inheritOrder.disabled=rows.every(e=>e.orderMode==='inherit');inheritOrder.onclick=()=>change(()=>{state.values[g]=rows.map(e=>({...e,orderMode:'inherit'}))});list.append(inheritOrder)}
+  const modify=(i,fn)=>change(()=>{const next=copy(state.values[g]||draftRows(g));fn(next,i);state.values[g]=next});
   rows.forEach((e,i)=>{
    const row=document.createElement('div');row.className='ff-a07-element-row';row.draggable=!groups[g].styleOnly;row.dataset.elementKey=e.key;
    const name=document.createElement('strong');name.textContent=itemLabels[e.key]||e.key;row.append(name);
    row.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/plain',String(i));ev.dataTransfer.effectAllowed='move'});
    row.addEventListener('dragover',ev=>ev.preventDefault());
-   row.addEventListener('drop',ev=>{ev.preventDefault();const n=Number(ev.dataTransfer.getData('text/plain'));if(!groups[g].styleOnly&&Number.isInteger(n)&&n>=0&&n<rows.length&&n!==i)modify(i,a=>a.splice(i,0,...a.splice(n,1)))});
+   row.addEventListener('drop',ev=>{ev.preventDefault();const n=Number(ev.dataTransfer.getData('text/plain'));if(!groups[g].styleOnly&&Number.isInteger(n)&&n>=0&&n<rows.length&&n!==i)modify(i,a=>{a.splice(i,0,...a.splice(n,1));for(const e of a)delete e.orderMode})});
    for(const [key,opts,label] of [['shape',shapes,'الشكل'],['size',sizes,'الحجم']]){
     const wrap=document.createElement('label');wrap.textContent=label;const input=document.createElement('select');input.setAttribute('aria-label',label+' '+name.textContent);input.replaceChildren(...Object.entries(opts).map(([k,v])=>new Option(v,k)));input.value=e[key];input.onchange=()=>modify(i,a=>a[i][key]=input.value);wrap.append(input);row.append(wrap)
    }
    const advanced=document.createElement('details');advanced.className='ff-step03-properties';const title=document.createElement('summary');title.textContent='خصائص العنصر';advanced.append(title);const info=document.createElement('p');info.className='muted';info.textContent='معرّف ثابت: '+e.key+' · '+(groups[g].styleOnly?'مظهر فقط؛ لا يغيّر موقع الحقل أو صلاحياته.':'عنصر موجود؛ لا يغيّر التخصيص وظيفته.');advanced.append(info);
-   for(const [key,options] of Object.entries(properties)){if(key==='tone'&&!toneAllowed.has(e.key))continue;const wrap=document.createElement('label');wrap.textContent=propertyLabels[key];const input=document.createElement('select');input.dataset.step03Property=key;input.setAttribute('aria-label',propertyLabels[key]+' '+name.textContent);input.add(new Option('وراثة من التصميم',''));for(const [k,v] of Object.entries(options))input.add(new Option(v,k));input.value=e[key]||'';input.onchange=()=>{modify(i,a=>{if(input.value)a[i][key]=input.value;else delete a[i][key]});list.querySelectorAll('.ff-step03-properties')[i]?.setAttribute('open','')};wrap.append(input);advanced.append(wrap)}row.append(advanced);
-   if(!groups[g].styleOnly)for(const [label,d] of [['تقديم',-1],['تأخير',1]]){const b=document.createElement('button');b.type='button';b.textContent=label;b.disabled=i+d<0||i+d>=rows.length;b.onclick=()=>modify(i,a=>a.splice(i+d,0,...a.splice(i,1)));row.append(b)}
+   for(const [key,options] of Object.entries(properties)){if(key==='tone'&&!toneAllowed.has(e.key))continue;const wrap=document.createElement('label');wrap.textContent=propertyLabels[key];const input=document.createElement('select');input.dataset.step03Property=key;input.setAttribute('aria-label',propertyLabels[key]+' '+name.textContent);input.add(new Option('وراثة من التصميم',''));for(const [k,v] of Object.entries(options))input.add(new Option(v,k));input.value=e[key]||'';input.onchange=()=>{modify(i,a=>{if(input.value)a[i][key]=input.value;else delete a[i][key]});[...list.querySelectorAll('.ff-a07-element-row')].find(n=>n.dataset.elementKey===e.key)?.querySelector('.ff-step03-properties')?.setAttribute('open','')};wrap.append(input);advanced.append(wrap)}row.append(advanced);
+   if(!groups[g].styleOnly)for(const [label,d] of [['تقديم',-1],['تأخير',1]]){const b=document.createElement('button');b.type='button';b.textContent=label;b.disabled=i+d<0||i+d>=rows.length;b.onclick=()=>modify(i,a=>{a.splice(i+d,0,...a.splice(i,1));for(const e of a)delete e.orderMode});row.append(b)}
    list.append(row);
   })
  }

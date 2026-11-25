@@ -25,6 +25,14 @@ BEGIN
  j:=public.ff_a07_manager_style_layers('driver','driver',b,'mobile');
  IF j#>>'{style,elements,driver_actions,1,shape}' IS DISTINCT FROM 'round' OR j#>>'{style,elements,driver_actions,1,size}' IS DISTINCT FROM 'large' OR j#>>'{style,elements,driver_actions,1,weight}' IS DISTINCT FROM 'strong' OR j#>>'{style,elements,driver_actions,1,font}' IS DISTINCT FROM 'tahoma' THEN RAISE EXCEPTION 'property inheritance %',j; END IF;
  IF j->'sources'->>'elements.driver_actions.clockInBtn.shape' IS DISTINCT FROM a::text OR j->'sources'->>'elements.driver_actions.clockInBtn.weight' IS DISTINCT FROM a::text OR j->'sources'->>'elements.driver_actions.clockInBtn.font' IS DISTINCT FROM s::text THEN RAISE EXCEPTION 'property source %',j; END IF;
+ -- A more specific property-only draft must not reorder the broader group.
+ specific:=jsonb_build_object('elements',jsonb_build_object('driver_actions',jsonb_build_array(
+ jsonb_build_object('key','clockOutBtn','shape','inherit','size','inherit','orderMode','inherit'),
+ jsonb_build_object('key','ff51BreakBtn','shape','inherit','size','inherit','orderMode','inherit'),
+ jsonb_build_object('key','clockInBtn','shape','inherit','size','inherit','orderMode','inherit','font','tahoma'))));
+ s:=public.ff_a07_named_design('driver','driver',b,'mobile','D02','','labels','QA order inheritance','',NULL,specific);PERFORM public.ff_ui_publish(s);
+ j:=public.ff_a07_manager_style_layers('driver','driver',b,'mobile');
+ IF j#>>'{style,elements,driver_actions,1,key}' IS DISTINCT FROM 'clockInBtn' OR j#>>'{style,elements,driver_actions,1,shape}' IS DISTINCT FROM 'round' OR j#>>'{style,elements,driver_actions,1,font}' IS DISTINCT FROM 'tahoma' OR j->'sources'->>'elements.driver_actions.clockInBtn.order' IS DISTINCT FROM a::text THEN RAISE EXCEPTION 'order inheritance %',j;END IF;
  j:=public.ff_a07_manager_style_layers('driver','driver',b,'desktop');
  IF j#>'{style,elements,driver_actions,1,font}' IS NOT NULL THEN RAISE EXCEPTION 'device leak %',j; END IF;
  RESET ROLE;
