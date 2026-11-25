@@ -2,13 +2,56 @@ name: LUXE A09 denial HTTP QA
 on:
   pull_request:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/luxe-content-delegation.js'
+      - '.github/workflows/luxe-a09-denial-http-qa.yml'
 permissions:
   contents: read
 jobs:
   postgrest-contract:
+    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
       - name: Verify denied RPC status and durable audit through real HTTP
         run: python3 scripts/a09-denial-http-qa.py
+  live-site:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify custom domain serves exact merged audit asset
+        run: |
+          python3 - <<'PY'
+          from urllib.request import Request,urlopen
+          from urllib.parse import urlparse
+          from pathlib import Path
+          from hashlib import sha256
+          from time import sleep
+          root='https://delivery.freshfriesz.com/'
+          marker='20261125-a09-denial'
+          relative='scripts/luxe-content-delegation.js'
+          expected=Path(relative).read_bytes()
+          def get(url):
+              with urlopen(Request(root+url,headers={'Cache-Control':'no-cache','User-Agent':'FreshFries-LUXE-release-QA'}),timeout=15) as response:
+                  assert response.status==200
+                  assert urlparse(response.geturl()).hostname=='delivery.freshfriesz.com'
+                  return response.read()
+          for attempt in range(10):
+              try:
+                  html=get('?qa='+marker).decode()
+                  assert relative+'?v='+marker in html,'Merged script marker missing'
+                  shipped=get(relative+'?v='+marker)
+                  assert shipped==expected,'Published asset differs from merged source'
+                  print('PASS live domain: SHA256',sha256(shipped).hexdigest(),flush=True)
+                  break
+              except Exception as exc:
+                  print('Public deployment probe attempt',attempt+1,str(exc),flush=True)
+                  if attempt==9:
+                      raise
+                  sleep(12)
+          PY
