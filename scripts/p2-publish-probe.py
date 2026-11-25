@@ -13,6 +13,8 @@ assert b'luxe-p2-components.css?v=20261125-p2' in html
 assets=sorted(set(re.findall(rb'href="([^"]+\.css)(?:\?[^"]*)?"',html)))
 assets=[x.decode().removeprefix('./') for x in assets if not x.startswith((b'http:',b'https:',b'//'))]
 assert 'styles/luxe-p2-components.css' in assets
+scripts=sorted(set(x.decode().removeprefix('./') for x in re.findall(rb'<script[^>]+src="([^"?]+\\.js)(?:\\?[^\"]*)?"',html) if not x.startswith((b'http:',b'https:',b'//'))))
+assert {'scripts/luxe-a07-elements.js','scripts/luxe-a07-design.js','scripts/luxe-dashboard-studio.js'}<=set(scripts)
 
 def get(path):
  req=Request(urljoin(origin,path),headers={'Cache-Control':'no-cache','User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/130.0 Safari/537.36'})
@@ -47,10 +49,16 @@ for attempt in range(3):
    expected=(root/path).read_bytes(); actual=get(path+'?qa=20261125-p2-'+str(attempt))
    assert actual==expected,'public CSS differs: '+path
    print('PASS',path,sha256(actual).hexdigest(),flush=True)
+  for path in scripts:
+   expected=(root/path).read_bytes(); actual=get(path+'?qa=20261125-step03-'+str(attempt))
+   assert actual==expected,'public JavaScript differs: '+path
+   print('PASS',path,sha256(actual).hexdigest(),flush=True)
+  for path in ['scripts/luxe-a07-elements.js','scripts/luxe-a07-design.js','scripts/luxe-dashboard-studio.js','styles/luxe-a07-design.css']:
+   assert get(path)==(root/path).read_bytes(),'uncached public application path differs: '+path
   root_html,root_beacon=normalized(remote); index_html,index_beacon=normalized(explicit)
   assert root_html==index_html==html
   print('PASS public application HTML exact after Cloudflare-only normalization at both paths; removed beacon counts',root_beacon,index_beacon,flush=True)
-  print('PASS exact application HTML and',len(assets),'local CSS assets',sha256(root_html).hexdigest(),flush=True)
+  print('PASS exact application HTML and',len(assets),'local CSS assets and',len(scripts),'local JavaScript assets',sha256(root_html).hexdigest(),flush=True)
   break
  except (OSError,AssertionError) as exc:
   print('Publish attempt',attempt+1, str(exc),flush=True)
