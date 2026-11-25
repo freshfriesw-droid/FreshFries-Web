@@ -1080,7 +1080,7 @@ let selfPermissions=null,selfPermissionsFetchedAt=0,selfPermissionsNextTry=0;
 function canAction(key){return data?.role==='manager' || selfPermissions?.[key]===true}
 let ff39Mailbox=[],ff39Unread=-1,ff39PendingAck=0,ff39LastSync=0,ff39InboxLoading=false;
 let rejectPermissions={},rejectPermissionReady=false,rejectPermissionsNextTry=0;let client=null,data=null,user=null,clockTimer=null,pollTimer=null,signal=null,lastOfferKey='',soundCtx=null,inFlight=false,fetchCount=0,additionData=[],additionReady=false,lastAdditionKey='',activeAdditionForm=null,additionDraft='';
-function toast(s){$('toast').textContent=s;$('toast').classList.remove('hidden');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.add('hidden'),5700)}
+function toast(s){$('toast').textContent=window.ffContentStudio?.decorateMessage(s)??s;$('toast').classList.remove('hidden');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.add('hidden'),5700)}
 function conn(s){$('connection').textContent=s}
 async function rpc(name,args={}){if(!client)throw Error('الاتصال غير مهيأ');const {data:result,error}=await client.rpc(name,args);if(error){const e=new Error(error.message||'خطأ في قاعدة البيانات');e.code=String(error.code||'').slice(0,32);throw e;}return result}
 function branchName(id){return data?.branches?.find(b=>b.id===id)?.name||'فرع غير معروف'}
@@ -3592,7 +3592,7 @@ $x('ffx-play-sound').onclick=()=>{sound(prefs.sound,true);showToast('معاين�
 $x('ffx-play-delay').onclick=()=>{sound(prefs.delaySound,true);showToast('معاينة صوت تجاوز مهلة التوصيل')};
 $x('ffx-push-permission').onclick=async()=>{if(!('Notification'in window)){showToast('متصفحك لا يدعم إشعارات الجهاز');return}try{const p=await Notification.requestPermission();showToast('إذن الإشعارات: '+(p==='granted'?'مسموح':p==='denied'?'مرفوض':'لم يتم السماح'))}catch{showToast('تعذر طلب الإذن في هذا السياق')}};
 let toastTimer;
-function showToast(message,play,force){if(play)sound(play);if(!prefs.visual&&!force)return;toastEl.innerHTML=`${icon('bell')}<span>${h(message)}</span>`;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),6000)}
+function showToast(message,play,force){if(play)sound(play);if(!prefs.visual&&!force)return;toastEl.innerHTML=`${icon('bell')}<span>${h(window.ffContentStudio?.decorateMessage(message)??message)}</span>`;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),6000)}
 const origDing=typeof ding==='function'?ding:null,origNotify=typeof notify==='function'?notify:null;
 // The original app calls ding() for order offers, additions and staff messages; honor per-user sound settings.
 if(origDing)ding=function(){sound(prefs.sound)};

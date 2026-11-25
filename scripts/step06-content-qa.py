@@ -62,6 +62,21 @@ with sync_playwright() as pw:
   print('STEP06 actual mounted content',role,'matched',sum(r['matched']>0 for r in results),'failures',len(bad),flush=True)
   if bad:print('STEP06_BINDING_FAILURES',json.dumps(bad,ensure_ascii=False),flush=True)
   if role=='manager':
+   page.evaluate("""async()=>{
+    const rules=ffContentStudio.registry().filter(r=>r.message);
+    window.__step06Rows=rules.map((r,i)=>({content_key:r.key,body:'رسالة اختبار '+i}));
+    await ffContentStudio.sync(true);
+    for(const [i,r] of rules.entries()){
+     const message=r.message+(r.match==='prefix'?'تفصيل تجريبي':'');
+     const actual=ffContentStudio.decorateMessage(message);
+     if(!actual.startsWith(message+' — ')||!actual.includes('رسالة اختبار '+i))throw Error('unbound message '+r.key);
+    }
+    const target=rules.find(r=>r.original==='تم تسجيل الحضور');toast(target.message);
+    if(!document.getElementById('toast').textContent.includes(' — '))throw Error('actual toast hook missing');
+    window.__step06Rows=[];await ffContentStudio.sync(true);
+    if(ffContentStudio.decorateMessage(target.message)!==target.message)throw Error('message restore');
+   }""")
+   print('PASS STEP06 all fixed message keys, actual toast, original retention and restore',flush=True)
    page.evaluate("""rows=>{window.__step06Catalog=rows;window.__step06History=[];window.__step06Writes=[];const prior=rpc;rpc=async(name,args={})=>{
     if(name==='ff_content_catalog_list')return window.__step06Catalog;
     if(['ff_content_history','ff86_content_history_scoped'].includes(name))return window.__step06History.filter(r=>r.content_key===args.p_key&&(!args.p_role||r.role_scope===args.p_role)&&(!args.p_branch||r.branch_id===args.p_branch)&&(!args.p_global_branch||r.branch_id===null));
@@ -116,6 +131,20 @@ with sync_playwright() as pw:
    assert 'عنوان دخول تجريبي' in page.locator('#loginOverlay .loginbox > h2').text_content()
    assert 'PRIVATE-QA' not in page.locator('#cashierView .card > h2').text_content()
    assert 'غير مناسب' not in page.locator('#ff28Refresh').text_content()
+   count=page.evaluate("""async()=>{
+    const rows=ffContentStudio.registry().filter(r=>r.publicScreen==='login'&&r.selector);
+    const prior=rpc;rpc=async(name,args={})=>name==='ff_step06_public_content'?rows.map((r,i)=>({content_key:r.key,body:'اختبار عام '+i})):prior(name,args);
+    await ffContentStudio.syncPublic(true);
+    let count=0;
+    for(const [i,r] of rows.entries())for(const n of document.querySelectorAll(r.selector)){
+     const actual=r.mode==='hint'?n.placeholder:n.textContent;
+     if(!actual.includes('اختبار عام '+i))throw Error('public label '+r.key+' '+actual);
+     count++;
+    }
+    return count;
+   }""")
+   assert count>=30,count
+   print('PASS STEP06 public form bindings',count,flush=True)
    page.evaluate("""async()=>{document.body.dataset.access='customer';const prior=rpc;rpc=async(name,args={})=>name==='ff_step06_public_content'?[{content_key:'customer_portal.control.refresh',body:'تحديث تجريبي'}]:prior(name,args);await ffContentStudio.syncPublic(true)}""")
    assert page.locator('#ff28Refresh').text_content().strip()=='تحديث تجريبي'
    assert 'عنوان دخول تجريبي' not in page.locator('#loginOverlay .loginbox > h2').text_content()

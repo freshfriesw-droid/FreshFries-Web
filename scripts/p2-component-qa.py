@@ -40,7 +40,9 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  current_html=current_html.replace('luxe-shared-photo-menu-20261123.js?v=20261125-step05','luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style')
  current_html=current_html.replace('./scripts/luxe-content-studio.js?v=20261125-step06','./scripts/luxe-content-studio.js')
  current_html=current_html.replace('luxe-report-center-20261123.js?v=20261125-step06','luxe-report-center-20261123.js?v=20261125-a10')
- assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04, STEP05 and STEP06 asset version'
+ current_html=current_html.replace("function toast(s){$('toast').textContent=window.ffContentStudio?.decorateMessage(s)??s;","function toast(s){$('toast').textContent=s;")
+ current_html=current_html.replace("toastEl.innerHTML=`${icon('bell')}<span>${h(window.ffContentStudio?.decorateMessage(message)??message)}</span>`;","toastEl.innerHTML=`${icon('bell')}<span>${h(message)}</span>`;")
+ assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04, STEP05 and STEP06 audited hooks'
 else:
  assert current_html==baseline_html,'non-CSS application markup or script changed'
 changed={str(f.relative_to(base)) for f in list((base/'scripts').glob('*.js'))+list((base/'assets').glob('*.js')) if f.read_bytes()!=(root/f.relative_to(base)).read_bytes()}

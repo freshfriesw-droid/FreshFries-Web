@@ -72,6 +72,7 @@ with sync_playwright() as pw:
  page.evaluate("""()=>{
  const prior=rpc;
  window.a10Revoked=false;window.a10Escalated=false;
+ window.__a09Content=[{content_key:'reports.section.items',body:'أصناف مخصصة اختباريًا'},{content_key:'reports.section.finance',body:'ملخص مخصص'},{content_key:'reports.pdf_title',body:'عنوان PDF مخصص'},{content_key:'reports.pdf_note',body:'ملاحظة PDF مخصصة'}];
  rpc=async(name,args={})=>{
  if(name==='ff_a10_reporting_center'){
  window.__a06Calls.push({name,args});
@@ -97,6 +98,9 @@ with sync_playwright() as pw:
  window.ff76OpenReports();
  }""")
  page.locator('#ff76Body [data-report-section=finance]').wait_for()
+ assert 'أصناف مخصصة اختباريًا' in page.locator('#ff76Body [data-report-section=items] h3').inner_text()
+ assert 'المبالغ المسجلة ورسوم التوصيل' in page.locator('#ff76Body [data-report-section=finance] h3').inner_text()
+ assert 'ملخص مخصص' in page.locator('#ff76Body [data-report-section=finance] h3').inner_text()
  assert "تحصيل مثبت" in page.locator('#ff76Body').inner_text()
  assert "أداء العروض" in page.locator('#ff76Body').inner_text()
  assert "PRIVATE-QA" in page.locator('#ff76Body').inner_text()
