@@ -604,9 +604,10 @@ with sync_playwright() as pw:
     if(name==='ff60_health')return {stage:6};
     if(name==='ff60_operational_queue')return queue;
     if(name==='ff60_read_policy')return {fast_seconds:180,slow_seconds:600};
+    if(name==='ff_a10_reporting_center')return {from:args.p_from,to:args.p_to,role:'manager',scope:'QA',access_key:'qa',generated_at:stamp,available_sections:['ratings'],branches:[{id:'b1',name:'القاهرة'}],driver_options:[],filter_options:{},totals:{orders:1,rating_avg:2,low_ratings:1},internal_low_ratings:[{rating_id:'qa-rating',order_number:108,rater_role:'cashier',stars:2,note:'QA'}]};
     if(name==='ff_luxe_cashier_cancel_alerts')return [{order_id:'qa-cancel',number:104,invoice_ref:'QA',cancel_reason:'QA',items:[]}];
     if(name==='ff_a10_driver_rating_queue')return [{order_id:'qa-done',order_number:105}];
-    if(['ff_luxe_ack_cancel','ff49_cashier_invoice','ff_luxe_driver_grievance','ff_luxe_driver_rate_order','ff_luxe_rate_driver_cs','ff_luxe_rate_driver_cashier','ff38_cashier_set_stage'].includes(name))writes.push(name);
+    if(['ff_luxe_ack_cancel','ff49_cashier_invoice','ff_luxe_driver_grievance','ff_luxe_driver_rate_order','ff_luxe_rate_driver_cs','ff_luxe_rate_driver_cashier','ff38_cashier_set_stage','ff_a10_escalate_rating'].includes(name))writes.push(name);
     return base(name,args);
    };
    const tick=()=>new Promise(r=>setTimeout(r,50));
@@ -615,7 +616,7 @@ with sync_playwright() as pw:
    async function audit(screen,keys){
     ffA07Design.refresh();
     const selected=Object.fromEntries(Object.entries(ffA07Elements.groups).filter(([g,c])=>c.screen===screen&&c.keys.some(k=>keys.includes(k))).map(([g,c])=>[g,c.keys.map(key=>({key,shape:'round',size:'normal',align:'center',font:'tahoma',weight:'strong',border:'strong',shadow:'soft'}))]));
-    const records=keys.map(key=>({key,nodes:[...document.querySelectorAll(dyn[key])].filter(n=>n.closest('[data-ff-a07-screen]')?.dataset.ffA07Screen===screen).map(n=>({n,value:n.value,disabled:n.disabled,hidden:n.hidden,onclick:n.onclick,pressed:n.getAttribute('aria-pressed')}))}));
+    const records=keys.map(key=>({key,nodes:[...document.querySelectorAll(dyn[key]||'#'+CSS.escape(key))].filter(n=>n.closest('[data-ff-a07-screen]')?.dataset.ffA07Screen===screen).map(n=>({n,value:n.value,disabled:n.disabled,hidden:n.hidden,onclick:n.onclick,pressed:n.getAttribute('aria-pressed')}))}));
     window.__a07Rows={[screen]:{id:994,pack:'D01',style_config:{elements:selected}}};await ffDashboardStudio.sync(true);ffA07Design.refresh();
     const missing=records.filter(x=>!x.nodes.length).map(x=>x.key),bad=[];
     for(const r of records)for(const o of r.nodes){const n=o.n,t=ffA07Elements.visualTarget(n),s=getComputedStyle(t);if(!n.isConnected||t.dataset.ffA07ElAlign!=='center'||s.textAlign!=='center'||!s.fontFamily.toLowerCase().includes('tahoma')||Number(s.fontWeight)<700||s.borderTopWidth!=='3px'||s.boxShadow==='none'||n.value!==o.value||n.disabled!==o.disabled||n.hidden!==o.hidden||n.onclick!==o.onclick||n.getAttribute('aria-pressed')!==o.pressed)bad.push(r.key)}
@@ -624,11 +625,17 @@ with sync_playwright() as pw:
     checks.push({screen,keys,missing,bad,cleanup});
    }
    if(role==='manager'){
-    document.getElementById('ff60-launch').click();(await wait('[data-ff60-action="show-invoice"]')).click();
+    document.getElementById('ff60-launch').click();await wait(dyn.lifecycle_action);await audit('dashboard',['lifecycle_action']);(await wait('[data-ff60-action="show-invoice"]')).click();
     await wait(dyn.lifecycle_invoice);await audit('dashboard',['lifecycle_invoice','lifecycle_countdown','lifecycle_state']);
     (await wait('[data-ff60-action="show-reoffer"]')).click();await wait(dyn.lifecycle_reoffer_reason);
     await audit('dashboard',['lifecycle_reoffer_driver','lifecycle_reoffer_reason']);
     document.getElementById('ff60-close')?.click();
+    data.orders=[mk('qa-watch',108,{driver_id:null,phase:null})];draw();
+    document.getElementById('ff5-launch').click();await wait(dyn.watch_tab);await wait(dyn.watch_find);await audit('dashboard',['watch_tab','watch_find']);
+    document.getElementById('ff5-close').click();
+    window.ff76OpenReports();await wait('#ffA10RatingEscalate');await audit('reports',['ffA10RatingEscalate']);
+    if(document.getElementById('ffA10RatingEscalate').value!=='qa-rating')throw Error('report selector value changed');
+    document.getElementById('ff76Close').click();
     data.orders=[mk('qa-rate',106)];draw();
     await wait(dyn.orders_rate_driver_open);await audit('orders',['orders_rate_driver_open']);
     const btn=document.querySelector(dyn.orders_rate_driver_open);btn.click();
