@@ -77,9 +77,11 @@ with sync_playwright() as pw:
    page.set_viewport_size({"width":390,"height":850})
    page.locator('#ffx-mobile-nav button[data-key="attendance"]').click()
    assert page.locator("#clockInBtn").is_visible(),"pre-existing attendance workspace must be opened"
-   page.evaluate("""async ()=>{window.__a07Button=document.getElementById('clockInBtn');window.__a07Rows={driver:{id:500,pack:'D09',bar:'labels',style_config:{elements:{driver_actions:[{key:'clockInBtn',shape:'pill',size:'large'},{key:'clockOutBtn',shape:'outline',size:'normal'},{key:'ff51BreakBtn',shape:'pack',size:'normal'}]}}}};await ffDashboardStudio.sync(true)}""")
+   page.evaluate("""async ()=>{window.__a07Button=document.getElementById('clockInBtn');window.__a07Rows={driver:{id:500,pack:'D09',bar:'labels',style_config:{elements:{driver_actions:[{key:'clockInBtn',shape:'pill',size:'large',weight:'strong',font:'tahoma',border:'strong'},{key:'clockOutBtn',shape:'outline',size:'normal'},{key:'ff51BreakBtn',shape:'pack',size:'normal'}]}}}};await ffDashboardStudio.sync(true)}""")
    assert page.locator("#clockInBtn").get_attribute("data-ff-a07-shape")=="pill"
    assert page.locator("#clockInBtn").evaluate("n=>n===window.__a07Button && getComputedStyle(n).order==='1'"),page.evaluate("()=>['clockInBtn','clockOutBtn','ff51BreakBtn'].map(id=>{const n=document.getElementById(id);return {id,order:getComputedStyle(n).order,attr:n.dataset.ffA07Order,parent:n.parentElement.className,display:getComputedStyle(n.parentElement).display,same:n===window.__a07Button}})")
+   assert page.locator("#clockInBtn").get_attribute("data-ff-a07-el-weight")=="strong"
+   assert page.locator("#clockInBtn").evaluate("n=>getComputedStyle(n).fontWeight==='700' && getComputedStyle(n).fontFamily.includes('Tahoma')")
    assert page.locator("#clockInBtn").is_visible()
    assert page.locator("#clockOutBtn").is_visible()
    assert page.locator("#cashierView").get_attribute("data-ff-a07-pack") is None
@@ -104,9 +106,14 @@ with sync_playwright() as pw:
    assert dlg.locator("[data-a07-after] [data-a07-surface=dark]").count()==1
    dlg.locator("select[name=viewport]").select_option("390")
    page.screenshot(path=out/"manager-gallery.png",animations="disabled")
+   dlg.locator("select[name=screen]").select_option("reports")
+   dlg.locator("#ffA07Elements > summary").click()
+   assert dlg.locator("[data-a07-group]").input_value()=="reports_actions"
+   assert dlg.locator(".ff-a07-element-row").count()==4
+   dlg.locator("#ffA07Elements > summary").click()
    dlg.locator("select[name=screen]").select_option("driver")
    dlg.locator("select[name=role]").select_option("driver")
-   dlg.locator("#ffA07Elements summary").click()
+   dlg.locator("#ffA07Elements > summary").click()
    dlg.locator("[data-a07-group]").select_option("driver_actions")
    first=dlg.locator(".ff-a07-element-row").first
    assert first.get_attribute("data-element-key")=="ff51BreakBtn"
