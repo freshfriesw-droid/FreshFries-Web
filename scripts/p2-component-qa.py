@@ -95,7 +95,8 @@ def setup(browser,origin,role):
  return c,p
 rows=[]
 with sync_playwright() as pw:
- browser=pw.chromium.launch(channel='chrome')
+ # Deterministic software rasterization for both pinned trees. Keep exact RGB comparison.
+ browser=pw.chromium.launch(channel='chrome',args=['--disable-gpu','--disable-lcd-text','--disable-font-subpixel-positioning','--force-color-profile=srgb'])
  for role in roles:
   oc,old=setup(browser,old_origin,role);nc,new=setup(browser,new_origin,role)
   if True:
@@ -152,6 +153,7 @@ with sync_playwright() as pw:
      bounds=difference.getbbox()
      if bounds is not None:
       difference.save(out/f'{role}-{width}-{theme}-pixel-difference.png')
+      print('PIXEL DIAGNOSTIC',role,width,theme,bounds,'channel extrema',difference.getextrema(),'changed pixels',sum(1 for pixel in difference.getdata() if any(pixel)),flush=True)
      assert bounds is None,(role,width,theme,'component pixels differ',bounds)
     for p in (old,new):p.locator('#p2-probe').evaluate('e=>e.remove()')
     if width in (390,1440) and theme in ('classic','dark'):

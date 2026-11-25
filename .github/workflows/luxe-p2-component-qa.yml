@@ -29,9 +29,11 @@ jobs:
           git fetch --no-tags --depth=1 origin 2a7a067a35f85e1a4c196d7e1f308cad305e583e
           mkdir -p "$RUNNER_TEMP/p2-closed"
           git archive 2a7a067a35f85e1a4c196d7e1f308cad305e583e | tar -x -C "$RUNNER_TEMP/p2-closed"
-          P2_ROOT="$RUNNER_TEMP/p2-closed" python scripts/p2-component-qa.py
+          status=0
+          P2_ROOT="$RUNNER_TEMP/p2-closed" python scripts/p2-component-qa.py || status=$?
           mkdir -p p2-evidence/historical
-          cp -a "$RUNNER_TEMP/p2-closed/p2-evidence/." p2-evidence/historical/
+          cp -a "$RUNNER_TEMP/p2-closed/p2-evidence/." p2-evidence/historical/ || true
+          exit "$status"
       - name: Compare current editor against closed P2 default workspaces
         run: P2_BASELINE="$RUNNER_TEMP/p2-closed" P2_STEP03_REGRESSION=1 python scripts/p2-component-qa.py
       - uses: actions/upload-artifact@v4
