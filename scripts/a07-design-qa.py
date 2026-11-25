@@ -33,6 +33,7 @@ fixture="""async role=>{
   if(name==='ff49_catalog')return [{id:'qa-item',name:'تشكن فرايز',price:1500,active:true,parser_aliases:['تشكن']}];
   if(name==='ff_a07_effective_designs')return window.__a07Rows||{};
   if(name==='ff_a07_design_catalog')return window.__a07Catalog||[];
+  if(name==='ff_content_catalog_list')return [{key:'driver.attend',screen:'driver',label:'الحضور',original:'الحضور'}];
   if(name==='ff_a07_named_design')return 4321;
   if(name==='ff_a07_preview_scope')return {applies:args.p_target_device==='mobile',before:{pack:'D01',style_config:{}},after:{pack:args.p_target_device==='mobile'?'D08':'D01',style_config:{}},after_sources:args.p_target_device==='mobile'?{font:-1}:{}};
   if(name==='ff81_effective_design')return null;
@@ -100,6 +101,15 @@ with sync_playwright() as pw:
    assert page.locator("#driverView > .ff-a07-logo-cover").count()==0
    assert page.locator("#driverView .ff-a07-logo-inline").get_attribute("src").endswith("ff-official-logo.png")
    assert page.locator("#cashierView").get_attribute("data-ff-a07-pack") is None
+   page.evaluate("""async()=>{window.__a07Rows.driver.style_config={logoPosition:'menu',logoAsset:'mark',logoWidth:'30%',dialogRadius:'square',dialogPadding:'wide',ratingScale:'large'};await ffDashboardStudio.sync(true)}""")
+   assert page.locator('#ffx-sidebar .ff-step03-menu-brand img').get_attribute('src').endswith('ff-icon-192.png')
+   assert page.locator('#ffx-sidebar .ff-step03-menu-brand').get_attribute('data-a07-logo-width')=='30%'
+   page.evaluate("""()=>{const d=document.createElement('dialog');d.className='ff-luxe-rate-dialog';d.id='qa-rate';d.innerHTML='<div class=ff-luxe-stars><button>★</button></div>';document.body.append(d);ffA07Design.refresh()}""")
+   assert page.locator('#qa-rate').get_attribute('data-a07-dialog-radius')=='square'
+   assert page.locator('#qa-rate .ff-luxe-stars button').evaluate('n=>getComputedStyle(n).fontSize')=='40px'
+   page.evaluate("""async()=>{window.__a07Rows.driver.style_config={};await ffDashboardStudio.sync(true)}""")
+   assert page.locator('#ffx-sidebar .ff-step03-menu-brand').count()==0
+   assert page.locator('#qa-rate').get_attribute('data-a07-rating-scale') is None
   if role in ("manager","customer_service"):
    page.set_viewport_size({"width":390,"height":850})
    page.evaluate("""async ()=>{document.getElementById('newItems').value='1 تشكن بدون شطة';document.getElementById('ffbQuickInput').value='نص محفوظ';window.__a07Rows={orders:{id:501,pack:'D10',bar:'labels',style_config:{density:'compact'}}};await ffDashboardStudio.sync(true)}""")
@@ -132,6 +142,11 @@ with sync_playwright() as pw:
    dlg.locator("[data-a07-after] [data-step03-preview=clockInBtn]").first.click()
    assert dlg.locator("[data-a07-group]").input_value()=="driver_actions"
    assert dlg.locator(".ff-a07-element-row[data-element-key=clockInBtn] details").get_attribute("open") is not None
+   dlg.locator('[data-step03-content="driver.attend"]').click()
+   page.wait_for_function("()=>Array.from(document.querySelectorAll('dialog[open]')).length===2")
+   page.wait_for_function("()=>Array.from(document.querySelectorAll('dialog[open] select')).some(s=>s.value==='driver.attend')")
+   page.evaluate("()=>Array.from(document.querySelectorAll('dialog[open]')).find(d=>d.id!=='ffStudio').close()")
+   assert dlg.is_visible()
    dlg.locator("[data-a07-group]").select_option("driver_actions")
    first=dlg.locator(".ff-a07-element-row").first
    assert first.get_attribute("data-element-key")=="ff51BreakBtn"
