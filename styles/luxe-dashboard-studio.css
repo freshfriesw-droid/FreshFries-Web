@@ -109,3 +109,12 @@
 #ffCardEditor [data-card-tone=neutral]{background:#f0f0f0;color:#333}
 #ffx-kpis .ffx-kpi-label{overflow-wrap:anywhere}
 @media(max-width:360px){#ffx-kpis [data-card-size=wide]{grid-column:1/-1}}
+
+/* STEP08: constrain the release-history editor at narrow widths. The preview retains its own scroll container. */
+#ffStudio{box-sizing:border-box}
+#ffStudio form{grid-template-columns:minmax(0,1fr);min-width:0}
+#ffStudio form>*,#ffStudio details,#ffStudio label{min-width:0;max-width:100%;overflow-wrap:anywhere}
+#ffStudio input:not([type=checkbox]):not([type=radio]),#ffStudio textarea,#ffStudio select{min-width:0;max-width:100%;width:100%;box-sizing:border-box}
+#ffStudio button{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+#ffStudio table{width:100%;table-layout:fixed;overflow-wrap:anywhere}
+#ffStudio .ff-preview-scroll{width:100%;max-width:100%;min-width:0;overflow:auto}

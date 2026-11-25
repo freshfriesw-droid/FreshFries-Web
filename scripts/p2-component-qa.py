@@ -47,6 +47,7 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  current_html=current_html.replace('./scripts/luxe-a07-elements.js?v=20261125-step07','./scripts/luxe-a07-elements.js')
  current_html=current_html.replace('./scripts/luxe-dashboard-studio.js?v=20261125-step08','./scripts/luxe-dashboard-studio.js')
  current_html=current_html.replace('./scripts/luxe-content-studio.js?v=20261125-step08','./scripts/luxe-content-studio.js')
+ current_html=current_html.replace('./styles/luxe-dashboard-studio.css?v=20261125-step08','./styles/luxe-dashboard-studio.css')
  assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04–STEP08 audited hooks'
 else:
  assert current_html==baseline_html,'non-CSS application markup or script changed'

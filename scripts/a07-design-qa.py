@@ -592,7 +592,7 @@ with sync_playwright() as pw:
    assert dlg.locator('select[name=version]').input_value()=='903'
    for width in (320,360,390,430,768,1024,1440):
     page.set_viewport_size({'width':width,'height':850})
-    assert dlg.evaluate('e=>e.scrollWidth<=e.clientWidth+2'),width
+    assert dlg.evaluate('e=>e.scrollWidth<=e.clientWidth+2'),(width,dlg.evaluate('e=>({width:e.clientWidth,scroll:e.scrollWidth,overflow:[...e.querySelectorAll("*")].filter(n=>n.getBoundingClientRect().width>e.clientWidth+2&&!n.closest(".ff-preview-scroll,.ff-a07-preview-holder")).slice(0,10).map(n=>[n.tagName,n.id,n.className,n.getBoundingClientRect().width])})'))
    print('PASS STEP08 design impact, scoped trial/stop, stale release rejection, publication, restoration, seven widths',flush=True)
    dlg.locator('[data-close]').click()
 
