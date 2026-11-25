@@ -89,3 +89,6 @@
 .ff-a07-preview-holder{max-width:none}
 @container(max-width:760px){.ff-a07-demo .ff-a07-demo-grid{grid-template-columns:minmax(0,1fr)}}
 #ffA07StyleFields,#ffA07Gallery{min-width:0;border:1px solid var(--ffx-line,#aaa);border-radius:10px;padding:10px}
+
+.ff-design-layout[data-ff-a07-pack]>[data-slot]{background:var(--a07-bg);color:var(--a07-ink);border-radius:var(--a07-radius);min-width:0}
+.ff-a07-caption{margin:4px 0;padding:8px;overflow-wrap:anywhere;color:var(--ffx-ink,#181818)}
