@@ -348,7 +348,9 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "959b1492b66a8c6d93adbe9bef203bfe"
+      "definition_md5": "959b1492b66a8c6d93adbe9bef203bfe",
+      "scope_test": "STEP12 delegated wrappers rollback PASS: nonstaff/disabled and foreign branch denied; own branch allowed",
+      "manual_review": "delegated guard inspected; targeted runtime cases verified; not exhaustive per-role matrix"
     },
     {
       "name": "ff41_case_comment",
@@ -753,7 +755,9 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "046d4f9f63868ead0526d6d40b9aa004"
+      "definition_md5": "046d4f9f63868ead0526d6d40b9aa004",
+      "scope_test": "STEP12 delegated wrappers rollback PASS: nonstaff/disabled denied; scoped supervisor return type array",
+      "manual_review": "delegated guard inspected; targeted runtime cases verified; not exhaustive per-role matrix"
     },
     {
       "name": "ff51_driver_set_break",
@@ -1119,7 +1123,9 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "8e5610f1e50aee5784bee22bf0d032df"
+      "definition_md5": "8e5610f1e50aee5784bee22bf0d032df",
+      "scope_test": "STEP12 delegated wrappers rollback PASS: nonstaff/disabled and foreign branch denied; manager fixture order counted",
+      "manual_review": "delegated guard inspected; targeted runtime cases verified; not exhaustive per-role matrix"
     },
     {
       "name": "ff80_dashboard_metrics",
@@ -1767,7 +1773,9 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "28a6569c22752fc01741016bf959dc9e"
+      "definition_md5": "28a6569c22752fc01741016bf959dc9e",
+      "scope_test": "STEP12 delegated wrappers rollback PASS: nonstaff/disabled denied; authorized cashier menu array",
+      "manual_review": "delegated guard inspected; targeted runtime cases verified; not exhaustive per-role matrix"
     },
     {
       "name": "ff_burger_my_branch",
@@ -2275,7 +2283,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d986b70e8e815e25e4322265c7854d34"
+      "definition_md5": "d986b70e8e815e25e4322265c7854d34",
+      "manual_review": "Function body returns void without requiring MFA; no new MFA requirement identified in final FIX-15 / QA-25 or STEP12. Not counted as a security control; no permission or login-policy change made."
     },
     {
       "name": "ff_set_special_courier_capacity",
@@ -2357,7 +2366,9 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "3b499e447de03faf4e63a85ff8c45803"
+      "definition_md5": "3b499e447de03faf4e63a85ff8c45803",
+      "scope_test": "STEP12 delegated wrappers rollback PASS: nonstaff/disabled and foreign branch denied; own branch mobile call accepted",
+      "manual_review": "delegated guard inspected; targeted runtime cases verified; not exhaustive per-role matrix"
     },
     {
       "name": "ff_ui_manager_history",
@@ -2375,7 +2386,9 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "6ed859fabec77452a608a78ce6351cc0"
+      "definition_md5": "6ed859fabec77452a608a78ce6351cc0",
+      "scope_test": "STEP12 delegated wrappers rollback PASS: nonstaff/disabled and supervisor denied; manager call accepted",
+      "manual_review": "delegated guard inspected; targeted runtime cases verified; not exhaustive per-role matrix"
     },
     {
       "name": "ff_ui_named_draft",
@@ -2456,7 +2469,9 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "14113f9fe204be017a67bdd7a252938f"
+      "definition_md5": "14113f9fe204be017a67bdd7a252938f",
+      "scope_test": "STEP12 delegated wrappers rollback PASS: nonstaff/disabled denied for existing foreign order; positive assembly evidence in A04, not repeated here",
+      "manual_review": "delegated guard inspected; targeted runtime cases verified; not exhaustive per-role matrix"
     },
     {
       "name": "ff_v12_assembly_snapshot",
@@ -2468,5 +2483,5 @@
       "definition_md5": "e36ad6176fc8e89141933210b87fd9c8"
     }
   ],
-  "last_update": "2026-11-26: pinned cashier desk scope"
+  "last_update": "2026-11-26: delegated wrapper review and 24 assertions"
 }
