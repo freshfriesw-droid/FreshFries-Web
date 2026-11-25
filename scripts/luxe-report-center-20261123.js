@@ -257,12 +257,24 @@ const uid=me(),tag=identity,revision=pdfRevision;pdfPromise=(async()=>{
  page.innerHTML='<div style="border-bottom:4px solid #c51b30;padding:10px 0;margin-bottom:15px"><h1>'+safe(content['reports.pdf_title']||'FRESH FRIES LUXE — مركز التقارير')+'</h1><b>'+safe(result.from)+' إلى '+safe(result.to)+'</b><p>'+safe(result.scope)+'</p><p>مصدر البيانات: Supabase · '+safe(stamp(result.generated_at))+'</p><p>الفلاتر: '+safe(filterText())+'</p></div>'+
  '<style>.r-section{border:1px solid #ccc;padding:10px;margin:12px 0;break-inside:auto}.r-section h3{border-right:4px solid #c51b30;padding-right:8px}.r-kpis{display:flex;flex-wrap:wrap;gap:7px}.r-kpi{border:1px solid #ddd;padding:8px;min-width:135px}.r-kpi b{display:block;font-size:18px}.r-scroll{overflow:visible}table{border-collapse:collapse;width:100%;font-size:11px}th,td{text-align:right;border:1px solid #ddd;padding:7px;overflow-wrap:anywhere}th{background:#eee}.r-muted{font-size:11px;color:#444}.r-bars{display:flex;align-items:flex-end;height:150px}.r-barcol{height:150px;width:65px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}.r-bar{width:34px;background:#c51b30}.r-barcol span{font-size:10px}.r-stamp{border:2px dashed #c51b30;padding:9px}</style>'+
  compose(selected())+(content['reports.pdf_note']?'<p class="r-muted">'+safe(content['reports.pdf_note'])+'</p>':'')+'<footer style="margin-top:20px;border-top:1px solid #ddd">فريش فرايز — تقرير تشغيلي لا يثبت التحصيل المالي.</footer>';
- const staging=document.createElement('div');staging.style.cssText='position:fixed;left:-10000px;top:0;width:720px;pointer-events:none';staging.append(page);document.body.append(staging);
- try{const blob=await window.html2pdf().set({margin:8,filename:'FreshFries_LUXE_'+result.from+'_'+result.to+'.pdf',
- html2canvas:{scale:1.25,logging:false,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
- pagebreak:{mode:['css','legacy'],avoid:['tr','.r-kpi']}}).from(page).outputPdf('blob');
+ const staging=document.createElement('div');staging.style.cssText='position:fixed;inset:0;overflow:auto;background:white;z-index:2147483000;pointer-events:none';staging.append(page);document.body.append(staging);
+ let overlay;
+ try{
+ const worker=window.html2pdf().set({margin:8,filename:'FreshFries_LUXE_'+result.from+'_'+result.to+'.pdf',
+ html2canvas:{scale:1.25,logging:false,windowWidth:800,scrollX:0,scrollY:0,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+ pagebreak:{mode:['css','legacy'],avoid:['tr','.r-kpi']}}).from(page);
+ await worker.toContainer();
+ const container=await worker.get('container');overlay=await worker.get('overlay');
+ Object.assign(overlay.style,{opacity:'1',backgroundColor:'#ffffff',zIndex:'2147483001',overflow:'auto'});
+ Object.assign(container.style,{position:'relative',left:'0',right:'auto',top:'0',margin:'0'});
+ const canvas=await worker.toCanvas().get('canvas');
+ const pixels=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+ let ink=0;for(let i=0;i<pixels.length;i+=32){if(pixels[i+3]>0&&Math.min(pixels[i],pixels[i+1],pixels[i+2])<180)ink++;}
+ if(ink<100)throw Error('تعذر رسم محتوى التقرير؛ لم يُحفظ ملف فارغ.');
+ const blob=await worker.toPdf().outputPdf('blob');
  authorized(uid,tag,revision);if(!(blob instanceof Blob)||blob.size<500)throw Error('ملف PDF غير صالح');
- pdf=blob;fileName='FreshFries_LUXE_Report_'+result.from+'_'+result.to+'.pdf';return blob}finally{staging.remove()}})();
+ pdf=blob;fileName='FreshFries_LUXE_Report_'+result.from+'_'+result.to+'.pdf';return blob
+ }finally{overlay?.remove();staging.remove()}})();
  try{return await pdfPromise}finally{if(revision===pdfRevision)pdfPromise=null}}
 function saveBlob(){if(!pdf||!me()||!identity.startsWith(me()+':'))return;const url=pdfURL||URL.createObjectURL(pdf),a=document.createElement('a');a.href=url;a.download=fileName;a.click();if(!pdfURL)setTimeout(()=>URL.revokeObjectURL(url),5000)}
 async function download(){if(!pdf||!me())return;const uid=me(),tag=identity,revision=pdfRevision;try{await verifyExport(uid,tag,revision);saveBlob()}catch(e){if(me()===uid)el('ff76Status').textContent=e.message}}
