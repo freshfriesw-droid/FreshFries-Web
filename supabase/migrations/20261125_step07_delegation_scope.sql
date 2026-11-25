@@ -1,0 +1,228 @@
+-- STEP07: extend existing scoped grants; no operational permissions or publishing.
+ALTER TABLE public.ff82_content_grants DROP CONSTRAINT ff82_content_grants_edit_kinds_check;
+ALTER TABLE public.ff82_content_grants ADD CONSTRAINT ff82_content_grants_edit_kinds_check CHECK (cardinality(edit_kinds)>0 AND array_position(edit_kinds,NULL) IS NULL AND edit_kinds <@ ARRAY['text','colors','buttons','layout','design','fonts','identity','media','cards']::text[]);
+
+CREATE OR REPLACE FUNCTION public.ff_a09_design_context(p_device text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE g public.ff82_content_grants; v public.ff_ui_versions; style jsonb; cards jsonb;
+BEGIN
+ SELECT * INTO g FROM public.ff82_my_grant();
+ IF g.id IS NULL OR p_device IS NULL OR p_device NOT IN ('all','mobile','desktop') OR NOT(g.edit_kinds && ARRAY['colors','buttons','layout','design','fonts','identity','media','cards']::text[]) THEN RETURN NULL; END IF;
+ SELECT * INTO v FROM ff_private.a07_resolve(g.screen,g.role_scope,g.branch_id,p_device,NULL);
+ style:=ff_private.a07_style_layers(g.screen,g.role_scope,g.branch_id,p_device,NULL)->'style';
+ IF g.screen='dashboard' THEN SELECT layout INTO cards FROM ff_private.a08_card_source(g.role_scope,g.branch_id,p_device,NULL); END IF;
+ RETURN jsonb_build_object('id',v.id,'pack',coalesce(v.pack,'D01'),'style_config',coalesce(style,'{}'),'screen',g.screen,'bar',coalesce(v.bar,'labels'),'card_layout',cards);
+END $function$;
+
+CREATE OR REPLACE FUNCTION public.ff_a09_design_draft(p_device text, p_patch jsonb, p_name text, p_base bigint DEFAULT NULL::bigint)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE g public.ff82_content_grants; v public.ff_ui_versions; effective public.ff_ui_versions; prior bigint; revision bigint; why text; k text; allowed text[]:='{}'; merged jsonb; inherited jsonb; element_config jsonb;
+BEGIN
+ IF auth.uid() IS NULL THEN RETURN jsonb_build_object('ok',false,'reason','authentication');END IF;
+ LOCK TABLE public.ff82_content_grants IN SHARE MODE;
+ SELECT * INTO g FROM public.ff82_my_grant();
+ IF g.id IS NULL OR NOT('edit'=ANY(g.capabilities)) OR NOT(g.edit_kinds && ARRAY['colors','buttons','layout','design','fonts','identity','media','cards']::text[]) THEN why:='outside_edit_scope';
+ ELSIF p_device IS NULL OR p_device NOT IN ('all','mobile','desktop') OR jsonb_typeof(p_patch) IS DISTINCT FROM 'object' OR p_patch='{}' OR NOT ff_private.a07_valid_style(p_patch-ARRAY['designPack','designBar','cardLayout']) OR NOT public.ff83_valid_content('design.name',p_name) OR p_name IS NULL OR length(btrim(p_name))>80 THEN why:='invalid_design';
+ ELSE
+  IF 'colors'=ANY(g.edit_kinds) THEN allowed:=allowed||ARRAY['accent','surface','border','shadow'];END IF;
+  IF 'buttons'=ANY(g.edit_kinds) THEN allowed:=allowed||ARRAY['button','iconSize'];END IF;
+  IF 'layout'=ANY(g.edit_kinds) THEN allowed:=allowed||ARRAY['layout','density','radius','scale','font','weight','logoSize','logoAlign','designBar','dialogRadius','dialogPadding','ratingScale'];END IF;
+  IF 'fonts'=ANY(g.edit_kinds) THEN allowed:=allowed||ARRAY['font','scale','weight'];END IF;
+  IF 'identity'=ANY(g.edit_kinds) THEN allowed:=allowed||ARRAY['logoSize','logoAlign','logoWidth','logoPosition'];END IF;
+  IF 'media'=ANY(g.edit_kinds) THEN allowed:=allowed||ARRAY['logoAsset','logoDarkAsset'];END IF;
+  IF 'design'=ANY(g.edit_kinds) THEN allowed:=allowed||ARRAY['designPack'];END IF;
+  IF g.edit_kinds && ARRAY['buttons','layout','fonts','colors']::text[] THEN allowed:=allowed||ARRAY['elements'];END IF;
+  IF 'layout'=ANY(g.edit_kinds) AND g.screen='dashboard' THEN allowed:=allowed||ARRAY['dashboardPanels','quickActions'];END IF;
+  IF 'cards'=ANY(g.edit_kinds) AND g.screen='dashboard' THEN allowed:=allowed||ARRAY['dashboardPanels','cardLayout'];END IF;
+  IF 'buttons'=ANY(g.edit_kinds) AND g.screen='dashboard' THEN allowed:=allowed||ARRAY['quickActions'];END IF;
+  IF EXISTS(SELECT 1 FROM jsonb_object_keys(p_patch) k0 WHERE NOT(k0=ANY(allowed))) THEN why:='outside_edit_kind';
+  ELSIF p_patch ? 'designPack' AND (jsonb_typeof(p_patch->'designPack') IS DISTINCT FROM 'string' OR NOT EXISTS(SELECT 1 FROM ff_private.a07_design_packs WHERE code=p_patch->>'designPack')) THEN why:='invalid_design_pack';
+  ELSIF p_patch ? 'designBar' AND (jsonb_typeof(p_patch->'designBar') IS DISTINCT FROM 'string' OR (p_patch->>'designBar') NOT IN ('labels','icons','wide','floating','compact')) THEN why:='invalid_design_bar';
+  ELSIF p_patch ? 'cardLayout' AND (jsonb_typeof(p_patch->'cardLayout') IS DISTINCT FROM 'array' OR NOT public.ff81_validate_cards(p_patch->'cardLayout')) THEN why:='invalid_card_layout';
+  END IF;
+  SELECT * INTO v FROM public.ff_ui_versions WHERE screen_scope=g.screen AND role_scope=g.role_scope AND branch_id=g.branch_id AND device=p_device AND published_at IS NOT NULL ORDER BY published_at DESC,id DESC LIMIT 1;
+  prior:=v.id;
+  IF p_base IS NOT NULL THEN
+   SELECT * INTO v FROM public.ff_ui_versions WHERE id=p_base AND actor_id=auth.uid() AND published_at IS NULL AND screen_scope=g.screen AND role_scope=g.role_scope AND branch_id=g.branch_id AND device=p_device AND previous_id IS NOT DISTINCT FROM prior AND EXISTS(SELECT 1 FROM public.ff82_content_audit a WHERE a.design_revision=p_base AND a.grant_id=g.id AND a.actor_id=auth.uid() AND a.action='design_draft' AND a.outcome='allowed');
+   IF v.id IS NULL THEN why:='stale_or_foreign_draft';END IF;
+  END IF;
+  IF why IS NULL THEN
+   SELECT * INTO effective FROM ff_private.a07_resolve(g.screen,g.role_scope,g.branch_id,p_device,NULL);
+   merged:=coalesce(v.style_config,'{}')||(p_patch-ARRAY['elements','designPack','designBar','cardLayout']);
+   IF p_patch ? 'dashboardPanels' THEN
+    merged:=merged||jsonb_build_object('dashboardPanels',coalesce(v.style_config->'dashboardPanels','{}'::jsonb)||(p_patch->'dashboardPanels'));
+   END IF;
+   IF p_patch ? 'elements' THEN
+    inherited:=ff_private.a07_style_layers(g.screen,g.role_scope,g.branch_id,p_device,NULL)->'style'->'elements';
+    element_config:=ff_private.a09_merge_elements(g.screen,v.style_config->'elements',inherited,p_patch->'elements',g.edit_kinds);
+    IF element_config IS NULL THEN why:='outside_element_kind'; ELSE merged:=merged||jsonb_build_object('elements',element_config);END IF;
+   END IF;
+   IF why IS NULL THEN
+   BEGIN
+    INSERT INTO public.ff_ui_versions(screen_scope,role_scope,branch_id,device,pack,layout_text,bar,actor_id,previous_id,style_config,card_layout,draft_name,draft_description)
+    VALUES(g.screen,g.role_scope,g.branch_id,p_device,coalesce(p_patch->>'designPack',v.pack,effective.pack,'D01'),coalesce(v.layout_text,effective.layout_text,''),coalesce(p_patch->>'designBar',v.bar,effective.bar,'labels'),auth.uid(),prior,merged,coalesce(p_patch->'cardLayout',v.card_layout),btrim(p_name),'مسودة مفوضة للمراجعة') RETURNING id INTO revision;
+   EXCEPTION WHEN check_violation OR foreign_key_violation THEN why:='invalid_design';END;
+   END IF;
+  END IF;
+ END IF;
+ INSERT INTO public.ff82_content_audit(actor_id,grant_id,action,outcome,reason,design_revision,attempted_revision,effect) VALUES(auth.uid(),g.id,'design_draft',CASE WHEN why IS NULL THEN 'allowed' ELSE 'denied' END,coalesce(why,''),revision,p_base,CASE WHEN why IS NULL THEN 'draft_only' ELSE 'no_change' END);
+ RETURN jsonb_build_object('ok',why IS NULL,'reason',why,'revision',revision);
+END $function$;
+
+CREATE OR REPLACE FUNCTION public.ff_a09_design_history(p_device text)
+ RETURNS SETOF ff_ui_versions
+ LANGUAGE sql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+ SELECT v.* FROM public.ff_ui_versions v JOIN public.ff82_my_grant() g ON v.screen_scope=g.screen AND v.role_scope=g.role_scope AND v.branch_id=g.branch_id
+ WHERE g.edit_kinds && ARRAY['colors','buttons','layout','design','fonts','identity','media','cards']::text[] AND v.device=p_device AND (v.published_at IS NOT NULL OR v.actor_id=auth.uid() OR 'review'=ANY(g.capabilities)) ORDER BY v.id DESC LIMIT 100
+$function$;
+
+CREATE OR REPLACE FUNCTION public.ff_a09_design_review(p_revision bigint, p_note text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE g public.ff82_content_grants; v public.ff_ui_versions; why text;
+BEGIN
+ IF auth.uid() IS NULL THEN RETURN jsonb_build_object('ok',false,'reason','authentication');END IF;
+ LOCK TABLE public.ff82_content_grants IN SHARE MODE;
+ SELECT * INTO g FROM public.ff82_my_grant();
+ SELECT * INTO v FROM public.ff_ui_versions WHERE id=p_revision;
+ IF g.id IS NULL OR NOT('review'=ANY(g.capabilities)) OR NOT(g.edit_kinds && ARRAY['colors','buttons','layout','design','fonts','identity','media','cards']::text[]) OR v.id IS NULL OR v.published_at IS NOT NULL OR v.screen_scope<>g.screen OR v.role_scope<>g.role_scope OR v.branch_id IS DISTINCT FROM g.branch_id THEN why:='outside_review_scope';
+ ELSIF p_note IS NULL OR length(btrim(p_note)) NOT BETWEEN 1 AND 500 OR NOT public.ff83_valid_content('orders.guidance',p_note) THEN why:='invalid_note';END IF;
+ INSERT INTO public.ff82_content_audit(actor_id,grant_id,action,outcome,reason,design_revision,attempted_revision,effect) VALUES(auth.uid(),g.id,'design_review',CASE WHEN why IS NULL THEN 'allowed' ELSE 'denied' END,coalesce(why,btrim(p_note)),CASE WHEN why IS NULL THEN v.id END,p_revision,CASE WHEN why IS NULL THEN 'review_only' ELSE 'no_change' END);
+ RETURN jsonb_build_object('ok',why IS NULL,'reason',why);
+END $function$;
+
+CREATE OR REPLACE FUNCTION public.ff_a09_set_grant(p_recipient uuid, p_branch uuid, p_screen text, p_capabilities text[], p_start timestamp with time zone, p_end timestamp with time zone, p_kinds text[])
+ RETURNS bigint
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE r text; new_id bigint; old_id bigint;
+BEGIN
+ IF NOT EXISTS(SELECT 1 FROM public.ff_profiles WHERE user_id=auth.uid() AND active AND role='manager') THEN
+  PERFORM ff_private.a09_reject_manager('grant_manage',NULL,'إدارة التفويض للمدير فقط','42501');
+  RETURN NULL;
+ END IF;
+ SELECT a.role INTO r FROM public.ff82_manager_accounts() a WHERE a.user_id=p_recipient AND a.branch_id=p_branch;
+ IF r IS NULL OR p_screen IS NULL OR p_kinds IS NULL OR cardinality(p_kinds)=0 OR array_position(p_kinds,NULL) IS NOT NULL OR NOT(p_kinds <@ ARRAY['text','colors','buttons','layout','design','fonts','identity','media','cards']::text[])
+ OR ('text'=ANY(p_kinds) AND NOT EXISTS(SELECT 1 FROM public.ff_content_catalog c WHERE c.screen=p_screen))
+ OR (p_kinds && ARRAY['colors','buttons','layout','design','fonts','identity','media','cards']::text[] AND p_screen NOT IN ('dashboard','orders','cashier','driver','assembly','burger_kitchen','catalog','customers','reports','staff','archive','ratings','cases','messages','reservations','system','finance','branches'))
+ OR ('cards'=ANY(p_kinds) AND p_screen<>'dashboard')
+ OR p_start IS NULL OR p_end IS NULL OR p_end<=greatest(p_start,clock_timestamp()) OR p_capabilities IS NULL OR cardinality(p_capabilities)=0 OR array_position(p_capabilities,NULL) IS NOT NULL OR NOT(p_capabilities <@ ARRAY['view','edit','preview','review']::text[]) THEN
+ RAISE EXCEPTION 'تحقق من النطاق ونوع التعديل والمدة' USING ERRCODE='22023';END IF;
+ LOCK TABLE public.ff82_content_grants IN SHARE ROW EXCLUSIVE MODE;
+ UPDATE public.ff82_content_grants SET revoked_at=clock_timestamp(),revoked_by=auth.uid() WHERE recipient=p_recipient AND revoked_at IS NULL RETURNING id INTO old_id;
+ IF old_id IS NOT NULL THEN INSERT INTO public.ff82_content_audit(actor_id,grant_id,action,outcome,reason) VALUES(auth.uid(),old_id,'revoke','allowed','replaced');END IF;
+ INSERT INTO public.ff82_content_grants(recipient,role_scope,branch_id,screen,capabilities,starts_at,ends_at,granted_by,edit_kinds) VALUES(p_recipient,r,p_branch,p_screen,p_capabilities,p_start,p_end,auth.uid(),p_kinds) RETURNING id INTO new_id;
+ INSERT INTO public.ff82_content_audit(actor_id,grant_id,action,outcome,reason) VALUES(auth.uid(),new_id,'grant','allowed',array_to_string(p_kinds,','));
+ RETURN new_id;
+END $function$;
+
+-- Keep per-element permissions independent and retain unchanged inherited values.
+CREATE OR REPLACE FUNCTION ff_private.a09_merge_elements(p_screen text, p_exact jsonb, p_inherited jsonb, p_patch jsonb, p_kinds text[])
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ IMMUTABLE
+ SET search_path TO ''
+AS $function$
+DECLARE spec jsonb:='{"dashboard_status":{"screen":"dashboard","keys":["dashboard_status_tag"],"styleOnly":true},"orders_status":{"screen":"orders","keys":["orders_status_tag","orders_addition_warning"],"styleOnly":true},"driver_status":{"screen":"driver","keys":["driver_offer_countdown","driver_status_tag"],"styleOnly":true},"cashier_status":{"screen":"cashier","keys":["cashier_status_tag","cashier_addition_warning"],"styleOnly":true},"burger_regions":{"screen":"burger_kitchen","keys":["ffBurgerKitchenStatus","ffBurgerKitchenBranch","ffBurgerKitchenActive","ffBurgerKitchenFinished"],"styleOnly":true},"dashboard_regions":{"screen":"dashboard","keys":["ffx-hero-title","ffx-hero-sub","ffx-kpis","ffx-shortcuts","ffx-order-list","ffx-overdue"],"styleOnly":true},"order_fields":{"screen":"orders","keys":["newBranch","ffbQuickInput","newPhone","newArea","newFee","newNotes","newCustomerName","newChannel","newFullAddress","ffbMenuSearch","newItems"],"styleOnly":true},"order_tabs":{"screen":"orders","keys":["ffbTabMenu","ffbTabText"],"styleOnly":false},"order_tools":{"screen":"orders","keys":["ffbApplyText","ffbMenuReload"],"styleOnly":true},"cashier_regions":{"screen":"cashier","keys":["cashierOrders"],"styleOnly":true},"assembly_regions":{"screen":"assembly","keys":["ffV12BranchTitle","ffV12AssemblyStatus","ffV12AssemblySummary","ffV12AssemblyOrders"],"styleOnly":true},"catalog_fields":{"screen":"catalog","keys":["ff51CatName","ff51ItemName","ff51ItemPrice","ff51OfferName","ff51OfferPrice"],"styleOnly":true},"catalog_regions":{"screen":"catalog","keys":["ff51CatalogItems","ff51OffersList"],"styleOnly":true},"customer_fields":{"screen":"customers","keys":["ff51CustomerSearch","ff51CustomerNoteText"],"styleOnly":true},"customer_regions":{"screen":"customers","keys":["ff51CustomersList","ff51CustomerHistory","ff51CustomerNotesList"],"styleOnly":true},"report_fields":{"screen":"reports","keys":["ff76From","ff76To","ff76Branch","ff76Driver","ffA10Staff","ffA10Area","ffA10Item","ffA10Status","ff76Mode","ff76Trend"],"styleOnly":true},"report_regions":{"screen":"reports","keys":["ff76Status","ff76Body","ff76ApprovalBox"],"styleOnly":true},"staff_regions":{"screen":"staff","keys":["staffAdminList","staffAuditList"],"styleOnly":true},"archive_fields":{"screen":"archive","keys":["ff51ArchiveFrom","ff51ArchiveTo","ff51ArchiveStatus","ff51ArchiveBranch"],"styleOnly":true},"archive_regions":{"screen":"archive","keys":["ff51ArchiveCount","ff51ArchiveList"],"styleOnly":true},"ratings_regions":{"screen":"ratings","keys":["ff51RatingBranch","ff51RatingsList"],"styleOnly":true},"reservation_fields":{"screen":"reservations","keys":["ff49ReserveBranch","ff49ReserveName","ff49ReservePhone","ff49ReserveNotes","ff49ReservePickup","ff49ReserveItems"],"styleOnly":true},"reservation_regions":{"screen":"reservations","keys":["ff49ReservationsList"],"styleOnly":true},"case_fields":{"screen":"cases","keys":["ff41Kind","ff41Branch","ff41Priority","ff41Subject","ff41Description","ff41FilterKind","ff41FilterStatus"],"styleOnly":true},"case_regions":{"screen":"cases","keys":["ff41CaseList","ff41Detail"],"styleOnly":true},"message_fields":{"screen":"messages","keys":["ff39Title","ff39Role","ff39Branch","ff39Body"],"styleOnly":true},"message_regions":{"screen":"messages","keys":["ff39InboxList","ff39SentLog"],"styleOnly":true},"system_regions":{"screen":"system","keys":["ff48Summary","ff48Rows","ff47Stats","ff47Cases","ff46Summary","ff44Results","ff43Findings"],"styleOnly":true},"reports_actions":{"screen":"reports","keys":["ff76Run","ff76Preview","ff76Download","ff76Share"]},"dashboard_actions":{"screen":"dashboard","keys":["ffx-hero-new","ffx-hero-reserve","ffx-hero-overdue"]},"orders_actions":{"screen":"orders","keys":["createBtn","ffA06DiscardDraft","ffReserveBottom"]},"driver_actions":{"screen":"driver","keys":["ff51BreakBtn","clockInBtn","clockOutBtn"]},"assembly_actions":{"screen":"assembly","keys":["ffV12Toggle","ffV12Refresh","ffV12BurgerOpen","ffV12Logout"]},"burger_actions":{"screen":"burger_kitchen","keys":["ffBurgerKitchenNotifications","ffBurgerViewFinished","ffBurgerKitchenRefresh","ffBurgerKitchenLogout"]},"catalog_actions":{"screen":"catalog","keys":["ff51ItemSave","ff51ItemReset"]},"catalog_offers":{"screen":"catalog","keys":["ff51OfferSave","ff51OfferReset"]},"archive_actions":{"screen":"archive","keys":["ff51ArchiveRefresh","ff51ArchiveExport","ff51ArchiveClose"]},"ratings_actions":{"screen":"ratings","keys":["ff51RatingsRefresh","ff51RatingsClose"]},"reservations_actions":{"screen":"reservations","keys":["ff49ReservationsRefresh","ff49ReservationsClose"]},"cases_actions":{"screen":"cases","keys":["ff41Refresh","ff41Close"]},"messages_actions":{"screen":"messages","keys":["ff39Refresh","ff39Close"]},"system_actions":{"screen":"system","keys":["ff48Refresh","ff48Export","ff48Close"]},"driver_regions":{"screen":"driver","keys":["clockInBtn","driverOffers","driverTasks"]},"assembly_stats":{"screen":"assembly","keys":["ffV12CountAll","ffV12CountPrinted","ffV12CountPreparing","ffV12CountReady"]},"cashier_stage":{"screen":"cashier","keys":["cashier_stage"]},"staff_actions":{"screen":"staff","keys":["staffAuditRefresh"]},"customers_actions":{"screen":"customers","keys":["ff51CustomerFind","ff51CustomerNoteSave"]},"finance_actions":{"screen":"finance","keys":["ff42Load","ff42Export","ff42ClosePanel","ff42Save","ff42CloseSettlement","ff42ShowDetail"],"styleOnly":true},"finance_fields":{"screen":"finance","keys":["ff42Day","ff42Branch","ff42CashDue","ff42CashReceived","ff42Difference","ff42Notes"],"styleOnly":true},"finance_regions":{"screen":"finance","keys":["ff42Status","ff42Summary","ff42List","ff42Form","ff42Detail"],"styleOnly":true},"branches_actions":{"screen":"branches","keys":["ffA05BranchPolicyBtn","ffA05Close","ffA05SaveHours","ffA05SaveTariff","ffA05PriceHistory"],"styleOnly":true},"branches_fields":{"screen":"branches","keys":["ffA05PolicyBranch","ffA05Effective","ffA05Reason","ffA05Day","ffA05Closed","ffA05Open","ffA05CloseTime","ffA05Shift","ffA05Area","ffA05Tariff"],"styleOnly":true},"branches_regions":{"screen":"branches","keys":["ffA05PolicyStatus","ffA05PolicyCurrent","ffA05PolicyHistory","ffA05PriceRows"],"styleOnly":true},"login_actions":{"screen":"login","keys":["loginBtn","ff61ApplyToggle","ff61StatusToggle","ff71CustomerToggle","ff71CustomerSend","ff71CustomerVerify","ff61ApplySend","ff61TrackSend"],"styleOnly":true},"login_fields":{"screen":"login","keys":["email","password","ff71CustomerPhone","ff71CustomerCode","ff61TrackCode","loginStatus","ff71CustomerMessage"],"styleOnly":true},"join_fields":{"screen":"login","keys":["join_name","join_email","join_phone","join_qualification","join_address","join_age","join_marital","join_role","join_experience","join_message","ff61Consent","ff61ApplyInfo"],"styleOnly":true},"customer_portal_actions":{"screen":"customer_portal","keys":["ff28Refresh","ff28Logout"],"styleOnly":true},"customer_portal_regions":{"screen":"customer_portal","keys":["ff28Title","ff28State","ff28Rows","ff28Name","ff28Role"],"styleOnly":true},"system_qa_controls":{"screen":"system","keys":["ff47Reload","ff47Close","ff47Version","ff47Title","ff47Create","ff47Runs","ff47Export","ff47Finish","ff47Reopen","ff47Category","ff47Filter"],"styleOnly":true},"system_readiness_controls":{"screen":"system","keys":["ff46Run","ff46Export","ff46Close"],"styleOnly":true},"system_access_controls":{"screen":"system","keys":["ff45Run","ff45Export","ff45Close"],"styleOnly":true},"system_integrity_controls":{"screen":"system","keys":["ff44Export","ff44Close","ff44From","ff44To","ff44Run"],"styleOnly":true},"system_security_controls":{"screen":"system","keys":["ff43Run","ff43Export","ff43Close"],"styleOnly":true},"case_contact_controls":{"screen":"cases","keys":["ff41Order","ff41CustomerName","ff41CustomerPhone","ff41Channel","ff41Create"],"styleOnly":true},"message_delivery_controls":{"screen":"messages","keys":["ff39Send","ff39SentRefresh"],"styleOnly":true},"dashboard_alert_controls":{"screen":"dashboard","keys":["ff40AlertRefresh","ff40AlertsClose","ff40AlertBranch"],"styleOnly":true},"staff_filter_controls":{"screen":"staff","keys":["ffEditMyAccount","staffAdminRefresh","ffA05StaffSearch","ffA05StaffRole","ffA05StaffActive","ffA05StaffSort","permissionEmployee","permissionLoad"],"styleOnly":true},"catalog_edit_controls":{"screen":"catalog","keys":["ff51CatalogRefresh","ff51CatalogClose","ffCatalogCardTarget","ffCatalogCardSort","ffCatalogCardStyle","ffCatalogCardSave","ffAliasTarget","ffAliasNames","ffAliasSave","ffAliasDefault"],"styleOnly":true},"customer_close_control":{"screen":"customers","keys":["ff51CustomersClose"],"styleOnly":true},"archive_page_controls":{"screen":"archive","keys":["ff51ArchivePrev","ff51ArchiveNext"],"styleOnly":true},"order_change_controls":{"screen":"orders","keys":["ff50Refresh","ff50Close","ff50RequestItems","ff50RequestReason","ff50RequestSave","ff50RequestCancel"],"styleOnly":true},"order_transfer_controls":{"screen":"orders","keys":["ff49TransferRefresh","ff49TransferClose"],"styleOnly":true},"reservation_save_control":{"screen":"reservations","keys":["ff49ReserveSave"],"styleOnly":true},"assembly_sound_control":{"screen":"assembly","keys":["ff66AssemblySoundSettings"],"styleOnly":true},"staff_edit_controls":{"screen":"staff","keys":["ffEditClose","ffEditSave"],"styleOnly":true},"order_search_controls":{"screen":"orders","keys":["orderSearch","orderBranchFilter","orderStatusFilter","auditRefreshBtn"],"styleOnly":true},"order_manual_controls":{"screen":"orders","keys":["ff49ManualClose","ff49ManualDriver","ff49ManualReason","ff49ManualConfirm"],"styleOnly":true},"order_late_controls":{"screen":"orders","keys":["ff52LateClose","ff52LateItems","ff75LatePreview","ff52LateSave"],"styleOnly":true},"order_review_controls":{"screen":"orders","keys":["ffbCloseReview","ffbConfirmSave","ffbCancelReview"],"styleOnly":true},"driver_route_controls":{"screen":"driver","keys":["ff52RoutesClose","ff52RouteBranch","ff52RouteDriver","ff52RouteAreas","ff52RouteStart","ff52RouteEnd","ff52RouteActive","ff52RouteSave"],"styleOnly":true},"staff_link_controls":{"screen":"staff","keys":["addEmail","addName","addRole","addBranch","linkUserBtn"],"styleOnly":true},"dashboard_lifecycle_controls":{"screen":"dashboard","keys":["ff60-refresh","ff60-close","ff60-search","ff60-branch","ff60-state","ff60-open-old","ff60-fast","ff60-slow","ff60-save-policy"],"styleOnly":true},"dashboard_watch_controls":{"screen":"dashboard","keys":["ff4-refresh","ff4-export","ff4-close","ff4-search","ff4-branch","ff4-state","ff4-minutes"],"styleOnly":true},"dashboard_overdue_controls":{"screen":"dashboard","keys":["ff5-refresh","ff5-export","ff5-close","ff5-search","ff5-branch","ff5-age","ff5-sort"],"styleOnly":true},"driver_offer_controls":{"screen":"driver","keys":["offer_accept","offer_reject","offer_check_reject"],"styleOnly":true},"driver_progress_controls":{"screen":"driver","keys":["driver_on_way","driver_arrived","driver_delivered"],"styleOnly":true},"order_dynamic_actions":{"screen":"orders","keys":["order_customer_edit","order_auto","order_manual","order_change","order_reassign","order_transfer","order_cancel"],"styleOnly":true},"order_addition_controls":{"screen":"orders","keys":["additionItemsInput","addition_preview","addition_save","addition_close"],"styleOnly":true},"case_detail_controls":{"screen":"cases","keys":["ff41NextStatus","ff41Resolution","ff41CommentBody","case_transition","case_comment"],"styleOnly":true},"staff_edit_fields":{"screen":"staff","keys":["employee_name","employee_username","employee_email","employee_phone","employee_qualification","employee_address","employee_age","employee_marital","employee_experience","employee_password","employee_message"],"styleOnly":true},"dashboard_filter_controls":{"screen":"dashboard","keys":["ffx-branch","ffx-kpi-reload","ffx-open-alerts"],"styleOnly":true},"dashboard_shell_controls":{"screen":"dashboard","keys":["ffx-menu","ffx-refresh","ffx-bell","ffx-theme-toggle","ffx-options","ffx-drawer-close"],"styleOnly":true},"dashboard_quick_controls":{"screen":"dashboard","keys":["ff2-close","ff2-search","ff3-close"],"styleOnly":true},"preferences_appearance":{"screen":"system","keys":["ffx-pref-close","ffx-density","ffx-auto","ffx-motion","ffx-fast","ffx-reset"],"styleOnly":true},"preferences_alerts":{"screen":"system","keys":["ffx-audio","ffx-visual","ffx-delay","ffx-sound","ffx-delay-sound","ffx-volume","ffx-repeat","ffx-play-sound","ffx-play-delay","ffx-push-permission","ff-luxe-audio-unlock"],"styleOnly":true},"preferences_tones":{"screen":"system","keys":["ff66-tone-name","ff66-tone-file","ff66-tone-add","ff66-tone-refresh"],"styleOnly":true},"reports_legacy_controls":{"screen":"reports","keys":["ff40ExportCSV","ff40ReportsClose","ff40From","ff40To","ff40ReportBranch","ff40RunReport"],"styleOnly":true},"message_ack_control":{"screen":"messages","keys":["ff39RequireAck"],"styleOnly":true},"dashboard_watch_options":{"screen":"dashboard","keys":["ff4-overdue","ff4-hidephones"],"styleOnly":true},"staff_share_control":{"screen":"staff","keys":["ffEditShare"],"styleOnly":true},"order_repeat_addition":{"screen":"orders","keys":["order_toggle_reject","order_open_addition","order_late_addition","order_cancel_addition","order_invoice_addition","order_invoice_late"],"styleOnly":true},"driver_addition_actions":{"screen":"driver","keys":["driver_accept_addition","driver_reject_addition","driver_pickup_addition"],"styleOnly":true},"cashier_repeat_actions":{"screen":"cashier","keys":["cashier_receive","cashier_invoice","cashier_burger","cashier_invoice_addition","cashier_invoice_late"],"styleOnly":true},"assembly_filters":{"screen":"assembly","keys":["assembly_filter_all","assembly_filter_printed","assembly_filter_preparing","assembly_filter_ready","assembly_filter_late","assembly_filter_priority"],"styleOnly":true},"burger_filters":{"screen":"burger_kitchen","keys":["burger_filter_all","burger_filter_sent","burger_filter_preparing","burger_filter_late"],"styleOnly":true},"burger_timer":{"screen":"burger_kitchen","keys":["burger_order_timer"],"styleOnly":true},"staff_repeat_actions":{"screen":"staff","keys":["staff_toggle","staff_assembly_save","staff_assembly_convert","staff_edit","staff_save_access","staff_permission_save"],"styleOnly":true},"message_repeat_actions":{"screen":"messages","keys":["message_ack","message_read"],"styleOnly":true},"case_repeat_actions":{"screen":"cases","keys":["case_open"],"styleOnly":true},"finance_repeat_actions":{"screen":"finance","keys":["settlement_select"],"styleOnly":true},"system_repeat_actions":{"screen":"system","keys":["qa_case_save"],"styleOnly":true},"reservation_repeat_actions":{"screen":"reservations","keys":["reservation_next","reservation_cancel"],"styleOnly":true},"order_transfer_repeat":{"screen":"orders","keys":["transfer_confirm"],"styleOnly":true},"order_changes_repeat":{"screen":"orders","keys":["change_approve","change_reject","change_service","change_pos"],"styleOnly":true},"catalog_repeat_actions":{"screen":"catalog","keys":["catalog_item_edit","catalog_item_toggle","catalog_offer_edit","catalog_offer_toggle"],"styleOnly":true},"customer_repeat_actions":{"screen":"customers","keys":["customer_open"],"styleOnly":true},"driver_route_repeat":{"screen":"driver","keys":["route_edit"],"styleOnly":true},"dashboard_lifecycle_repeat":{"screen":"dashboard","keys":["lifecycle_action"],"styleOnly":true},"dashboard_watch_repeat":{"screen":"dashboard","keys":["watch_tab","watch_find"],"styleOnly":true},"report_more_controls":{"screen":"reports","keys":["ff76Close","ff76Today","ff76Yesterday","ff76Seven","ff76Thirty","ff76CSV","ff76SavePreset","ff76UsePreset","ffA10GrantSave","ff76SaveApproval"],"styleOnly":true},"report_preview_controls":{"screen":"reports","keys":["ff76DlgDownload","ff76DlgShare","ff76DlgClose"],"styleOnly":true},"message_template_controls":{"screen":"messages","keys":["ffA11Priority","ffA11Route","ffA11Template","ffA11TemplateName","ffA11TemplateSave","ffA11TemplateDelete","ffA11Preview","ffA11GrantUser","ffA11GrantRole","ffA11GrantBranch","ffA11GrantSave","ffA11GrantRefresh","ffA11Audit"],"styleOnly":true},"order_customer_modal":{"screen":"orders","keys":["ffCustomerEditSave","ffCustomerEditCancel"],"styleOnly":true},"order_picker_modal":{"screen":"orders","keys":["ffUnifiedMenuReview","ffUnifiedMenuUndo","ffUnifiedMenuClose"],"styleOnly":true},"system_recovery_controls":{"screen":"system","keys":["ffA12Scope","ffA12Branch","ffA12Type","ffA12From","ffA12To","ffA12Preview","ffA12Confirm","ffA12Execute","ffA12List","ffA12Batch","ffA12RestoreConfirm","ffA12Restore","ffA12FixtureType","ffA12FixtureDate","ffA12FixtureConfirm","ffA12Fixture"],"styleOnly":true},"messages_grant_limits":{"screen":"messages","keys":["ffA11GrantPriority","ffA11GrantHours"],"styleOnly":true},"reports_presets_and_approval":{"screen":"reports","keys":["ff76PresetName","ff76PresetList","ffA10GrantUser","ffA10GrantSection","ffA10GrantAllowed","ff76ManagerName","ff76ManagerNotes"],"styleOnly":true},"report_rating_escalate":{"screen":"reports","keys":["ffA10RatingEscalate"],"styleOnly":true},"order_customer_edit_fields":{"screen":"orders","keys":["order_edit_name","order_edit_phone","order_edit_area","order_edit_address","order_edit_reason","order_edit_customer_note"],"styleOnly":true},"order_picker_search":{"screen":"orders","keys":["ffUnifiedMenuSearch"],"styleOnly":true},"case_alert_controls":{"screen":"cases","keys":["ffCaseAlertClose","ffCaseAlertRefresh"],"styleOnly":true},"archive_completed_controls":{"screen":"archive","keys":["fflCashierFinishedToggle","fflFinishedFrom","fflFinishedTo","fflFinishedBranch","fflFinishedToday","fflFinishedApply","fflFinishedSearch","fflFinishedRefresh","fflFinishedMore"],"styleOnly":true},"archive_completed_detail":{"screen":"archive","keys":["ffCompletedDetailClose"],"styleOnly":true},"dashboard_operational_day":{"screen":"dashboard","keys":["ffF01Date","ffF01Compare","ffF01Branch","ffF01Today","ffF01Refresh"],"styleOnly":true},"reports_history_period":{"screen":"reports","keys":["ffHistoryFrom","ffHistoryTo","ffHistoryToday","ffHistoryApply"],"styleOnly":true},"finance_range_controls":{"screen":"finance","keys":["ff42RangeFrom","ff42RangeTo","ff42RangeApply"],"styleOnly":true},"order_reward_issue":{"screen":"orders","keys":["ffRewardItemSearch","ffRewardIssue","ffRewardCodesRefresh","reward_issue_kind","reward_issue_name","reward_issue_phone","reward_issue_expiry"],"styleOnly":true},"order_reward_redeem_start":{"screen":"orders","keys":["ffRewardServiceCode","ffRewardServiceApply"],"styleOnly":true},"cashier_reward_start":{"screen":"cashier","keys":["ffRewardCashierCode","ffRewardCashierApply"],"styleOnly":true},"order_reward_redeem":{"screen":"orders","keys":["ffRewardRedeemButton","ffRewardRedeemClose","reward_redeem_branch","reward_redeem_channel","reward_redeem_area","reward_redeem_fee","reward_redeem_notes","reward_redeem_verify"],"styleOnly":true},"cashier_reward_redeem":{"screen":"cashier","keys":["ffRewardRedeemButton","ffRewardRedeemClose","reward_redeem_branch","reward_redeem_channel","reward_redeem_area","reward_redeem_fee","reward_redeem_notes","reward_redeem_verify"],"styleOnly":true},"cashier_burger_send":{"screen":"cashier","keys":["ffBurgerPanelToggle","ffBurgerNew","ffBurgerCollapse"],"styleOnly":true},"cashier_burger_send_fields":{"screen":"cashier","keys":["ffBurgerSubmit","ffBurgerCancel","burger_send_branch","burger_send_kind","burger_send_order","burger_send_invoice","burger_send_notes"],"styleOnly":true},"assembly_burger_send":{"screen":"assembly","keys":["ffBurgerPanelToggle","ffBurgerNew","ffBurgerCollapse"],"styleOnly":true},"assembly_burger_send_fields":{"screen":"assembly","keys":["ffBurgerSubmit","ffBurgerCancel","burger_send_branch","burger_send_kind","burger_send_order","burger_send_invoice","burger_send_notes"],"styleOnly":true},"driver_addition_warning":{"screen":"driver","keys":["driver_addition_notice","driver_addition_invoice_notice"],"styleOnly":true},"cashier_customer_edit":{"screen":"cashier","keys":["cashier_customer_edit"],"styleOnly":true},"assembly_order_components":{"screen":"assembly","keys":["assembly_stage_action","assembly_stage_state","assembly_order_age","assembly_order_note"],"styleOnly":true},"burger_order_components":{"screen":"burger_kitchen","keys":["burger_stage_action","burger_stage_state","burger_required_note","burger_confirm_note"],"styleOnly":true},"cashier_burger_components":{"screen":"cashier","keys":["cashier_burger_skip","cashier_burger_state","cashier_burger_timer"],"styleOnly":true},"assembly_burger_components":{"screen":"assembly","keys":["assembly_burger_skip","assembly_burger_state","assembly_burger_timer"],"styleOnly":true},"staff_dynamic_fields":{"screen":"staff","keys":["staff_assembly_branch","staff_assembly_target","staff_access_role","staff_access_branch","staff_permission_value"],"styleOnly":true},"system_qa_fields":{"screen":"system","keys":["system_qa_result","system_qa_note"],"styleOnly":true},"finance_evidence_fields":{"screen":"finance","keys":["finance_fee_amount","finance_fee_reference"],"styleOnly":true},"finance_evidence_controls":{"screen":"finance","keys":["finance_fee_save","finance_fee_status","finance_fee_history"],"styleOnly":true},"dashboard_lifecycle_fields":{"screen":"dashboard","keys":["lifecycle_invoice","lifecycle_reoffer_driver","lifecycle_reoffer_reason"],"styleOnly":true},"dashboard_lifecycle_status":{"screen":"dashboard","keys":["lifecycle_countdown","lifecycle_state"],"styleOnly":true},"dashboard_follow_control":{"screen":"dashboard","keys":["dashboard_order_follow"],"styleOnly":true},"system_theme_controls":{"screen":"system","keys":["system_theme_choice"],"styleOnly":true},"cashier_cancellation_controls":{"screen":"cashier","keys":["cashier_cancel_ack","cashier_cancel_banner","cashier_cancel_note"],"styleOnly":true},"driver_feedback_controls":{"screen":"driver","keys":["driver_feedback_refresh","driver_feedback_open"],"styleOnly":true},"driver_rating_fields":{"screen":"driver","keys":["driver_rating_note"],"styleOnly":true},"driver_rating_controls":{"screen":"driver","keys":["driver_rating_star","driver_rating_submit","driver_rating_close"],"styleOnly":true},"driver_grievance_fields":{"screen":"driver","keys":["driver_grievance_kind","driver_grievance_details"],"styleOnly":true},"driver_grievance_controls":{"screen":"driver","keys":["driver_grievance_save","driver_grievance_close"],"styleOnly":true},"orders_rating_entry":{"screen":"orders","keys":["orders_rate_driver_open"],"styleOnly":true},"driver_grievance_entry":{"screen":"driver","keys":["driver_grievance_open"],"styleOnly":true},"orders_rating_dialog":{"screen":"orders","keys":["orders_rate_star","orders_rate_note","orders_rate_save","orders_rate_skip"],"styleOnly":true},"cashier_rating_dialog":{"screen":"cashier","keys":["cashier_rate_star","cashier_rate_note","cashier_rate_save","cashier_rate_skip"],"styleOnly":true}}'::jsonb; g record; old_rows jsonb; new_rows jsonb; out_rows jsonb:=coalesce(p_exact,'{}'); old_order text[]; new_order text[]; permitted text[]:=ARRAY[]::text[]; item jsonb; exact_item jsonb; inherited_item jsonb; baseline jsonb; result_item jsonb; prop text; result_rows jsonb; mode_inherit boolean;
+BEGIN
+ IF NOT ff_private.a07_valid_elements(p_patch,p_screen) THEN RETURN NULL; END IF;
+ IF 'buttons'=ANY(p_kinds) THEN permitted:=permitted||ARRAY['shape','size','icon','hover','press']; END IF;
+ IF 'fonts'=ANY(p_kinds) OR 'layout'=ANY(p_kinds) THEN permitted:=permitted||ARRAY['font','weight','textScale']; END IF;
+ IF 'colors'=ANY(p_kinds) THEN permitted:=permitted||ARRAY['border','shadow','tone']; END IF;
+ IF 'layout'=ANY(p_kinds) THEN permitted:=permitted||ARRAY['spacing','align','spaceBlock','outerGap','placement']; END IF;
+ FOR g IN SELECT * FROM jsonb_each(p_patch) LOOP
+  old_rows:=coalesce(p_exact->g.key,p_inherited->g.key);
+  IF old_rows IS NULL THEN SELECT jsonb_agg(jsonb_build_object('key',k,'shape','pack','size','normal') ORDER BY ord) INTO old_rows FROM jsonb_array_elements_text(spec->g.key->'keys') WITH ORDINALITY AS a(k,ord);END IF;
+  new_rows:=g.value;
+  SELECT array_agg(e->>'key' ORDER BY ord) INTO old_order FROM jsonb_array_elements(old_rows) WITH ORDINALITY a(e,ord);
+  SELECT array_agg(e->>'key' ORDER BY ord) INTO new_order FROM jsonb_array_elements(new_rows) WITH ORDINALITY a(e,ord);
+  IF NOT ('layout'=ANY(p_kinds)) AND old_order IS DISTINCT FROM new_order THEN RETURN NULL; END IF;
+  mode_inherit:=CASE WHEN 'layout'=ANY(p_kinds) AND old_order IS DISTINCT FROM new_order THEN false WHEN 'layout'=ANY(p_kinds) AND (new_rows->0->>'orderMode')='inherit' THEN true ELSE coalesce(p_exact->g.key->0->>'orderMode'='inherit',p_exact->g.key IS NULL) END;
+  result_rows:='[]'::jsonb;
+  FOR item IN SELECT value FROM jsonb_array_elements(new_rows) LOOP
+   SELECT e INTO exact_item FROM jsonb_array_elements(coalesce(p_exact->g.key,'[]')) e WHERE e->>'key'=item->>'key';
+   SELECT e INTO inherited_item FROM jsonb_array_elements(coalesce(p_inherited->g.key,'[]')) e WHERE e->>'key'=item->>'key';
+   baseline:=jsonb_build_object('key',item->>'key','shape','pack','size','normal')||coalesce(inherited_item,'{}')||coalesce(exact_item,'{}');
+   IF (item-ARRAY['key','orderMode']-permitted) IS DISTINCT FROM (baseline-ARRAY['key','orderMode']-permitted) THEN RETURN NULL; END IF;
+   result_item:=jsonb_build_object('key',item->>'key','shape','inherit','size','inherit')||coalesce(exact_item,'{}');
+   FOREACH prop IN ARRAY permitted LOOP
+    IF item->prop IS DISTINCT FROM baseline->prop THEN
+     IF item ? prop THEN result_item:=jsonb_set(result_item,ARRAY[prop],item->prop,true); ELSE result_item:=result_item-prop; END IF;
+    END IF;
+   END LOOP;
+   result_item:=result_item-'orderMode';
+   IF mode_inherit THEN result_item:=result_item||'{"orderMode":"inherit"}'::jsonb; END IF;
+   result_rows:=result_rows||jsonb_build_array(result_item);
+  END LOOP;
+  IF NOT ff_private.a07_valid_elements(jsonb_build_object(g.key,result_rows),p_screen) THEN RETURN NULL; END IF;
+  out_rows:=out_rows||jsonb_build_object(g.key,result_rows);
+ END LOOP;
+ RETURN out_rows;
+END $function$;
+
+-- Keep existing text delegation contracts while recording the effect and attempted revision.
+CREATE OR REPLACE FUNCTION public.ff82_delegate_draft(p_key text, p_body text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare g public.ff82_content_grants; prior bigint; revision bigint; why text;
+begin
+ if auth.uid() is null then return jsonb_build_object('ok',false,'reason','authentication');end if;
+ -- Serialize write with revocation and replacement. Recheck using the current grant after locking.
+ lock table public.ff82_content_grants in share mode;
+ select * into g from public.ff82_my_grant();
+ if g.id is null or not('text'=ANY(g.edit_kinds)) or not('edit'=any(g.capabilities)) or not exists(select 1 from public.ff_content_catalog c where c.key=p_key and c.screen=g.screen) then why:='outside_edit_scope';
+ elsif p_body is null then why:='restore_manager_only';
+ else
+  select id into prior from public.ff_content_versions where content_key=p_key and role_scope=g.role_scope and branch_id=g.branch_id and published_at is not null order by published_at desc,id desc limit 1;
+  begin
+   insert into public.ff_content_versions(content_key,role_scope,branch_id,body,actor_id,previous_id)
+   values(p_key,g.role_scope,g.branch_id,btrim(p_body),auth.uid(),prior) returning id into revision;
+  exception when check_violation then why:='invalid_text';end;
+ end if;
+ insert into public.ff82_content_audit(actor_id,grant_id,action,outcome,reason,content_key,revision_id,effect)
+ values(auth.uid(),g.id,'draft',case when why is null then 'allowed' else 'denied' end,coalesce(why,''),left(p_key,150),revision,case when why is null then 'draft_only' else 'no_change' end);
+ return jsonb_build_object('ok',why is null,'reason',why,'revision',revision);
+end $function$;
+
+-- Keep existing text delegation contracts while recording the effect and attempted revision.
+CREATE OR REPLACE FUNCTION public.ff82_delegate_review(p_revision bigint, p_note text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare g public.ff82_content_grants; v public.ff_content_versions; why text;
+begin
+ if auth.uid() is null then return jsonb_build_object('ok',false,'reason','authentication');end if;
+ lock table public.ff82_content_grants in share mode;
+ select * into g from public.ff82_my_grant();
+ select * into v from public.ff_content_versions where id=p_revision;
+ if g.id is null or not('text'=ANY(g.edit_kinds)) or not('review'=any(g.capabilities)) or v.id is null or v.published_at is not null or v.role_scope<>g.role_scope or v.branch_id is distinct from g.branch_id
+ or not exists(select 1 from public.ff_content_catalog c where c.key=v.content_key and c.screen=g.screen) then why:='outside_review_scope';
+ else
+  begin insert into public.ff82_content_reviews(revision_id,grant_id,reviewer,note) values(v.id,g.id,auth.uid(),btrim(p_note));
+  exception when check_violation or not_null_violation then why:='invalid_note';end;
+ end if;
+ insert into public.ff82_content_audit(actor_id,grant_id,action,outcome,reason,revision_id,attempted_revision,effect)
+ values(auth.uid(),g.id,'review',case when why is null then 'allowed' else 'denied' end,coalesce(why,''),case when why is null then v.id end,p_revision,case when why is null then 'review_only' else 'no_change' end);
+ return jsonb_build_object('ok',why is null,'reason',why);
+end $function$;

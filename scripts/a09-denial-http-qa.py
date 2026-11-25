@@ -1,4 +1,5 @@
 """A09 HTTP contract test. Disposable PostgreSQL/PostgREST only; no live credentials."""
+from concurrent.futures import ThreadPoolExecutor
 import base64
 import hashlib
 import hmac
@@ -125,6 +126,88 @@ END $$;
     assert sql("SELECT count(*) FROM ff_ui_versions WHERE published_at IS NOT NULL;")=="1"
     assert sql("SELECT count(*) FROM ff_content_versions WHERE published_at IS NOT NULL;")=="1"
     print("PASS manager publish unchanged; all 12 real HTTP denials committed without side effects",flush=True)
+
+    # STEP07: exercise the actual scoped migration and grant-window function with
+    # two independent database sessions. The fixture supplies only the tables
+    # needed by the denial path; the positive design/data contracts run against
+    # the actual Supabase database in step07_delegation_rollback.sql.
+    sql("""
+ALTER TABLE public.ff82_content_grants ADD COLUMN role_scope text,
+ ADD COLUMN branch_id uuid, ADD COLUMN screen text,
+ ADD COLUMN capabilities text[], ADD COLUMN edit_kinds text[],
+ ADD COLUMN revoked_by uuid, ADD COLUMN granted_by uuid;
+ALTER TABLE public.ff82_content_grants ADD CONSTRAINT ff82_content_grants_edit_kinds_check
+ CHECK (edit_kinds <@ ARRAY['text','colors','buttons','layout']::text[]);
+ALTER TABLE public.ff_ui_versions ADD COLUMN actor_id uuid,
+ ADD COLUMN style_config jsonb, ADD COLUMN card_layout jsonb,
+ ADD COLUMN pack text, ADD COLUMN bar text, ADD COLUMN layout_text text,
+ ADD COLUMN draft_name text, ADD COLUMN draft_description text;
+ALTER TABLE public.ff82_content_audit ADD COLUMN content_key text;
+CREATE TABLE public.ff_branches(id uuid PRIMARY KEY,active boolean);
+CREATE TABLE public.ff_user_branches(user_id uuid,branch_id uuid);
+""" + f"""
+INSERT INTO public.ff_branches VALUES('{BRANCH}',true);
+INSERT INTO public.ff_user_branches VALUES('{WORKER}','{BRANCH}');
+UPDATE public.ff82_content_grants SET role_scope='cashier',branch_id='{BRANCH}',
+ screen='cashier',capabilities=ARRAY['view','edit'],edit_kinds=ARRAY['layout'],
+ starts_at=clock_timestamp()-interval '1 minute',ends_at=clock_timestamp()+interval '10 minutes',revoked_at=NULL WHERE id=10;
+""" + (ROOT/"supabase/ff87-delegation-window.sql").read_text()
+    + (ROOT/"supabase/migrations/20261125_step07_delegation_scope.sql").read_text()
+    + """
+UPDATE public.ff82_content_grants SET edit_kinds=ARRAY['fonts'] WHERE id=10;
+REVOKE ALL ON FUNCTION public.ff82_my_grant(),public.ff_a09_design_draft(text,jsonb,text,bigint) FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.ff82_my_grant(),public.ff_a09_design_draft(text,jsonb,text,bigint) TO authenticated;
+NOTIFY pgrst,'reload schema';
+""")
+    def active_grant():
+        status,body=call("ff82_my_grant",{})
+        return status==200 and len(json.loads(body))==1
+    wait_for(active_grant,"STEP07 active grant and schema cache")
+    args={"p_device":"mobile","p_patch":{"font":"tahoma"},"p_name":"QA race","p_base":None}
+    def blocked_worker(manager_statement, expiry=False):
+        # The manager holds a write lock until the worker's actual HTTP call is
+        # observed waiting for its SHARE lock. Commit only after that observation.
+        holder=subprocess.Popen(
+            ["docker","exec","-i",PG,"psql","-U","postgres","-d","postgres","-At","-v","ON_ERROR_STOP=1"],
+            stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        try:
+            claims=json.dumps({"sub":MANAGER})
+            holder.stdin.write("SET application_name='step07-holder'; BEGIN; "
+                + "SELECT set_config('request.jwt.claims','"+claims+"',true); "
+                + manager_statement+";\n")
+            holder.stdin.flush()
+            wait_for(lambda: sql("""SELECT count(*) FROM pg_locks l JOIN pg_stat_activity a USING(pid)
+                WHERE a.application_name='step07-holder' AND l.relation='public.ff82_content_grants'::regclass
+                AND l.mode='RowExclusiveLock' AND l.granted AND a.state='idle in transaction'""")=="1","manager write lock")
+            with ThreadPoolExecutor(max_workers=1) as pool:
+                future=pool.submit(call,"ff_a09_design_draft",args)
+                try:
+                    wait_for(lambda: sql("""SELECT count(*) FROM pg_locks
+                        WHERE relation='public.ff82_content_grants'::regclass AND mode='ShareLock' AND NOT granted""")=="1","worker waiting for grant lock")
+                    if expiry:
+                        # Wall-clock expiry occurs while the worker is blocked.
+                        time.sleep(3)
+                finally:
+                    holder.stdin.write("COMMIT;\n\\q\n")
+                    holder.stdin.flush()
+                status,body=future.result(timeout=15)
+            assert holder.wait(timeout=10)==0,holder.stderr.read()
+            assert status==200 and json.loads(body).get("ok") is False,(status,body)
+            assert sql("SELECT count(*) FROM ff_ui_versions WHERE draft_name='QA race'")=="0"
+            audit=json.loads(sql("SELECT row_to_json(a) FROM ff82_content_audit a ORDER BY id DESC LIMIT 1"))
+            assert audit["actor_id"]==WORKER and audit["action"]=="design_draft" and audit["outcome"]=="denied" and audit["effect"]=="no_change",audit
+        finally:
+            if holder.poll() is None:
+                holder.kill()
+                holder.wait(timeout=10)
+    blocked_worker("SELECT public.ff82_revoke_grant(10)")
+    assert not active_grant()
+    print("PASS STEP07 real concurrent revoke vs HTTP edit: edit blocked, rechecked, denied, no write",flush=True)
+    sql("UPDATE public.ff82_content_grants SET revoked_at=NULL,revoked_by=NULL,ends_at=clock_timestamp()+interval '10 minutes' WHERE id=10")
+    assert active_grant()
+    blocked_worker("UPDATE public.ff82_content_grants SET ends_at=clock_timestamp()+interval '2 seconds' WHERE id=10",expiry=True)
+    assert not active_grant()
+    print("PASS STEP07 real concurrent expiry during lock wait: edit rechecked, denied, audit persisted",flush=True)
 except Exception:
     for name in (PG,REST):
         subprocess.run(["docker","logs",name],check=False)

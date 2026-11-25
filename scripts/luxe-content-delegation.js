@@ -5,9 +5,14 @@ const role=()=>typeof ffV12AssemblyActive!=='undefined'&&ffV12AssemblyActive?'as
 const actor=()=>typeof user!=='undefined'&&user?.id&&role()?user.id:'';
 const manager=()=>!!actor()&&role()==='manager';
 const capLabels={view:'مشاهدة',edit:'تحرير المسودة',preview:'معاينة',review:'مراجعة'};
-const screens={cashier:'الكاشير',driver:'الموصل',burger_kitchen:'مطبخ البرجر',system:'النظام والأمان',notices:'التنبيهات التشغيلية',dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات'};
-const kinds={text:'النصوص',colors:'الألوان والحدود',buttons:'الأزرار والأيقونات',layout:'التخطيط والكثافة'};
-const tokenKinds={colors:['accent','surface','border','shadow'],buttons:['button','iconSize'],layout:['layout','density','radius','scale','font','weight','logoSize','logoAlign']};
+const screens={cashier:'الكاشير',driver:'الموصل',burger_kitchen:'مطبخ البرجر',system:'النظام والأمان',notices:'التنبيهات التشغيلية',dashboard:'الرئيسية',reports:'التقارير',orders:'إدخال الطلبات',catalog:'المنيو والعروض',customers:'العملاء',staff:'الموظفون والصلاحيات',cases:'الشكاوى والتظلمات',messages:'الرسائل',archive:'الأرشيف',ratings:'التقييمات',assembly:'نقطة التجميع',reservations:'الحجوزات',finance:'التسويات',branches:'الفروع وساعات العمل'};
+const kinds={text:'النصوص',colors:'الألوان والحدود',buttons:'الأزرار والأيقونات',layout:'التخطيط والكثافة',design:'حزم التصاميم',fonts:'الخطوط',identity:'الهوية وموضع الشعار',media:'صور الشعار المعتمدة',cards:'البطاقات الرئيسية'};
+const tokenKinds={colors:['accent','surface','border','shadow'],buttons:['button','iconSize'],layout:['layout','density','radius','scale','font','weight','logoSize','logoAlign','designBar','dialogRadius','dialogPadding','ratingScale'],design:['designPack'],fonts:['font','scale','weight'],identity:['logoSize','logoAlign','logoWidth','logoPosition'],media:['logoAsset','logoDarkAsset'],cards:[]};
+const extraTokens={designPack:['حزمة التصميم',...Array.from({length:16},(_,i)=>{const p='D'+String(i+1).padStart(2,'0');return[p,p]})],designBar:['شريط التنقل',['labels','عناوين'],['icons','أيقونات'],['wide','عريض'],['floating','عائم'],['compact','مضغوط']]};
+const cardMetrics={orders_today:'طلبات اليوم التشغيلي',late_today:'طلبات اليوم المتأخرة',completed_today:'طلبات اليوم المنجزة',available_drivers:'الموصلون المتاحون الآن'};
+const sizes={normal:'عادي',wide:'عريض',full:'عرض كامل'},tones={default:'افتراضي',red:'أحمر',black:'أسود',neutral:'محايد'};
+const clone=v=>JSON.parse(JSON.stringify(v));
+let cardPatch,actionPatch,panelPatch={};
 const roles={manager:'المدير العام',supervisor:'المشرف',customer_service:'خدمة العملاء',cashier:'الكاشير',driver:'الموصل',assembly:'نقطة التجميع',burger_kitchen:'مطبخ البرجر'};
 const dialog=document.createElement('dialog');dialog.id='ff82Delegation';dialog.dir='rtl';dialog.setAttribute('aria-labelledby','ff82Title');
 dialog.innerHTML='<div class="sectionbar"><h2 id="ff82Title">التفويض المتدرج للمحتوى</h2><button type="button" data-d-close>إغلاق</button></div><p>تفويض محدود بالنطاق ونوع التعديل والمدة؛ لا يمنح صلاحية تشغيلية أو نشر نهائي.</p>'+
@@ -19,7 +24,7 @@ dialog.innerHTML='<div class="sectionbar"><h2 id="ff82Title">التفويض ال
  '<section data-d-worker hidden><p data-d-scope></p><section data-d-text-section><label>العنصر<select data-d-key></select></label><label>الإصدارات<select data-d-history></select></label><p data-d-body></p>'+
  '<section data-d-preview hidden><h3>معاينة النص</h3><p data-d-original></p><p data-d-sample></p></section>'+
  '<section data-d-edit hidden><label>مسودة نص جديد<textarea data-d-text maxlength="180" rows="3"></textarea></label><p data-d-format-help hidden></p><button type="button" data-d-save>حفظ مسودة للمدير</button></section>'+
- '<section data-d-review hidden><label>ملاحظة المراجعة<textarea data-d-note maxlength="500" rows="3"></textarea></label><button type="button" data-d-send-review>رفع المراجعة إلى المدير</button></section></section><section data-d-design hidden><h3>مسودات التصميم المفوضة</h3><label>الجهاز<select data-d-device><option value="mobile">الجوال</option><option value="desktop">الكمبيوتر</option><option value="all">كل الأجهزة</option></select></label><label>الإصدار<select data-d-design-history></select></label><p data-d-design-info></p><p data-d-design-diff></p><section data-d-design-edit hidden><label>اسم المسودة<input data-d-design-name maxlength="80"></label><div data-d-style-fields></div><div data-d-element-fields></div><label><input type="checkbox" data-d-design-base> متابعة تعديل مسودة محددة أنشأتها ضمن التفويض الحالي</label><button type="button" data-d-design-save>حفظ مسودة التصميم للمدير</button></section><section data-d-design-preview hidden><h4>معاينة اصطناعية قبل / بعد</h4><div class="ff-a07-compare-grid"><div data-d-design-before></div><div data-d-design-after></div></div></section><section data-d-design-review hidden><label>ملاحظة مراجعة التصميم<textarea data-d-design-note maxlength="500"></textarea></label><button type="button" data-d-design-send>رفع المراجعة إلى المدير</button></section></section></section>'+
+ '<section data-d-review hidden><label>ملاحظة المراجعة<textarea data-d-note maxlength="500" rows="3"></textarea></label><button type="button" data-d-send-review>رفع المراجعة إلى المدير</button></section></section><section data-d-design hidden><h3>مسودات التصميم المفوضة</h3><label>الجهاز<select data-d-device><option value="mobile">الجوال</option><option value="desktop">الكمبيوتر</option><option value="all">كل الأجهزة</option></select></label><label>الإصدار<select data-d-design-history></select></label><p data-d-design-info></p><p data-d-design-diff></p><section data-d-design-edit hidden><label>اسم المسودة<input data-d-design-name maxlength="80"></label><div data-d-style-fields></div><div data-d-element-fields></div><div data-d-dashboard-fields></div><label><input type="checkbox" data-d-design-base> متابعة تعديل مسودة محددة أنشأتها ضمن التفويض الحالي</label><button type="button" data-d-design-save>حفظ مسودة التصميم للمدير</button></section><section data-d-design-preview hidden><h4>معاينة اصطناعية قبل / بعد</h4><div class="ff-a07-compare-grid"><div data-d-design-before></div><div data-d-design-after></div></div></section><section data-d-design-review hidden><label>ملاحظة مراجعة التصميم<textarea data-d-design-note maxlength="500"></textarea></label><button type="button" data-d-design-send>رفع المراجعة إلى المدير</button></section></section></section>'+
  '<p data-d-status role="status" aria-live="polite"></p>';
 document.body.append(dialog);
 const q=n=>dialog.querySelector('[data-d-'+n+']');
@@ -93,16 +98,16 @@ async function workerRefresh(token,who){
  const items=await rpc('ff82_delegate_catalog');if(!guard(token,who))return;catalog=items||[];options(q('key'),catalog.map(c=>[c.key,c.label]));await loadHistory(token,who)
 }
 button.onclick=()=>{if(!actor()||context!==key()||(!manager()&&(!grant||!enabled(grant.capabilities[0]))))return;session++;status('');q('manager').hidden=!manager();q('worker').hidden=manager();q('start').value=localDate(Date.now());q('end').value=localDate(Date.now()+3600000);dialog.showModal();void run(manager()?managerRefresh:workerRefresh)};
-q('grant').onclick=()=>void run(async(token,who)=>{if(!manager())return;const a=accounts[Number(q('account').value)],caps=Array.from(q('caps').querySelectorAll('input:checked'),x=>x.value),start=new Date(q('start').value),end=new Date(q('end').value);if(!q('account').value||!a||!caps.length||!Number.isFinite(+start)||!Number.isFinite(+end)||end<=start||end<=new Date()){status('تحقق من الحساب والصلاحيات ووقت البدء والانتهاء');return}if(!confirm('اعتماد التفويض لهذا الحساب وإلغاء تفويضه السابق؟'))return;const types=Array.from(q('kinds').querySelectorAll('input:checked'),x=>x.value);if(!types.length){status('حدد نوع التعديل');return}const args={p_recipient:a.user_id,p_branch:a.branch_id,p_screen:q('screen').value,p_capabilities:caps,p_start:start.toISOString(),p_end:end.toISOString()};const id=await rpc(types.length===1&&types[0]==='text'?'ff82_set_grant':'ff_a09_set_grant',types.length===1&&types[0]==='text'?args:{...args,p_kinds:types});if(guard(token,who)){await managerRefresh(token,who);status('تم اعتماد التفويض #'+id)}});
+q('grant').onclick=()=>void run(async(token,who)=>{if(!manager())return;const a=accounts[Number(q('account').value)],caps=Array.from(q('caps').querySelectorAll('input:checked'),x=>x.value),start=new Date(q('start').value),end=new Date(q('end').value);if(!q('account').value||!a||!caps.length||!Number.isFinite(+start)||!Number.isFinite(+end)||end<=start||end<=new Date()){status('تحقق من الحساب والصلاحيات ووقت البدء والانتهاء');return}if(!confirm('اعتماد التفويض لهذا الحساب وإلغاء تفويضه السابق؟'))return;const types=Array.from(q('kinds').querySelectorAll('input:checked'),x=>x.value);if(!types.length){status('حدد نوع التعديل');return}if(types.includes('cards')&&q('screen').value!=='dashboard'){status('تفويض البطاقات يقتصر على الرئيسية');return}const args={p_recipient:a.user_id,p_branch:a.branch_id,p_screen:q('screen').value,p_capabilities:caps,p_start:start.toISOString(),p_end:end.toISOString()};const id=await rpc(types.length===1&&types[0]==='text'?'ff82_set_grant':'ff_a09_set_grant',types.length===1&&types[0]==='text'?args:{...args,p_kinds:types});if(guard(token,who)){await managerRefresh(token,who);status(id==null?'رفض الخادم اعتماد التفويض':'تم اعتماد التفويض #'+id)}});
 q('revoke').onclick=()=>void run(async(token,who)=>{if(!manager()||!q('grants').value)return;if(!confirm('إلغاء التفويض المحدد؟'))return;const ok=await rpc('ff82_revoke_grant',{p_id:Number(q('grants').value)});if(guard(token,who)){await managerRefresh(token,who);status(ok?'أُلغي التفويض':'التفويض غير نشط')}});
 q('read-reviews').onclick=()=>void run(async(token,who)=>{if(!manager()||!q('revision').value)return;const rows=await rpc('ff82_manager_reviews',{p_revision:Number(q('revision').value)});if(guard(token,who))lines(q('reviews'),(rows||[]).map(x=>x.note+' · '+x.reviewer+' · '+new Date(x.created_at).toLocaleString('ar-YE')))});
 q('key').onchange=()=>{q('text').value='';q('note').value='';void run(loadHistory)};q('history').onchange=preview;q('text').oninput=preview;
 q('save').onclick=()=>void run(async(token,who)=>{if(!enabled('edit')){status('التفويض غير نشط');return}const result=await rpc('ff82_delegate_draft',{p_key:q('key').value,p_body:q('text').value});if(guard(token,who)){if(result?.ok){q('text').value='';await loadHistory(token,who);status('حُفظت المسودة #'+result.revision+'؛ النشر للمدير فقط')}else status('رفض الخادم التعديل: '+(result?.reason||'غير مصرح'))}});
 q('send-review').onclick=()=>void run(async(token,who)=>{if(!enabled('review')||!selection())return;const result=await rpc('ff82_delegate_review',{p_revision:Number(q('history').value),p_note:q('note').value});if(guard(token,who)){if(result?.ok)q('note').value='';status(result?.ok?'تم إرسال المراجعة':'رفض الخادم المراجعة')}});
-function clearDesign(){designHistory=[];designContext=null;elementPatch={};q('element-fields').replaceChildren();q('design-history').replaceChildren();q('style-fields').replaceChildren();for(const n of ['design-info','design-diff','design-before','design-after'])q(n).replaceChildren();for(const n of ['design-name','design-note'])q(n).value='';q('design-base').checked=false;q('design').hidden=true}
+function clearDesign(){designHistory=[];designContext=null;elementPatch={};cardPatch=undefined;actionPatch=undefined;panelPatch={};q('dashboard-fields').replaceChildren();q('element-fields').replaceChildren();q('design-history').replaceChildren();q('style-fields').replaceChildren();for(const n of ['design-info','design-diff','design-before','design-after'])q(n).replaceChildren();for(const n of ['design-name','design-note'])q(n).value='';q('design-base').checked=false;q('design').hidden=true}
 function invalidateDialog(){clearDesign();session++;busy=false;history=[];catalog=[];accounts=[];grants=[];for(const n of ['account','grants','key','history'])q(n).replaceChildren();for(const n of ['audit','reviews','body','scope','original','sample','status'])q(n).textContent='';for(const n of ['text','note','revision'])q(n).value='';controls();if(dialog.open)dialog.close()}
 function designSelected(){return designHistory.find(x=>String(x.id)===q('design-history').value)}
-function designPatch(){const patch=Object.fromEntries([...q('style-fields').querySelectorAll('select')].filter(n=>n.value).map(n=>[n.dataset.token,n.value]));if(Object.keys(elementPatch).length)patch.elements=JSON.parse(JSON.stringify(elementPatch));return patch}
+function designPatch(){const patch=Object.fromEntries([...q('style-fields').querySelectorAll('select')].filter(n=>n.value).map(n=>[n.dataset.token,n.value]));if(Object.keys(elementPatch).length)patch.elements=clone(elementPatch);if(cardPatch!==undefined)patch.cardLayout=clone(cardPatch);if(actionPatch!==undefined)patch.quickActions=clone(actionPatch);if(Object.keys(panelPatch).length)patch.dashboardPanels=clone(panelPatch);return patch}
 function designPreview(){
  const row=designSelected();q('design-info').textContent=row?'#'+row.id+' · '+(row.published_at?'منشور':'مسودة')+' · '+row.pack+' · '+row.draft_name:'لا يوجد إصدار مطابق — معاينة افتراضية';
  q('design-base').disabled=!row||!!row.published_at||row.actor_id!==actor();
@@ -112,12 +117,16 @@ function designPreview(){
  const api=window.ffA07Design,selectedBase=q('design-base').checked&&row&&!row.published_at&&row.actor_id===actor(),pack=(selectedBase?row.pack:designContext?.pack)||'D01',base={...(designContext?.style_config||{}),...(selectedBase?row.style_config:{})};
  base.elements={...(designContext?.style_config?.elements||{}),...(selectedBase?row.style_config?.elements||{}:{})};
  q('design-before').replaceChildren(api.demoCard(grant.screen,pack,base));
- const patch=designPatch(),inspect=!Object.keys(patch).length&&row&&!selectedBase;q('design-after').replaceChildren(api.demoCard(grant.screen,inspect?row.pack:pack,inspect?{...base,...row.style_config}:{...base,...patch,elements:{...base.elements,...patch.elements}}));
+ const patch=designPatch(),inspect=!Object.keys(patch).length&&row&&!selectedBase;
+ q('design-after').replaceChildren(api.demoCard(grant.screen,inspect?row.pack:(patch.designPack||pack),inspect?{...base,...row.style_config}:{...base,...patch,elements:{...base.elements,...patch.elements}}));
+ const summarize=(host,cards,actions,bar)=>{const p=document.createElement('p');p.textContent=(bar?'شريط التنقل: '+bar+' · ':'')+(Array.isArray(cards)?'البطاقات: '+cards.map(c=>c.label).join(' ← ')+' · ':'')+(Array.isArray(actions)?'الاختصارات: '+actions.map(c=>typeof c==='string'?c:c.label).join(' ← '):'');if(p.textContent)host.append(p)};
+ summarize(q('design-before'),selectedBase?row.card_layout:designContext?.card_layout,base.quickActions,selectedBase?row.bar:designContext?.bar);
+ summarize(q('design-after'),inspect?row.card_layout:(patch.cardLayout??(selectedBase?row.card_layout:designContext?.card_layout)),inspect?row.style_config?.quickActions:(patch.quickActions??base.quickActions),inspect?row.bar:(patch.designBar||(selectedBase?row.bar:designContext?.bar)));
 }
 function designFields(){
  q('style-fields').replaceChildren();
- for(const [kind,keys] of Object.entries(tokenKinds))if(hasKind(kind))for(const key of keys){
-  const [label,...choices]=window.ffA07Design.tokens[key],wrap=document.createElement('label'),sel=document.createElement('select');wrap.textContent=label;sel.dataset.token=key;sel.add(new Option('دون تغيير',''));for(const [k,v]of choices)sel.add(new Option(v,k));sel.onchange=designPreview;wrap.append(sel);q('style-fields').append(wrap);
+ for(const key of new Set(Object.entries(tokenKinds).filter(([kind])=>hasKind(kind)).flatMap(([,keys])=>keys))){
+  const [label,...choices]=extraTokens[key]||window.ffA07Design.tokens[key],wrap=document.createElement('label'),sel=document.createElement('select');wrap.textContent=label;sel.dataset.token=key;sel.add(new Option('دون تغيير',''));for(const [k,v]of choices)sel.add(new Option(v,k));sel.onchange=designPreview;wrap.append(sel);q('style-fields').append(wrap);
  }
 }
 async function loadDesignHistory(token,who,selected){
@@ -128,14 +137,15 @@ async function loadDesignHistory(token,who,selected){
 }
 q('device').onchange=()=>void run(loadDesignHistory);q('design-history').onchange=()=>{q('design-base').checked=false;resetElements();designPreview()};
 q('design-base').onchange=()=>{resetElements();designPreview()};
-function resetElements(){elementPatch={};renderElements()}
+function resetElements(){elementPatch={};cardPatch=undefined;actionPatch=undefined;panelPatch={};renderElements();renderDashboardFields()}
 function renderElements(){
- const host=q('element-fields');host.replaceChildren();if(!hasKind('buttons')&&!hasKind('layout'))return;
+ const host=q('element-fields');host.replaceChildren();if(!['buttons','layout','fonts','colors'].some(hasKind))return;
  const api=window.ffA07Elements,row=designSelected(),own=q('design-base').checked&&row&&!row.published_at&&row.actor_id===actor();
  const available=Object.keys(api.groups).filter(k=>api.groups[k].screen===grant.screen);
  for(const group of available){
   const details=document.createElement('details'),title=document.createElement('summary');title.textContent=api.labels[group];details.append(title);details.open=true;
-  const initial=(own?row.style_config?.elements?.[group]:null)||designContext?.style_config?.elements?.[group]||api.defaultRows(group);
+  const inherited=designContext?.style_config?.elements?.[group]||api.defaultRows(group),exact=own?row.style_config?.elements?.[group]:null;
+  const initial=exact?exact.map(e=>({...inherited.find(x=>x.key===e.key),...e})):inherited;
   const rows=elementPatch[group]||JSON.parse(JSON.stringify(initial));
   const modify=fn=>{const next=JSON.parse(JSON.stringify(rows));fn(next);elementPatch[group]=next;renderElements();designPreview()};
   rows.forEach((e,i)=>{
@@ -143,9 +153,43 @@ function renderElements(){
    if(hasKind('buttons'))for(const [key,choices,label]of [['shape',api.shapes,'الشكل'],['size',api.sizes,'الحجم']]){
     const wrap=document.createElement('label'),sel=document.createElement('select');wrap.textContent=label;sel.setAttribute('aria-label',label+' '+name.textContent);Object.entries(choices).forEach(([k,v])=>sel.add(new Option(v,k)));sel.value=e[key];sel.onchange=()=>modify(a=>a[i][key]=sel.value);wrap.append(sel);line.append(wrap);
    }
-   if(hasKind('layout'))for(const [label,d]of [['تقديم',-1],['تأخير',1]]){const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.disabled=i+d<0||i+d>=rows.length;btn.onclick=()=>{if(i+d>=0&&i+d<rows.length)modify(a=>a.splice(i+d,0,...a.splice(i,1)))};line.append(btn)}
+   const props={buttons:['icon','hover','press'],fonts:['font','weight','textScale'],colors:['border','shadow','tone'],layout:['font','weight','textScale','spacing','align','spaceBlock','outerGap','placement']};
+   for(const key of new Set(Object.entries(props).filter(([kind])=>hasKind(kind)).flatMap(([,keys])=>keys))){
+    if(!api.safeEffect(key,e.key))continue;
+    const wrap=document.createElement('label'),sel=document.createElement('select');wrap.textContent=api.propertyLabels[key];sel.setAttribute('aria-label',api.propertyLabels[key]+' '+name.textContent);sel.add(new Option('وراثة من التصميم',''));Object.entries(api.properties[key]).forEach(([k,v])=>sel.add(new Option(v,k)));sel.value=e[key]||'';sel.onchange=()=>modify(a=>{if(sel.value)a[i][key]=sel.value;else delete a[i][key]});wrap.append(sel);line.append(wrap);
+   }
+   if(hasKind('layout')&&!api.groups[group].styleOnly)for(const [label,d]of [['تقديم',-1],['تأخير',1]]){const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.disabled=i+d<0||i+d>=rows.length;btn.onclick=()=>{if(i+d>=0&&i+d<rows.length)modify(a=>{a.splice(i+d,0,...a.splice(i,1));for(const e of a)delete e.orderMode})};line.append(btn)}
    details.append(line);
   });host.append(details);
+ }
+}
+function renderDashboardFields(){
+ const host=q('dashboard-fields');host.replaceChildren();
+ if(grant?.screen!=='dashboard'||!enabled('edit'))return;
+ const selected=designSelected(),own=q('design-base').checked&&selected&&!selected.published_at&&selected.actor_id===actor(),base=own?{...designContext,...selected,card_layout:selected.card_layout??designContext?.card_layout,style_config:{...designContext?.style_config,...selected.style_config}}:designContext;
+ const allowed=()=>!busy&&enabled('edit')&&grant?.screen==='dashboard';
+ const make=(tag,txt)=>{const n=document.createElement(tag);if(txt!==undefined)n.textContent=txt;return n};
+ const group=label=>{const d=make('details');d.open=true;d.append(make('summary',label));host.append(d);return d};
+ const btn=(parent,label,fn)=>{const b=make('button',label);b.type='button';b.onclick=()=>{if(allowed()){fn();renderDashboardFields();designPreview()}};parent.append(b)};
+ const select=(parent,label,choices,value,fn)=>{const wrap=make('label',label),el=make('select');for(const [k,v] of Object.entries(choices))el.add(new Option(v,k));el.value=value;el.onchange=()=>{if(allowed()){fn(el.value);renderDashboardFields();designPreview()}};wrap.append(el);parent.append(wrap)};
+ const input=(parent,label,value,fn)=>{const wrap=make('label',label),el=make('input');el.maxLength=100;el.value=value;el.onchange=()=>{if(allowed()&&el.value.trim()){fn(el.value.trim());designPreview()}};wrap.append(el);parent.append(wrap)};
+ if(hasKind('cards')||hasKind('layout')){
+  const d=group('الأقسام الثانوية للرئيسية');
+  for(const [key,label] of Object.entries({activity:'الأنشطة الحديثة',shortcuts:'الإجراءات السريعة',branches:'حالة الفروع'}))select(d,label,{'':'دون تغيير','true':'إظهار','false':'إخفاء'},Object.hasOwn(panelPatch,key)?String(panelPatch[key]):'',v=>{if(v==='')delete panelPatch[key];else panelPatch[key]=v==='true'});
+ }
+ if(hasKind('cards')){
+  const d=group('بطاقات المؤشرات — بياناتها التشغيلية وصلاحياتها محفوظة'),defaults=()=>Object.entries(cardMetrics).map(([metric,label])=>({metric,label,size:'normal',tone:'default'})),rows=cardPatch??(Array.isArray(base?.card_layout)?clone(base.card_layout):defaults());
+  const change=fn=>{cardPatch=clone(cardPatch??rows);fn(cardPatch)};
+  btn(d,'إضافة بطاقة',()=>change(a=>a.push(defaults()[0])));btn(d,'استعادة البطاقات الأربع كمسودة',()=>{cardPatch=defaults()});
+  rows.forEach((row,i)=>{const box=make('div');box.className='ff-a07-element-row';box.append(make('strong','بطاقة '+(i+1)));select(box,'المؤشر',cardMetrics,row.metric,v=>change(a=>{a[i].metric=v;a[i].label=cardMetrics[v]}));input(box,'اسم البطاقة',row.label,v=>change(a=>a[i].label=v));select(box,'المقاس',sizes,row.size,v=>change(a=>a[i].size=v));select(box,'اللون',tones,row.tone,v=>change(a=>a[i].tone=v));select(box,'الأيقونة',{'':'افتراضية',...(window.ffA08Dashboard?.icons||{})},row.icon||'',v=>change(a=>{if(v)a[i].icon=v;else delete a[i].icon}));
+   if(i>0)btn(box,'تقديم',()=>change(a=>a.splice(i-1,0,...a.splice(i,1))));if(i<rows.length-1)btn(box,'تأخير',()=>change(a=>a.splice(i+1,0,...a.splice(i,1))));btn(box,'نسخ',()=>change(a=>a.splice(i+1,0,clone(a[i]))));btn(box,'حذف',()=>change(a=>a.splice(i,1)));d.append(box)});
+ }
+ if(hasKind('buttons')||hasKind('layout')){
+  const d=group('اختصارات مكتبة الإجراءات — لا تمنح صلاحيات تشغيلية'),lib=window.ffStep04ActionLibrary||[],byKey=new Map(lib.map(x=>[x.key,x])),standard=['new','orders','drivers','late','reports','assembly_admin','rewards','messages','driver','cashier','settings'],raw=actionPatch??(Array.isArray(base?.style_config?.quickActions)?base.style_config.quickActions:standard),rows=raw.map(x=>{const key=typeof x==='string'?x:x.key,b=byKey.get(key);return b?{key,label:x.label||b.label,icon:x.icon||b.icon,size:x.size||'normal',tone:x.tone||'default'}:null}).filter(Boolean);
+  const change=fn=>{actionPatch=clone(actionPatch??rows);fn(actionPatch)};
+  const available=Object.fromEntries(lib.filter(x=>!rows.some(r=>r.key===x.key)).map(x=>[x.key,x.label]));
+  select(d,'إضافة اختصار',{'':'اختر إجراءً',...available},'',v=>{if(byKey.has(v)){const x=byKey.get(v);change(a=>a.push({key:v,label:x.label,icon:x.icon,size:'normal',tone:'default'}))}});
+  rows.forEach((row,i)=>{const box=make('div');box.className='ff-a07-element-row';box.append(make('strong',byKey.get(row.key)?.label||row.key));input(box,'اسم الاختصار',row.label,v=>change(a=>a[i].label=v));select(box,'المقاس',sizes,row.size,v=>change(a=>a[i].size=v));select(box,'اللون',tones,row.tone,v=>change(a=>a[i].tone=v));if(i>0)btn(box,'تقديم',()=>change(a=>a.splice(i-1,0,...a.splice(i,1))));if(i<rows.length-1)btn(box,'تأخير',()=>change(a=>a.splice(i+1,0,...a.splice(i,1))));btn(box,'حذف',()=>change(a=>a.splice(i,1)));d.append(box)});
  }
 }
 q('design-save').onclick=()=>void run(async(token,who)=>{

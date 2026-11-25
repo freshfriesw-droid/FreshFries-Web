@@ -32,7 +32,7 @@ fixture="""async role=>{
    window.__a09Grant={id:901,recipient:args.p_recipient,role_scope:'cashier',branch_id:args.p_branch,screen:args.p_screen,capabilities:args.p_capabilities,edit_kinds:args.p_kinds,starts_at:args.p_start,ends_at:args.p_end};return 901;
   }
   if(name==='ff82_delegate_catalog')return [];
-  if(name==='ff_a09_design_context')return {pack:'D01',style_config:{accent:'red'},screen:'cashier'};
+  if(name==='ff_a09_design_context')return {pack:'D01',style_config:{accent:'red'},screen:window.__a09Grant?.screen||'cashier',bar:'labels'};
   if(name==='ff_a09_design_history')return window.__a09DesignRows||[];
   if(name==='ff_a09_design_draft'){
    const id=902+window.__a09DesignRows.length;window.__a09DesignRows.unshift({id,actor_id:user.id,role_scope:role,branch_id:'b1',screen_scope:'cashier',device:args.p_device,pack:'D01',draft_name:args.p_name,style_config:args.p_patch,published_at:null});return {ok:true,revision:id};
@@ -86,11 +86,11 @@ with sync_playwright() as pw:
  assert "لم يتغير أي إصدار أو تفويض" in dlg.locator("[data-d-audit]").inner_text()
  dlg.locator("[data-d-screen]").select_option("cashier")
  dlg.locator("[data-d-kinds] input[value=text]").uncheck()
- for k in ("colors","buttons","layout"):dlg.locator(f"[data-d-kinds] input[value={k}]").check()
+ for k in ("colors","buttons","layout","design","fonts","identity","media"):dlg.locator(f"[data-d-kinds] input[value={k}]").check()
  for k in ("edit","preview","review"):dlg.locator(f"[data-d-caps] input[value={k}]").check()
  dlg.locator("[data-d-grant]").click()
  page.wait_for_function("()=>window.__a09Grant?.id===901")
- assert page.evaluate("()=>window.__a09Grant.edit_kinds")==["colors","buttons","layout"]
+ assert page.evaluate("()=>window.__a09Grant.edit_kinds")==["colors","buttons","layout","design","fonts","identity","media"]
  page.screenshot(path=out/"manager-grant.png",animations="disabled")
  dlg.locator("[data-d-close]").click()
  page.evaluate("""async ()=>{user={id:'qa-cashier',email:'qa@example.invalid'};data.role='cashier';data.branches=[{id:'b1',name:'القاهرة'}];data.orders=[];await ffContentDelegation.sync(true)}""")
@@ -102,6 +102,13 @@ with sync_playwright() as pw:
  dlg.locator("[data-d-style-fields] select[data-token=accent]").select_option("navy")
  dlg.locator("[data-d-style-fields] select[data-token=button]").select_option("pill")
  dlg.locator("[data-d-style-fields] select[data-token=layout]").select_option("single")
+ dlg.locator("[data-d-style-fields] select[data-token=designPack]").select_option("D08")
+ dlg.locator("[data-d-style-fields] select[data-token=designBar]").select_option("icons")
+ dlg.locator("[data-d-style-fields] select[data-token=font]").select_option("tahoma")
+ dlg.locator("[data-d-style-fields] select[data-token=logoWidth]").select_option("40%")
+ dlg.locator("[data-d-style-fields] select[data-token=logoPosition]").select_option("cover")
+ dlg.locator("[data-d-style-fields] select[data-token=logoAsset]").select_option("mark")
+ dlg.locator("[data-d-style-fields] select[data-token=logoDarkAsset]").select_option("brand")
  dlg.locator("[data-d-element-fields] select").first.select_option("outline")
  dlg.locator("[data-d-design-name]").fill("مسودة اختبار")
  assert dlg.locator("[data-d-design-after] [data-ff-a07-pack]").count()>0
@@ -112,6 +119,7 @@ with sync_playwright() as pw:
  assert p["p_patch"]["accent"]=="navy" and p["p_patch"]["button"]=="pill" and p["p_patch"]["layout"]=="single"
  assert p["p_patch"]["elements"]["cashier_stage"][0]["shape"]=="outline"
  assert p["p_base"] is None
+ assert {k:p["p_patch"][k] for k in ["designPack","designBar","font","logoWidth","logoPosition","logoAsset","logoDarkAsset"]}=={"designPack":"D08","designBar":"icons","font":"tahoma","logoWidth":"40%","logoPosition":"cover","logoAsset":"mark","logoDarkAsset":"brand"}
  dlg.locator("[data-d-design-note]").fill("مراجعة اختبارية")
  dlg.locator("[data-d-design-send]").click()
  page.wait_for_function("()=>document.querySelector('[data-d-status]').textContent.includes('تم رفع مراجعة التصميم')")
@@ -124,6 +132,22 @@ with sync_playwright() as pw:
  dlg.wait_for(state="hidden")
  assert dlg.is_hidden() and page.locator("#ff82Open").is_hidden()
  assert dlg.locator("[data-d-design-history] option").count()==0
+ # A separate cards-only grant: forbidden unrelated controls, actual saved card payload.
+ page.evaluate("""async ()=>{window.__a09Grant={id:903,recipient:user.id,role_scope:'cashier',branch_id:'b1',screen:'dashboard',capabilities:['view','edit','preview'],edit_kinds:['cards'],starts_at:new Date(Date.now()-10000).toISOString(),ends_at:new Date(Date.now()+600000).toISOString()};window.__a09DesignRows=[];await ffContentDelegation.sync(true)}""")
+ page.locator("#ff82Open").click()
+ dlg.get_by_role("button",name="إضافة بطاقة",exact=True).wait_for()
+ assert dlg.locator("[data-d-style-fields] select").count()==0
+ assert dlg.locator("[data-d-design-review]").is_hidden()
+ assert dlg.locator("[data-d-text-section]").is_hidden()
+ dlg.get_by_role("button",name="إضافة بطاقة",exact=True).click()
+ dlg.locator("[data-d-design-name]").fill("مسودة البطاقات")
+ dlg.locator("[data-d-design-save]").click()
+ page.wait_for_function("()=>window.__a09DesignRows.length===1")
+ p=page.evaluate("()=>window.__a06Calls.filter(x=>x.name==='ff_a09_design_draft').at(-1).args")
+ assert len(p["p_patch"]["cardLayout"])==5
+ assert set(p["p_patch"])=={"cardLayout"}
+ page.evaluate("""()=>{window.__a09Grant=null;window.__a09GrantSignal()}""")
+ dlg.wait_for(state="hidden")
  print("PASS A09: labels, control identity, safe links, variables, report content, manager grant, delegated draft/review, 7 widths and revocation",flush=True)
  ctx.close();browser.close()
 server.shutdown()

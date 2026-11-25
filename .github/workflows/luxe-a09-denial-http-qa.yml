@@ -33,8 +33,11 @@ jobs:
           from hashlib import sha256
           from time import sleep
           root='https://delivery.freshfriesz.com/'
-          marker='20261125-a09-denial'
           relative='scripts/luxe-content-delegation.js'
+          import re
+          match=re.search(re.escape(relative)+r'\?v=([^"\']+)',Path('index.html').read_text())
+          assert match, 'Merged versioned asset reference missing'
+          marker=match.group(1)
           expected=Path(relative).read_bytes()
           def get(url):
               with urlopen(Request(root+url,headers={'Cache-Control':'no-cache','User-Agent':'FreshFries-LUXE-release-QA'}),timeout=15) as response:

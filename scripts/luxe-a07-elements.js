@@ -172,5 +172,5 @@ function preview(root,screen,v,select){
  }
 }
 function selectPreview(form,group,key){states.get(form)?.selectPreview(group,key)}
-window.ffA07Elements={editor,read,set,refresh,preview,selectPreview,visualTarget,setSources,sourceLabel,effectiveValue,groups,labels,itemLabels,shapes,sizes,properties,propertyLabels,toneAllowed,defaultRows};
+window.ffA07Elements={editor,read,set,refresh,preview,selectPreview,visualTarget,setSources,sourceLabel,effectiveValue,groups,labels,itemLabels,shapes,sizes,properties,propertyLabels,toneAllowed,safeEffect,defaultRows};
 })();

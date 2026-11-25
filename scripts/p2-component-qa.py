@@ -42,14 +42,17 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  current_html=current_html.replace('luxe-report-center-20261123.js?v=20261125-step06','luxe-report-center-20261123.js?v=20261125-a10')
  current_html=current_html.replace("function toast(s){$('toast').textContent=window.ffContentStudio?.decorateMessage(s)??s;","function toast(s){$('toast').textContent=s;")
  current_html=current_html.replace("toastEl.innerHTML=`${icon('bell')}<span>${h(window.ffContentStudio?.decorateMessage(message)??message)}</span>`;","toastEl.innerHTML=`${icon('bell')}<span>${h(message)}</span>`;")
- assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04, STEP05 and STEP06 audited hooks'
+ # STEP07: only delegation asset versions change in index; actual visual comparisons stay strict.
+ current_html=current_html.replace('./scripts/luxe-content-delegation.js?v=20261125-step07','./scripts/luxe-content-delegation.js?v=20261125-a09-denial')
+ current_html=current_html.replace('./scripts/luxe-a07-elements.js?v=20261125-step07','./scripts/luxe-a07-elements.js')
+ assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04–STEP07 audited hooks'
 else:
  assert current_html==baseline_html,'non-CSS application markup or script changed'
 changed={str(f.relative_to(base)) for f in list((base/'scripts').glob('*.js'))+list((base/'assets').glob('*.js')) if f.read_bytes()!=(root/f.relative_to(base)).read_bytes()}
 step03_scripts={'scripts/luxe-a07-elements.js','scripts/luxe-a07-design.js','scripts/luxe-dashboard-studio.js','scripts/luxe-content-studio.js'}
 if os.environ.get('P2_STEP04_REGRESSION')=='1':
  # No unrelated scripts changed; keep all visual/focus/pixel comparisons intact.
- assert changed==step03_scripts|{'scripts/luxe-a08-dashboard.js','scripts/luxe-shared-photo-menu-20261123.js','scripts/luxe-report-center-20261123.js'},changed
+ assert changed==step03_scripts|{'scripts/luxe-a08-dashboard.js','scripts/luxe-shared-photo-menu-20261123.js','scripts/luxe-report-center-20261123.js','scripts/luxe-content-delegation.js'},changed
 elif os.environ.get('P2_STEP03_REGRESSION')=='1':
  assert changed==step03_scripts,changed
 else:
