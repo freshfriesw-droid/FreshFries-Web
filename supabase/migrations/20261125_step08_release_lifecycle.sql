@@ -308,6 +308,6 @@ CREATE OR REPLACE FUNCTION public.ff_ui_trial_accounts(p_id bigint)
  SET search_path TO ''
 AS $function$
  select p.account_id,p.account_name from public.ff_ui_versions v cross join lateral ff_private.step08_targets(v.role_scope,v.branch_id) p
- where exists(select from public.ff_profiles m where m.user_id=auth.uid() and m.active and m.role='manager')
+ where v.id=p_id and exists(select from public.ff_profiles m where m.user_id=auth.uid() and m.active and m.role='manager')
  and v.screen_scope NOT IN ('login','customer_portal') and v.published_at is null order by p.account_name,p.account_id
 $function$;
