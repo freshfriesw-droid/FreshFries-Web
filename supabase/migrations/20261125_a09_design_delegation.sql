@@ -133,7 +133,7 @@ BEGIN
  SELECT * INTO g FROM public.ff82_my_grant();
  SELECT * INTO v FROM public.ff_ui_versions WHERE id=p_revision;
  IF g.id IS NULL OR NOT('review'=ANY(g.capabilities)) OR NOT(g.edit_kinds && ARRAY['colors','buttons','layout']::text[]) OR v.id IS NULL OR v.published_at IS NOT NULL OR v.screen_scope<>g.screen OR v.role_scope<>g.role_scope OR v.branch_id IS DISTINCT FROM g.branch_id THEN why:='outside_review_scope';
- ELSIF p_note IS NULL OR length(btrim(p_note)) NOT BETWEEN 1 AND 500 OR p_note ~ '[<>{}[:cntrl:]]' OR p_note ~* '(https?://|www\\.|javascript:|data:|vbscript:|//)' OR translate(p_note,U&'\\061C\\200E\\200F\\202A\\202B\\202C\\202D\\202E\\2066\\2067\\2068\\2069','')<>p_note THEN why:='invalid_note';END IF;
+ ELSIF p_note IS NULL OR length(btrim(p_note)) NOT BETWEEN 1 AND 500 OR NOT public.ff83_valid_content('orders.guidance',p_note) THEN why:='invalid_note';END IF;
  INSERT INTO public.ff82_content_audit(actor_id,grant_id,action,outcome,reason,design_revision) VALUES(auth.uid(),g.id,'design_review',CASE WHEN why IS NULL THEN 'allowed' ELSE 'denied' END,coalesce(why,btrim(p_note)),CASE WHEN why IS NULL THEN v.id END);
  RETURN jsonb_build_object('ok',why IS NULL,'reason',why);
 END $$;
