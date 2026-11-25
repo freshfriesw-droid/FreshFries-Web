@@ -77,7 +77,7 @@ with sync_playwright() as pw:
   if role in ("driver","cashier","customer_service"):
    key={"driver":"attendance","cashier":"cashier","customer_service":"new"}[role]
    page.locator('#ffx-mobile-nav button[data-key="'+key+'"]').click()
-  signatures=set()
+  signatures=set();noncolor_signatures=set()
   if role in ('cashier','driver'):
    holder='#cashierOrders' if role=='cashier' else '#driverTasks'
    status_probe=page.locator(holder).evaluate('e=>{const n=document.createElement("article");n.className="item ff-luxe-cancelled";n.id="a07-status-probe";e.append(n);return getComputedStyle(n).borderTopColor}')
@@ -91,8 +91,12 @@ with sync_playwright() as pw:
     assert result["pack"]==pack,(role,width,pack,result)
     assert not result["overflow"],(role,width,pack,"page overflow")
     signatures.add(result["signature"]);results.append({"role":role,"width":width,"pack":pack})
+    if width==1440:
+     noncolor=page.locator(selector).evaluate("""e=>{const s=getComputedStyle(e);return ['radius','gap','cols','pad','font','shadow','scale','border','button-radius'].map(k=>s.getPropertyValue('--a07-'+k).trim()).join('|')}""")
+     noncolor_signatures.add(noncolor)
     if i in (1,16) and width in (390,1440):page.screenshot(path=out/f"{role}-{width}-{pack}.png",animations="disabled")
   assert len(signatures)==16,(role,"distinct packs",len(signatures))
+  assert len(noncolor_signatures)==16,(role,"non-color design distinction",len(noncolor_signatures))
   if role in ("cashier","driver"):
    assert page.locator("#a07-status-probe").evaluate("n=>getComputedStyle(n).borderTopColor")==status_probe
   if alternate: page.set_viewport_size({"width":390,"height":850})
