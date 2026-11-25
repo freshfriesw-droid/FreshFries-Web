@@ -20,7 +20,7 @@ fixture="""async role=>{
  selfPermissions={create_order:['manager','customer_service'].includes(role),view_reports:['manager','supervisor','customer_service'].includes(role),edit_order:true,assign_driver:true};
  const orders=[{id:'qa-order',number:123,branch_id:b.id,area:'منطقة تجريبية',status:'sent',phase:'assigned',cashier_stage:'waiting',driver_name:'موصل تجريبي',created_at:new Date().toISOString(),items:[]}];
  window.__a06Calls=[];window.__a09Grant=null;window.__a09DesignRows=[];window.__a09Content=[];
- client={channel:()=>{const ch={on:()=>ch,subscribe:()=>ch};return ch},removeChannel:async()=>true};
+ client={channel:()=>{const ch={on:(event,cfg,fn)=>{if(cfg?.table==='ff_a09_grant_events')window.__a09GrantSignal=fn;return ch},subscribe:()=>ch};return ch},removeChannel:async()=>true};
  rpc=async(name,args={})=>{
   window.__a06Calls.push({name,args});
   if(name==='ff_content_effective')return window.__a09Content||[];
@@ -116,7 +116,8 @@ with sync_playwright() as pw:
   page.set_viewport_size({"width":width,"height":850})
   assert dlg.evaluate("e=>e.scrollWidth<=e.clientWidth+2"),width
   if width in (390,1440):page.screenshot(path=out/f"delegated-editor-{width}.png",animations="disabled")
- page.evaluate("""async ()=>{window.__a09Grant=null;await ffContentDelegation.sync(true)}""")
+ page.evaluate("""()=>{window.__a09Grant=null;window.__a09GrantSignal()}""")
+ dlg.wait_for(state="hidden")
  assert dlg.is_hidden() and page.locator("#ff82Open").is_hidden()
  assert dlg.locator("[data-d-design-history] option").count()==0
  print("PASS A09: labels, control identity, safe links, variables, report content, manager grant, delegated draft/review, 7 widths and revocation",flush=True)
