@@ -1,0 +1,35 @@
+BEGIN;
+DO $qa$
+DECLARE b uuid:=gen_random_uuid(); c uuid:=gen_random_uuid(); m uuid:=gen_random_uuid(); d1 uuid:=gen_random_uuid(); d2 uuid:=gen_random_uuid(); o1 uuid:=gen_random_uuid(); o2 uuid:=gen_random_uuid(); t1 uuid:=gen_random_uuid(); t2 uuid:=gen_random_uuid(); desk1 text:='qa-'||gen_random_uuid();desk2 text:='qa-'||gen_random_uuid(); v jsonb;checks int:=0;
+BEGIN
+ INSERT INTO public.ff_branches(id,code,name) VALUES(b,'qa-finance-'||b,'QA finance branch');
+ INSERT INTO auth.users(id) VALUES(c),(m);
+ INSERT INTO public.ff_profiles(user_id,display_name,role,active) VALUES(c,'QA STEP12 cashier','cashier',true),(m,'QA STEP12 manager','manager',true);
+ INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(c,b);
+ INSERT INTO public.ff38_staff_permission_overrides(user_id,permission_key,allowed,updated_by) VALUES(c,'assign_driver',true,m);
+ INSERT INTO public.ff_drivers(id,name,branch_id) VALUES(d1,'QA driver one',b),(d2,'QA driver two',b);
+ INSERT INTO public.ff38_driver_presence(driver_id,state,checked_in_at,last_seen_at) VALUES(d1,'busy',now(),now()),(d2,'busy',now(),now()) ON CONFLICT(driver_id) DO UPDATE SET state=excluded.state,checked_in_at=excluded.checked_in_at,last_seen_at=excluded.last_seen_at;
+ INSERT INTO public.ff_orders(id,order_number,branch_id,phone_snapshot,business_date,driver_id,status) VALUES(o1,-(1+floor(random()*1e12)::bigint),b,'000000000',public.ff_business_date(now()),d1,'sent'),(o2,-(1+floor(random()*1e12)::bigint),b,'000000000',public.ff_business_date(now()),d2,'sent');
+ INSERT INTO public.ff38_delivery_tasks(order_id,driver_id) VALUES(o1,d1),(o2,d2);
+ INSERT INTO public.ff_luxe_cashier_desks(code,label,branch_id,sort_order) VALUES(desk1,'QA desk 1',b,1),(desk2,'QA desk 2',b,2);
+ INSERT INTO public.ff_luxe_cashier_staff_desks(user_id,desk_code,assigned_by) VALUES(c,desk1,m);
+ INSERT INTO public.ff_luxe_cashier_order_desks(order_id,desk_code) VALUES(o1,desk1),(o2,desk2);
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);
+ INSERT INTO public.ff49_driver_transfers(id,order_id,original_driver_id,new_driver_id,reason,requested_by) VALUES(t1,o1,d1,d2,'QA transfer one',m),(t2,o2,d2,d1,'QA transfer two',m);
+ PERFORM set_config('request.jwt.claim.sub',c::text,true);SET LOCAL ROLE authenticated;
+ IF public.ff38_order_financial_summary(o1)->>'order_id' IS DISTINCT FROM o1::text THEN RAISE EXCEPTION 'Own financial scope broken';END IF;checks:=checks+1;
+ BEGIN PERFORM public.ff38_order_financial_summary(o2);RAISE EXCEPTION 'Foreign financial summary allowed' USING ERRCODE='ZQA12';EXCEPTION WHEN SQLSTATE '42501' THEN NULL;END;checks:=checks+1;
+ v:=public.ff49_visible_transfers();
+ IF NOT EXISTS(SELECT FROM jsonb_array_elements(v) x WHERE x->>'id'=t1::text) OR EXISTS(SELECT FROM jsonb_array_elements(v) x WHERE x->>'id'=t2::text) THEN RAISE EXCEPTION 'Desk transfer list scope';END IF;checks:=checks+1;
+ BEGIN PERFORM public.ff49_cashier_confirm_transfer(t2,'QA');RAISE EXCEPTION 'Foreign confirm accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN SQLSTATE '42501' THEN NULL;END;checks:=checks+1;
+ BEGIN PERFORM public.ff49_request_driver_transfer(o2,d1,'QA valid reason');RAISE EXCEPTION 'Foreign request accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN SQLSTATE '42501' THEN NULL;END;checks:=checks+1;
+ BEGIN PERFORM public.ff52_reassign_before_pos(o2,d1,'QA valid reason');RAISE EXCEPTION 'Foreign reassignment accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN SQLSTATE '42501' THEN NULL;END;checks:=checks+1;
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);
+ IF public.ff38_order_financial_summary(o2)->>'order_id' IS DISTINCT FROM o2::text THEN RAISE EXCEPTION 'Manager financial broken';END IF;checks:=checks+1;
+ v:=public.ff49_visible_transfers();IF NOT EXISTS(SELECT FROM jsonb_array_elements(v) x WHERE x->>'id'=t1::text) OR NOT EXISTS(SELECT FROM jsonb_array_elements(v) x WHERE x->>'id'=t2::text) THEN RAISE EXCEPTION 'Manager transfer list broken';END IF;checks:=checks+1;
+ RESET ROLE;
+ IF (SELECT status FROM public.ff49_driver_transfers WHERE id=t2)<>'pending_cashier' OR (SELECT driver_id FROM public.ff_orders WHERE id=o2)<>d2 THEN RAISE EXCEPTION 'Denied operation changed data';END IF;checks:=checks+1;
+ IF checks<>9 THEN RAISE EXCEPTION 'Incomplete desk assertions';END IF;
+END $qa$;
+SELECT 'PASS STEP12 desk finance/transfer: 9 authorization and preservation checks' result;
+ROLLBACK;

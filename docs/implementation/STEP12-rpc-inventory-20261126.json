@@ -250,7 +250,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "899e76ce05728194be575702c251651b"
+      "definition_md5": "74d49a0195300a997e7fb7c8f33fca27",
+      "scope_test": "20261125225737: cashier desk authorization and preservation, 9 rollback checks plus 33 regressions"
     },
     {
       "name": "ff38_permission_allowed",
@@ -549,7 +550,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "346590743451e21e1fc2f9992ef9a4b4"
+      "definition_md5": "26a8b279a2cd65255d38ad4118930e88",
+      "scope_test": "20261125225737: cashier desk authorization and preservation, 9 rollback checks plus 33 regressions"
     },
     {
       "name": "ff49_cashier_invoice",
@@ -603,7 +605,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d70b475304dbf162a4d9ff6527796984"
+      "definition_md5": "9d292f949b7613cc378ee988511e2f08",
+      "scope_test": "20261125225737: cashier desk authorization and preservation, 9 rollback checks plus 33 regressions"
     },
     {
       "name": "ff49_reservation_transition",
@@ -639,7 +642,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "3b9db46b0eb73d06080c53748913bfe9"
+      "definition_md5": "f0748cd218c7344c11b07d20daadbdda",
+      "scope_test": "20261125225737: cashier desk authorization and preservation, 9 rollback checks plus 33 regressions"
     },
     {
       "name": "ff50_change_cashier_confirm_pos",
@@ -864,7 +868,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "91383238a698de92149fd4546a7ea38b"
+      "definition_md5": "a96c95229fe31323b0927faff47cbdf2",
+      "scope_test": "20261125225737: cashier desk authorization and preservation, 9 rollback checks plus 33 regressions"
     },
     {
       "name": "ff52_regular_addition_cancel",
@@ -2445,5 +2450,5 @@
       "definition_md5": "e36ad6176fc8e89141933210b87fd9c8"
     }
   ],
-  "last_update": "2026-11-26: completed supervisor scope"
+  "last_update": "2026-11-26: legacy finance and transfer desk scope"
 }
