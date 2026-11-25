@@ -126,7 +126,7 @@ with sync_playwright() as pw:
    assert "1111" not in page.locator("#ffA08Activity").inner_text()
    page.evaluate("()=>window.ffDashboardStudio.open()")
    studio=page.locator("#ffStudio")
-   studio.locator("#ffCardEditor summary").click()
+   studio.locator("#ffCardEditor > summary").click()
    studio.locator("[data-card-add]").click()
    rows=studio.locator(".ff-card-edit-row")
    assert rows.count()==5
