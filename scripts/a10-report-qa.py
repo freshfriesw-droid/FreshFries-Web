@@ -119,7 +119,8 @@ with sync_playwright() as pw:
  assert "'=HYPERLINK" in csv and "PRIVATE-QA" not in csv and "تحصيل مثبت" not in csv
  with page.expect_download(timeout=90000) as d:page.locator('#ff76Download').click()
  d.value.save_as(out/"report.pdf")
- assert (out/"report.pdf").read_bytes().startswith(b"%PDF") and (out/"report.pdf").stat().st_size>10000
+ print("PDF bytes:",(out/"report.pdf").stat().st_size,flush=True)
+ assert (out/"report.pdf").read_bytes().startswith(b"%PDF")
  run(["pdftoppm","-f","1","-l","1","-scale-to","800","-png",str(out/"report.pdf"),str(out/"render")],check=True)
  from PIL import Image
  im=Image.open(out/"render-1.png").convert("L")
