@@ -219,3 +219,28 @@
 #ff60-panel:is([data-ff-a07-pack],[data-ff-a07-element-scope]) .ff60-actions button[data-ff60-action][data-ff-a07-el-text-scale="large"]{font-size:1.125em!important}
 #ff60-panel:is([data-ff-a07-pack],[data-ff-a07-element-scope]) .ff60-actions button[data-ff60-action][data-ff-a07-el-space-block="normal"]:not([type="checkbox"]):not([type="radio"]):not([type="range"]){padding-block:8px!important}
 #ff60-panel:is([data-ff-a07-pack],[data-ff-a07-element-scope]) .ff60-actions button[data-ff60-action][data-ff-a07-el-space-block="wide"]:not([type="checkbox"]):not([type="radio"]):not([type="range"]){padding-block:12px!important}
+
+/* STEP03: explicit visual values on legacy controls and status badges. Preserve semantic colors and focus indication. */
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-shape="square"]{border-radius:0!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-shape="round"]{border-radius:var(--ff-p2-radius-lg,16px)!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-shape="pill"]{border-radius:999px!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-size="large"]{font-size:1.1em!important;padding:14px!important;min-height:var(--ff-p2-touch-lg,48px)}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-el-weight="normal"]{font-weight:400!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-el-weight="strong"]{font-weight:700!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-el-spacing="normal"]{padding-inline:12px!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-el-spacing="wide"]{padding-inline:18px!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-el-border="thin"]{border-style:solid!important;border-width:1px!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-el-border="strong"]{border-style:solid!important;border-width:3px!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-el-text-scale="normal"]{font-size:1em!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-el-text-scale="large"]{font-size:1.125em!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-el-space-block="normal"]:not([type="checkbox"]):not([type="radio"]):not([type="range"]){padding-block:8px!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-el-space-block="wide"]:not([type="checkbox"]):not([type="radio"]):not([type="range"]){padding-block:12px!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-el-outer-gap="normal"]{margin-block:4px!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) :is(#fflCashierFinishedToggle,#ffx-menu,.ff-cashier-status,.ff-assembly-stage)[data-ff-a07-el-outer-gap="wide"]{margin-block:8px!important}
+/* The later operational-polish stylesheet uses #cashierOrders>.item .ff-cashier-status. */
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) #cashierOrders>.item .ff-cashier-status[data-ff-a07-el-weight="normal"]{font-weight:400!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) #cashierOrders>.item .ff-cashier-status[data-ff-a07-el-weight="strong"]{font-weight:700!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) #cashierOrders>.item .ff-cashier-status[data-ff-a07-el-border="thin"]{border-style:solid!important;border-width:1px!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) #cashierOrders>.item .ff-cashier-status[data-ff-a07-el-border="strong"]{border-style:solid!important;border-width:3px!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) #cashierOrders>.item .ff-cashier-status[data-ff-a07-el-text-scale="normal"]{font-size:1em!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) #cashierOrders>.item .ff-cashier-status[data-ff-a07-el-text-scale="large"]{font-size:1.125em!important}
