@@ -12,7 +12,7 @@ const selectors={
  dashboard:'#ffx-dashboard',orders:'#serviceOnly,#staffOrders',cashier:'#cashierView,#ffBurgerCashierPanel',driver:'#driverView',
  assembly:'#ffV12AssemblyWorkspace',burger_kitchen:'#ffBurgerKitchenWorkspace',
  catalog:'#ff51CatalogPanel',customers:'#ff51CustomersPanel',reports:'#ff76Center',staff:'#staffAdminCard',
- archive:'#ff51ArchivePanel',ratings:'#ff51RatingsPanel',cases:'#ff41Panel,#ff41Dialog,#ff47Cases',messages:'#ff39Panel,#ff39Dialog',
+ archive:'#ff51ArchivePanel',ratings:'#ff51RatingsPanel',cases:'#ff41Panel,#ff41Dialog',messages:'#ff39Panel,#ff39Dialog',
  reservations:'#ff49ReservationsPanel',system:'#ff48DiagnosticsPanel,#ff47QAPanel,#ff46ReadinessPanel,#ff44IntegrityPanel,#ff43SecurityPanel,#ff62DataCenter'
 };
 const tokens={
@@ -82,6 +82,7 @@ function refresh(){
  }
  for(const old of owned)if(!seen.has(old)){resetNode(old);delete old.dataset.ffA07Signature;delete old.dataset.ffA07Screen}
  owned=seen;
+ window.ffA07Elements?.refresh(seen,current);
  for(const img of document.querySelectorAll('img[src$="/ff-official-logo.png"],img[src$="/ff-icon-192.png"]'))imageFallback(img);
 }
 function apply(rows){current=cfgOf(rows);refresh()}
@@ -98,10 +99,11 @@ function selectFields(form){
  form.querySelector('#ffCardEditor').before(section);
  const wrap=document.createElement('label');wrap.textContent='الشاشة';const sel=document.createElement('select');sel.name='screen';for(const [k,v]of Object.entries(screens))sel.add(new Option(v,k,k==='dashboard',k==='dashboard'));
  wrap.append(sel);form.querySelector('.ff-studio-fields').prepend(wrap);
+ window.ffA07Elements?.editor(form,form.querySelector('#ffCardEditor'));
  return sel;
 }
-function readStyle(form){return Object.fromEntries(Object.keys(tokens).map(k=>[k,form.elements.namedItem('a07_'+k)?.value]).filter(([k,v])=>tokens[k].slice(1).some(o=>o[0]===v)))}
-function setStyle(form,v){for(const [k,[,...options]] of Object.entries(tokens)){const input=form.elements.namedItem('a07_'+k);if(input)input.value=options.some(x=>x[0]===v?.[k])?v[k]:options[0][0]}}
+function readStyle(form){const v=Object.fromEntries(Object.keys(tokens).map(k=>[k,form.elements.namedItem('a07_'+k)?.value]).filter(([k,v])=>tokens[k].slice(1).some(o=>o[0]===v)));const elements=window.ffA07Elements?.read(form);if(elements&&Object.keys(elements).length)v.elements=elements;return v}
+function setStyle(form,v){for(const [k,[,...options]] of Object.entries(tokens)){const input=form.elements.namedItem('a07_'+k);if(input)input.value=options.some(x=>x[0]===v?.[k])?v[k]:options[0][0]}window.ffA07Elements?.set(form,v?.elements)}
 const demo={
  dashboard:['نظرة عامة','الطلبات اليومية','مؤشرات الفروع','إجراءات سريعة'],
  orders:['طلب جديد','1 تشكن فرايز — ملاحظة تجريبية','معاينة قبل الحفظ','حفظ الطلب'],
@@ -136,6 +138,7 @@ function demoCard(screen,pack,style,compact=false){
   cards.append(card);
  }
  root.append(cards);
+ if(!compact)window.ffA07Elements?.preview(root,screen,style?.elements);
  if(!compact){const danger=document.createElement('span');danger.className='ff-a07-demo-danger';danger.textContent='إلغاء — معاينة فقط';root.append(danger)}
  return root;
 }
