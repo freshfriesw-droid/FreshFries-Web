@@ -149,11 +149,12 @@ CREATE TABLE public.ff_user_branches(user_id uuid,branch_id uuid);
 INSERT INTO public.ff_branches VALUES('{BRANCH}',true);
 INSERT INTO public.ff_user_branches VALUES('{WORKER}','{BRANCH}');
 UPDATE public.ff82_content_grants SET role_scope='cashier',branch_id='{BRANCH}',
- screen='cashier',capabilities=ARRAY['view','edit'],edit_kinds=ARRAY['fonts'],
+ screen='cashier',capabilities=ARRAY['view','edit'],edit_kinds=ARRAY['layout'],
  starts_at=clock_timestamp()-interval '1 minute',ends_at=clock_timestamp()+interval '10 minutes',revoked_at=NULL WHERE id=10;
 """ + (ROOT/"supabase/ff87-delegation-window.sql").read_text()
     + (ROOT/"supabase/migrations/20261125_step07_delegation_scope.sql").read_text()
     + """
+UPDATE public.ff82_content_grants SET edit_kinds=ARRAY['fonts'] WHERE id=10;
 REVOKE ALL ON FUNCTION public.ff82_my_grant(),public.ff_a09_design_draft(text,jsonb,text,bigint) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.ff82_my_grant(),public.ff_a09_design_draft(text,jsonb,text,bigint) TO authenticated;
 NOTIFY pgrst,'reload schema';
