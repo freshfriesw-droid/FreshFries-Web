@@ -139,12 +139,13 @@ q('device').onchange=()=>void run(loadDesignHistory);q('design-history').onchang
 q('design-base').onchange=()=>{resetElements();designPreview()};
 function resetElements(){elementPatch={};cardPatch=undefined;actionPatch=undefined;panelPatch={};renderElements();renderDashboardFields()}
 function renderElements(){
- const host=q('element-fields');host.replaceChildren();if(!hasKind('buttons')&&!hasKind('layout'))return;
+ const host=q('element-fields');host.replaceChildren();if(!['buttons','layout','fonts','colors'].some(hasKind))return;
  const api=window.ffA07Elements,row=designSelected(),own=q('design-base').checked&&row&&!row.published_at&&row.actor_id===actor();
  const available=Object.keys(api.groups).filter(k=>api.groups[k].screen===grant.screen);
  for(const group of available){
   const details=document.createElement('details'),title=document.createElement('summary');title.textContent=api.labels[group];details.append(title);details.open=true;
-  const initial=(own?row.style_config?.elements?.[group]:null)||designContext?.style_config?.elements?.[group]||api.defaultRows(group);
+  const inherited=designContext?.style_config?.elements?.[group]||api.defaultRows(group),exact=own?row.style_config?.elements?.[group]:null;
+  const initial=exact?exact.map(e=>({...inherited.find(x=>x.key===e.key),...e})):inherited;
   const rows=elementPatch[group]||JSON.parse(JSON.stringify(initial));
   const modify=fn=>{const next=JSON.parse(JSON.stringify(rows));fn(next);elementPatch[group]=next;renderElements();designPreview()};
   rows.forEach((e,i)=>{
@@ -152,7 +153,12 @@ function renderElements(){
    if(hasKind('buttons'))for(const [key,choices,label]of [['shape',api.shapes,'الشكل'],['size',api.sizes,'الحجم']]){
     const wrap=document.createElement('label'),sel=document.createElement('select');wrap.textContent=label;sel.setAttribute('aria-label',label+' '+name.textContent);Object.entries(choices).forEach(([k,v])=>sel.add(new Option(v,k)));sel.value=e[key];sel.onchange=()=>modify(a=>a[i][key]=sel.value);wrap.append(sel);line.append(wrap);
    }
-   if(hasKind('layout'))for(const [label,d]of [['تقديم',-1],['تأخير',1]]){const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.disabled=i+d<0||i+d>=rows.length;btn.onclick=()=>{if(i+d>=0&&i+d<rows.length)modify(a=>a.splice(i+d,0,...a.splice(i,1)))};line.append(btn)}
+   const props={buttons:['icon','hover','press'],fonts:['font','weight','textScale'],colors:['border','shadow','tone'],layout:['font','weight','textScale','spacing','align','spaceBlock','outerGap','placement']};
+   for(const key of new Set(Object.entries(props).filter(([kind])=>hasKind(kind)).flatMap(([,keys])=>keys))){
+    if(!api.safeEffect(key,e.key))continue;
+    const wrap=document.createElement('label'),sel=document.createElement('select');wrap.textContent=api.propertyLabels[key];sel.setAttribute('aria-label',api.propertyLabels[key]+' '+name.textContent);sel.add(new Option('وراثة من التصميم',''));Object.entries(api.properties[key]).forEach(([k,v])=>sel.add(new Option(v,k)));sel.value=e[key]||'';sel.onchange=()=>modify(a=>{if(sel.value)a[i][key]=sel.value;else delete a[i][key]});wrap.append(sel);line.append(wrap);
+   }
+   if(hasKind('layout')&&!api.groups[group].styleOnly)for(const [label,d]of [['تقديم',-1],['تأخير',1]]){const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.disabled=i+d<0||i+d>=rows.length;btn.onclick=()=>{if(i+d>=0&&i+d<rows.length)modify(a=>{a.splice(i+d,0,...a.splice(i,1));for(const e of a)delete e.orderMode})};line.append(btn)}
    details.append(line);
   });host.append(details);
  }
