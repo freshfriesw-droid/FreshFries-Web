@@ -277,7 +277,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f3b79b5fc77ef7e4eb21f662b05c2876"
+      "definition_md5": "af903f101584a53872da42059c22d405",
+      "scope_test": "STEP12 20261125223206: scoped supervisor, central roles, branch reassignment and inactive account; rollback PASS 9"
     },
     {
       "name": "ff38_sweep_offers",
@@ -2439,5 +2440,6 @@
       "config": "search_path=\"\"",
       "definition_md5": "e36ad6176fc8e89141933210b87fd9c8"
     }
-  ]
+  ],
+  "last_update": "2026-11-26: legacy snapshot scope migration"
 }
