@@ -1,0 +1,47 @@
+DO $qa$
+DECLARE m uuid:=gen_random_uuid();s uuid:=gen_random_uuid();a uuid:=gen_random_uuid();c uuid:=gen_random_uuid();x uuid:=gen_random_uuid();k uuid:=gen_random_uuid();b uuid:=gen_random_uuid();b2 uuid:=gen_random_uuid();msg uuid;msg2 uuid;g uuid;r jsonb;checks integer:=0;blocked boolean;
+BEGIN
+ BEGIN
+ INSERT INTO public.ff_branches(id,code,name) VALUES(b,'qa-a11-'||b,'A11 QA one'),(b2,'qa-a11-'||b2,'A11 QA two');
+ INSERT INTO auth.users(id) VALUES(m),(s),(a),(c),(x),(k);
+ INSERT INTO public.ff_profiles(user_id,display_name,role,active) VALUES(m,'A11 QA manager','manager',true),(s,'A11 QA supervisor','supervisor',true),(a,'A11 QA inactive','cashier',false),(c,'A11 QA cashier','cashier',true),(x,'A11 QA foreign','cashier',true),(k,'A11 QA kitchen','burger_kitchen',true) ON CONFLICT(user_id) DO UPDATE SET role=excluded.role,active=excluded.active;
+ INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(s,b),(a,b),(c,b),(x,b2),(k,b);
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);SET LOCAL ROLE authenticated;
+ r:=public.ff_a11_message_preview('cashier',b,'urgent',NULL);
+ IF r->>'count'<>'1' OR r#>>'{people,0,user_id}'<>c::text THEN RAISE EXCEPTION 'audience %',r;END IF;checks:=checks+1;
+ IF public.ff_a11_message_preview('burger_kitchen',b,'information',NULL)->>'count'<>'1' THEN RAISE EXCEPTION 'burger audience';END IF;checks:=checks+1;
+ IF public.ff_a11_message_preview('cashier',b,'information',ARRAY[c,x])->>'ok'<>'false' THEN RAISE EXCEPTION 'foreign person accepted';END IF;checks:=checks+1;
+ IF public.ff_a11_message_send('QA','message','cashier',b,'urgent',NULL,ARRAY[x],false,NULL)->>'ok'<>'false' THEN RAISE EXCEPTION 'stale audience';END IF;checks:=checks+1;
+ IF public.ff_a11_message_send('QA','message','cashier',b,'urgent',NULL,ARRAY[c],false,'javascript:alert(1)')->>'ok'<>'false' THEN RAISE EXCEPTION 'unsafe route';END IF;checks:=checks+1;
+ IF public.ff_a11_message_send('QA',' ','cashier',b,'urgent',NULL,ARRAY[c],false,NULL)->>'ok'<>'false' THEN RAISE EXCEPTION 'empty body';END IF;checks:=checks+1;
+ r:=public.ff_a11_message_send('QA','message','cashier',b,'urgent',NULL,ARRAY[c],true,'messages');
+ IF r->>'ok'<>'true' THEN RAISE EXCEPTION 'send %',r;END IF;msg:=(r->>'message_id')::uuid;checks:=checks+1;
+ r:=public.ff_a11_message_grant(s,'cashier',b,'operational',now()+interval '1 hour');IF r->>'ok'<>'true' THEN RAISE EXCEPTION 'grant %',r;END IF;g:=(r->>'id')::uuid;checks:=checks+1;
+ RESET ROLE;
+ IF (SELECT count(*) FROM public.ff39_message_recipients WHERE message_id=msg)<>1 OR NOT EXISTS(SELECT FROM public.ff39_message_recipients WHERE message_id=msg AND user_id=c) THEN RAISE EXCEPTION 'recipient row';END IF;checks:=checks+1;
+ PERFORM set_config('request.jwt.claim.sub',x::text,true);SET LOCAL ROLE authenticated;
+ IF EXISTS(SELECT FROM public.ff39_message_recipients WHERE message_id=msg) OR EXISTS(SELECT FROM jsonb_array_elements(public.ff39_inbox()->'items') i WHERE i->>'id'=msg::text) THEN RAISE EXCEPTION 'foreign recipient RLS';END IF;checks:=checks+1;
+ IF public.ff_a11_message_send('QA','bad','cashier',b,'information',NULL,ARRAY[c],false,NULL)->>'ok'<>'false' THEN RAISE EXCEPTION 'ungranted send';END IF;checks:=checks+1;
+ IF public.ff_a11_message_grant(x,'all',NULL,'urgent',now()+interval '1 hour')->>'ok'<>'false' THEN RAISE EXCEPTION 'self grant';END IF;checks:=checks+1;
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',s::text,true);SET LOCAL ROLE authenticated;
+ IF public.ff_a11_message_preview('cashier',b,'operational',NULL)->>'count'<>'1' OR public.ff_a11_message_preview('cashier',b,'urgent',NULL)->>'ok'<>'false' OR public.ff_a11_message_preview('cashier',NULL,'information',NULL)->>'ok'<>'false' OR public.ff_a11_message_preview('cashier',b2,'information',NULL)->>'ok'<>'false' OR public.ff_a11_message_preview('all',b,'information',NULL)->>'ok'<>'false' THEN RAISE EXCEPTION 'grant scope';END IF;checks:=checks+1;
+ r:=public.ff_a11_message_send('QA','delegated','cashier',b,'operational',ARRAY[c],ARRAY[c],false,NULL);IF r->>'ok'<>'true' THEN RAISE EXCEPTION 'delegated send %',r;END IF;msg2:=(r->>'message_id')::uuid;checks:=checks+1;
+ IF EXISTS(SELECT FROM jsonb_array_elements(public.ff_a11_message_history()) i WHERE i->>'id'=msg::text) THEN RAISE EXCEPTION 'foreign sent history';END IF;checks:=checks+1;
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',c::text,true);SET LOCAL ROLE authenticated;
+ IF NOT EXISTS(SELECT FROM public.ff39_message_recipients WHERE message_id=msg) OR NOT EXISTS(SELECT FROM jsonb_array_elements(public.ff39_inbox()->'items') i WHERE i->>'id'=msg::text AND i->>'priority'='urgent') THEN RAISE EXCEPTION 'own recipient RLS or offline inbox';END IF;checks:=checks+1;
+ PERFORM public.ff39_mark_read(msg,true);checks:=checks+1;
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',m::text,true);SET LOCAL ROLE authenticated;
+ IF NOT EXISTS(SELECT FROM jsonb_array_elements(public.ff_a11_message_history()) i WHERE i->>'id'=msg::text AND i->>'read_count'='1' AND i->>'ack_count'='1') THEN RAISE EXCEPTION 'read history';END IF;checks:=checks+1;
+ IF public.ff_a11_message_state(msg,'cancel')->>'ok'<>'false' OR public.ff_a11_message_state(msg,'archive')->>'ok'<>'true' OR public.ff_a11_message_state(msg2,'cancel')->>'ok'<>'true' THEN RAISE EXCEPTION 'state transitions';END IF;checks:=checks+1;
+ IF public.ff_a11_message_revoke(g)->>'ok'<>'true' THEN RAISE EXCEPTION 'revoke';END IF;checks:=checks+1;
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',s::text,true);SET LOCAL ROLE authenticated;
+ IF public.ff_a11_message_access()->>'can_send'<>'false' OR public.ff_a11_message_send('QA','bad','cashier',b,'information',NULL,ARRAY[c],false,NULL)->>'ok'<>'false' THEN RAISE EXCEPTION 'revocation';END IF;checks:=checks+1;
+ RESET ROLE;PERFORM set_config('request.jwt.claim.sub',c::text,true);SET LOCAL ROLE authenticated;
+ IF EXISTS(SELECT FROM jsonb_array_elements(public.ff39_inbox()->'items') i WHERE i->>'id'=msg2::text) THEN RAISE EXCEPTION 'cancelled inbox';END IF;checks:=checks+1;
+ RESET ROLE;
+ IF NOT EXISTS(SELECT FROM public.ff_a11_message_audit WHERE actor_id=x AND event='denied_send') OR NOT EXISTS(SELECT FROM public.ff_a11_message_audit WHERE actor_id=s AND event='denied_send') THEN RAISE EXCEPTION 'durable denied audit';END IF;checks:=checks+1;
+ IF has_function_privilege('anon','public.ff_a11_message_send(text,text,text,uuid,text,uuid[],uuid[],boolean,text)','EXECUTE') OR has_table_privilege('authenticated','public.ff39_messages','SELECT') OR has_table_privilege('authenticated','public.ff_a11_message_grants','INSERT') THEN RAISE EXCEPTION 'direct access';END IF;checks:=checks+1;
+ RAISE EXCEPTION 'QA rollback' USING ERRCODE='ZQA11';
+ EXCEPTION WHEN SQLSTATE 'ZQA11' THEN NULL;END;
+ IF checks<>24 OR EXISTS(SELECT FROM public.ff_branches WHERE id IN(b,b2)) THEN RAISE EXCEPTION 'incomplete QA %',checks;END IF;
+END $qa$;
