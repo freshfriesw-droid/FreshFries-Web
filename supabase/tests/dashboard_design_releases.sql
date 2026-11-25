@@ -14,7 +14,7 @@ begin
  perform set_config('request.jwt.claim.sub',d::text,true);
  if not exists(select from public.ff_ui_effective(null,'mobile') where id=a) or exists(select from public.ff_ui_effective(null,'desktop') where id=a) then raise exception 'Wrong device';end if;
  if exists(select from public.ff_ui_manager_history()) then raise exception 'Unauthorized history';end if;
- begin perform public.ff_ui_publish(b);raise exception 'Unauthorized publish';exception when raise_exception then if sqlerrm='Unauthorized publish' then raise;end if;end;
+ begin perform public.ff_ui_publish(b);raise exception 'Unauthorized publish';exception when SQLSTATE '42501' then null;end;
  perform set_config('request.jwt.claim.sub',m::text,true);
  c:=public.ff_ui_save_draft('driver',null,'mobile','D07','اختبار ٢','icons');perform public.ff_ui_publish(c);
  restored:=public.ff_ui_save_draft(null,null,null,null,null,null,a);perform public.ff_ui_publish(restored);
