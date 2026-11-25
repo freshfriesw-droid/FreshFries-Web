@@ -48,7 +48,7 @@ Object.assign(targets,{
 });
 const navKeys=['home','new','orders','late','drivers','driver','cashier','reservations','transfer','routes','messages','cases','offers','attendance','burger','cashier_finished','reports','archive','ratings','catalog','customers','changes','team','assembly_admin','applications','application_alerts','branch_policy','staff_link','studio','data_center','security','integrity','access','readiness','qa','diagnostics'];
 for(const key of navKeys)targets['nav.'+key]='#ffx-nav button[data-key="'+key+'"] > span:first-of-type,#ffx-mobile-nav button[data-key="'+key+'"] > span:first-of-type,#ffx-shortcuts button[data-a08-action="'+key+'"] > span:first-of-type';
-const extraText=new Set(['reports.pdf_title','reports.pdf_note','orders.success','notices.new_order']);
+const extraText=new Set(['reports.pdf_title','reports.pdf_note','orders.success','orders.error','notices.new_order']);
 const hintTargets={"orders.hint.phone":"#newPhone","orders.hint.area":"#newArea","orders.hint.fee":"#newFee","orders.hint.notes":"#newNotes","orders.hint.menu":"#ffbMenuSearch","orders.hint.search":"#orderSearch"};
 const hintOriginals=new WeakMap();
 const templates=new Set(['notices.delayed','notices.reminder','notices.order_summary']);
@@ -107,6 +107,7 @@ const labelFor=k=>catalog.find(x=>x.key===k);
 const selected=()=>history.find(x=>String(x.id)===q('history').value);
 function originalText(key,role=data?.role){return key==='dashboard.title'?(originalTitles[role]||(role==='all'?'العنوان الأصلي بحسب الدور':'مساحة العمل الذكية')):(labelFor(key)?.original||'');}
 function write(key,value){for(const node of document.querySelectorAll(targets[key]))writeNode(key,node,value)}
+const preserveState=new Set(['driver.break','assembly.open','burger_kitchen.finished']);
 function writeNode(key,node,value){
  if(value!=null&&!validText(value,key))value=null;
  if(key==='dashboard.title'){
@@ -130,7 +131,7 @@ function writeNode(key,node,value){
  for(let i=0;i<saved.length;i++){
   const item=saved[i],text=item[0];
   if(item[2]!==null&&text.data!==item[2])item[1]=text.data;
-  const next=i===0?' '+value:'';
+  const next=i===0?(preserveState.has(key)?item[1]+' — '+value:' '+value):preserveState.has(key)?item[1]:'';
   if(text.data!==next)text.data=next;
   item[2]=next;
  }
@@ -292,6 +293,14 @@ function notice(key,fallback,number,orderBranch){
  }
  return substitute(body,vars);
 }
-window.ffContentStudio={sync,open,notice,text:currentText};
+async function reportText(reportBranch){
+ const who=actor(),role=currentRole();if(!who)return {};
+ try{
+  const rows=await rpc('ff_content_effective',{p_branch:reportBranch||null});
+  if(actor()!==who||currentRole()!==role)return {};
+  return Object.fromEntries((rows||[]).filter(r=>['reports.pdf_title','reports.pdf_note'].includes(r.content_key)&&typeof r.body==='string'&&validText(r.body,r.content_key)).map(r=>[r.content_key,r.body]));
+ }catch{return {}}
+}
+window.ffContentStudio={sync,open,notice,text:currentText,reportText};
 setInterval(()=>{if(actor())void sync()},3000);
 })();
