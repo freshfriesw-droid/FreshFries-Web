@@ -1,0 +1,42 @@
+name: A11 Communications QA
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths: ['scripts/luxe-a11-communications.js','index.html','.github/workflows/luxe-a11-communications-qa.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright
+      - run: python scripts/a11-communications-qa.py
+  production:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          python - <<'PY'
+          import urllib.request,time
+          from pathlib import Path
+          base='https://delivery.freshfriesz.com/'
+          path='scripts/luxe-a11-communications.js'
+          for i in range(20):
+              try:
+                  marker='20261125-a11'
+                  assert marker in urllib.request.urlopen(base+'?a11='+str(i),timeout=20).read().decode()
+                  assert urllib.request.urlopen(base+path+'?v='+marker+'&check='+str(i),timeout=20).read()==Path(path).read_bytes()
+                  print('PASS live production exact A11 script bytes and index marker')
+                  break
+              except Exception as e:
+                  print(i,e,flush=True);time.sleep(12)
+          else: raise SystemExit('Production A11 not verified')
+          PY
