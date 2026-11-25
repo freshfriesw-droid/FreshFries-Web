@@ -114,13 +114,17 @@ with sync_playwright() as pw:
    dlg.locator("select[name=screen]").select_option("driver")
    dlg.locator("select[name=role]").select_option("driver")
    dlg.locator("#ffA07Elements > summary").click()
+   dlg.locator("[data-a07-after] [data-step03-preview=clockInBtn]").first.click()
+   assert dlg.locator("[data-a07-group]").input_value()=="driver_actions"
+   assert dlg.locator(".ff-a07-element-row[data-element-key=clockInBtn] details").get_attribute("open") is not None
    dlg.locator("[data-a07-group]").select_option("driver_actions")
    first=dlg.locator(".ff-a07-element-row").first
    assert first.get_attribute("data-element-key")=="ff51BreakBtn"
    first.get_by_role("button",name="تأخير").click()
    assert dlg.locator(".ff-a07-element-row").first.get_attribute("data-element-key")=="clockInBtn"
    dlg.locator(".ff-a07-element-row").first.locator("select").first.select_option("pill")
-   dlg.locator(".ff-a07-element-row").first.locator("summary").click()
+   first_props=dlg.locator(".ff-a07-element-row").first.locator("details")
+   if first_props.get_attribute("open") is None: first_props.locator("summary").click()
    dlg.locator(".ff-a07-element-row").first.locator('[data-step03-property=weight]').select_option("strong")
    assert dlg.locator("[data-a07-after] [data-ff-a07-el-weight=strong]").count()>=1
    dlg.locator("[data-a07-undo]").click()

@@ -122,7 +122,7 @@ const demo={
  reservations:['الحجوزات','حجز تجريبي','استلام لاحق','مراجعة'],
  system:['أمان النظام','فحص تجريبي','لا تغييرات فعلية','عرض الفحص']
 };
-function demoCard(screen,pack,style,compact=false){
+function demoCard(screen,pack,style,compact=false,select=null){
  const row=demo[screen]||demo.dashboard;
  const root=document.createElement('section');root.className='ff-a07-demo';root.dataset.ffA07Screen=screen;
  decorate(root,{pack,style_config:style,id:'preview'});
@@ -138,7 +138,7 @@ function demoCard(screen,pack,style,compact=false){
   cards.append(card);
  }
  root.append(cards);
- if(!compact)window.ffA07Elements?.preview(root,screen,style?.elements);
+ if(!compact)window.ffA07Elements?.preview(root,screen,style?.elements,select);
  if(!compact){const danger=document.createElement('span');danger.className='ff-a07-demo-danger';danger.textContent='إلغاء — معاينة فقط';root.append(danger)}
  return root;
 }
@@ -161,7 +161,7 @@ function gallery(form,packs){
   grid.replaceChildren();
   packs.forEach(({code,name})=>{const button=document.createElement('button');button.type='button';button.className='ff-a07-gallery-choice';button.setAttribute('aria-pressed',String(code===pack));button.setAttribute('aria-label',name);const label=document.createElement('b');label.textContent=code+' · '+name;button.append(label,demoCard(previewScreen,code,{},true));button.onclick=()=>{form.elements.pack.value=code;form.elements.pack.dispatchEvent(new Event('change',{bubbles:true}))};grid.append(button)});
   for(const [selector,chosen,config]of [['[data-a07-before]',select.value,{}],['[data-a07-after]',pack,style]]){
-   const parent=compare.querySelector(selector);parent.replaceChildren();const holder=document.createElement('div');holder.className='ff-a07-preview-holder';holder.style.width=width+'px';holder.append(demoCard(previewScreen,chosen,config));parent.append(holder);
+   const parent=compare.querySelector(selector);parent.replaceChildren();const holder=document.createElement('div');holder.className='ff-a07-preview-holder';holder.style.width=width+'px';holder.append(demoCard(previewScreen,chosen,config,false,selector==='[data-a07-after]'?(group,key)=>window.ffA07Elements?.selectPreview(form,group,key):null));parent.append(holder);
   }
  }
  details.addEventListener('toggle',redraw);select.addEventListener('change',redraw);return redraw;

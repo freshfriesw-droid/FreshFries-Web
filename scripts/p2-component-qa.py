@@ -22,7 +22,7 @@ if os.environ.get('P2_STEP03_REGRESSION')=='1':
  # The exact two editor scripts are intentionally changed by STEP03. All
  # other scripts must remain byte-identical, and ALL 147 visual/focus/pixel
  # comparisons below still run unchanged on the updated application.
- assert changed=={'scripts/luxe-a07-elements.js','scripts/luxe-dashboard-studio.js'},changed
+ assert changed=={'scripts/luxe-a07-elements.js','scripts/luxe-a07-design.js','scripts/luxe-dashboard-studio.js'},changed
 else:
  assert not changed,changed
 assert len(report['removed'])>=25
