@@ -90,6 +90,14 @@ with sync_playwright() as pw:
    expected_actions=(["orders","settings","new"] if role in ("manager","customer_service") else ["orders","settings"] if role=="supervisor" else ["settings"])
    assert actual==expected_actions,(role,actual)
    assert page.evaluate("document.documentElement.scrollWidth<=innerWidth+1"),(role,width,"overflow")
+   page.evaluate("""async ()=>{window.__a07Rows.dashboard.style_config.quickActions=[{key:'settings',label:'إعداد مخصص',icon:'star',size:'full',tone:'red'},{key:'settings',label:'نسخة إعداد',icon:'clock',size:'normal',tone:'neutral'},'studio','new'];await ffDashboardStudio.sync(true)}""")
+   action_nodes=page.locator("#ffx-shortcuts [data-a08-action]")
+   assert action_nodes.evaluate_all("els=>els.map(e=>e.dataset.a08Action)")==(["settings","settings","studio","new"] if role=="manager" else ["settings","settings","new"] if role=="customer_service" else ["settings","settings"])
+   assert action_nodes.first.inner_text()=="إعداد مخصص"
+   assert action_nodes.first.get_attribute("data-a08-size")=="full" and action_nodes.first.get_attribute("data-a08-tone")=="red"
+   assert action_nodes.first.evaluate("e=>getComputedStyle(e).backgroundColor")=="rgb(173, 23, 38)"
+   assert page.evaluate("document.documentElement.scrollWidth<=innerWidth+1"),(role,width,"STEP04 overflow")
+   page.evaluate("""async ()=>{window.__a07Rows.dashboard.style_config.quickActions=['orders','settings','new'];await ffDashboardStudio.sync(true)}""")
    results.append({"role":role,"width":width,"cards":expected,"actions":actual})
    if width in (390,1440):page.screenshot(path=out/f"{role}-{width}.png",animations="disabled")
   if role=="customer_service":
@@ -141,6 +149,38 @@ with sync_playwright() as pw:
    studio.locator("[data-a08-custom-actions]").check()
    studio.locator("[data-a08-actions] select").select_option("reservations")
    assert studio.locator("[data-a08-preview]").inner_text().find("الحجوزات")>=0
+
+   # STEP04: real navigation library, structured copies, history and drag.
+   library=page.evaluate("()=>window.ffStep04ActionLibrary.map(x=>x.key)")
+   assert len(library)==40 and len(set(library))==40
+   assert {"catalog","archive","ratings","settlements","team","branch_policy","studio","refresh"}<=set(library)
+   editor=studio.locator("#ffA08Panels")
+   editor.get_by_role("combobox",name="إجراء سريع من المكتبة").select_option("archive")
+   action_rows=editor.locator(".ff-a08-action-row")
+   count=action_rows.count()
+   action_rows.last.get_by_role("button",name="نسخ",exact=True).click()
+   assert action_rows.count()==count+1
+   action_rows.last.locator("input").fill("أرشيف مخصص")
+   action_rows.last.locator("input").press("Tab")
+   action_rows.last.get_by_role("combobox",name=f"أيقونة الاختصار {count+1}").select_option("star")
+   action_rows.last.get_by_role("combobox",name=f"مقاس الاختصار {count+1}").select_option("full")
+   action_rows.last.get_by_role("combobox",name=f"لون الاختصار {count+1}").select_option("red")
+   editor.locator("[data-a08-undo]").click()
+   assert action_rows.last.locator("select").last.input_value()=="default"
+   editor.locator("[data-a08-redo]").click()
+   assert action_rows.last.locator("select").last.input_value()=="red"
+   action_rows.last.get_by_role("button",name="تقديم",exact=True).click()
+   assert action_rows.nth(count-1).locator("input").input_value()=="أرشيف مخصص"
+   page.evaluate("""()=>{const rows=document.querySelectorAll('#ffA08Panels .ff-a08-action-row');const dt=new DataTransfer();dt.setData('application/x-ff-step04-index',String(rows.length-2));rows[0].dispatchEvent(new DragEvent('drop',{bubbles:true,dataTransfer:dt}))}""")
+   assert action_rows.first.locator("input").input_value()=="أرشيف مخصص"
+   action_rows.last.get_by_role("button",name="حذف",exact=True).click()
+   editor.locator("[data-a08-undo]").click()
+   assert action_rows.count()==count+1
+   assert editor.locator("[data-a08-action-preview]").get_by_text("أرشيف مخصص",exact=True).count()==1
+   # Restore old test's expected legacy array before its existing submission.
+   editor.locator("[data-a08-custom-actions]").uncheck()
+   editor.locator("[data-a08-custom-actions]").check()
+   editor.get_by_role("combobox",name="إجراء سريع من المكتبة").select_option("reservations")
    studio.locator("input[name=draftName]").fill("مسودة بطاقات اختبار")
    studio.locator("button[type=submit]").click()
    page.wait_for_function("()=>window.__a06Calls.some(c=>c.name==='ff_a07_named_design')")

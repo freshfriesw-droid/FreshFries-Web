@@ -91,9 +91,11 @@
  const sizes={normal:'عادي',wide:'عريض',full:'عرض كامل'},tones={default:'افتراضي',red:'أحمر',black:'أسود',neutral:'محايد'};
  const defaults=()=>Object.entries(metricNames).map(([metric,label])=>({metric,label,size:'normal',tone:'default'}));
  let cards=defaults(),undoCards=[],redoCards=[],editorActor='';
- const copyCards=items=>items.map(x=>({...x}));
- function rememberCards(){undoCards.push(copyCards(cards));redoCards=[]}
- function changeCards(action){if(busy||!manager())return;inherit.checked=false;rememberCards();action();renderCardEditor();}
+ const copyCards=items=>JSON.parse(JSON.stringify(items));
+ const cardSnapshot=()=>({cards:copyCards(cards),inherit:inherit.checked});
+ const restoreCardSnapshot=s=>{cards=s.cards;inherit.checked=s.inherit;renderCardEditor()};
+ function rememberCards(){undoCards.push(cardSnapshot());redoCards=[]}
+ function changeCards(action){if(busy||!manager())return;rememberCards();inherit.checked=false;action();renderCardEditor();}
  function renderCardPreview(){
   const preview=dlg.querySelector('[data-card-preview]');preview.replaceChildren();
   const width=Number(field('viewport').value)||390;preview.style.setProperty('--ff-card-columns',width<430?'2':width<768?'3':'4');
@@ -113,13 +115,13 @@
    row.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',String(i));e.dataTransfer.effectAllowed='move'});
    row.addEventListener('dragover',e=>e.preventDefault());
    row.addEventListener('drop',e=>{e.preventDefault();const raw=e.dataTransfer.getData('text/plain'),from=Number(raw);if(/^\d+$/.test(raw)&&Number.isInteger(from)&&from>=0&&from<cards.length&&from!==i)changeCards(()=>cards.splice(i,0,...cards.splice(from,1)))});
-   const input=document.createElement('input');input.maxLength=100;input.required=true;input.value=card.label;input.setAttribute('aria-label','عنوان البطاقة '+(i+1));input.addEventListener('change',()=>{if(busy||!manager())return;inherit.checked=false;rememberCards();card.label=input.value.trim();renderCardPreview();dlg.querySelector('[data-card-undo]').disabled=false;dlg.querySelector('[data-card-redo]').disabled=true});input.addEventListener('input',()=>{const box=dlg.querySelector('[data-card-preview] [data-card-index="'+i+'"] b');if(box)box.textContent=input.value});
+   const input=document.createElement('input');input.maxLength=100;input.required=true;input.value=card.label;input.setAttribute('aria-label','عنوان البطاقة '+(i+1));input.addEventListener('change',()=>{if(busy||!manager())return;rememberCards();inherit.checked=false;card.label=input.value.trim();renderCardPreview();dlg.querySelector('[data-card-undo]').disabled=false;dlg.querySelector('[data-card-redo]').disabled=true});input.addEventListener('input',()=>{const box=dlg.querySelector('[data-card-preview] [data-card-index="'+i+'"] b');if(box)box.textContent=input.value});
    row.append(input);
    for(const [key,options] of Object.entries({metric:metricNames,size:sizes,tone:tones})){
     const select=document.createElement('select');select.setAttribute('aria-label',({metric:'مصدر المؤشر',size:'مقاس البطاقة',tone:'لون البطاقة'})[key]+' '+(i+1));select.replaceChildren(...Object.entries(options).map(([k,label])=>new Option(label,k)));select.value=card[key];select.onchange=()=>changeCards(()=>{card[key]=select.value;if(key==='metric')card.label=metricNames[select.value]});row.append(select);
    }
    const actions=document.createElement('div');actions.className='actions';
-   for(const [label,disabled,action] of [['تقديم',i===0,()=>cards.splice(i-1,0,...cards.splice(i,1))],['تأخير',i===cards.length-1,()=>cards.splice(i+1,0,...cards.splice(i,1))],['نسخ',false,()=>cards.splice(i+1,0,{...card})],['حذف',false,()=>cards.splice(i,1)]]){
+   for(const [label,disabled,action] of [['تقديم',i===0,()=>cards.splice(i-1,0,...cards.splice(i,1))],['تأخير',i===cards.length-1,()=>cards.splice(i+1,0,...cards.splice(i,1))],['نسخ',false,()=>cards.splice(i+1,0,...copyCards([card]))],['حذف',false,()=>cards.splice(i,1)]]){
     const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.disabled=disabled;btn.onclick=()=>changeCards(action);actions.append(btn);
    }
    const access=a08.cardFields(card,i,changeCards);access.open=!!expanded[i];row.append(access);row.append(actions);list.append(row);
@@ -128,12 +130,12 @@
   renderCardPreview();
  }
  function resetCards(layout,inheritLayout=false){inherit.checked=inheritLayout;cards=Array.isArray(layout)?copyCards(layout):defaults();undoCards=[];redoCards=[];renderCardEditor()}
- inherit.onchange=renderCardPreview;
+ inherit.onchange=()=>{if(busy||!manager())return;undoCards.push({cards:copyCards(cards),inherit:!inherit.checked});redoCards=[];renderCardEditor()};
  dlg.querySelector('[data-card-add]').onclick=()=>changeCards(()=>cards.push(defaults()[0]));
  dlg.querySelector('[data-card-default]').onclick=()=>changeCards(()=>{cards=defaults()});
- dlg.querySelector('[data-card-undo]').onclick=()=>{if(!busy&&manager()&&undoCards.length){redoCards.push(copyCards(cards));cards=undoCards.pop();renderCardEditor()}};
+ dlg.querySelector('[data-card-undo]').onclick=()=>{if(!busy&&manager()&&undoCards.length){redoCards.push(cardSnapshot());restoreCardSnapshot(undoCards.pop())}};
 
- dlg.querySelector('[data-card-redo]').onclick=()=>{if(!busy&&manager()&&redoCards.length){undoCards.push(copyCards(cards));cards=redoCards.pop();renderCardEditor()}};
+ dlg.querySelector('[data-card-redo]').onclick=()=>{if(!busy&&manager()&&redoCards.length){undoCards.push(cardSnapshot());restoreCardSnapshot(redoCards.pop())}};
  const revisionLabel=document.createElement('small');
  caption.after(revisionLabel);
  function apply(version,cardLayout=null,barVersion=version){
@@ -250,7 +252,7 @@
   const properties=[
    ['اسم المسودة',row=>row.draft_name||'—'],['وصف التعديل',row=>row.draft_description||'—'],['الشاشة',row=>screenLabel(row.screen_scope)],['الدور',row=>roles[row.role_scope]],['الفرع',row=>branch(row.branch_id)],
    ['الجهاز',row=>row.device],['الحزمة',row=>row.pack],['شريط الجوال',row=>row.bar],
-   ['وصف الواجهة',row=>row.layout_text||original],['خصائص المظهر',row=>Object.entries(row.style_config||{}).sort().map(([k,v])=>(appearance.tokens[k]?.[0]||(k==='elements'?'ترتيب العناصر وأشكالها':k))+': '+(k==='elements'?JSON.stringify(v):appearance.tokens[k]?.slice(1).find(x=>x[0]===v)?.[1]||v)).join('\n')||'حسب الحزمة'],['عدد البطاقات',row=>row.card_layout==null?'وراثة / الافتراضي':String(row.card_layout.length)],['ترتيب البطاقات ومصادرها وأحجامها وألوانها',row=>(row.card_layout??defaults()).map((card,i)=>(i+1)+'. '+card.label+' ['+(metricNames[card.metric]||card.metric)+' · '+(sizes[card.size]||card.size)+' · '+(tones[card.tone]||card.tone)+' · '+(card.roles?.join('/')||'كل الأدوار')+' · '+(card.permission||'الصلاحيات الأصلية')+' · '+(card.icon||'أيقونة المؤشر')+']').join('\n')||'لا توجد بطاقات']
+   ['وصف الواجهة',row=>row.layout_text||original],['خصائص المظهر',row=>Object.entries(row.style_config||{}).sort().map(([k,v])=>(appearance.tokens[k]?.[0]||(k==='elements'?'ترتيب العناصر وأشكالها':k))+': '+(typeof v==='object'?JSON.stringify(v):appearance.tokens[k]?.slice(1).find(x=>x[0]===v)?.[1]||v)).join('\n')||'حسب الحزمة'],['عدد البطاقات',row=>row.card_layout==null?'وراثة / الافتراضي':String(row.card_layout.length)],['ترتيب البطاقات ومصادرها وأحجامها وألوانها',row=>(row.card_layout??defaults()).map((card,i)=>(i+1)+'. '+card.label+' ['+(metricNames[card.metric]||card.metric)+' · '+(sizes[card.size]||card.size)+' · '+(tones[card.tone]||card.tone)+' · '+(card.roles?.join('/')||'كل الأدوار')+' · '+(card.permission||'الصلاحيات الأصلية')+' · '+(card.icon||'أيقونة المؤشر')+']').join('\n')||'لا توجد بطاقات']
   ];
   for(const [label,value] of properties){
    if(value(left)===value(right))continue;
@@ -265,6 +267,7 @@
  function buttons(){const row=records.find(r=>String(r.id)===field('version').value);
   for(const b of form.querySelectorAll('button:not([data-close])'))b.disabled=busy;
   for(const el of form.querySelectorAll('input,select,textarea'))el.disabled=busy;
+  a08.setBusy(form,busy);
   dlg.querySelector('[data-card-undo]').disabled=busy||!undoCards.length;dlg.querySelector('[data-card-redo]').disabled=busy||!redoCards.length;
   for(const row of dlg.querySelectorAll('.ff-card-edit-row')){row.draggable=!busy;const b=row.querySelectorAll('button');if(b.length){b[0].disabled=busy||row===row.parentElement.firstElementChild;b[1].disabled=busy||row===row.parentElement.lastElementChild}}
   dlg.querySelector('[data-publish]').disabled=busy||!row||!!row.published_at;
