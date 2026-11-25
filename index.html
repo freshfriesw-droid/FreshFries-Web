@@ -3737,7 +3737,7 @@ function setBranchOptions(){const sel=$x('ffx-branch');if(!sel||!userLogged())re
 function visibleOrders(){if(!userLogged())return[];const branch=$x('ffx-branch').value;return (Array.isArray(data.orders)?data.orders:[]).filter(o=>!branch||o.branch_id===branch)}
 let dailyKpi={key:'',request:0,last:0,pending:false,values:null,error:false};
 let activeCardLayout=null,activeCardStyle={},activeCardContext='',activeCardSource=null,kpiRenderSignature='';
-function cardContextKey(){return kpiScope()+'|'+(matchMedia('(max-width:850px)').matches?'mobile':'desktop')}
+function cardContextKey(){return (userLogged()?[user.id,data.role,$x('ffx-branch').value].join('|'):'')+'|'+(matchMedia('(max-width:850px)').matches?'mobile':'desktop')}
 function cardStyleForScope(){return activeCardContext===cardContextKey()?activeCardStyle:{}}
 window.ffApplyCardLayout=(layout,style={},source=null)=>{
  activeCardLayout=Array.isArray(layout)?layout.map(x=>({...x})):null;
@@ -3788,7 +3788,7 @@ function paintKpis(){
   return {e,value,known,available,hint}
  });
  const branch=$x('ffx-branch').value||null;
- window.ffA08Dashboard?.sync(v,{key:kpiScope()?cardContextKey():'',role,branch,branchName:(data?.branches||[]).find(b=>b.id===branch)?.name,style,allowed:new Set(cards.filter(c=>c.available).map(c=>c.e.metric))});
+ window.ffA08Dashboard?.sync(v,{key:kpiScope()?kpiScope()+'|'+cardContextKey():'',role,branch,branchName:(data?.branches||[]).find(b=>b.id===branch)?.name,style,allowed:new Set(cards.filter(c=>c.available).map(c=>c.e.metric))});
  const sig=JSON.stringify(cards);
  if(sig===kpiRenderSignature&&target.children.length===cards.length)return;
  kpiRenderSignature=sig;
