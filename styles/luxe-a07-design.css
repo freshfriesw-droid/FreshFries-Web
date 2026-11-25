@@ -131,3 +131,26 @@
 .ff-step03-preview-group{margin-block:8px;min-width:0}.ff-step03-preview-group h4{margin:4px 0;font-size:1em}.ff-step03-preview-group .ff-a07-preview-actions{flex-wrap:wrap}.ff-step03-preview-group button{max-width:100%;white-space:normal;cursor:pointer}
 
 [data-step03-inherit-order]{display:block;margin-block:8px;max-width:100%}
+
+/* STEP03 safe icon/state and official logo presentation settings. */
+[data-ff-a07-pack] [data-ff-a07-el-icon="check"]::before{content:"✓";margin-inline-end:5px}
+[data-ff-a07-pack] [data-ff-a07-el-icon="arrow"]::before{content:"←";margin-inline-end:5px}
+[data-ff-a07-pack] [data-ff-a07-el-icon="star"]::before{content:"★";margin-inline-end:5px}
+[data-ff-a07-pack] [data-ff-a07-el-icon="search"]::before{content:"⌕";margin-inline-end:5px}
+[data-ff-a07-pack] [data-ff-a07-el-icon="file"]::before{content:"▤";margin-inline-end:5px}
+[data-ff-a07-pack] [data-ff-a07-el-icon="none"]::before{content:none}
+[data-ff-a07-pack] [data-ff-a07-el-hover="outline"]:hover:not(:disabled){outline:2px solid currentColor;outline-offset:-3px}
+[data-ff-a07-pack] [data-ff-a07-el-hover="shadow"]:hover:not(:disabled){box-shadow:0 2px 7px #0005!important}
+[data-ff-a07-pack] [data-ff-a07-el-press="inset"]:active:not(:disabled){box-shadow:inset 0 2px 6px #0006!important}
+.ff-a07-logo-cover{display:flex;justify-content:flex-start;align-items:center;padding:8px;max-width:100%}
+[data-a07-logo-align="center"]>.ff-a07-logo-cover{justify-content:center}[data-a07-logo-align="end"]>.ff-a07-logo-cover{justify-content:flex-end}
+[data-a07-logo-width="24"]{--a07-exact-logo:24px}
+[data-a07-logo-width="32"]{--a07-exact-logo:32px}
+[data-a07-logo-width="40"]{--a07-exact-logo:40px}
+[data-a07-logo-width="48"]{--a07-exact-logo:48px}
+[data-a07-logo-width="56"]{--a07-exact-logo:56px}
+[data-a07-logo-width="64"]{--a07-exact-logo:64px}
+[data-a07-logo-width="80"]{--a07-exact-logo:80px}
+[data-a07-logo-width] :is(.ff-a07-logo-inline,.ffx-hero-logo,.ff-assembly-brand>img,[data-ff-a07-managed-logo]){inline-size:var(--a07-exact-logo)!important;block-size:var(--a07-exact-logo)!important;max-inline-size:100%;object-fit:contain}
+
+#ffStep03ScopeCompare section{min-width:0;padding:8px;border:1px solid var(--ffx-line,#bbb);border-radius:8px;margin-block:8px}#ffStep03ScopeCompare label{display:block;min-width:0;margin-block:4px}#ffStep03ScopeCompare p{overflow-wrap:anywhere}
