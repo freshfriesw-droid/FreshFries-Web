@@ -98,7 +98,7 @@ endpoints = [
 try:
     run("docker","network","create",NETWORK)
     run("docker","run","-d","--name",PG,"--network",NETWORK,"-e","POSTGRES_PASSWORD=test-only-a09","postgres:16.11")
-    wait_for(lambda: run("docker","exec",PG,"pg_isready","-U","postgres"),"PostgreSQL")
+    wait_for(lambda: run("docker","exec",PG,"pg_isready","-h","127.0.0.1","-U","postgres"),"PostgreSQL")
     sql(fixture + migration + """
 DO $$DECLARE f record; BEGIN
  FOR f IN SELECT p.oid::regprocedure AS fn FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND p.proname IN ('ff_ui_publish','ff_ui_rollback','ff_ui_control_trial','ff_content_publish','ff_content_create_draft','ff_ui_save_draft','ff_ui_named_draft','ff_a07_named_design','ff81_named_card_draft','ff82_set_grant','ff_a09_set_grant','ff82_revoke_grant')
