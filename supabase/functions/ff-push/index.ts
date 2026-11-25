@@ -1,4 +1,5 @@
 import webpush from "npm:web-push@3.6.7";
+import { validatedPushEndpoint } from "./push-endpoint.mjs";
 import { createClient } from "npm:@supabase/supabase-js@2.95.0";
 
 type Subscription = {endpoint:string;keys:{p256dh:string;auth:string};expirationTime?:number|null};
@@ -41,8 +42,10 @@ function normalize(s:unknown,max:number):string{
  return String(s??"").slice(0,max);
 }
 async function sendOne(sub:Subscription,payload:Record<string,unknown>,ttl=300):Promise<void>{
- if(!sub?.endpoint?.startsWith("https://")||!sub?.keys?.p256dh||!sub?.keys?.auth)throw new Error("INVALID_SUBSCRIPTION");
- await webpush.sendNotification(sub,JSON.stringify(payload),{TTL:ttl,urgency:"high"});
+ const endpoint=validatedPushEndpoint(sub?.endpoint);
+ if(!endpoint)throw new Error("UNSUPPORTED_PUSH_ENDPOINT");
+ if(!sub?.keys?.p256dh||!sub?.keys?.auth)throw new Error("INVALID_SUBSCRIPTION");
+ await webpush.sendNotification({...sub,endpoint},JSON.stringify(payload),{TTL:ttl,urgency:"high"});
 }
 async function authorizedUser(req:Request):Promise<string|null>{
  const token=(req.headers.get("Authorization")||"").replace(/^Bearer\s+/i,"");
@@ -91,7 +94,7 @@ async function dispatchJobs():Promise<{claimed:number,sent:number,retry:number,w
       try{await sendOne(d.subscription as Subscription,body,300);return true;}
       catch(err){
        const code=Number((err as {statusCode?:number})?.statusCode||0);
-       if(code===404||code===410){
+       if(code===404||code===410||(err as Error)?.message==='UNSUPPORTED_PUSH_ENDPOINT'){
         await admin.from("ff_push_devices").update({enabled:false}).eq("id",d.id).eq("user_id",job.user_id);
        }
        throw err;
