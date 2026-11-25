@@ -122,8 +122,8 @@ def compare(a,b,label):
  assert a.keys()==b.keys(),(label,'element coverage',sorted(a.keys()^b.keys()))
  diff=[(k,p,a[k][p],b[k][p]) for k in a for p in a[k] if a[k][p]!=b[k][p]]
  assert not diff,(label,diff[:35])
-def setup(browser,origin,role):
- c=browser.new_context(viewport={'width':390,'height':850},service_workers='block',reduced_motion='reduce',locale='ar')
+def setup(browser,origin,role,width=390):
+ c=browser.new_context(viewport={'width':width,'height':850},service_workers='block',reduced_motion='reduce',locale='ar')
  c.route('**/*',lambda r:r.continue_() if r.request.url.startswith(origin) else r.abort())
  p=c.new_page()
  # Synchronize the wall clock in both browser contexts. The real timers still run.
@@ -135,7 +135,7 @@ def setup(browser,origin,role):
  # Require readiness independently in both trees; never hide a failing bar to compare.
  if role in ('assembly','burger_kitchen'):
   p.wait_for_function("()=>{const n=document.getElementById('ffA06SpecialNav');return n&&!n.hidden&&n.querySelectorAll('button').length>=5&&getComputedStyle(n).display==='flex'}",timeout=10000)
- if role in ('driver','cashier','customer_service'):
+ if role in ('driver','cashier','customer_service') and width<=850:
   key={'driver':'attendance','cashier':'cashier','customer_service':'new'}[role]
   p.locator('#ffx-mobile-nav button[data-key="'+key+'"]').click()
  return c,p
@@ -185,7 +185,14 @@ with sync_playwright() as pw:
      # Stable component panel image comparison; the synthetic panel uses its own paint layer to avoid blending with unrelated workspace pixels. Actual workspace images recorded separately.
      paths=[out/f'{role}-{width}-{theme}-{side}-components.png' for side in ('before','after')]
      for attempt in range(1,4):
-      for p,path in zip((old,new),paths):
+      fresh=[]
+      for origin,path in zip((old_origin,new_origin),paths):
+       context,p=setup(browser,origin,role,width)
+       fresh.append(context)
+       p.evaluate("""t=>{document.body.classList.remove('ffx-dark','ffx-contrast','ffx-compact');if(t!=='classic')document.body.classList.add('ffx-'+t);document.body.classList.toggle('ffx-compact',t==='contrast')}""",theme)
+       p.evaluate(probe)
+       p.evaluate("()=>document.fonts.ready")
+       p.evaluate("()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
        rect=p.locator('#p2-probe').bounding_box()
        assert rect and rect['y']>=0 and rect['y']+rect['height']<=850,(role,width,theme,rect)
        # Clip a viewport screenshot in memory rather than locator screenshot,
@@ -194,6 +201,7 @@ with sync_playwright() as pw:
        shot=Image.open(BytesIO(p.screenshot(animations='disabled')))
        x,y,w,h=(round(rect[k]) for k in ('x','y','width','height'))
        shot.crop((x,y,x+w,y+h)).save(path)
+      for context in fresh:context.close()
       im1,im2=[Image.open(path).convert('RGB') for path in paths]
       assert im1.size==im2.size,(role,width,theme,'panel geometry',im1.size,im2.size)
       difference=ImageChops.difference(im1,im2)
