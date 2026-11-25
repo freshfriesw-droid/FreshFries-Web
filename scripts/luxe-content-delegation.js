@@ -19,13 +19,16 @@ dialog.innerHTML='<div class="sectionbar"><h2 id="ff82Title">التفويض ال
  '<section data-d-worker hidden><p data-d-scope></p><section data-d-text-section><label>العنصر<select data-d-key></select></label><label>الإصدارات<select data-d-history></select></label><p data-d-body></p>'+
  '<section data-d-preview hidden><h3>معاينة النص</h3><p data-d-original></p><p data-d-sample></p></section>'+
  '<section data-d-edit hidden><label>مسودة نص جديد<textarea data-d-text maxlength="180" rows="3"></textarea></label><p data-d-format-help hidden></p><button type="button" data-d-save>حفظ مسودة للمدير</button></section>'+
- '<section data-d-review hidden><label>ملاحظة المراجعة<textarea data-d-note maxlength="500" rows="3"></textarea></label><button type="button" data-d-send-review>رفع المراجعة إلى المدير</button></section></section><section data-d-design hidden><h3>مسودات التصميم المفوضة</h3><label>الجهاز<select data-d-device><option value="mobile">الجوال</option><option value="desktop">الكمبيوتر</option><option value="all">كل الأجهزة</option></select></label><label>الإصدار<select data-d-design-history></select></label><p data-d-design-info></p><section data-d-design-edit hidden><label>اسم المسودة<input data-d-design-name maxlength="80"></label><div data-d-style-fields></div><div data-d-element-fields></div><label><input type="checkbox" data-d-design-base> متابعة تعديل مسودة محددة أنشأتها ضمن التفويض الحالي</label><button type="button" data-d-design-save>حفظ مسودة التصميم للمدير</button></section><section data-d-design-preview hidden><h4>معاينة اصطناعية قبل / بعد</h4><div class="ff-a07-compare-grid"><div data-d-design-before></div><div data-d-design-after></div></div></section><section data-d-design-review hidden><label>ملاحظة مراجعة التصميم<textarea data-d-design-note maxlength="500"></textarea></label><button type="button" data-d-design-send>رفع المراجعة إلى المدير</button></section></section></section>'+
+ '<section data-d-review hidden><label>ملاحظة المراجعة<textarea data-d-note maxlength="500" rows="3"></textarea></label><button type="button" data-d-send-review>رفع المراجعة إلى المدير</button></section></section><section data-d-design hidden><h3>مسودات التصميم المفوضة</h3><label>الجهاز<select data-d-device><option value="mobile">الجوال</option><option value="desktop">الكمبيوتر</option><option value="all">كل الأجهزة</option></select></label><label>الإصدار<select data-d-design-history></select></label><p data-d-design-info></p><p data-d-design-diff></p><section data-d-design-edit hidden><label>اسم المسودة<input data-d-design-name maxlength="80"></label><div data-d-style-fields></div><div data-d-element-fields></div><label><input type="checkbox" data-d-design-base> متابعة تعديل مسودة محددة أنشأتها ضمن التفويض الحالي</label><button type="button" data-d-design-save>حفظ مسودة التصميم للمدير</button></section><section data-d-design-preview hidden><h4>معاينة اصطناعية قبل / بعد</h4><div class="ff-a07-compare-grid"><div data-d-design-before></div><div data-d-design-after></div></div></section><section data-d-design-review hidden><label>ملاحظة مراجعة التصميم<textarea data-d-design-note maxlength="500"></textarea></label><button type="button" data-d-design-send>رفع المراجعة إلى المدير</button></section></section></section>'+
  '<p data-d-status role="status" aria-live="polite"></p>';
 document.body.append(dialog);
 const q=n=>dialog.querySelector('[data-d-'+n+']');
 const button=document.createElement('button');button.type='button';button.id='ff82Open';button.className='ffx-outline-light';button.textContent='التفويض المتدرج';button.hidden=true;
 function mountButton(){const host=role()==='assembly'?document.getElementById('ffV12AssemblyWorkspace'):role()==='burger_kitchen'?document.getElementById('ffBurgerKitchenWorkspace'):document.querySelector('.ffx-hero-actions');if(host&&!host.contains(button))host.append(button)}
 mountButton();
+let grantChannel=null,grantChannelActor='';
+function stopGrantWatch(){if(grantChannel){try{void client?.removeChannel(grantChannel)}catch{}grantChannel=null}grantChannelActor=''}
+function watchGrant(who){if(grantChannelActor===who||typeof client==='undefined'||!client?.channel)return;stopGrantWatch();grantChannelActor=who;const invalidate=()=>{if(actor()!==who||manager())return;grant=null;button.hidden=true;invalidateDialog();void sync(true)};try{const cfg={schema:'public',table:'ff_a09_grant_events',filter:'recipient=eq.'+who};grantChannel=client.channel('ff-a09-grant-'+who).on('postgres_changes',{...cfg,event:'INSERT'},invalidate).on('postgres_changes',{...cfg,event:'UPDATE'},invalidate).subscribe()}catch{stopGrantWatch()}}
 let grant=null,context='',last=0,request=0,session=0,busy=false,accounts=[],grants=[],catalog=[],history=[],designHistory=[],designContext=null,elementPatch={};
 const hasKind=k=>!!grant&&(grant.edit_kinds||['text']).includes(k);
 const hasDesign=()=>Object.keys(tokenKinds).some(hasKind);
@@ -40,12 +43,13 @@ function grantWindow(g){
 }
 function localDate(t){const d=new Date(t);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)}
 function options(el,items){el.replaceChildren(...items.map(([value,label])=>new Option(label,String(value))))}
-function clear(){clearDesign();request++;session++;grant=null;context='';last=0;busy=false;accounts=[];grants=[];catalog=[];history=[];button.hidden=true;if(dialog.open)dialog.close();for(const n of ['account','grants','key','history'])q(n).replaceChildren();for(const n of ['audit','reviews','body','scope','original','sample','status'])q(n).textContent='';for(const n of ['text','note','revision'])q(n).value=''}
+function clear(){stopGrantWatch();clearDesign();request++;session++;grant=null;context='';last=0;busy=false;accounts=[];grants=[];catalog=[];history=[];button.hidden=true;if(dialog.open)dialog.close();for(const n of ['account','grants','key','history'])q(n).replaceChildren();for(const n of ['audit','reviews','body','scope','original','sample','status'])q(n).textContent='';for(const n of ['text','note','revision'])q(n).value=''}
 function key(){return actor()+'|'+(role()||'')}
 async function sync(force=false){
  const who=actor();if(!who){if(context)clear();return}
  const k=key();if(k!==context){clear();context=k}mountButton();
- if(manager()){button.hidden=false;return}
+ if(manager()){stopGrantWatch();button.hidden=false;return}
+ watchGrant(who);
  if(grant&&!enabled(grant.capabilities[0])){grant=null;button.hidden=true;invalidateDialog()}
  if(!force&&Date.now()-last<5000)return;
  last=Date.now();const seq=++request;
@@ -95,7 +99,7 @@ q('read-reviews').onclick=()=>void run(async(token,who)=>{if(!manager()||!q('rev
 q('key').onchange=()=>{q('text').value='';q('note').value='';void run(loadHistory)};q('history').onchange=preview;q('text').oninput=preview;
 q('save').onclick=()=>void run(async(token,who)=>{if(!enabled('edit')){status('التفويض غير نشط');return}const result=await rpc('ff82_delegate_draft',{p_key:q('key').value,p_body:q('text').value});if(guard(token,who)){if(result?.ok){q('text').value='';await loadHistory(token,who);status('حُفظت المسودة #'+result.revision+'؛ النشر للمدير فقط')}else status('رفض الخادم التعديل: '+(result?.reason||'غير مصرح'))}});
 q('send-review').onclick=()=>void run(async(token,who)=>{if(!enabled('review')||!selection())return;const result=await rpc('ff82_delegate_review',{p_revision:Number(q('history').value),p_note:q('note').value});if(guard(token,who)){if(result?.ok)q('note').value='';status(result?.ok?'تم إرسال المراجعة':'رفض الخادم المراجعة')}});
-function clearDesign(){designHistory=[];designContext=null;elementPatch={};q('element-fields').replaceChildren();q('design-history').replaceChildren();q('style-fields').replaceChildren();for(const n of ['design-info','design-before','design-after'])q(n).replaceChildren();for(const n of ['design-name','design-note'])q(n).value='';q('design-base').checked=false;q('design').hidden=true}
+function clearDesign(){designHistory=[];designContext=null;elementPatch={};q('element-fields').replaceChildren();q('design-history').replaceChildren();q('style-fields').replaceChildren();for(const n of ['design-info','design-diff','design-before','design-after'])q(n).replaceChildren();for(const n of ['design-name','design-note'])q(n).value='';q('design-base').checked=false;q('design').hidden=true}
 function invalidateDialog(){clearDesign();session++;busy=false;history=[];catalog=[];accounts=[];grants=[];for(const n of ['account','grants','key','history'])q(n).replaceChildren();for(const n of ['audit','reviews','body','scope','original','sample','status'])q(n).textContent='';for(const n of ['text','note','revision'])q(n).value='';controls();if(dialog.open)dialog.close()}
 function designSelected(){return designHistory.find(x=>String(x.id)===q('design-history').value)}
 function designPatch(){const patch=Object.fromEntries([...q('style-fields').querySelectorAll('select')].filter(n=>n.value).map(n=>[n.dataset.token,n.value]));if(Object.keys(elementPatch).length)patch.elements=JSON.parse(JSON.stringify(elementPatch));return patch}
@@ -103,11 +107,12 @@ function designPreview(){
  const row=designSelected();q('design-info').textContent=row?'#'+row.id+' · '+(row.published_at?'منشور':'مسودة')+' · '+row.pack+' · '+row.draft_name:'لا يوجد إصدار مطابق — معاينة افتراضية';
  q('design-base').disabled=!row||!!row.published_at||row.actor_id!==actor();
  if(q('design-base').disabled)q('design-base').checked=false;
+ const source=designContext?.style_config||{},target=row?.style_config||{};const diff=Object.keys({...source,...target}).filter(k=>JSON.stringify(source[k])!==JSON.stringify(target[k]));q('design-diff').textContent=row?'مقارنة الإصدار المحدد بالمظهر الفعّال: '+(diff.map(k=>window.ffA07Design.tokens[k]?.[0]||k).join('، ')||'لا اختلاف في الخصائص المحفوظة'):'';
  if(!enabled('preview'))return;
  const api=window.ffA07Design,selectedBase=q('design-base').checked&&row&&!row.published_at&&row.actor_id===actor(),pack=(selectedBase?row.pack:designContext?.pack)||'D01',base={...(designContext?.style_config||{}),...(selectedBase?row.style_config:{})};
  base.elements={...(designContext?.style_config?.elements||{}),...(selectedBase?row.style_config?.elements||{}:{})};
  q('design-before').replaceChildren(api.demoCard(grant.screen,pack,base));
- const patch=designPatch();q('design-after').replaceChildren(api.demoCard(grant.screen,pack,{...base,...patch,elements:{...base.elements,...patch.elements}}));
+ const patch=designPatch(),inspect=!Object.keys(patch).length&&row&&!selectedBase;q('design-after').replaceChildren(api.demoCard(grant.screen,inspect?row.pack:pack,inspect?{...base,...row.style_config}:{...base,...patch,elements:{...base.elements,...patch.elements}}));
 }
 function designFields(){
  q('style-fields').replaceChildren();
