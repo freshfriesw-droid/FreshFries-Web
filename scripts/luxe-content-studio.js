@@ -38,6 +38,17 @@ const targets={
  'reservations.refresh':'#ff49ReservationsRefresh'
 };
 Object.assign(targets,{
+ 'catalog.title':"#ff51CatalogPanel .sectionbar h2",
+ 'customers.title':"#ff51CustomersPanel .sectionbar h2",
+ 'staff.title':"#staffAdminCard .sectionbar h2",
+ 'archive.title':"#ff51ArchivePanel .sectionbar h2",
+ 'ratings.title':"#ff51RatingsPanel .sectionbar h2",
+ 'cases.title':"#ff41Panel .ff41-header h2",
+ 'messages.title':"#ff39Panel .sectionbar h2",
+ 'reservations.title':"#ff49ReservationsPanel .sectionbar h2",
+ 'system.title':"#ff48DiagnosticsPanel .sectionbar h2",
+ 'assembly.title':"#ffV12AssemblyWorkspace .sectionbar h2",
+ 'burger_kitchen.title':"#ffBurgerKitchenWorkspace .ff-burger-head h2",
  'orders.cancel':'[data-cancel-order]','orders.add':'[data-open-addition]','orders.add_late':'[data-ff52-late]',
  'driver.attend':'#clockInBtn','driver.leave':'#clockOutBtn','driver.break':'#ff51BreakBtn',
  'assembly.open':'#ffV12Toggle','assembly.burger':'#ffV12BurgerOpen',
@@ -131,7 +142,7 @@ function writeNode(key,node,value){
  for(let i=0;i<saved.length;i++){
   const item=saved[i],text=item[0];
   if(item[2]!==null&&text.data!==item[2])item[1]=text.data;
-  const next=i===0?(preserveState.has(key)?item[1]+' — '+value:' '+value):preserveState.has(key)?item[1]:'';
+  const next=i===0?(preserveState.has(key)?item[1]+' — '+value:' '+value+(key==='assembly.title'?' · ':'')):preserveState.has(key)?item[1]:'';
   if(text.data!==next)text.data=next;
   item[2]=next;
  }
