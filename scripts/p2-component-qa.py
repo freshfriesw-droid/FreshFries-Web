@@ -104,7 +104,7 @@ inventory="""()=>{const rows=[],sheets=[],inaccessible=[];
 # Sample each shared component plus actual operational order/status classes; do not
 # put test elements inside order queues where polling might mutate them.
 probe="""()=>{let host=document.getElementById('p2-probe');
- if(!host){host=document.createElement('section');host.id='p2-probe';host.setAttribute('aria-label','Synthetic component test');host.style.cssText='position:fixed;inset-inline:4px;top:4px;z-index:2147483600;max-height:80vh;overflow:auto;padding:8px;background:var(--ffb-surface);color:var(--ffb-ink)';host.innerHTML=`
+ if(!host){host=document.createElement('section');host.id='p2-probe';host.setAttribute('aria-label','Synthetic component test');host.style.cssText='position:fixed;inset-inline:4px;top:4px;z-index:2147483600;max-height:80vh;overflow:auto;padding:8px;background:var(--ffb-surface);color:var(--ffb-ink);isolation:isolate;contain:paint;transform:translateZ(0)';host.innerHTML=`
  <div class="card" data-p2="card"><h3>اختبار المكونات</h3><div class="sectionbar" data-p2="section"><h2>القسم</h2><button class="primary" data-p2="primary">حفظ</button></div>
  <div class="actions" data-p2="actions"><button data-p2="button">إجراء</button><button class="dark" data-p2="dark">داكن</button><button class="good" data-p2="good">تأكيد</button><button class="outline" data-p2="outline">رجوع</button><button disabled data-p2="disabled">معطل</button></div>
  <label for="p2-field">الاسم</label><input id="p2-field" data-p2="field" value="طلب تجريبي"><label for="p2-select">الفرع</label><select id="p2-select" data-p2="select"><option>القاهرة</option></select><label for="p2-text">ملاحظة</label><textarea id="p2-text" data-p2="textarea">ملاحظة</textarea>
@@ -182,7 +182,7 @@ with sync_playwright() as pw:
      # Normalize both scroll positions before capturing the same viewport region.
      p.evaluate("""async()=>{window.scrollTo(0,0);const h=document.getElementById('p2-probe');h.scrollTop=0;h.scrollLeft=0;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));}""")
     if width in (390,1440) and theme in ('classic','dark'):
-     # Stable component panel image comparison; actual workspace images recorded separately.
+     # Stable component panel image comparison; the synthetic panel uses its own paint layer to avoid blending with unrelated workspace pixels. Actual workspace images recorded separately.
      paths=[out/f'{role}-{width}-{theme}-{side}-components.png' for side in ('before','after')]
      for attempt in range(1,4):
       for p,path in zip((old,new),paths):
