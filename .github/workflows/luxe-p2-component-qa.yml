@@ -1,7 +1,7 @@
 name: LUXE P2 component cascade QA
 on:
   pull_request:
-    paths: ['index.html','styles/**','assets/*.css','scripts/p2-component-qa.py','.github/workflows/luxe-p2-component-qa.yml','docs/implementation/P2-css-consolidation-20261125.json']
+    paths: ['index.html','styles/**','assets/*.css','scripts/p2-component-qa.py','scripts/luxe-a07-design.js','scripts/luxe-a07-elements.js','scripts/luxe-dashboard-studio.js','scripts/luxe-content-studio.js','.github/workflows/luxe-p2-component-qa.yml','docs/implementation/P2-css-consolidation-20261125.json']
   push:
     branches: [main]
     paths: ['scripts/p2-publish-probe.py','scripts/luxe-a07-design.js','scripts/luxe-a07-elements.js','scripts/luxe-dashboard-studio.js','styles/luxe-a07-design.css','styles/luxe-p2-components.css','docs/implementation/P2-css-consolidation-20261125.json','.github/workflows/luxe-p2-component-qa.yml']
