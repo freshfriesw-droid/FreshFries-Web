@@ -9,8 +9,8 @@ const screens={
  messages:'الرسائل',reservations:'الحجوزات',system:'النظام والأمان'
 };
 const selectors={
- dashboard:'#ffx-dashboard',orders:'#serviceOnly,#staffOrders',cashier:'#cashierView',driver:'#driverView',
- assembly:'#ffV12AssemblyWorkspace',burger_kitchen:'#ffBurgerKitchenWorkspace,#ffBurgerCashierPanel',
+ dashboard:'#ffx-dashboard',orders:'#serviceOnly,#staffOrders',cashier:'#cashierView,#ffBurgerCashierPanel',driver:'#driverView',
+ assembly:'#ffV12AssemblyWorkspace',burger_kitchen:'#ffBurgerKitchenWorkspace',
  catalog:'#ff51CatalogPanel',customers:'#ff51CustomersPanel',reports:'#ff76Center',staff:'#staffAdminCard',
  archive:'#ff51ArchivePanel',ratings:'#ff51RatingsPanel',cases:'#ff41Panel,#ff41Dialog,#ff47Cases',messages:'#ff39Panel,#ff39Dialog',
  reservations:'#ff49ReservationsPanel',system:'#ff48DiagnosticsPanel,#ff47QAPanel,#ff46ReadinessPanel,#ff44IntegrityPanel,#ff43SecurityPanel,#ff62DataCenter'
@@ -39,7 +39,7 @@ const LOGO='./assets/ff-official-logo.png',FALLBACK='./assets/ff-icon-192.png';
 function imageFallback(img){
  if(img.dataset.ffA07Fallback)return;
  img.dataset.ffA07Fallback='1';
- img.addEventListener('error',()=>{if(!img.dataset.ffA07Tried){img.dataset.ffA07Tried='1';img.src=FALLBACK}}, {once:true});
+ const fallback=()=>{if(!img.dataset.ffA07Tried){img.dataset.ffA07Tried='1';img.src=FALLBACK}}; img.addEventListener('error',fallback,{once:true});if(img.complete&&!img.naturalWidth)fallback();
 }
 function addLogo(root,screen){
  if(screen==='dashboard'||screen==='assembly'||root.id==='ffBurgerCashierPanel'||root.id==='staffOrders')return;
@@ -47,6 +47,15 @@ function addLogo(root,screen){
  if(!title||title.closest('button')||title.querySelector('.ff-a07-logo-inline'))return;
  const img=document.createElement('img');img.className='ff-a07-logo-inline';img.src=LOGO;img.alt='شعار فريش فرايز';img.loading='lazy';img.width=40;img.height=40;imageFallback(img);
  title.prepend(img);
+}
+function applyCaption(root,row,screen){
+ if(screen==='dashboard'||root.id==='staffOrders')return;
+ let node=root.querySelector(':scope > [data-ff-a07-caption]');
+ if(!row?.layout_text){node?.remove();return}
+ const title=root.querySelector('h2,h3');
+ if(!title||title.closest('button'))return;
+ if(!node){node=document.createElement('p');node.dataset.ffA07Caption='1';node.className='ff-a07-caption';root.prepend(node)}
+ node.textContent=row.layout_text;
 }
 function resetNode(root){
  for(const k of Object.keys(tokens))delete root.dataset['a07'+k[0].toUpperCase()+k.slice(1)];
@@ -67,8 +76,8 @@ function refresh(){
    if(seen.has(root))continue;seen.add(root);
    root.dataset.ffA07Screen=screen;
    addLogo(root,screen);
-   const row=current[screen], signature=JSON.stringify([row?.id,row?.pack,row?.style_config]);
-   if(root.dataset.ffA07Signature!==signature){decorate(root,row);root.dataset.ffA07Signature=signature}
+   const row=current[screen], signature=JSON.stringify([row?.id,row?.pack,row?.style_config,row?.layout_text]);
+   if(root.dataset.ffA07Signature!==signature){decorate(root,row);applyCaption(root,row,screen);root.dataset.ffA07Signature=signature}
   }
  }
  for(const old of owned)if(!seen.has(old)){resetNode(old);delete old.dataset.ffA07Signature;delete old.dataset.ffA07Screen}
