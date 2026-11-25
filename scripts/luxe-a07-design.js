@@ -163,7 +163,8 @@ function refresh(){
   }
  }
  const elementOnly=new Set();
- const shared=[[$('ffBurgerDialog'),activeScreen()==='assembly'?'assembly':'cashier'],[$('ffRewardRedeemDialog'),(typeof data!=='undefined'&&data?.role==='cashier')?'cashier':'orders']];
+ const ratingDialogs=[...document.querySelectorAll('dialog.ff-luxe-rate-dialog:has(button[data-skip])')].map(root=>[root,activeScreen()==='cashier'?'cashier':'orders']);
+ const shared=[...ratingDialogs,[$('ffBurgerDialog'),activeScreen()==='assembly'?'assembly':'cashier'],[$('ffRewardRedeemDialog'),(typeof data!=='undefined'&&data?.role==='cashier')?'cashier':'orders']];
  if(activeScreen()==='assembly'){const panel=$('ffBurgerCashierPanel');if(panel)shared.push([panel,'assembly']);}
  for(const [root,screen] of shared){if(!root||seen.has(root))continue;seen.add(root);elementOnly.add(root);root.dataset.ffA07Screen=screen;if(packOK(current[screen]?.pack))root.dataset.ffA07ElementScope='1';else delete root.dataset.ffA07ElementScope;}
  for(const [screen,selector] of Object.entries(elementSelectors))for(const root of document.querySelectorAll(selector)){
