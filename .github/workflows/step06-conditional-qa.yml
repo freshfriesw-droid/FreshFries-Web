@@ -1,0 +1,30 @@
+name: STEP06 remaining conditional bindings
+on:
+  push:
+    branches: [step06-final-proof-20261125]
+    paths:
+      - 'scripts/step06-conditional-qa.py'
+      - '.github/workflows/step06-conditional-qa.yml'
+  pull_request:
+    paths:
+      - 'scripts/step06-conditional-qa.py'
+      - '.github/workflows/step06-conditional-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  conditional:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright==1.51.0
+      - run: python scripts/step06-conditional-qa.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: step06-conditional-evidence
+          path: step06-conditional-evidence/
