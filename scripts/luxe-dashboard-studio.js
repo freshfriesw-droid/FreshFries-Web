@@ -174,7 +174,7 @@
   }
   const targets=['screen','role','branch','device'].map(name=>field(name).selectedOptions[0]?.textContent||'—');
   dlg.querySelector('[data-impact-scope]').textContent='النطاق: '+targets.join(' · ')+' · '+width+'px';
-  const style=getComputedStyle(preview),bg=luminance(style.getPropertyValue('--pack-bg')),ink=luminance(style.getPropertyValue('--pack-ink'));
+  const style=getComputedStyle(preview),bg=luminance(style.getPropertyValue('--a07-bg')||style.getPropertyValue('--pack-bg')),ink=luminance(style.getPropertyValue('--a07-ink')||style.getPropertyValue('--pack-ink'));
   const ratio=bg===null||ink===null?null:(Math.max(bg,ink)+0.05)/(Math.min(bg,ink)+0.05);
   dlg.querySelector('[data-impact-contrast]').textContent=ratio===null?'تباين الحزمة: يحتاج تحقق':'تباين النص والخلفية: '+ratio.toFixed(2)+':1 — '+(ratio>=4.5?'يتوافق مع حد النص العادي 4.5:1':'يحتاج تعديل');
   dlg.querySelector('[data-impact-nav]').textContent=width>850?'شريط الهاتف لا يظهر في هذا العرض.':bar==='compact'?'الشريط المختصر: الرئيسية والمزيد والإجراء النشط؛ الاختصارات الأخرى عبر قائمة المزيد.':bar==='icons'?'الأيقونات فقط؛ أسماء العناصر تبقى لقارئ الشاشة.':'معاينة شكل الشريط؛ لا تخفي الإجراءات.';
