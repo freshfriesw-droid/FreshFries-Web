@@ -26,14 +26,21 @@ jobs:
       - run: |
           python - <<'PY'
           import urllib.request,time
+          from urllib.parse import urlparse
           from pathlib import Path
           base='https://delivery.freshfriesz.com/'
           path='scripts/luxe-a11-communications.js'
-          for i in range(20):
+          def get(path):
+              req=urllib.request.Request(base+path,headers={'Cache-Control':'no-cache','User-Agent':'FreshFries-LUXE-release-QA'})
+              with urllib.request.urlopen(req,timeout=20) as response:
+                  assert response.status==200
+                  assert urlparse(response.geturl()).hostname=='delivery.freshfriesz.com'
+                  return response.read()
+          for i in range(10):
               try:
                   marker='20261125-a11'
-                  assert marker in urllib.request.urlopen(base+'?a11='+str(i),timeout=20).read().decode()
-                  assert urllib.request.urlopen(base+path+'?v='+marker+'&check='+str(i),timeout=20).read()==Path(path).read_bytes()
+                  assert marker in get('?qa='+marker).decode()
+                  assert get(path+'?v='+marker)==Path(path).read_bytes()
                   print('PASS live production exact A11 script bytes and index marker')
                   break
               except Exception as e:
