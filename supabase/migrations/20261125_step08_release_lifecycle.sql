@@ -170,7 +170,7 @@ AS $function$
    v.id,v.style_config,v.screen_scope,v.role_scope,v.branch_id,v.device,v.published_at,trial.started_at
  FROM public.ff_ui_versions v
  LEFT JOIN LATERAL (SELECT max(t.started_at) AS started_at FROM public.ff_ui_trials t
-  WHERE t.version_id=v.id AND t.recipient=p_actor AND t.stopped_at IS NULL AND t.ends_at>statement_timestamp() AND v.published_at IS NULL
+  WHERE t.version_id=v.id AND t.recipient=p_actor AND t.stopped_at IS NULL AND t.ends_at>statement_timestamp() AND v.published_at IS NULL AND (v.branch_id IS NULL OR EXISTS(SELECT FROM public.ff_branches br WHERE br.id=v.branch_id AND br.active))
   AND NOT EXISTS(SELECT FROM public.ff_ui_versions newer WHERE newer.screen_scope=v.screen_scope AND newer.role_scope=v.role_scope AND newer.branch_id IS NOT DISTINCT FROM v.branch_id AND newer.device=v.device AND newer.published_at IS NOT NULL AND (v.previous_id IS NULL OR (newer.published_at,newer.id)>(SELECT q.published_at,q.id FROM public.ff_ui_versions q WHERE q.id=v.previous_id)))) trial ON true
  WHERE (v.published_at IS NOT NULL OR trial.started_at IS NOT NULL)
  AND (p_screen NOT IN ('login','customer_portal') OR (v.screen_scope=p_screen AND v.role_scope='all' AND v.branch_id IS NULL AND v.published_at IS NOT NULL))
@@ -193,7 +193,7 @@ CREATE OR REPLACE FUNCTION ff_private.a07_resolve(p_screen text, p_role text, p_
 AS $function$
  SELECT v.* FROM public.ff_ui_versions v
  LEFT JOIN LATERAL (SELECT max(t.started_at) AS started_at FROM public.ff_ui_trials t
-  WHERE t.version_id=v.id AND t.recipient=p_actor AND t.stopped_at IS NULL AND t.ends_at>statement_timestamp() AND v.published_at IS NULL
+  WHERE t.version_id=v.id AND t.recipient=p_actor AND t.stopped_at IS NULL AND t.ends_at>statement_timestamp() AND v.published_at IS NULL AND (v.branch_id IS NULL OR EXISTS(SELECT FROM public.ff_branches br WHERE br.id=v.branch_id AND br.active))
   AND NOT EXISTS(SELECT FROM public.ff_ui_versions newer WHERE newer.screen_scope=v.screen_scope AND newer.role_scope=v.role_scope AND newer.branch_id IS NOT DISTINCT FROM v.branch_id AND newer.device=v.device AND newer.published_at IS NOT NULL AND (v.previous_id IS NULL OR (newer.published_at,newer.id)>(SELECT q.published_at,q.id FROM public.ff_ui_versions q WHERE q.id=v.previous_id)))) trial ON true
  WHERE (v.published_at IS NOT NULL OR trial.started_at IS NOT NULL)
  AND (p_screen NOT IN ('login','customer_portal') OR (v.screen_scope=p_screen AND v.role_scope='all' AND v.branch_id IS NULL AND v.published_at IS NOT NULL))
@@ -213,7 +213,7 @@ CREATE OR REPLACE FUNCTION public.ff_content_effective(p_branch uuid)
 AS $function$
  SELECT DISTINCT ON(v.content_key) v.content_key,v.body,v.id
  FROM public.ff_content_versions v JOIN public.ff_profiles p ON p.user_id=auth.uid() AND p.active
- LEFT JOIN LATERAL (SELECT max(t.started_at) AS started_at FROM ff_private.step08_content_trials t WHERE t.version_id=v.id AND t.recipient=auth.uid() AND t.stopped_at IS NULL AND t.ends_at>statement_timestamp() AND v.published_at IS NULL AND NOT EXISTS(SELECT FROM public.ff_content_catalog c WHERE c.key=v.content_key AND c.screen IN ('login','customer_portal'))) trial ON true
+ LEFT JOIN LATERAL (SELECT max(t.started_at) AS started_at FROM ff_private.step08_content_trials t WHERE t.version_id=v.id AND t.recipient=auth.uid() AND t.stopped_at IS NULL AND t.ends_at>statement_timestamp() AND v.published_at IS NULL AND (v.branch_id IS NULL OR EXISTS(SELECT FROM public.ff_branches br WHERE br.id=v.branch_id AND br.active)) AND NOT EXISTS(SELECT FROM public.ff_content_catalog c WHERE c.key=v.content_key AND c.screen IN ('login','customer_portal'))) trial ON true
  WHERE auth.uid() IS NOT NULL AND (v.published_at IS NOT NULL OR trial.started_at IS NOT NULL)
  AND (v.role_scope='all' OR v.role_scope=p.role::text)
  AND (v.branch_id IS NULL OR (v.branch_id=p_branch AND (
@@ -311,3 +311,7 @@ AS $function$
  where v.id=p_id and exists(select from public.ff_profiles m where m.user_id=auth.uid() and m.active and m.role='manager')
  and v.screen_scope NOT IN ('login','customer_portal') and v.published_at is null order by p.account_name,p.account_id
 $function$;
+
+-- Prevent direct client fabrication of trusted lifecycle audit rows; trigger owners still write.
+CREATE POLICY ff_step08_release_audit_server_only ON public.ff_audit_log AS RESTRICTIVE FOR INSERT TO anon,authenticated
+ WITH CHECK (entity_type NOT IN ('ui_design','content') AND action NOT LIKE 'a07_design_%' AND action NOT LIKE 'step08_content_%');

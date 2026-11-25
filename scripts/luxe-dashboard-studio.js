@@ -153,7 +153,7 @@
   if(!ident){if(context||dlg.open)reset();return}
   if(dlg.open&&(!manager()||editorActor!==ident.who))reset();
   if(ident.key!==context){serial++;appearance.clear();apply(null);context=ident.key;last=0}
-  if(!force&&Date.now()-last<30000){appearance.refresh();return}
+  if(!force&&Date.now()-last<3000){appearance.refresh();return}
   last=Date.now();const request=++serial;
   try{
    let rows;
@@ -167,7 +167,7 @@
    apply(version,version?.card_layout??null,roleVersion);appearance.apply(rows);
   }catch{/* Keep the last confirmed design only for the same account and scope. */}
  }
- function reset(){editorActor='';clearScopeComparison();clearSource();appearance.clear();serial++;session++;context='';last=0;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();setStyle({});resetCards(null);status.textContent='';if(dlg.open)dlg.close();apply(null)}
+ function reset(){editorActor='';clearScopeComparison();clearSource();appearance.clear();serial++;session++;context='';last=0;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();dlg.querySelector('[data-release-impact]').textContent='';compare();form.reset();setStyle({});resetCards(null);status.textContent='';if(dlg.open)dlg.close();apply(null)}
  const sampleNav={all:['الرئيسية','الطلبات','المزيد'],manager:['الرئيسية','طلب جديد','الطلبات','تحكم المدير','المزيد'],supervisor:['الرئيسية','الطلبات','المزيد'],customer_service:['الرئيسية','طلب جديد','الطلبات','المزيد'],cashier:['الرئيسية','شاشة الكاشير','المزيد'],driver:['الرئيسية','مهامي','المزيد'],assembly:['الرئيسية','المزيد'],burger_kitchen:['الرئيسية','المزيد']};
  function luminance(hex){
   const parts=/^#([0-9a-f]{6})$/i.exec(hex.trim());if(!parts)return null;
@@ -375,7 +375,7 @@
   await rpc('ff_ui_publish',{p_id:row.id});
   if(valid(token,who)){await history(token,row.id);if(valid(token,who)){if(!records.some(v=>v.id===row.id&&v.published_at))throw Error('لم يثبت نشر الإصدار في السجل');status.textContent='نُشر الإصدار رقم '+row.id;sourceRefresh(true);void sync(true)}}
  });
- dlg.querySelector('[data-close]').onclick=()=>dlg.close();dlg.onclose=()=>{if(dlg.open)return;editorActor='';session++;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();compare();form.reset();setStyle({});resetCards(null);status.textContent='';clearScopeComparison();clearSource()};
+ dlg.querySelector('[data-close]').onclick=()=>dlg.close();dlg.onclose=()=>{if(dlg.open)return;editorActor='';session++;busy=false;records=[];field('version').replaceChildren();field('baseline').replaceChildren();field('accounts').replaceChildren();dlg.querySelector('[data-release-impact]').textContent='';compare();form.reset();setStyle({});resetCards(null);status.textContent='';clearScopeComparison();clearSource()};
  window.addEventListener('ff-luxe-session-reset',reset);
  document.getElementById('ffx-branch').addEventListener('change',()=>sync(true));
  matchMedia('(max-width:850px)').addEventListener('change',()=>sync(true));

@@ -200,7 +200,7 @@ async function syncPublic(force=false){
 }
 function reset(){
  serial++;session++;context='';last=0;values.clear();publicSerial++;publicKey='';publicAt=0;publicValues.clear();catalog=[];history=[];busy=false;
- if(dialog.open)dialog.close();for(const name of ['key','history','branch'])q(name).replaceChildren();
+ if(dialog.open)dialog.close();for(const name of ['key','history','branch','baseline','accounts'])q(name).replaceChildren();
  for(const name of ['search','body'])q(name).value='';for(const name of ['status','audit','original','preview','rich-preview'])q(name).textContent='';
  render();
 }
@@ -253,7 +253,7 @@ function compareVersions(){
  q('audit').textContent=row?('الإصدار #'+row.id+' · '+(row.published_at?'منشور':'مسودة')+' · '+new Date(row.created_at).toLocaleString('ar-YE')+' · محرر: '+row.actor_id+(row.published_by?' · نشر: '+row.published_by:'')):'لا يوجد إصدار محدد';
  q('publish').disabled=busy||!row||!!row.published_at;q('load').disabled=busy||!row;
  q('rollback').disabled=busy||!row?.published_at||!row.previous_id||history.some(v=>v.published_at&&v.previous_id===row.id);
- q('impact-check').disabled=busy||!row;const publicRow=additionalByKey.get(row?.content_key)?.publicScreen;
+ q('impact-check').disabled=busy||!row;const publicRow=['login','customer_portal'].includes(labelFor(row?.content_key)?.screen)||additionalByKey.get(row?.content_key)?.publicScreen;
  for(const name of ['accounts-load','accounts','hours','trial','stop'])q(name).disabled=busy||!row||!!row.published_at||!!publicRow;
  q('baseline').disabled=busy;compareVersions();
 }
@@ -287,7 +287,7 @@ async function run(action){
 }
 async function open(selection={}){
  if(!manager()||dialog.open)return;
- session++;busy=false;catalog=[];history=[];q('search').value='';q('body').value='';q('status').textContent='';q('key').replaceChildren();q('history').replaceChildren();
+ session++;busy=false;catalog=[];history=[];q('search').value='';q('body').value='';q('status').textContent='';q('impact').textContent='';q('compare').textContent='';q('key').replaceChildren();q('history').replaceChildren();q('baseline').replaceChildren();q('accounts').replaceChildren();
  q('role').replaceChildren(...Object.entries(roles).map(([k,v])=>new Option(v,k)));
  q('branch').replaceChildren(new Option('كل الفروع',''),...(data.branches||[]).map(b=>new Option(b.name,b.id)));
  q('screen').replaceChildren(new Option('كل الواجهات',''));
@@ -353,7 +353,7 @@ q('rollback').onclick=()=>void run(async(token,who)=>{
  await getHistory(token,id);
  if(token===session&&who===actor()&&manager()&&dialog.open){if(!history.some(v=>v.id===id&&v.published_at))throw Error('لم تثبت الاستعادة في السجل');q('status').textContent='تمت الاستعادة في الإصدار #'+id;void sync(true);void syncPublic(true)}
 });
-q('close').onclick=()=>dialog.close();dialog.onclose=()=>{session++;busy=false;q('rich-preview').replaceChildren();q('body').value=''};
+q('close').onclick=()=>dialog.close();dialog.onclose=()=>{session++;busy=false;q('rich-preview').replaceChildren();q('body').value='';q('baseline').replaceChildren();q('accounts').replaceChildren();q('impact').textContent='';q('compare').textContent=''};
 const studio=document.querySelector('#ffStudio form');
 if(studio){
  const button=document.createElement('button');button.type='button';button.textContent='استوديو المحتوى والمسميات';button.id='ffContentOpen';

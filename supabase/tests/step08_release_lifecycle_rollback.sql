@@ -13,6 +13,7 @@ BEGIN
  PERFORM public.ff_ui_publish(a);
  t:=public.ff_a07_named_design('dashboard','cashier',b,'mobile','D05','QA experiment','wide','QA trial','',NULL,'{"font":"serif","logoAsset":"brand"}');
  n:=public.ff_a07_named_design('dashboard','cashier',b,'mobile','D06','','floating','QA other','',NULL,'{}');
+ IF (SELECT count(*) FROM public.ff_ui_trial_accounts(t))<>2 OR EXISTS(SELECT FROM public.ff_ui_trial_accounts(t) WHERE account_id=x) THEN RAISE EXCEPTION 'trial accounts leak';END IF;
  IF public.ff_ui_control_trial(t,ARRAY[u],1)<>1 THEN RAISE EXCEPTION 'trial start';END IF;
  PERFORM set_config('request.jwt.claim.sub',u::text,true);
  IF (public.ff_a07_effective_designs(b,'mobile')->'dashboard'->>'id')::bigint IS DISTINCT FROM t THEN RAISE EXCEPTION 'trial not effective';END IF;
@@ -51,6 +52,13 @@ BEGIN
  IF NOT EXISTS(SELECT FROM public.ff_content_effective(b) WHERE content_key='cashier.title' AND revision=cr AND body='QA content original') THEN RAISE EXCEPTION 'content restore mismatch';END IF;
  PERFORM set_config('request.jwt.claim.sub',m::text,true);public_id:=public.ff_content_create_draft('login.title','all',NULL,'QA public text');
  IF public.ff_step08_release_impact('content',public_id)->>'trial_allowed' IS DISTINCT FROM 'false' THEN RAISE EXCEPTION 'public trial allowed';END IF;
+ -- Unsafe properties, unknown KPI/action, missing protected elements, and client audit forgery.
+ BEGIN PERFORM public.ff_a07_named_design('dashboard','cashier',b,'mobile','D01','','labels','QA unsafe','',NULL,'{"quickActions":["unknown_rpc"]}');RAISE EXCEPTION 'unknown action accepted' USING ERRCODE='XX000';EXCEPTION WHEN raise_exception OR check_violation THEN NULL;END;
+ BEGIN PERFORM public.ff_a07_named_design('dashboard','cashier',b,'mobile','D01','','labels','QA unsafe','',NULL,'{"elements":{"dashboard_status":[]}}');RAISE EXCEPTION 'required element hidden' USING ERRCODE='XX000';EXCEPTION WHEN raise_exception OR check_violation THEN NULL;END;
+ BEGIN PERFORM public.ff_a07_named_design('dashboard','cashier',b,'mobile','D01','','labels','QA unsafe','', '[{"metric":"secret","label":"QA","size":"normal","tone":"default"}]','{}');RAISE EXCEPTION 'unknown KPI accepted' USING ERRCODE='XX000';EXCEPTION WHEN raise_exception OR check_violation THEN NULL;END;
+ BEGIN PERFORM public.ff_content_create_draft('cashier.title','cashier',b,'<script>bad</script>');RAISE EXCEPTION 'unsafe text accepted' USING ERRCODE='XX000';EXCEPTION WHEN check_violation THEN NULL;END;
+ BEGIN PERFORM public.ff_step08_content_trial(public_id,ARRAY[u],1);RAISE EXCEPTION 'public trial accepted' USING ERRCODE='XX000';EXCEPTION WHEN invalid_parameter_value THEN NULL;END;
+ BEGIN INSERT INTO public.ff_audit_log(actor_id,action,entity_type,entity_id,branch_id,details) VALUES(m,'step08_content_publish','content',public_id::text,b,'{}');RAISE EXCEPTION 'client forged audit accepted' USING ERRCODE='XX000';EXCEPTION WHEN insufficient_privilege THEN NULL;END;
  RESET ROLE;
  IF NOT EXISTS(SELECT FROM public.ff_audit_log WHERE actor_id=m AND action='a07_design_publish' AND entity_id=restored::text AND details->'targets' @> to_jsonb(ARRAY[u,p])) THEN RAISE EXCEPTION 'design targets missing';END IF;
  IF NOT EXISTS(SELECT FROM public.ff_audit_log WHERE actor_id=m AND action='step08_content_restore' AND entity_id=cr::text) OR NOT EXISTS(SELECT FROM public.ff_audit_log WHERE actor_id=m AND action='step08_content_publish' AND entity_id=cr::text AND details->'targets' @> to_jsonb(ARRAY[u,p])) OR NOT EXISTS(SELECT FROM public.ff_audit_log WHERE actor_id=m AND action='step08_content_trial_stop' AND entity_id=c2::text) THEN RAISE EXCEPTION 'text lifecycle audit missing';END IF;
