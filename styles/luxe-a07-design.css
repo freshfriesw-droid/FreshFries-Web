@@ -154,3 +154,18 @@
 [data-a07-logo-width] :is(.ff-a07-logo-inline,.ffx-hero-logo,.ff-assembly-brand>img,[data-ff-a07-managed-logo]){inline-size:var(--a07-exact-logo)!important;block-size:var(--a07-exact-logo)!important;max-inline-size:100%;object-fit:contain}
 
 #ffStep03ScopeCompare section{min-width:0;padding:8px;border:1px solid var(--ffx-line,#bbb);border-radius:8px;margin-block:8px}#ffStep03ScopeCompare label{display:block;min-width:0;margin-block:4px}#ffStep03ScopeCompare p{overflow-wrap:anywhere}
+
+/* STEP03: bounded relative logo sizing, menu placement and protected dialog styling. */
+[data-a07-logo-width="10%"]{--a07-relative-logo:10%}[data-a07-logo-width="20%"]{--a07-relative-logo:20%}[data-a07-logo-width="30%"]{--a07-relative-logo:30%}[data-a07-logo-width="40%"]{--a07-relative-logo:40%}
+[data-a07-logo-width$="%"] :is(.ff-a07-logo-inline,.ffx-hero-logo,.ff-assembly-brand>img,[data-ff-a07-managed-logo]){inline-size:var(--a07-relative-logo)!important;block-size:auto!important;max-inline-size:100%;max-block-size:160px;object-fit:contain}
+[data-ff-step03-logo-in-menu] :is(.ff-a07-logo-inline,.ffx-hero-logo,.ff-assembly-brand>img,[data-ff-a07-managed-logo]){display:none!important}
+[data-ff-step03-menu-original]{display:none!important}
+.ff-step03-menu-brand{display:grid;place-items:center;max-width:100%;flex:none;inline-size:var(--a07-exact-logo,var(--a07-logo,40px));block-size:auto;padding:0}
+.ff-step03-menu-brand[data-a07-logo-width$="%"]{inline-size:var(--a07-relative-logo);max-inline-size:40%}
+.ff-step03-menu-brand[data-a07-logo-align="end"]{order:2;margin-inline-start:auto}.ff-step03-menu-brand[data-a07-logo-align="center"]{align-self:center}
+.ff-step03-menu-brand img{width:100%;height:auto;max-height:120px;object-fit:contain;background:#fff;border-radius:8px}
+#ffA06SpecialMore>.ff-step03-menu-brand{margin-block-end:8px}
+[data-a07-dialog-radius="square"]{border-radius:0!important}[data-a07-dialog-radius="round"]{border-radius:18px!important}
+[data-a07-dialog-padding="normal"]{padding:12px!important}[data-a07-dialog-padding="wide"]{padding:20px!important}
+[data-a07-rating-scale="normal"] .ff-luxe-stars button{font-size:30px!important}[data-a07-rating-scale="large"] .ff-luxe-stars button{font-size:40px!important}
+.ff-step03-dialog-example{display:grid;gap:8px;border:2px solid #a71729;padding:12px;margin-block:8px}.ff-step03-rating-example{font-size:24px;color:#8e5900;letter-spacing:3px}[data-a07-rating-scale="large"] .ff-step03-rating-example{font-size:32px}

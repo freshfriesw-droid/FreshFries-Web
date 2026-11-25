@@ -223,7 +223,7 @@ async function run(action){
  try{await action(token,who)}catch(e){if(token===session&&who===actor())q('status').textContent=e.message||'تعذر تنفيذ الإجراء'}
  finally{if(token===session&&who===actor()){busy=false;controls()}}
 }
-async function open(){
+async function open(selection={}){
  if(!manager()||dialog.open)return;
  session++;busy=false;catalog=[];history=[];q('search').value='';q('body').value='';q('status').textContent='';q('key').replaceChildren();q('history').replaceChildren();
  q('role').replaceChildren(...Object.entries(roles).map(([k,v])=>new Option(v,k)));
@@ -235,7 +235,7 @@ async function open(){
  await run(async(token,who)=>{
   const rows=await rpc('ff_content_catalog_list');
   if(token!==session||who!==actor()||!manager())return;
-  catalog=(rows||[]).filter(r=>known(r.key));q('screen').replaceChildren(new Option('كل الواجهات',''),...[...new Set(catalog.map(r=>r.screen))].map(k=>new Option(screens[k]||k,k)));setKeys();preview();await getHistory(token);
+  catalog=(rows||[]).filter(r=>known(r.key));q('screen').replaceChildren(new Option('كل الواجهات',''),...[...new Set(catalog.map(r=>r.screen))].map(k=>new Option(screens[k]||k,k)));setKeys();const chosen=catalog.find(r=>r.key===selection?.key);if(chosen){q('screen').value=chosen.screen;setKeys();q('key').value=chosen.key;if(Object.hasOwn(roles,selection.role))q('role').value=selection.role;if([...q('branch').options].some(o=>o.value===selection.branch))q('branch').value=selection.branch;q('history-role').value=q('role').value;q('history-branch').value=q('branch').value||'__global__'}preview();await getHistory(token);
  });
 }
 function selectKey(){q('body').value='';preview();void run(token=>getHistory(token))}

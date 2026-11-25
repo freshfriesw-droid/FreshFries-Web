@@ -30,15 +30,18 @@ const tokens={
  logoSize:['مقاس الشعار',['normal','عادي'],['small','صغير'],['large','كبير']],
  logoAsset:['صورة الشعار',['brand','الشعار الرسمي'],['mark','أيقونة المطعم']],
  logoDarkAsset:['شعار الوضع الداكن',['brand','الشعار الرسمي'],['mark','أيقونة المطعم']],
- logoWidth:['مقاس الشعار الدقيق',['24','24 بكسل'],['32','32 بكسل'],['40','40 بكسل'],['48','48 بكسل'],['56','56 بكسل'],['64','64 بكسل'],['80','80 بكسل']],
- logoPosition:['موضع الشعار',['header','موضع العنوان الأصلي'],['cover','غلاف مستقل أعلى الشاشة']],
+ logoWidth:['مقاس الشعار الدقيق',['24','24 بكسل'],['32','32 بكسل'],['40','40 بكسل'],['48','48 بكسل'],['56','56 بكسل'],['64','64 بكسل'],['80','80 بكسل'],['10%','10% من المساحة'],['20%','20% من المساحة'],['30%','30% من المساحة'],['40%','40% من المساحة']],
+ logoPosition:['موضع الشعار',['header','موضع العنوان الأصلي'],['cover','غلاف مستقل أعلى الشاشة'],['menu','القائمة الرئيسية / المزيد']],
+ dialogRadius:['استدارة نافذة التأكيد أو التقييم',['square','مستطيلة'],['round','مستديرة']],
+ dialogPadding:['مساحة نافذة التأكيد أو التقييم',['normal','عادية'],['wide','واسعة']],
+ ratingScale:['حجم نجوم التقييم',['normal','عادي'],['large','كبير']],
  logoAlign:['محاذاة الشعار',['start','البداية'],['center','الوسط'],['end','النهاية']],
  layout:['شبكة البطاقات على الكمبيوتر',['pack','حسب الحزمة'],['single','عمود واحد'],['double','عمودان'],['triple','ثلاثة أعمدة']]
 };
 const roleScreens={manager:'dashboard',supervisor:'dashboard',customer_service:'orders',cashier:'cashier',driver:'driver',assembly:'assembly',burger_kitchen:'burger_kitchen'};
 const packOK=p=>/^D[0-9]{2,}$/.test(p||'');
 const cfgOf=v=>v&&typeof v==='object'&&!Array.isArray(v)?v:{};
-let current={},owned=new Set();
+let current={},owned=new Set(),ownedDialogs=new Set();
 const LOGO='./assets/ff-official-logo.png',FALLBACK='./assets/ff-icon-192.png';
 const logoPaths={brand:LOGO,mark:FALLBACK},logoOrigins=new WeakMap();
 function imageFallback(img){
@@ -63,9 +66,9 @@ function applyLogo(root){
   const src=logoPaths[choice]||o.src;
   if(src&&src!==o.desired){o.desired=src;delete img.dataset.ffA07Tried;if(img.getAttribute('src')!==src)img.src=src}
   let cover=root.querySelector(':scope > .ff-a07-logo-cover');
-  if(root.dataset.a07LogoPosition==='cover'){
+  if(root.dataset.a07LogoPosition==='cover'||(root.classList.contains('ff-a07-demo')&&root.dataset.a07LogoPosition==='menu')){
    if(!cover){cover=document.createElement('div');cover.className='ff-a07-logo-cover';root.prepend(cover)}
-   if(img.parentNode!==cover)cover.append(img)
+   if(img.parentNode!==cover)cover.append(img);cover.dataset.logoPlacement=root.dataset.a07LogoPosition;if(root.classList.contains('ff-a07-demo')&&root.dataset.a07LogoPosition==='menu')cover.setAttribute('aria-label','معاينة موضع الشعار في القائمة');else cover.removeAttribute('aria-label')
   }else if(cover?.contains(img)&&o.parent?.isConnected){
    o.parent.insertBefore(img,o.next?.parentNode===o.parent?o.next:null);if(!cover.children.length)cover.remove()
   }
@@ -92,7 +95,45 @@ function decorate(root,row){
   if(options.some(o=>o[0]===style[k]))root.dataset['a07'+k[0].toUpperCase()+k.slice(1)]=style[k];
  }
 }
+
+const navScreens={home:'dashboard',new:'orders',orders:'orders',late:'dashboard',cashier:'cashier',attendance:'driver',driver:'driver',offers:'driver',burger:'burger_kitchen',cashier_finished:'cashier',catalog:'catalog',customers:'customers',reports:'reports',team:'staff',staff_link:'staff',applications:'staff',application_alerts:'staff',archive:'archive',ratings:'ratings',cases:'cases',messages:'messages',reservations:'reservations',studio:'system',data_center:'system',security:'system',integrity:'system',access:'system',readiness:'system',qa:'system',diagnostics:'system'};
+function activeScreen(){
+ if(typeof ffV12AssemblyActive!=='undefined'&&ffV12AssemblyActive)return 'assembly';
+ if(window.ffBurgerActive?.())return 'burger_kitchen';
+ const key=document.querySelector('#ffx-nav button.active[data-key],#ffx-mobile-nav button.active[data-key]')?.dataset.key;
+ return navScreens[key]||roleScreens[typeof data!=='undefined'?data?.role:null]||'dashboard';
+}
+function dialogStyle(){
+ const next=new Set();
+ for(const el of document.querySelectorAll('#ffbConfirmLayer .ffb-v2-dialog,dialog.ff-luxe-rate-dialog')){
+  const screen=el.matches('.ffb-v2-dialog')?'orders':activeScreen(),style=current[screen]?.style_config||{};
+  for(const key of ['dialogRadius','dialogPadding','ratingScale']){
+   const attr='a07'+key[0].toUpperCase()+key.slice(1);delete el.dataset[attr];
+   if(tokens[key].slice(1).some(o=>o[0]===style[key]))el.dataset[attr]=style[key];
+  }
+  next.add(el);
+ }
+ for(const el of ownedDialogs)if(!next.has(el))for(const key of ['a07DialogRadius','a07DialogPadding','a07RatingScale'])delete el.dataset[key];
+ ownedDialogs=next;
+}
+function menuLogo(){
+ const screen=activeScreen(),row=current[screen],style=row?.style_config||{};
+ const special=['assembly','burger_kitchen'].includes(screen);
+ const host=special?$('ffA06SpecialMore'):$('ffx-sidebar')?.querySelector('.ffx-logo');
+ for(const old of document.querySelectorAll('.ff-step03-menu-brand'))if(old.parentElement!==host||style.logoPosition!=='menu')old.remove();
+ for(const node of document.querySelectorAll('[data-ff-step03-menu-original]'))if(node.parentElement!==host||style.logoPosition!=='menu'){delete node.dataset.ffStep03MenuOriginal;}
+ if(!host||style.logoPosition!=='menu')return;
+ let box=host.querySelector(':scope > .ff-step03-menu-brand');
+ if(!box){box=document.createElement('span');box.className='ff-step03-menu-brand';const img=document.createElement('img');img.alt='شعار فريش فرايز';img.src=LOGO;box.append(img);host.prepend(box);imageFallback(img)}
+ const original=host.querySelector(':scope > .ffx-logo-image');if(original)original.dataset.ffStep03MenuOriginal='1';
+ decorate(box,row);
+ const dark=style.surface==='dark'||(style.surface!=='light'&&(document.body.classList.contains('ffx-dark')||(!special&&style.surface!=='light')||['D02','D08','D11','D13'].includes(row?.pack)));
+ const img=box.querySelector('img'),src=logoPaths[dark&&style.logoDarkAsset?style.logoDarkAsset:style.logoAsset]||LOGO;
+ if(img.getAttribute('src')!==src){delete img.dataset.ffA07Tried;img.src=src}
+ for(const root of owned)if(root.dataset.ffA07Screen===screen&&root.dataset.a07LogoPosition==='menu')root.dataset.ffStep03LogoInMenu='1';
+}
 function refresh(){
+ for(const root of owned)delete root.dataset.ffStep03LogoInMenu;
  const seen=new Set();
  for(const [screen,selector] of Object.entries(selectors)){
   for(const root of document.querySelectorAll(selector)){
@@ -106,6 +147,7 @@ function refresh(){
  for(const old of owned)if(!seen.has(old)){resetNode(old);delete old.dataset.ffA07Signature;delete old.dataset.ffA07Screen}
  owned=seen;
  for(const root of seen)applyLogo(root);
+ dialogStyle();menuLogo();
  window.ffA07Elements?.refresh(seen,current);
  for(const img of document.querySelectorAll('img[src$="/ff-official-logo.png"],img[src$="/ff-icon-192.png"]'))imageFallback(img);
 }
@@ -151,7 +193,7 @@ function demoCard(screen,pack,style,compact=false,select=null){
  const root=document.createElement('section');root.className='ff-a07-demo';root.dataset.ffA07Screen=screen;
  decorate(root,{pack,style_config:style,id:'preview'});
  const head=document.createElement('header');head.className='ff-a07-demo-head';const img=document.createElement('img');img.src=LOGO;img.alt='شعار فريش فرايز';img.className='ff-a07-logo-inline';img.width=40;img.height=40;imageFallback(img);
- const h=document.createElement('strong');h.textContent=row[0];head.append(img,h);root.append(head);applyLogo(root);
+ const h=document.createElement('strong');h.textContent=row[0];head.append(img,h);root.append(head);applyLogo(root);if(style?.logoPosition==='menu'){const note=document.createElement('small');note.textContent='موضع الشعار في القائمة';root.querySelector('.ff-a07-logo-cover')?.append(note)}
  const cards=document.createElement('div');cards.className='ff-a07-demo-grid';
  for(let i=0;i<(compact?2:3);i++){
   const card=document.createElement('article');card.className='ff-a07-demo-card';
@@ -163,6 +205,7 @@ function demoCard(screen,pack,style,compact=false,select=null){
  }
  root.append(cards);
  if(!compact)window.ffA07Elements?.preview(root,screen,style?.elements,select);
+ if(!compact&&(style?.dialogRadius||style?.dialogPadding||style?.ratingScale)){const dialog=document.createElement('section');dialog.className='ff-step03-dialog-example';for(const key of ['dialogRadius','dialogPadding','ratingScale'])if(tokens[key].slice(1).some(o=>o[0]===style[key]))dialog.dataset['a07'+key[0].toUpperCase()+key.slice(1)]=style[key];const title=document.createElement('strong');title.textContent='نافذة تأكيد / تقييم — معاينة';const stars=document.createElement('span');stars.className='ff-step03-rating-example';stars.textContent='★★★★★';dialog.append(title,stars);root.append(dialog)}
  if(!compact){const danger=document.createElement('span');danger.className='ff-a07-demo-danger';danger.textContent='إلغاء — معاينة فقط';root.append(danger)}
  return root;
 }
