@@ -37,7 +37,7 @@ jobs:
           cp -a "$RUNNER_TEMP/p2-closed/p2-evidence/." p2-evidence/historical/ || true
           exit "$status"
       - name: Compare current editor against closed P2 default workspaces
-        run: P2_BASELINE="$RUNNER_TEMP/p2-closed" P2_STEP04_REGRESSION=1 python scripts/p2-component-qa.py
+        run: P2_CURRENT_CHROME=1 P2_BASELINE="$RUNNER_TEMP/p2-closed" P2_STEP04_REGRESSION=1 python scripts/p2-component-qa.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
