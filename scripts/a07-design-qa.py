@@ -56,12 +56,17 @@ fixture="""async role=>{
 }"""
 roles={"manager":("dashboard","#ffx-dashboard"),"supervisor":("dashboard","#ffx-dashboard"),"customer_service":("orders","#serviceOnly"),"cashier":("cashier","#cashierView"),"driver":("driver","#driverView"),"assembly":("assembly","#ffV12AssemblyWorkspace"),"burger_kitchen":("burger_kitchen","#ffBurgerKitchenWorkspace")}
 results=[]
+visual_matrix=[]
+def collect_visual(page):
+ visual_matrix.extend(page.evaluate("()=>window.__step03Matrix||[]"))
+ (out/"step03-computed-property-matrix.json").write_text(json.dumps(visual_matrix,ensure_ascii=False,indent=2))
+ print("STEP03 computed matrix",sum(x["computed"] for x in visual_matrix),"binding-only",sum(x["bindingOnly"] for x in visual_matrix),"failures",sum(len(x["failures"]) for x in visual_matrix),flush=True)
 with sync_playwright() as pw:
  browser=pw.chromium.launch(channel="chrome")
  for role,(screen,selector) in roles.items():
   ctx=browser.new_context(viewport={"width":390,"height":850},service_workers="block",reduced_motion="reduce")
   ctx.route("**/*",lambda route:route.continue_() if route.request.url.startswith(origin) else route.abort())
-  page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,role)
+  ctx.add_init_script(path=root/'scripts/step03-visual-matrix-probe.js');page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,role)
   page.wait_for_function("()=>!!window.ffA07Design&&!!window.ffDashboardStudio")
   if role=="assembly":page.locator("#ffV12Toggle").click()
   if role in ("driver","cashier","customer_service"):
@@ -121,6 +126,7 @@ with sync_playwright() as pw:
      observations.push({screen:c.screen,group:g,key,matched:ns.length,visible:ns.filter(n=>n.getClientRects().length>0).length,failures:[...new Set(failures)]});
     }
    }
+   window.step03Probe('mounted-'+data?.role,rows,dyn);
    window.__a07Rows={};await ffDashboardStudio.sync(true);ffA07Design.refresh();
    for(const o of native)if(o.node.isConnected&&(o.node.checked!==o.checked||o.node.disabled!==o.disabled||o.node.required!==o.required||o.node.value!==o.value||o.node.type!==o.type||ffA07Elements.visualTarget(o.node).dataset.ffA07ElAlign))throw Error('native state/reset changed '+o.node.id);
    return observations;
@@ -186,6 +192,7 @@ with sync_playwright() as pw:
      window.__a07Rows={[screen]:{id:999,pack:'D01',bar:'labels',style_config:{elements:selected}}};await ffDashboardStudio.sync(true);ffA07Design.refresh();
      const missing=records.filter(r=>!r.nodes.length).map(r=>r.key),bad=[];
      for(const r of records)for(const o of r.nodes){const n=o.node,target=ffA07Elements.visualTarget(n);if(!n.isConnected||target.dataset.ffA07ElAlign!=='center'||getComputedStyle(target).textAlign!=='center'||n.value!==o.value||n.disabled!==o.disabled||n.hidden!==o.hidden||n.onclick!==o.onclick||n.getAttribute('role')!==o.role)bad.push(r.key)}
+     window.step03Probe('operational-'+role,window.__a07Rows,selectors);
      window.__a07Rows={};await ffDashboardStudio.sync(true);ffA07Design.refresh();
      const cleanup=records.every(r=>r.nodes.every(o=>!ffA07Elements.visualTarget(o.node).dataset.ffA07ElAlign));
      return {missing,bad,cleanup,count:records.length};
@@ -219,6 +226,7 @@ with sync_playwright() as pw:
      const missing=records.filter(r=>!r.nodes.length).map(r=>r.key),bad=[];
      for(const r of records)for(const o of r.nodes){const t=ffA07Elements.visualTarget(o.n),s=getComputedStyle(t);if(!o.n.isConnected||o.n.disabled!==o.disabled||o.n.checked!==o.checked||o.n.onclick!==o.handler||o.n.getAttribute('role')!==o.role||(o.text!==null&&o.n.textContent!==o.text)||s.textAlign!=='center'||!s.fontFamily.toLowerCase().includes('tahoma')||s.borderTopWidth!=='3px')bad.push(r.key)}
      const protectedNote=role!=='burger_kitchen'||!!(note&&ready&&!note.checked&&ready.disabled&&note.getAttribute('aria-label'));
+     window.step03Probe('burger-'+role,window.__a07Rows,selectors);
      window.__a07Rows={};await ffDashboardStudio.sync(true);ffA07Design.refresh();
      return {missing,bad,count:records.length,protectedNote,cleanup:records.every(r=>r.nodes.every(o=>!ffA07Elements.visualTarget(o.n).dataset.ffA07ElAlign))};
     }finally{rpc=baseRPC;await ffBurgerRefresh();}
@@ -454,10 +462,10 @@ with sync_playwright() as pw:
   page.evaluate("()=>window.dispatchEvent(new Event('ff-luxe-session-reset'))")
   assert page.locator(selector).get_attribute("data-ff-a07-pack") is None
   print("PASS A07",role,47,"role/width/pack checks",flush=True)
-  ctx.close()
+  collect_visual(page);ctx.close()
  ctx=browser.new_context(viewport={"width":390,"height":850},service_workers="block",reduced_motion="reduce")
  ctx.route("**/*",lambda route:route.continue_() if route.request.url.startswith(origin) else route.abort())
- page=ctx.new_page();page.goto(origin,wait_until="load")
+ ctx.add_init_script(path=root/'scripts/step03-visual-matrix-probe.js');page=ctx.new_page();page.goto(origin,wait_until="load")
  page.wait_for_function("()=>!!window.ffA07Design")
  page.evaluate("""async()=>{client={};user=null;data=null;document.body.dataset.access='locked';document.getElementById('loginOverlay').classList.remove('hidden');rpc=async(name,args)=>name==='ff_a07_public_appearance'?{pack:'D05',layout_text:'PUBLIC QA',style_config:{logoAsset:'mark'}}:null;await ffA07Design.syncPublic(true)}""")
  assert page.locator("#loginOverlay .loginbox").get_attribute("data-ff-a07-pack")=="D05"
@@ -503,6 +511,7 @@ with sync_playwright() as pw:
      if(s.borderTopStyle!=='solid'||parseFloat(s.borderTopWidth)!==3)why.push('border');
      if(why.length)bad.push({key:o.key,why});
     }
+    window.step03Probe('public-'+screen,{[screen]:window.__step03PublicRows[screen+'|'+device]},Object.fromEntries(Object.entries(dyn).map(([k,v])=>[k,'#ff61ApplyForm [name="'+v+'"]'])));
     const other=screen==='login'?'customer_portal':'login';
     const isolation=[...document.querySelectorAll('[data-ff-a07-screen="'+other+'"] [data-ff-a07-el-align]')].length===0;
     window.__step03PublicRows={};await ffA07Design.syncPublic(true);
@@ -522,13 +531,13 @@ with sync_playwright() as pw:
  assert page.locator("#loginOverlay .loginbox").get_attribute("data-ff-a07-pack")=="D08"
  print("PASS STEP03 stale public mobile response rejected after resize",flush=True)
 
- ctx.close()
+ collect_visual(page);ctx.close()
 
  # Separate manager session for data-dependent admin controls. Only original
  # renderer functions and read-only in-memory fixture responses are used.
  ctx=browser.new_context(viewport={"width":1440,"height":850},service_workers="block",reduced_motion="reduce")
  ctx.route("**/*",lambda route:route.continue_() if route.request.url.startswith(origin) else route.abort())
- page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,"manager")
+ ctx.add_init_script(path=root/'scripts/step03-visual-matrix-probe.js');page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,"manager")
  page.wait_for_function("()=>!!window.ffA07Design&&!!window.ffDashboardStudio")
  admin=page.evaluate(r"""async()=>{
   const stamp=new Date().toISOString(),caseRow={id:'qa-case',subject:'QA',description:'QA',status:'open',kind:'customer_complaint',priority:'normal',branch_id:'b1',created_at:stamp};
@@ -582,6 +591,7 @@ with sync_playwright() as pw:
    if(s.borderTopStyle!=='solid'||parseFloat(s.borderTopWidth)!==3)why.push('border');
    if(why.length)bad.push({key:r.key,why});
   }
+  window.step03Probe('admin-renderers',rows,selectors);
   window.__a07Rows={};await ffDashboardStudio.sync(true);ffA07Design.refresh();
   const cleanup=records.every(r=>r.nodes.every(o=>!ffA07Elements.visualTarget(o.n).dataset.ffA07ElAlign&&!ffA07Elements.visualTarget(o.n).dataset.ffA07ElFont));
   return {count:records.length,missing,bad,cleanup,matched:records.map(r=>({key:r.key,screen:r.screen,nodes:r.nodes.length,unscoped:r.unscoped}))};
@@ -589,14 +599,14 @@ with sync_playwright() as pw:
  (out/"step03-real-admin-renderers.json").write_text(json.dumps(admin,ensure_ascii=False,indent=2))
  assert not admin["missing"] and not admin["bad"] and admin["cleanup"],admin
  print("PASS STEP03 actual administrative renderers",admin["count"],flush=True)
- ctx.close()
+ collect_visual(page);ctx.close()
 
  # Remaining actual dynamic dialogs and lifecycle fields: exercise only original renderers;
  # opening, typing and skipping are local, and every RPC remains intercepted.
  for role in ("manager","cashier","driver"):
   ctx=browser.new_context(viewport={"width":390,"height":850},service_workers="block",reduced_motion="reduce")
   ctx.route("**/*",lambda route:route.continue_() if route.request.url.startswith(origin) else route.abort())
-  page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,role)
+  ctx.add_init_script(path=root/'scripts/step03-visual-matrix-probe.js');page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,role)
   page.wait_for_function("()=>!!window.ffA07Design&&!!window.ffDashboardStudio")
   extra=page.evaluate(r"""async({role,dyn})=>{
    const base=rpc,stamp=new Date().toISOString(),writes=[];
@@ -622,6 +632,7 @@ with sync_playwright() as pw:
     window.__a07Rows={[screen]:{id:994,pack:'D01',style_config:{elements:selected}}};await ffDashboardStudio.sync(true);ffA07Design.refresh();
     const missing=records.filter(x=>!x.nodes.length).map(x=>x.key),bad=[];
     for(const r of records)for(const o of r.nodes){const n=o.n,t=ffA07Elements.visualTarget(n),s=getComputedStyle(t);if(!n.isConnected||t.dataset.ffA07ElAlign!=='center'||s.textAlign!=='center'||!s.fontFamily.toLowerCase().includes('tahoma')||Number(s.fontWeight)<700||s.borderTopWidth!=='3px'||s.boxShadow==='none'||n.value!==o.value||n.disabled!==o.disabled||n.hidden!==o.hidden||n.onclick!==o.onclick||n.getAttribute('aria-pressed')!==o.pressed)bad.push(r.key)}
+    window.step03Probe('remaining-'+role+'-'+keys.join(','),window.__a07Rows,dyn);
     window.__a07Rows={};await ffDashboardStudio.sync(true);ffA07Design.refresh();
     const cleanup=records.every(r=>r.nodes.every(o=>!ffA07Elements.visualTarget(o.n).dataset.ffA07ElAlign));
     checks.push({screen,keys,missing,bad,cleanup});
@@ -667,11 +678,14 @@ with sync_playwright() as pw:
   (out/f"step03-remaining-renderers-{role}.json").write_text(json.dumps(extra,ensure_ascii=False,indent=2))
   assert not extra["writes"] and all(not c["missing"] and not c["bad"] and c["cleanup"] for c in extra["checks"]),extra
   print("PASS STEP03 remaining original renderers",role,sum(len(c["keys"]) for c in extra["checks"]),flush=True)
-  ctx.close()
+  collect_visual(page);ctx.close()
 
  print("PASS STEP03 independent finance, branch, login and customer scopes",flush=True)
  browser.close()
 server.shutdown()
 (out/"role-pack-matrix.json").write_text(json.dumps(results,ensure_ascii=False,indent=2))
 assert len(results)==7*47
+assert len(set(k for x in visual_matrix for k in x['entries']))==662, 'visual matrix registry coverage'
+failures=[f for x in visual_matrix for f in x['failures']]
+assert not failures, ('STEP03 computed property mismatch',len(failures),failures[:25])
 print("PASS A07",len(results),"actual role/width/pack checks, gallery and reset",flush=True)
