@@ -714,3 +714,40 @@ INSERT INTO public.ff_content_catalog(key,screen,label,original) VALUES
 ('notices.message.b3fe16c3','notices','توضيح الرسالة الأصلية: تعذر إرسال التظلم:','تعذر إرسال التظلم:'),
 ('notices.message.80c9eac4','notices','توضيح الرسالة الأصلية: تم حفظ التقييم','تم حفظ التقييم')
 ON CONFLICT(key) DO NOTHING;
+
+-- Stable remaining action/accessible controls.
+INSERT INTO public.ff_content_catalog(key,screen,label,original) VALUES
+('dashboard.control.ffx_menu','dashboard','توضيح يحفظ النص الأصلي: القائمة الرئيسية','القائمة الرئيسية'),
+('dashboard.control.ffx_refresh','dashboard','توضيح يحفظ النص الأصلي: تحديث البيانات','تحديث البيانات'),
+('dashboard.control.ffx_bell','dashboard','توضيح يحفظ النص الأصلي: التنبيهات','التنبيهات'),
+('dashboard.control.ffx_theme_toggle','dashboard','توضيح يحفظ النص الأصلي: تغيير المظهر','تغيير المظهر'),
+('dashboard.control.ffx_options','dashboard','توضيح يحفظ النص الأصلي: تخصيص النظام','تخصيص النظام'),
+('dashboard.control.ffx_drawer_close','dashboard','توضيح يحفظ النص الأصلي: إغلاق القائمة','إغلاق القائمة'),
+('system.control.ffx_pref_close','system','توضيح يحفظ النص الأصلي: إغلاق الإعدادات','إغلاق الإعدادات'),
+('system.control.ffx_audio','system','توضيح يحفظ النص الأصلي: تشغيل التنبيهات الصوتية','تشغيل التنبيهات الصوتية'),
+('system.control.ffx_visual','system','توضيح يحفظ النص الأصلي: عرض تنبيهات مرئية','عرض تنبيهات مرئية'),
+('system.control.ffx_delay','system','توضيح يحفظ النص الأصلي: تنبيه تجاوز مهلة التوصيل','تنبيه تجاوز مهلة التوصيل'),
+('system.control.ffx_volume','system','توضيح يحفظ النص الأصلي: مستوى الصوت','مستوى الصوت'),
+('dashboard.control.ffx_branch','dashboard','توضيح يحفظ النص الأصلي: تصفية الفرع','تصفية الفرع'),
+('orders.control.ffunifiedmenureview','orders','توضيح يحفظ النص الأصلي: 🔎 تحليل الأصناف ومعاينتها','🔎 تحليل الأصناف ومعاينتها'),
+('orders.control.ffunifiedmenuundo','orders','توضيح يحفظ النص الأصلي: تراجع عن آخر تعديل','تراجع عن آخر تعديل'),
+('orders.control.ffunifiedmenuclose','orders','توضيح يحفظ النص الأصلي: إغلاق','إغلاق'),
+('orders.control.ffunifiedmenusearch','orders','توضيح يحفظ النص الأصلي: ابحث عن صنف أو عرض','ابحث عن صنف أو عرض'),
+('cases.control.ffcasealertclose','cases','توضيح يحفظ النص الأصلي: إغلاق','إغلاق'),
+('cases.control.ffcasealertrefresh','cases','توضيح يحفظ النص الأصلي: تحديث','تحديث'),
+('archive.control.ffcompleteddetailclose','archive','توضيح يحفظ النص الأصلي: إغلاق','إغلاق'),
+('reports.control.ffa10ratingescalate','reports','توضيح يحفظ النص الأصلي: تصعيد يدوي لتقييم منخفض (لا يصدّر)','تصعيد يدوي لتقييم منخفض (لا يصدّر)'),
+('assembly.control.assembly_stage_action','assembly','توضيح يحفظ النص الأصلي: إجراء المرحلة — النص الرسمي حسب حالة الطلب','إجراء المرحلة — النص الرسمي حسب حالة الطلب'),
+('burger_kitchen.control.burger_stage_action','burger_kitchen','توضيح يحفظ النص الأصلي: إجراء مرحلة تحضير البرجر — النص الرسمي حسب حالة الطلب','إجراء مرحلة تحضير البرجر — النص الرسمي حسب حالة الطلب'),
+('cashier.control.cashier_burger_skip','cashier','توضيح يحفظ النص الأصلي: إجراء البرجر للكاشير — النص الرسمي حسب الحالة','إجراء البرجر للكاشير — النص الرسمي حسب الحالة'),
+('assembly.control.assembly_burger_skip','assembly','توضيح يحفظ النص الأصلي: إجراء البرجر لنقطة التجميع — النص الرسمي حسب الحالة','إجراء البرجر لنقطة التجميع — النص الرسمي حسب الحالة'),
+('driver.control.driver_rating_submit','driver','توضيح يحفظ النص الأصلي: حفظ تقييم الطلب','حفظ تقييم الطلب'),
+('driver.control.driver_rating_close','driver','توضيح يحفظ النص الأصلي: إغلاق نافذة التقييم','إغلاق نافذة التقييم'),
+('driver.control.driver_grievance_save','driver','توضيح يحفظ النص الأصلي: حفظ التظلم','حفظ التظلم'),
+('driver.control.driver_grievance_close','driver','توضيح يحفظ النص الأصلي: إغلاق التظلم','إغلاق التظلم'),
+('ratings.control.orders_rate_save','ratings','توضيح يحفظ النص الأصلي: حفظ تقييم الموصل','حفظ تقييم الموصل'),
+('ratings.control.orders_rate_skip','ratings','توضيح يحفظ النص الأصلي: تخطي التقييم','تخطي التقييم'),
+('driver.control.driver_feedback_refresh','driver','توضيح يحفظ النص الأصلي: تحديث ملاحظات الأداء','تحديث ملاحظات الأداء'),
+('driver.control.driver_feedback_open','driver','توضيح يحفظ النص الأصلي: فتح متابعة الأداء','فتح متابعة الأداء'),
+('finance.control.finance_fee_save','finance','توضيح يحفظ النص الأصلي: حفظ إثبات رسوم التوصيل','حفظ إثبات رسوم التوصيل')
+ON CONFLICT(key) DO NOTHING;

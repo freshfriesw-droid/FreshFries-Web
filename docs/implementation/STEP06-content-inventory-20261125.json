@@ -1,8 +1,8 @@
 {
   "base": "a4d579a6b2e1f100c24922be1bc0dc522eb9c26a",
   "existing": 125,
-  "added": 673,
-  "total": 798,
+  "added": 706,
+  "total": 831,
   "registered": [
     {
       "key": "orders.control.ffa06discarddraft",
@@ -6409,6 +6409,303 @@
       "source": "index.html",
       "message": "تم حفظ التقييم",
       "match": "exact"
+    },
+    {
+      "key": "dashboard.control.ffx_menu",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: القائمة الرئيسية",
+      "original": "القائمة الرئيسية",
+      "selector": "#ffx-menu",
+      "mode": "accessible",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ffx_refresh",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: تحديث البيانات",
+      "original": "تحديث البيانات",
+      "selector": "#ffx-refresh",
+      "mode": "accessible",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ffx_bell",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: التنبيهات",
+      "original": "التنبيهات",
+      "selector": "#ffx-bell",
+      "mode": "accessible",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ffx_theme_toggle",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: تغيير المظهر",
+      "original": "تغيير المظهر",
+      "selector": "#ffx-theme-toggle",
+      "mode": "accessible",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ffx_options",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: تخصيص النظام",
+      "original": "تخصيص النظام",
+      "selector": "#ffx-options",
+      "mode": "accessible",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ffx_drawer_close",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق القائمة",
+      "original": "إغلاق القائمة",
+      "selector": "#ffx-drawer-close",
+      "mode": "accessible",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ffx_pref_close",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق الإعدادات",
+      "original": "إغلاق الإعدادات",
+      "selector": "#ffx-pref-close",
+      "mode": "accessible",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ffx_audio",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: تشغيل التنبيهات الصوتية",
+      "original": "تشغيل التنبيهات الصوتية",
+      "selector": ".ffx-switchrow:has(> #ffx-audio) > span",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ffx_visual",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: عرض تنبيهات مرئية",
+      "original": "عرض تنبيهات مرئية",
+      "selector": ".ffx-switchrow:has(> #ffx-visual) > span",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ffx_delay",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: تنبيه تجاوز مهلة التوصيل",
+      "original": "تنبيه تجاوز مهلة التوصيل",
+      "selector": ".ffx-switchrow:has(> #ffx-delay) > span",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ffx_volume",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: مستوى الصوت",
+      "original": "مستوى الصوت",
+      "selector": "label:has(> #ffx-volume-label)",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ffx_branch",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: تصفية الفرع",
+      "original": "تصفية الفرع",
+      "selector": "#ffx-branch",
+      "mode": "accessible",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.ffunifiedmenureview",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: 🔎 تحليل الأصناف ومعاينتها",
+      "original": "🔎 تحليل الأصناف ومعاينتها",
+      "selector": "#ffUnifiedMenuReview",
+      "mode": "protected",
+      "source": "scripts/luxe-unified-order-inputs-20261123.js"
+    },
+    {
+      "key": "orders.control.ffunifiedmenuundo",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: تراجع عن آخر تعديل",
+      "original": "تراجع عن آخر تعديل",
+      "selector": "#ffUnifiedMenuUndo",
+      "mode": "protected",
+      "source": "scripts/luxe-unified-order-inputs-20261123.js"
+    },
+    {
+      "key": "orders.control.ffunifiedmenuclose",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ffUnifiedMenuClose",
+      "mode": "protected",
+      "source": "scripts/luxe-unified-order-inputs-20261123.js"
+    },
+    {
+      "key": "orders.control.ffunifiedmenusearch",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: ابحث عن صنف أو عرض",
+      "original": "ابحث عن صنف أو عرض",
+      "selector": "#ffUnifiedMenuSearch",
+      "mode": "hint",
+      "source": "scripts/luxe-unified-order-inputs-20261123.js"
+    },
+    {
+      "key": "cases.control.ffcasealertclose",
+      "screen": "cases",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ffCaseAlertClose",
+      "mode": "protected",
+      "source": "scripts/luxe-case-alerts-20261123.js"
+    },
+    {
+      "key": "cases.control.ffcasealertrefresh",
+      "screen": "cases",
+      "label": "توضيح يحفظ النص الأصلي: تحديث",
+      "original": "تحديث",
+      "selector": "#ffCaseAlertRefresh",
+      "mode": "protected",
+      "source": "scripts/luxe-case-alerts-20261123.js"
+    },
+    {
+      "key": "archive.control.ffcompleteddetailclose",
+      "screen": "archive",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق",
+      "original": "إغلاق",
+      "selector": "#ffCompletedDetailClose",
+      "mode": "protected",
+      "source": "scripts/luxe-completed-detail-popup-20261123.js"
+    },
+    {
+      "key": "reports.control.ffa10ratingescalate",
+      "screen": "reports",
+      "label": "توضيح يحفظ النص الأصلي: تصعيد يدوي لتقييم منخفض (لا يصدّر)",
+      "original": "تصعيد يدوي لتقييم منخفض (لا يصدّر)",
+      "selector": "label:has(> #ffA10RatingEscalate)",
+      "mode": "protected_label",
+      "source": "scripts/luxe-report-center-20261123.js"
+    },
+    {
+      "key": "assembly.control.assembly_stage_action",
+      "screen": "assembly",
+      "label": "توضيح يحفظ النص الأصلي: إجراء المرحلة — النص الرسمي حسب حالة الطلب",
+      "original": "إجراء المرحلة — النص الرسمي حسب حالة الطلب",
+      "selector": "#ffV12AssemblyOrders button.ff-assembly-stage-action",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "burger_kitchen.control.burger_stage_action",
+      "screen": "burger_kitchen",
+      "label": "توضيح يحفظ النص الأصلي: إجراء مرحلة تحضير البرجر — النص الرسمي حسب حالة الطلب",
+      "original": "إجراء مرحلة تحضير البرجر — النص الرسمي حسب حالة الطلب",
+      "selector": "#ffBurgerKitchenWorkspace .ff-burger-card > button",
+      "mode": "protected",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "cashier.control.cashier_burger_skip",
+      "screen": "cashier",
+      "label": "توضيح يحفظ النص الأصلي: إجراء البرجر للكاشير — النص الرسمي حسب الحالة",
+      "original": "إجراء البرجر للكاشير — النص الرسمي حسب الحالة",
+      "selector": "#ffBurgerCashierPanel .ff-burger-card > button",
+      "mode": "protected",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "assembly.control.assembly_burger_skip",
+      "screen": "assembly",
+      "label": "توضيح يحفظ النص الأصلي: إجراء البرجر لنقطة التجميع — النص الرسمي حسب الحالة",
+      "original": "إجراء البرجر لنقطة التجميع — النص الرسمي حسب الحالة",
+      "selector": "#ffV12AssemblyWorkspace .ff-burger-card > button",
+      "mode": "protected",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "driver.control.driver_rating_submit",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: حفظ تقييم الطلب",
+      "original": "حفظ تقييم الطلب",
+      "selector": "dialog.ff-luxe-rate-dialog:has(#ffLuxeFourScores) button[data-submit]",
+      "mode": "protected",
+      "source": "A07 fixed selector / authored operational renderer"
+    },
+    {
+      "key": "driver.control.driver_rating_close",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق نافذة التقييم",
+      "original": "إغلاق نافذة التقييم",
+      "selector": "dialog.ff-luxe-rate-dialog:has(#ffLuxeFourScores) button[data-close]",
+      "mode": "protected",
+      "source": "A07 fixed selector / authored operational renderer"
+    },
+    {
+      "key": "driver.control.driver_grievance_save",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: حفظ التظلم",
+      "original": "حفظ التظلم",
+      "selector": "dialog.ff-luxe-rate-dialog:has(option[value=\"delivery_fee\"]) button[data-save]",
+      "mode": "protected",
+      "source": "A07 fixed selector / authored operational renderer"
+    },
+    {
+      "key": "driver.control.driver_grievance_close",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: إغلاق التظلم",
+      "original": "إغلاق التظلم",
+      "selector": "dialog.ff-luxe-rate-dialog:has(option[value=\"delivery_fee\"]) button[data-close]",
+      "mode": "protected",
+      "source": "A07 fixed selector / authored operational renderer"
+    },
+    {
+      "key": "ratings.control.orders_rate_save",
+      "screen": "ratings",
+      "label": "توضيح يحفظ النص الأصلي: حفظ تقييم الموصل",
+      "original": "حفظ تقييم الموصل",
+      "selector": "dialog.ff-luxe-rate-dialog:has(button[data-skip]) button[data-save]",
+      "mode": "protected",
+      "source": "A07 fixed selector / authored operational renderer"
+    },
+    {
+      "key": "ratings.control.orders_rate_skip",
+      "screen": "ratings",
+      "label": "توضيح يحفظ النص الأصلي: تخطي التقييم",
+      "original": "تخطي التقييم",
+      "selector": "dialog.ff-luxe-rate-dialog:has(button[data-skip]) button[data-skip]",
+      "mode": "protected",
+      "source": "A07 fixed selector / authored operational renderer"
+    },
+    {
+      "key": "driver.control.driver_feedback_refresh",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: تحديث ملاحظات الأداء",
+      "original": "تحديث ملاحظات الأداء",
+      "selector": "#ffA10DriverFeedback button[data-refresh]",
+      "mode": "protected",
+      "source": "A07 fixed selector / authored operational renderer"
+    },
+    {
+      "key": "driver.control.driver_feedback_open",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: فتح متابعة الأداء",
+      "original": "فتح متابعة الأداء",
+      "selector": "#ffA10DriverFeedback [data-rows] button",
+      "mode": "protected",
+      "source": "A07 fixed selector / authored operational renderer"
+    },
+    {
+      "key": "finance.control.finance_fee_save",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: حفظ إثبات رسوم التوصيل",
+      "original": "حفظ إثبات رسوم التوصيل",
+      "selector": "#ffA10FeeEvidence button[data-save]",
+      "mode": "protected",
+      "source": "A07 fixed selector / authored operational renderer"
     }
   ],
   "previousRegistryCoverage": [
@@ -8015,11 +8312,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "cashier_stage",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "ffx-kpis",
       "screen": "dashboard",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -8300,11 +8592,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "email",
-      "screen": "login",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
       "id": "loginStatus",
       "screen": "login",
       "reason": "public or login; separate safe public read policy not established"
@@ -8330,76 +8617,6 @@
       "reason": "public or login; separate safe public read policy not established"
     },
     {
-      "id": "ff28Name",
-      "screen": "customer_portal",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ff28Role",
-      "screen": "customer_portal",
-      "reason": "public or login; separate safe public read policy not established"
-    },
-    {
-      "id": "ffx-branch",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-menu",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-refresh",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-bell",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-theme-toggle",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-options",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-drawer-close",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-pref-close",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-audio",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-visual",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-delay",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffx-volume",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "ff4-overdue",
       "screen": "dashboard",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -8415,21 +8632,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "ffUnifiedMenuReview",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffUnifiedMenuUndo",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffUnifiedMenuClose",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "ffA12Confirm",
       "screen": "system",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -8440,32 +8642,7 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "ffA10RatingEscalate",
-      "screen": "reports",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffUnifiedMenuSearch",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffCaseAlertClose",
-      "screen": "cases",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffCaseAlertRefresh",
-      "screen": "cases",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "fflCashierFinishedToggle",
-      "screen": "archive",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffCompletedDetailClose",
       "screen": "archive",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
@@ -8477,11 +8654,6 @@
     {
       "id": "driver_addition_invoice_notice",
       "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "assembly_stage_action",
-      "screen": "assembly",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
@@ -8500,11 +8672,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "burger_stage_action",
-      "screen": "burger_kitchen",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "burger_stage_state",
       "screen": "burger_kitchen",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -8520,11 +8687,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "cashier_burger_skip",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "cashier_burger_state",
       "screen": "cashier",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -8532,11 +8694,6 @@
     {
       "id": "cashier_burger_timer",
       "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "assembly_burger_skip",
-      "screen": "assembly",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
@@ -8595,11 +8752,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "finance_fee_save",
-      "screen": "finance",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "finance_fee_status",
       "screen": "finance",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -8650,32 +8802,12 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "driver_feedback_refresh",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_feedback_open",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "driver_rating_note",
       "screen": "driver",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
       "id": "driver_rating_star",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_rating_submit",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_rating_close",
       "screen": "driver",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
@@ -8690,16 +8822,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "driver_grievance_save",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_grievance_close",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "orders_rate_star",
       "screen": "orders",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -8710,32 +8832,12 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "orders_rate_save",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "orders_rate_skip",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "cashier_rate_star",
       "screen": "cashier",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
       "id": "cashier_rate_note",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "cashier_rate_save",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "cashier_rate_skip",
       "screen": "cashier",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     }

@@ -19,14 +19,14 @@ observations=[]
 audit="""async ()=>{
  const registry=ffContentStudio.registry().filter(r=>!r.publicScreen&&r.selector);
  const direct=n=>Array.from(n.childNodes).filter(c=>c.nodeType===Node.TEXT_NODE).map(c=>c.data).join('');
- const snapshots=registry.map((r,index)=>({r,marker:'تخصيص اختباري '+index,nodes:Array.from(document.querySelectorAll(r.selector)).map(n=>({n,before:r.mode==='hint'?n.getAttribute('placeholder'):direct(n),disabled:n.disabled,value:n.value,id:n.id,type:n.type,required:n.required,onclick:n.onclick}))}));
+ const snapshots=registry.map((r,index)=>({r,marker:'تخصيص اختباري '+index,nodes:Array.from(document.querySelectorAll(r.selector)).map(n=>({n,before:r.mode==='hint'?n.getAttribute('placeholder'):r.mode==='accessible'?n.getAttribute('aria-label'):direct(n),disabled:n.disabled,value:n.value,id:n.id,type:n.type,required:n.required,onclick:n.onclick}))}));
  const official=document.querySelector('#ff43SecurityPanel .warning')?.textContent;
  window.__step06Rows=snapshots.map(x=>({content_key:x.r.key,body:x.marker,revision:1}));
  await ffContentStudio.sync(true);
  const results=snapshots.map(x=>{
   const failures=[];
   for(const o of x.nodes){
-   const n=o.n,after=x.r.mode==='hint'?n.getAttribute('placeholder'):x.r.mode==='guide'?n.querySelector('[data-ff-guidance="'+x.r.key+'"]')?.textContent:direct(n);
+   const n=o.n,after=x.r.mode==='hint'?n.getAttribute('placeholder'):x.r.mode==='accessible'?n.getAttribute('aria-label'):x.r.mode==='guide'?n.querySelector('[data-ff-guidance="'+x.r.key+'"]')?.textContent:direct(n);
    if(!n.isConnected){failures.push('node-replaced');continue}
    if(!String(after||'').includes(x.marker))failures.push('not-applied:'+String(o.before||'').slice(0,100));
    if(['protected','protected_label'].includes(x.r.mode)&&!String(after||'').includes(o.before.trim()))failures.push('original-hidden');
@@ -38,7 +38,7 @@ audit="""async ()=>{
  window.__step06Rows=[];await ffContentStudio.sync(true);
  for(const [index,x] of snapshots.entries())for(const o of x.nodes){
   if(!o.n.isConnected)continue;
-  const after=x.r.mode==='hint'?o.n.getAttribute('placeholder'):direct(o.n);
+  const after=x.r.mode==='hint'?o.n.getAttribute('placeholder'):x.r.mode==='accessible'?o.n.getAttribute('aria-label'):direct(o.n);
   if(x.r.mode==='guide'){if(o.n.querySelector('[data-ff-guidance="'+x.r.key+'"]'))results[index].failures.push('guide-not-restored')}
   else if(after!==o.before)results[index].failures.push('restore:'+String(after||'').slice(0,100));
  }
@@ -72,7 +72,7 @@ with sync_playwright() as pw:
      if(!actual.startsWith(message+' — ')||!actual.includes('رسالة اختبار '+i))throw Error('unbound message '+r.key);
     }
     const target=rules.find(r=>r.original==='تم تسجيل الحضور');toast(target.message);
-    if(!document.getElementById('toast').textContent.includes(' — '))throw Error('actual toast hook missing');
+    if(!document.getElementById('ffx-toast').textContent.includes(' — '))throw Error('actual toast hook missing');
     window.__step06Rows=[];await ffContentStudio.sync(true);
     if(ffContentStudio.decorateMessage(target.message)!==target.message)throw Error('message restore');
    }""")
