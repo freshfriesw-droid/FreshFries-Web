@@ -72,8 +72,8 @@ with sync_playwright() as pw:
         page.add_script_tag(content="""window.__account='A';window.__ratings=[];
           window.__delayPortal=false;
           window.rpc=async(name,args)=>{
-            if(name!=='ff28_customer')throw Error('unexpected RPC');
-            if(args?.p_order){window.__ratings.push(args);window.__rated=true}
+            if(!['ff28_customer','ff_a10_customer_rate'].includes(name))throw Error('unexpected RPC');
+            if(name==='ff_a10_customer_rate'){window.__ratings.push(args);window.__rated=true;return true}
             if(window.__delayPortal){window.__delayPortal=false;return await new Promise(resolve=>window.__resolvePortal=resolve)}
             return window.__account==='A'?[{id:'A-only',order_number:111,status:'delivered',total:1000,rating:window.__rated?4:null}]:
               [{id:'B-only',order_number:222,status:'new',total:500,rating:null}];
@@ -83,9 +83,10 @@ with sync_playwright() as pw:
         page.evaluate("document.body.dataset.access='customer';ff28PortalLoad()")
         assert "111" in page.locator("#ff28Rows").inner_text()
         page.get_by_label("تقييم الطلب").select_option("4")
+        page.get_by_label("ملاحظة التقييم").fill("خدمة جيدة")
         page.get_by_role("button",name="إرسال التقييم").click()
         page.wait_for_function("document.getElementById('ff28Rows').textContent.includes('تقييمك 4')")
-        assert page.evaluate("window.__ratings")==[{"p_order":"A-only","p_stars":4}]
+        assert page.evaluate("window.__ratings")==[{"p_order":"A-only","p_stars":4,"p_note":"خدمة جيدة"}]
         assert page.get_by_role("button",name="إرسال التقييم").count()==0
         page.evaluate("window.__delayPortal=true;void ff28PortalLoad()")
         page.wait_for_function("typeof window.__resolvePortal==='function'")
