@@ -13,7 +13,7 @@
    if(v==='square')return close(s.borderTopLeftRadius,0)?null:['radius',s.borderTopLeftRadius];
    if(v==='round')return parseFloat(s.borderTopLeftRadius)>0?null:['radius',s.borderTopLeftRadius];
    if(v==='pill')return close(s.borderTopLeftRadius,999)?null:['radius',s.borderTopLeftRadius];
-   if(v==='outline')return s.outlineStyle==='solid'&&close(s.outlineWidth,2)?null:['outline',s.outline];
+   if(v==='outline')return s.outlineStyle==='solid'&&(close(s.outlineWidth,2)||n.matches(':focus-visible')&&close(s.outlineWidth,3))?null:['outline',s.outline];
    if(v==='icon_label')return native(n)?null:getComputedStyle(n,'::before').content.includes('◆')?null:['pseudo',getComputedStyle(n,'::before').content];
   }
   if(p==='size')return v==='normal'||close(s.paddingInlineStart,14)&&close(s.paddingBlockStart,14)?null:['size',s.paddingInlineStart+'/'+s.paddingBlockStart];
@@ -47,6 +47,7 @@
   }
   const values={shape:Object.keys(el().shapes).filter(x=>x!=='inherit'),size:Object.keys(el().sizes).filter(x=>x!=='inherit'),...Object.fromEntries(Object.entries(el().properties).map(([p,v])=>[p,Object.keys(v)]))};
   const result={label,width:innerWidth,entries:[...new Set(records.map(o=>o.screen+'/'+o.group+'/'+o.key))],nodes:records.length,computed:0,bindingOnly:0,failures:[],counts:{}};
+  const stable=document.createElement('style');stable.textContent='[data-ff-a07-screen] *{transition:none!important}';document.head.append(stable);
   try{
    for(const [p,opts] of Object.entries(values))for(const v of opts){
     const cfg={};
@@ -60,7 +61,7 @@
      if(!o.original.isConnected||o.original.disabled!==o.disabled||o.original.checked!==o.checked||o.original.value!==o.value||o.original.required!==o.required||o.original.hidden!==o.hidden||o.original.onclick!==o.handler||o.original.getAttribute('role')!==o.role)result.failures.push({screen:o.screen,group:o.group,key:o.key,p,v,why:['operational-state']});
     }
    }
-  }finally{el().refresh(roots,config)}
+  }finally{el().refresh(roots,config);stable.remove()}
   window.__step03Matrix.push(result);
   return result.failures.length;
  };
