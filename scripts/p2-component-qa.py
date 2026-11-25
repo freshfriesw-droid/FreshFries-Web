@@ -75,6 +75,10 @@ def setup(browser,origin,role):
  p=c.new_page();p.goto(origin,wait_until='load');p.evaluate(fixture,role)
  p.wait_for_function('()=>!!window.ffA07Design&&!!window.ffDashboardStudio')
  if role=='assembly':p.locator('#ffV12Toggle').click()
+ # The special-role bar is populated by the A06 asynchronous scope refresh.
+ # Require readiness independently in both trees; never hide a failing bar to compare.
+ if role in ('assembly','burger_kitchen'):
+  p.wait_for_function("()=>{const n=document.getElementById('ffA06SpecialNav');return n&&!n.hidden&&n.querySelectorAll('button').length>=5&&getComputedStyle(n).display==='flex'}",timeout=10000)
  if role in ('driver','cashier','customer_service'):
   key={'driver':'attendance','cashier':'cashier','customer_service':'new'}[role]
   p.locator('#ffx-mobile-nav button[data-key="'+key+'"]').click()
@@ -102,6 +106,10 @@ with sync_playwright() as pw:
    for theme in themes:
     for p in (old,new):
      p.evaluate("""t=>{document.body.classList.remove('ffx-dark','ffx-contrast','ffx-compact');if(t!=='classic')document.body.classList.add('ffx-'+t);document.body.classList.toggle('ffx-compact',t==='contrast')}""",theme)
+    for p in (old,new):
+     if role in ('assembly','burger_kitchen'):
+      p.wait_for_function("w=>{const n=document.getElementById('ffA06SpecialNav');return n&&!n.hidden&&n.querySelectorAll('button').length>=5&&(getComputedStyle(n).display!=='none')===matchMedia('(max-width: 850px)').matches}",arg=width,timeout=10000)
+     p.evaluate("()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))")
     a=old.evaluate(probe);b=new.evaluate(probe)
     compare(a,b,(role,width,theme))
     assert b['hidden']['display']=='none'
