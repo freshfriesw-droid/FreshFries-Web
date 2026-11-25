@@ -592,7 +592,11 @@ with sync_playwright() as pw:
    assert dlg.locator('select[name=version]').input_value()=='903'
    for width in (320,360,390,430,768,1024,1440):
     page.set_viewport_size({'width':width,'height':850})
-    assert dlg.evaluate('e=>e.scrollWidth<=e.clientWidth+2'),(width,dlg.evaluate('e=>({width:e.clientWidth,scroll:e.scrollWidth,overflow:[...e.querySelectorAll("*")].filter(n=>n.getBoundingClientRect().width>e.clientWidth+2&&!n.closest(".ff-preview-scroll,.ff-a07-preview-holder")).slice(0,10).map(n=>[n.tagName,n.id,n.className,n.getBoundingClientRect().width])})'))
+    diag=dlg.evaluate("""e=>{const r=e.getBoundingClientRect();return {width:e.clientWidth,scroll:e.scrollWidth,overflow:[...e.querySelectorAll('*')].filter(n=>{const x=n.getBoundingClientRect();return x.width>0&&(x.left<r.left-2||x.right>r.right+2)&&!n.closest('.ff-preview-scroll,.ff-a07-preview-holder,[data-a07-before],[data-a07-after]')}).slice(0,15).map(n=>[n.tagName,n.id,String(n.className),Math.round(n.getBoundingClientRect().left),Math.round(n.getBoundingClientRect().right),n.scrollWidth,n.clientWidth])}}""")
+    if diag['scroll']>diag['width']+2:page.screenshot(path=out/f'step08-editor-overflow-{width}.png',animations='disabled')
+    assert diag['scroll']<=diag['width']+2,(width,diag)
+    for control in ('[data-close]','[data-publish]','[data-rollback]','[data-restore]'):
+     assert dlg.locator(control).evaluate("e=>{const r=e.getBoundingClientRect(),p=e.closest('dialog').getBoundingClientRect();return r.width>=1&&r.left>=p.left-2&&r.right<=p.right+2}"),(width,control)
    print('PASS STEP08 design impact, scoped trial/stop, stale release rejection, publication, restoration, seven widths',flush=True)
    dlg.locator('[data-close]').click()
 
