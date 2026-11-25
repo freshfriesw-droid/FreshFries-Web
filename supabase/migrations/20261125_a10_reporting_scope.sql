@@ -203,7 +203,7 @@ BEGIN
     (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.orders DESC)
       FROM (SELECT s.created_by AS staff_id,coalesce(p.display_name,'غير محدد') AS staff_name,count(*) AS orders,count(*) FILTER(WHERE s.status='cancelled') AS cancelled,count(*) FILTER(WHERE s.status<>'cancelled' AND coalesce(s.delivery_at,now())-s.created_at>interval '60 minutes') AS late,round(avg(extract(epoch from(s.sent_at-s.created_at))/60) FILTER(WHERE s.sent_at>=s.created_at),1) AS average_process_minutes,(SELECT count(*) FROM public.ff50_order_changes ch JOIN scoped z ON z.id=ch.order_id WHERE z.created_by IS NOT DISTINCT FROM s.created_by) AS changes
           FROM scoped AS s LEFT JOIN public.ff_profiles AS p ON p.user_id=s.created_by
-          GROUP BY p.user_id,p.display_name ORDER BY orders DESC LIMIT 70) AS x),'[]'::jsonb)
+          GROUP BY s.created_by,p.display_name ORDER BY orders DESC LIMIT 70) AS x),'[]'::jsonb)
     ELSE '[]'::jsonb END,
  'cancellations',CASE WHEN v_role IN('manager','supervisor','customer_service','cashier') THEN coalesce(
     (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.created_at DESC)
