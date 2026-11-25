@@ -4,7 +4,8 @@ from urllib.request import Request, urlopen
 from urllib.parse import urljoin, urlparse
 from hashlib import sha256
 from time import sleep
-import re, json, difflib
+import re, json, difflib, uuid
+nonce=uuid.uuid4().hex
 root=Path(__file__).resolve().parents[1]
 origin='https://delivery.freshfriesz.com/'
 report=json.loads((root/'docs/implementation/P2-css-consolidation-20261125.json').read_text())
@@ -21,7 +22,9 @@ def get(path):
  with urlopen(req,timeout=20) as r:
   assert urlparse(r.geturl()).hostname==urlparse(origin).hostname
   assert r.status==200
-  return r.read()
+  raw=r.read()
+  print('HTTP',path,'cache',r.headers.get('CF-Cache-Status'),'age',r.headers.get('Age'),'etag',r.headers.get('ETag'),'sha256',sha256(raw).hexdigest(),flush=True)
+  return raw
 # The live edge injects one Cloudflare Web Analytics beacon immediately before
 # </body>. Permit only that precisely bounded known provider script; every
 # other byte of application HTML must match, at both public URLs.
@@ -35,8 +38,8 @@ def normalized(raw):
 
 for attempt in range(3):
  try:
-  remote=get('?qa=20261125-p2-diag-'+str(attempt))
-  explicit=get('index.html?qa=20261125-p2-diag-'+str(attempt))
+  remote=get('?qa='+nonce+'-'+str(attempt))
+  explicit=get('index.html?qa='+nonce+'-'+str(attempt))
   print('HTML source/root/index bytes and hashes:',[(len(x),sha256(x).hexdigest(),b'luxe-p2-components.css?v=20261125-p2' in x) for x in (html,remote,explicit)],flush=True)
   if remote!=html:
    print('Root HTML differs; first 8 differing line spans:',flush=True)
@@ -46,16 +49,23 @@ for attempt in range(3):
   diag=root/'p2-live-evidence';diag.mkdir(exist_ok=True)
   (diag/'source.html').write_bytes(html);(diag/'root.html').write_bytes(remote);(diag/'index.html').write_bytes(explicit)
   for path in assets:
-   expected=(root/path).read_bytes(); actual=get(path+'?qa=20261125-p2-'+str(attempt))
+   expected=(root/path).read_bytes(); actual=get(path+'?qa='+nonce+'-'+str(attempt))
    assert actual==expected,'public CSS differs: '+path
    print('PASS',path,sha256(actual).hexdigest(),flush=True)
   for path in scripts:
-   expected=(root/path).read_bytes(); actual=get(path+'?qa=20261125-step03-'+str(attempt))
+   expected=(root/path).read_bytes(); actual=get(path+'?qa='+nonce+'-'+str(attempt))
    assert actual==expected,'public JavaScript differs: '+path
    print('PASS',path,sha256(actual).hexdigest(),flush=True)
   for path in ['scripts/luxe-a07-elements.js','scripts/luxe-a07-design.js','scripts/luxe-dashboard-studio.js','styles/luxe-a07-design.css']:
    assert get(path)==(root/path).read_bytes(),'uncached public application path differs: '+path
   root_html,root_beacon=normalized(remote); index_html,index_beacon=normalized(explicit)
+  # Also verify ordinary navigation and the exact asset URLs referenced in the published HTML.
+  assert normalized(get(''))[0]==html and normalized(get('index.html'))[0]==html
+  for path in re.findall(rb'(?:src|href)="([^"<>]+\.(?:css|js)\?[^"<>]+)"',html):
+   actual_path=path.decode().removeprefix('./')
+   if actual_path.startswith(('http:','https:','//')):continue
+   assert get(actual_path)==(root/actual_path.split('?',1)[0]).read_bytes(),'versioned public asset differs: '+actual_path
+  print('PASS ordinary root/index and versioned local asset references',flush=True)
   assert root_html==index_html==html
   print('PASS public application HTML exact after Cloudflare-only normalization at both paths; removed beacon counts',root_beacon,index_beacon,flush=True)
   print('PASS exact application HTML and',len(assets),'local CSS assets and',len(scripts),'local JavaScript assets',sha256(root_html).hexdigest(),flush=True)
