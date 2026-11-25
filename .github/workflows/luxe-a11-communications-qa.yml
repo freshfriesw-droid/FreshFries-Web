@@ -18,6 +18,7 @@ jobs:
           python-version: '3.12'
       - run: pip install playwright
       - run: python scripts/a11-communications-qa.py
+      - run: node scripts/step11-service-worker-qa.cjs
   production:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
