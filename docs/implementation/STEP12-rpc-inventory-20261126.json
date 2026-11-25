@@ -2313,7 +2313,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "821598e28d5be1a00d340ea8c351c302"
+      "definition_md5": "ea261f02b342e146cb03a623fdb38f79",
+      "scope_test": "STEP12 lifecycle migration 20261125224319: eight SQL checks PASS; real signed-token E2E not verified"
     },
     {
       "name": "ff_ui_control_trial",
@@ -2442,5 +2443,5 @@
       "definition_md5": "e36ad6176fc8e89141933210b87fd9c8"
     }
   ],
-  "last_update": "2026-11-26: legacy snapshot and alerts scope migrations"
+  "last_update": "2026-11-26: staff session lifecycle guard"
 }
