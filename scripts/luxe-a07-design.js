@@ -32,7 +32,7 @@ const tokens={
  layout:['شبكة البطاقات على الكمبيوتر',['pack','حسب الحزمة'],['single','عمود واحد'],['double','عمودان'],['triple','ثلاثة أعمدة']]
 };
 const roleScreens={manager:'dashboard',supervisor:'dashboard',customer_service:'orders',cashier:'cashier',driver:'driver',assembly:'assembly',burger_kitchen:'burger_kitchen'};
-const packOK=p=>/^D(0[1-9]|1[0-6])$/.test(p||'');
+const packOK=p=>/^D[0-9]{2,}$/.test(p||'');
 const cfgOf=v=>v&&typeof v==='object'&&!Array.isArray(v)?v:{};
 let current={},owned=new Set();
 const LOGO='./assets/ff-official-logo.png',FALLBACK='./assets/ff-icon-192.png';
@@ -141,21 +141,22 @@ function demoCard(screen,pack,style,compact=false){
 }
 function gallery(form,packs){
  const details=document.createElement('details');details.id='ffA07Gallery';
- const title=document.createElement('summary');title.textContent='معرض التصاميم الستة عشر — اختر للمقارنة';details.append(title);
+ const title=document.createElement('summary');title.textContent='معرض مكتبة التصاميم — اختر للمقارنة';details.append(title);
  const p=document.createElement('p');p.textContent='بيانات اصطناعية فقط. اختر واجهة ودورًا ومقاسًا ثم قارن الحزم؛ لا توجد إجراءات تشغيلية في المعاينة.';details.append(p);
  const grid=document.createElement('div');grid.className='ff-a07-gallery';details.append(grid);
  const compare=document.createElement('section');compare.className='ff-a07-compare';compare.innerHTML='<label>حزمة المقارنة<select name="comparePack"></select></label><div class="ff-a07-compare-grid"><div><h4>الحزمة المرجعية</h4><div data-a07-before></div></div><div><h4>المسودة</h4><div data-a07-after></div></div></div>';details.append(compare);
- const select=compare.querySelector('select');packs.forEach((name,i)=>select.add(new Option(name,'D'+String(i+1).padStart(2,'0'))));
+ const select=compare.querySelector('select');let catalogKey='';
  form.querySelector('#ffCardEditor').before(details);
  let key='';
  function redraw(){
   if(!details.open)return;
   const screen=form.elements.screen.value,role=form.elements.role.value,previewScreen=screen==='all'?(roleScreens[role]||'dashboard'):screen;
   const pack=form.elements.pack.value,style=readStyle(form),width=Number(form.elements.viewport.value)||390;
-  const next=JSON.stringify([previewScreen,pack,style,select.value,width]);
+  const catalog=JSON.stringify(packs);if(catalog!==catalogKey){const previous=select.value;select.replaceChildren(...packs.map(({code,name})=>new Option(code+' · '+name,code)));if(packs.some(p=>p.code===previous))select.value=previous;catalogKey=catalog;}
+  const next=JSON.stringify([previewScreen,pack,style,select.value,width,catalogKey]);
   if(next===key)return;key=next;
   grid.replaceChildren();
-  packs.forEach((name,i)=>{const code='D'+String(i+1).padStart(2,'0');const button=document.createElement('button');button.type='button';button.className='ff-a07-gallery-choice';button.setAttribute('aria-pressed',String(code===pack));button.setAttribute('aria-label',name);const label=document.createElement('b');label.textContent=code+' · '+name;button.append(label,demoCard(previewScreen,code,{},true));button.onclick=()=>{form.elements.pack.value=code;form.elements.pack.dispatchEvent(new Event('change',{bubbles:true}))};grid.append(button)});
+  packs.forEach(({code,name})=>{const button=document.createElement('button');button.type='button';button.className='ff-a07-gallery-choice';button.setAttribute('aria-pressed',String(code===pack));button.setAttribute('aria-label',name);const label=document.createElement('b');label.textContent=code+' · '+name;button.append(label,demoCard(previewScreen,code,{},true));button.onclick=()=>{form.elements.pack.value=code;form.elements.pack.dispatchEvent(new Event('change',{bubbles:true}))};grid.append(button)});
   for(const [selector,chosen,config]of [['[data-a07-before]',select.value,{}],['[data-a07-after]',pack,style]]){
    const parent=compare.querySelector(selector);parent.replaceChildren();const holder=document.createElement('div');holder.className='ff-a07-preview-holder';holder.style.width=width+'px';holder.append(demoCard(previewScreen,chosen,config));parent.append(holder);
   }
