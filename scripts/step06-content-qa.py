@@ -90,6 +90,12 @@ with sync_playwright() as pw:
    dlg.locator('[data-content-key]').wait_for()
    assert dlg.locator('[data-content-key]').input_value()=='finance.title'
    assert 'تسويات' in dlg.locator('[data-content-original]').inner_text()
+   dlg.locator('[data-content-search]').fill('تسويات')
+   page.wait_for_timeout(300)
+   assert dlg.locator('[data-content-key] option').count()>=1
+   dlg.locator('[data-content-search]').fill('')
+   page.wait_for_timeout(300)
+   dlg.locator('[data-content-key]').select_option('finance.title')
    dlg.locator('[data-content-body]').fill('متابعة نقدية اختبارية')
    dlg.locator('[data-content-save]').click()
    page.wait_for_function("()=>document.querySelector('[data-content-status]').textContent.includes('حُفظت المسودة')")

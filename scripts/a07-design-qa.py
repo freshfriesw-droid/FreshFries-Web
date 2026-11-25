@@ -688,12 +688,35 @@ with sync_playwright() as pw:
    if(why.length)bad.push({key:r.key,why});
   }
   window.step03Probe('admin-renderers',rows,selectors);
+async function step06ConditionalAudit(){
+ const registry=ffContentStudio.registry().filter(r=>r.selector&&!r.publicScreen);
+ const text=n=>Array.from(n.childNodes).filter(c=>c.nodeType===Node.TEXT_NODE).map(c=>c.data).join('');
+ const get=(r,n)=>r.mode==='accessible'?n.getAttribute('aria-label'):r.mode==='hint'?n.getAttribute('placeholder'):text(n);
+ const cases=registry.filter(r=>r.mode!=='guide').flatMap((r,i)=>Array.from(document.querySelectorAll(r.selector)).map(n=>({r,n,before:get(r,n),marker:'توضيح اختباري '+i,value:n.value,handler:n.onclick,disabled:n.disabled})));
+ const base=rpc;rpc=async(name,args={})=>name==='ff_content_effective'?registry.map((r,i)=>({content_key:r.key,body:'توضيح اختباري '+i})):base(name,args);
+ const failures=[],keys=new Set();
+ try{
+  await ffContentStudio.sync(true);
+  for(const c of cases){
+   if(!c.n.isConnected)continue;
+   const after=get(c.r,c.n);
+   if(!String(after||'').includes(c.marker)){failures.push([c.r.key,'not applied',c.before]);continue}
+   if(['protected','protected_label','accessible'].includes(c.r.mode)&&c.before&&!String(after).includes(c.before.trim()))failures.push([c.r.key,'official text lost']);
+   if(c.n.value!==c.value||c.n.onclick!==c.handler||c.n.disabled!==c.disabled)failures.push([c.r.key,'control changed']);keys.add(c.r.key);
+  }
+ }finally{rpc=async(name,args={})=>name==='ff_content_effective'?[]:base(name,args);await ffContentStudio.sync(true);rpc=base}
+ for(const c of cases)if(c.n.isConnected&&get(c.r,c.n)!==c.before)failures.push([c.r.key,'restore',get(c.r,c.n),c.before]);
+ return {keys:[...keys],failures};
+}
+  const contentAudit=await step06ConditionalAudit();
   window.__a07Rows={};await ffDashboardStudio.sync(true);ffA07Design.refresh();
   const cleanup=records.every(r=>r.nodes.every(o=>!ffA07Elements.visualTarget(o.n).dataset.ffA07ElAlign&&!ffA07Elements.visualTarget(o.n).dataset.ffA07ElFont));
-  return {count:records.length,missing,bad,cleanup,matched:records.map(r=>({key:r.key,screen:r.screen,nodes:r.nodes.length,unscoped:r.unscoped}))};
+  return {count:records.length,missing,bad,cleanup,contentAudit,matched:records.map(r=>({key:r.key,screen:r.screen,nodes:r.nodes.length,unscoped:r.unscoped}))};
  }""")
  (out/"step03-real-admin-renderers.json").write_text(json.dumps(admin,ensure_ascii=False,indent=2))
  assert not admin["missing"] and not admin["bad"] and admin["cleanup"],admin
+ assert not admin['contentAudit']['failures'],admin['contentAudit']['failures']
+ print('PASS STEP06 conditional administrative content',len(admin['contentAudit']['keys']),flush=True)
  print("PASS STEP03 actual administrative renderers",admin["count"],flush=True)
  collect_visual(page);ctx.close()
 
@@ -722,6 +745,27 @@ with sync_playwright() as pw:
    const tick=()=>new Promise(r=>setTimeout(r,50));
    async function wait(sel){for(let i=0;i<40;i++){const n=document.querySelector(sel);if(n)return n;await tick()}throw Error('real renderer missing '+sel)}
    const checks=[];
+
+async function step06ConditionalAudit(){
+ const registry=ffContentStudio.registry().filter(r=>r.selector&&!r.publicScreen);
+ const text=n=>Array.from(n.childNodes).filter(c=>c.nodeType===Node.TEXT_NODE).map(c=>c.data).join('');
+ const get=(r,n)=>r.mode==='accessible'?n.getAttribute('aria-label'):r.mode==='hint'?n.getAttribute('placeholder'):text(n);
+ const cases=registry.filter(r=>r.mode!=='guide').flatMap((r,i)=>Array.from(document.querySelectorAll(r.selector)).map(n=>({r,n,before:get(r,n),marker:'توضيح اختباري '+i,value:n.value,handler:n.onclick,disabled:n.disabled})));
+ const base=rpc;rpc=async(name,args={})=>name==='ff_content_effective'?registry.map((r,i)=>({content_key:r.key,body:'توضيح اختباري '+i})):base(name,args);
+ const failures=[],keys=new Set();
+ try{
+  await ffContentStudio.sync(true);
+  for(const c of cases){
+   if(!c.n.isConnected)continue;
+   const after=get(c.r,c.n);
+   if(!String(after||'').includes(c.marker)){failures.push([c.r.key,'not applied',c.before]);continue}
+   if(['protected','protected_label','accessible'].includes(c.r.mode)&&c.before&&!String(after).includes(c.before.trim()))failures.push([c.r.key,'official text lost']);
+   if(c.n.value!==c.value||c.n.onclick!==c.handler||c.n.disabled!==c.disabled)failures.push([c.r.key,'control changed']);keys.add(c.r.key);
+  }
+ }finally{rpc=async(name,args={})=>name==='ff_content_effective'?[]:base(name,args);await ffContentStudio.sync(true);rpc=base}
+ for(const c of cases)if(c.n.isConnected&&get(c.r,c.n)!==c.before)failures.push([c.r.key,'restore',get(c.r,c.n),c.before]);
+ return {keys:[...keys],failures};
+}
    async function audit(screen,keys){
     ffA07Design.refresh();
     const selected=Object.fromEntries(Object.entries(ffA07Elements.groups).filter(([g,c])=>c.screen===screen&&c.keys.some(k=>keys.includes(k))).map(([g,c])=>[g,c.keys.map(key=>({key,shape:'round',size:'normal',align:'center',font:'tahoma',weight:'strong',border:'strong',shadow:'soft'}))]));
@@ -732,7 +776,7 @@ with sync_playwright() as pw:
     window.step03Probe('remaining-'+role+'-'+keys.join(','),window.__a07Rows,dyn);
     window.__a07Rows={};await ffDashboardStudio.sync(true);ffA07Design.refresh();
     const cleanup=records.every(r=>r.nodes.every(o=>!ffA07Elements.visualTarget(o.n).dataset.ffA07ElAlign));
-    checks.push({screen,keys,missing,bad,cleanup});
+    const contentAudit=await step06ConditionalAudit();checks.push({screen,keys,missing,bad,cleanup,contentAudit});
    }
    if(role==='manager'){
     document.getElementById('ff60-launch').click();await wait(dyn.lifecycle_action);await audit('dashboard',['lifecycle_action']);(await wait('[data-ff60-action="show-invoice"]')).click();
@@ -774,6 +818,8 @@ with sync_playwright() as pw:
   }""",{"role":role,"dyn":registry["dyn"]})
   (out/f"step03-remaining-renderers-{role}.json").write_text(json.dumps(extra,ensure_ascii=False,indent=2))
   assert not extra["writes"] and all(not c["missing"] and not c["bad"] and c["cleanup"] for c in extra["checks"]),extra
+  assert all(not c['contentAudit']['failures'] for c in extra['checks']),[c['contentAudit']['failures'] for c in extra['checks'] if c['contentAudit']['failures']]
+  print('PASS STEP06 actual conditional modal content',role,len(set(k for c in extra['checks'] for k in c['contentAudit']['keys'])),flush=True)
   print("PASS STEP03 remaining original renderers",role,sum(len(c["keys"]) for c in extra["checks"]),flush=True)
   collect_visual(page);ctx.close()
 

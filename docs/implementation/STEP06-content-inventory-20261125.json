@@ -1,8 +1,8 @@
 {
   "base": "a4d579a6b2e1f100c24922be1bc0dc522eb9c26a",
   "existing": 125,
-  "added": 706,
-  "total": 831,
+  "added": 736,
+  "total": 861,
   "registered": [
     {
       "key": "orders.control.ffa06discarddraft",
@@ -6706,6 +6706,276 @@
       "selector": "#ffA10FeeEvidence button[data-save]",
       "mode": "protected",
       "source": "A07 fixed selector / authored operational renderer"
+    },
+    {
+      "key": "dashboard.control.ff4_overdue",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: عرض المتأخرة فقط",
+      "original": "عرض المتأخرة فقط",
+      "selector": "label:has(> #ff4-overdue)",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.ff4_hidephones",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: إخفاء أرقام العملاء عند التصدير",
+      "original": "إخفاء أرقام العملاء عند التصدير",
+      "selector": "label:has(> #ff4-hidephones)",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.ffa12confirm",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: للتأكيد اكتب: تصفير طلبات الاختبار فقط",
+      "original": "للتأكيد اكتب: تصفير طلبات الاختبار فقط",
+      "selector": "#ffA12ConfirmLabel",
+      "mode": "protected",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "system.control.ffa12restoreconfirm",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: للتأكيد اكتب: استرجاع نسخة الاختبار",
+      "original": "للتأكيد اكتب: استرجاع نسخة الاختبار",
+      "selector": "#ffA12RestoreLabel",
+      "mode": "protected",
+      "source": "scripts/luxe-a12-recovery.js"
+    },
+    {
+      "key": "archive.control.fflcashierfinishedtoggle",
+      "screen": "archive",
+      "label": "توضيح يحفظ النص الأصلي: 🗂️ الطلبات المنتهية",
+      "original": "🗂️ الطلبات المنتهية",
+      "selector": "#fflCashierFinishedToggle > span:first-child",
+      "mode": "protected",
+      "source": "scripts/luxe-completed-universal-20261123.js"
+    },
+    {
+      "key": "burger_kitchen.control.burger_confirm_note",
+      "screen": "burger_kitchen",
+      "label": "توضيح يحفظ النص الأصلي: أؤكد أنني قرأت جميع الملاحظات ونفذتها قبل إنهاء التحضير",
+      "original": "أؤكد أنني قرأت جميع الملاحظات ونفذتها قبل إنهاء التحضير",
+      "selector": ".ff-burger-note-confirm > span",
+      "mode": "protected",
+      "source": "scripts/luxe-burger-kitchen-20261123.js"
+    },
+    {
+      "key": "staff.control.staff_assembly_branch",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: الفرع المسموح",
+      "original": "الفرع المسموح",
+      "selector": "label:has(> select[data-assembly-branch])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.control.staff_assembly_target",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: التحويل إلى دور آخر (عند الحاجة)",
+      "original": "التحويل إلى دور آخر (عند الحاجة)",
+      "selector": "label:has(> select[data-assembly-target])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.control.staff_access_role",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: تعديل الدور",
+      "original": "تعديل الدور",
+      "selector": "label:has(+ select[data-access-role])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.control.staff_access_branch",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: اختيار الفرع المسموح؛ أسماء الفروع الأصلية محفوظة",
+      "original": "اختيار الفرع المسموح؛ أسماء الفروع الأصلية محفوظة",
+      "selector": "input[data-access-branch]",
+      "mode": "accessible",
+      "source": "index.html"
+    },
+    {
+      "key": "staff.control.staff_permission_value",
+      "screen": "staff",
+      "label": "توضيح يحفظ النص الأصلي: حالة السماح أو المنع أو الافتراضي",
+      "original": "حالة السماح أو المنع أو الافتراضي",
+      "selector": "select[data-permission-key]",
+      "mode": "accessible",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.system_qa_result",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: نتيجة الاختبار",
+      "original": "نتيجة الاختبار",
+      "selector": "label:has(> select[id^=\"ff47State_\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.system_qa_note",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: ملاحظة / سبب الخطأ",
+      "original": "ملاحظة / سبب الخطأ",
+      "selector": "label:has(> textarea[id^=\"ff47Notes_\"])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.control.finance_fee_amount",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: مبلغ الرسوم المثبت",
+      "original": "مبلغ الرسوم المثبت",
+      "selector": "#ffA10FeeEvidence label:has(> input[data-fee])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "finance.control.finance_fee_reference",
+      "screen": "finance",
+      "label": "توضيح يحفظ النص الأصلي: مرجع الإثبات أو سبب التصحيح",
+      "original": "مرجع الإثبات أو سبب التصحيح",
+      "selector": "#ffA10FeeEvidence label:has(> textarea[data-note])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.lifecycle_invoice",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: رقم فاتورة MicroPOS (اختياري)",
+      "original": "رقم فاتورة MicroPOS (اختياري)",
+      "selector": "label:has(> input[data-ff60-invoice])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.lifecycle_reoffer_driver",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: الموصل الذي انتهى أو رفض عرضه السابق",
+      "original": "الموصل الذي انتهى أو رفض عرضه السابق",
+      "selector": "label:has(> select[data-ff60-reoffer-driver])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "dashboard.control.lifecycle_reoffer_reason",
+      "screen": "dashboard",
+      "label": "توضيح يحفظ النص الأصلي: سبب إعادة العرض",
+      "original": "سبب إعادة العرض",
+      "selector": "label:has(> input[data-ff60-reoffer-reason])",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "system.control.system_theme_choice",
+      "screen": "system",
+      "label": "توضيح يحفظ النص الأصلي: اسم المظهر بحسب الاختيار",
+      "original": "اسم المظهر بحسب الاختيار",
+      "selector": "#ffx-themes button[data-ffx-theme] .ffx-theme-name",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.control.driver_rating_note",
+      "screen": "driver",
+      "label": "تلميح: تعليق أو ملاحظة (اختياري)",
+      "original": "تعليق أو ملاحظة (اختياري)",
+      "selector": "dialog.ff-luxe-rate-dialog:has(#ffLuxeFourScores) textarea",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.control.driver_rating_star",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: عدد النجوم حسب بند التقييم",
+      "original": "عدد النجوم حسب بند التقييم",
+      "selector": "#ffLuxeFourScores .ff-luxe-stars button",
+      "mode": "accessible",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.control.driver_grievance_kind",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: نوع التظلم",
+      "original": "نوع التظلم",
+      "selector": "dialog.ff-luxe-rate-dialog:has(option[value=\"delivery_fee\"]) label:has(> select)",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.control.driver_grievance_details",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: تفاصيل التظلم",
+      "original": "تفاصيل التظلم",
+      "selector": "dialog.ff-luxe-rate-dialog:has(option[value=\"delivery_fee\"]) label:has(> textarea)",
+      "mode": "protected_label",
+      "source": "index.html"
+    },
+    {
+      "key": "ratings.control.orders_rate_star",
+      "screen": "ratings",
+      "label": "توضيح يحفظ النص الأصلي: عدد نجوم تقييم الموصل",
+      "original": "عدد نجوم تقييم الموصل",
+      "selector": "dialog.ff-luxe-rate-dialog:has(button[data-skip]) .ff-luxe-stars button",
+      "mode": "accessible",
+      "source": "index.html"
+    },
+    {
+      "key": "ratings.control.orders_rate_note",
+      "screen": "ratings",
+      "label": "تلميح: ملاحظة أو تعليق (اختياري)",
+      "original": "ملاحظة أو تعليق (اختياري)",
+      "selector": "dialog.ff-luxe-rate-dialog:has(button[data-skip]) textarea",
+      "mode": "hint",
+      "source": "index.html"
+    },
+    {
+      "key": "orders.control.orders_addition_warning",
+      "screen": "orders",
+      "label": "توضيح يحفظ النص الأصلي: تحذير الإضافة — حسب الحالة الفعلية",
+      "original": "تحذير الإضافة — حسب الحالة الفعلية",
+      "selector": "#staffOrders .addition-card .warning",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "cashier.control.cashier_addition_warning",
+      "screen": "cashier",
+      "label": "توضيح يحفظ النص الأصلي: تحذير الإضافة للكاشير — حسب الحالة الفعلية",
+      "original": "تحذير الإضافة للكاشير — حسب الحالة الفعلية",
+      "selector": "#cashierOrders .addition-card .warning",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.control.driver_addition_notice",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: تحذير استلام الإضافة — حسب الحالة الفعلية",
+      "original": "تحذير استلام الإضافة — حسب الحالة الفعلية",
+      "selector": "#driverTasks .order-addition-alert",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "driver.control.driver_addition_invoice_notice",
+      "screen": "driver",
+      "label": "توضيح يحفظ النص الأصلي: تحذير فاتورة الإضافة — حسب الحالة الفعلية",
+      "original": "تحذير فاتورة الإضافة — حسب الحالة الفعلية",
+      "selector": "#driverTasks .addition-card .warning",
+      "mode": "protected",
+      "source": "index.html"
+    },
+    {
+      "key": "cashier.control.cashier_cancel_banner",
+      "screen": "cashier",
+      "label": "توضيح يحفظ النص الأصلي: تنبيه إلغاء الطلب — الرقم الفعلي محفوظ",
+      "original": "تنبيه إلغاء الطلب — الرقم الفعلي محفوظ",
+      "selector": "#cashierView .ff-luxe-cancel-banner",
+      "mode": "protected",
+      "source": "index.html"
     }
   ],
   "previousRegistryCoverage": [
@@ -8492,11 +8762,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "orders_addition_warning",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "driver_offer_countdown",
       "screen": "driver",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -8508,11 +8773,6 @@
     },
     {
       "id": "cashier_status_tag",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "cashier_addition_warning",
       "screen": "cashier",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
@@ -8617,43 +8877,8 @@
       "reason": "public or login; separate safe public read policy not established"
     },
     {
-      "id": "ff4-overdue",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ff4-hidephones",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "burger_order_timer",
       "screen": "burger_kitchen",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffA12Confirm",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "ffA12RestoreConfirm",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "fflCashierFinishedToggle",
-      "screen": "archive",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_addition_notice",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_addition_invoice_notice",
-      "screen": "driver",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
@@ -8682,11 +8907,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "burger_confirm_note",
-      "screen": "burger_kitchen",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "cashier_burger_state",
       "screen": "cashier",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -8707,51 +8927,6 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "staff_assembly_branch",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "staff_assembly_target",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "staff_access_role",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "staff_access_branch",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "staff_permission_value",
-      "screen": "staff",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "system_qa_result",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "system_qa_note",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "finance_fee_amount",
-      "screen": "finance",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "finance_fee_reference",
-      "screen": "finance",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "finance_fee_status",
       "screen": "finance",
       "reason": "no unique static text (data region, dynamic action or generated control)"
@@ -8759,21 +8934,6 @@
     {
       "id": "finance_fee_history",
       "screen": "finance",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "lifecycle_invoice",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "lifecycle_reoffer_driver",
-      "screen": "dashboard",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "lifecycle_reoffer_reason",
-      "screen": "dashboard",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
@@ -8787,60 +8947,572 @@
       "reason": "no unique static text (data region, dynamic action or generated control)"
     },
     {
-      "id": "system_theme_choice",
-      "screen": "system",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "cashier_cancel_banner",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
       "id": "cashier_cancel_note",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_rating_note",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_rating_star",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_grievance_kind",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "driver_grievance_details",
-      "screen": "driver",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "orders_rate_star",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "orders_rate_note",
-      "screen": "orders",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "cashier_rate_star",
-      "screen": "cashier",
-      "reason": "no unique static text (data region, dynamic action or generated control)"
-    },
-    {
-      "id": "cashier_rate_note",
       "screen": "cashier",
       "reason": "no unique static text (data region, dynamic action or generated control)"
     }
   ],
-  "warning": "Remaining visual IDs require classification or conditional-render proof; no assertion of complete content coverage."
+  "warning": "جرد 643 معرّفًا مرئيًا فريدًا: المفاتيح النصية ثابتة؛ عناصر البيانات الحية مصنفة منفصلة ومحفوظة. التغطية الفعلية للعناصر الشرطية تحتاج أدلة المتصفح؛ لا يُستنتج الإغلاق من العدد.",
+  "protectedRuntimeInventory": [
+    {
+      "id": "driverOffers",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "driverTasks",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffV12CountAll",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffV12CountPrinted",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffV12CountPreparing",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffV12CountReady",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffx-kpis",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffx-shortcuts",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffx-order-list",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffx-overdue",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "مكوّن بيانات/عرض تشغيلي؛ لا تغيير بالتحرير النصي",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "cashierOrders",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffV12BranchTitle",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffV12AssemblyStatus",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffV12AssemblySummary",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffV12AssemblyOrders",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff51CatalogItems",
+      "screen": "catalog",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "مكوّن بيانات/عرض تشغيلي؛ لا تغيير بالتحرير النصي",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff51OffersList",
+      "screen": "catalog",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff51CustomersList",
+      "screen": "customers",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff51CustomerHistory",
+      "screen": "customers",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff51CustomerNotesList",
+      "screen": "customers",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff76Status",
+      "screen": "reports",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff76Body",
+      "screen": "reports",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff76ApprovalBox",
+      "screen": "reports",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "staffAdminList",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "staffAuditList",
+      "screen": "staff",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff51ArchiveCount",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff51ArchiveList",
+      "screen": "archive",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff51RatingsList",
+      "screen": "ratings",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff49ReservationsList",
+      "screen": "reservations",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff41CaseList",
+      "screen": "cases",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff41Detail",
+      "screen": "cases",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff39InboxList",
+      "screen": "messages",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff39SentLog",
+      "screen": "messages",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "مكوّن بيانات/عرض تشغيلي؛ لا تغيير بالتحرير النصي",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff48Summary",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff48Rows",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff47Stats",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff47Cases",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "مكوّن بيانات/عرض تشغيلي؛ لا تغيير بالتحرير النصي",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff46Summary",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff44Results",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "مكوّن بيانات/عرض تشغيلي؛ لا تغيير بالتحرير النصي",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff43Findings",
+      "screen": "system",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "dashboard_status_tag",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "orders_status_tag",
+      "screen": "orders",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "driver_offer_countdown",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "driver_status_tag",
+      "screen": "driver",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "cashier_status_tag",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffBurgerKitchenStatus",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffBurgerKitchenBranch",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffBurgerKitchenActive",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "مكوّن بيانات/عرض تشغيلي؛ لا تغيير بالتحرير النصي",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffBurgerKitchenFinished",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "مكوّن بيانات/عرض تشغيلي؛ لا تغيير بالتحرير النصي",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff42Difference",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff42Status",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff42Summary",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff42List",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff42Form",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "مكوّن بيانات/عرض تشغيلي؛ لا تغيير بالتحرير النصي",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff42Detail",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffA05Closed",
+      "screen": "branches",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffA05PolicyStatus",
+      "screen": "branches",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffA05PolicyCurrent",
+      "screen": "branches",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "مكوّن بيانات/عرض تشغيلي؛ لا تغيير بالتحرير النصي",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffA05PolicyHistory",
+      "screen": "branches",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ffA05PriceRows",
+      "screen": "branches",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "loginStatus",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff71CustomerMessage",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff61ApplyInfo",
+      "screen": "login",
+      "reason": "public or login; separate safe public read policy not established",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff28State",
+      "screen": "customer_portal",
+      "reason": "public or login; separate safe public read policy not established",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "ff28Rows",
+      "screen": "customer_portal",
+      "reason": "public or login; separate safe public read policy not established",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "burger_order_timer",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "assembly_stage_state",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "assembly_order_age",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "assembly_order_note",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "burger_stage_state",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "burger_required_note",
+      "screen": "burger_kitchen",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "cashier_burger_state",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "cashier_burger_timer",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "assembly_burger_state",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "assembly_burger_timer",
+      "screen": "assembly",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "finance_fee_status",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "finance_fee_history",
+      "screen": "finance",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "lifecycle_countdown",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حاوية بيانات حية أو نتائج محسوبة؛ لا يُستبدل محتواها",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "lifecycle_state",
+      "screen": "dashboard",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    },
+    {
+      "id": "cashier_cancel_note",
+      "screen": "cashier",
+      "reason": "no unique static text (data region, dynamic action or generated control)",
+      "classification": "حالة فعلية أو محتوى مستخدم؛ لا يُستبدل النص أو القيمة الفعلية، ويمكن تحرير الإرشادات المحيطة",
+      "disposition": "immutable-runtime"
+    }
+  ]
 }

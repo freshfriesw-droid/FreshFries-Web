@@ -751,3 +751,37 @@ INSERT INTO public.ff_content_catalog(key,screen,label,original) VALUES
 ('driver.control.driver_feedback_open','driver','توضيح يحفظ النص الأصلي: فتح متابعة الأداء','فتح متابعة الأداء'),
 ('finance.control.finance_fee_save','finance','توضيح يحفظ النص الأصلي: حفظ إثبات رسوم التوصيل','حفظ إثبات رسوم التوصيل')
 ON CONFLICT(key) DO NOTHING;
+
+-- Remaining fixed conditional labels; values and control IDs remain untouched.
+INSERT INTO public.ff_content_catalog(key,screen,label,original) VALUES
+('dashboard.control.ff4_overdue','dashboard','توضيح يحفظ النص الأصلي: عرض المتأخرة فقط','عرض المتأخرة فقط'),
+('dashboard.control.ff4_hidephones','dashboard','توضيح يحفظ النص الأصلي: إخفاء أرقام العملاء عند التصدير','إخفاء أرقام العملاء عند التصدير'),
+('system.control.ffa12confirm','system','توضيح يحفظ النص الأصلي: للتأكيد اكتب: تصفير طلبات الاختبار فقط','للتأكيد اكتب: تصفير طلبات الاختبار فقط'),
+('system.control.ffa12restoreconfirm','system','توضيح يحفظ النص الأصلي: للتأكيد اكتب: استرجاع نسخة الاختبار','للتأكيد اكتب: استرجاع نسخة الاختبار'),
+('archive.control.fflcashierfinishedtoggle','archive','توضيح يحفظ النص الأصلي: 🗂️ الطلبات المنتهية','🗂️ الطلبات المنتهية'),
+('burger_kitchen.control.burger_confirm_note','burger_kitchen','توضيح يحفظ النص الأصلي: أؤكد أنني قرأت جميع الملاحظات ونفذتها قبل إنهاء التحضير','أؤكد أنني قرأت جميع الملاحظات ونفذتها قبل إنهاء التحضير'),
+('staff.control.staff_assembly_branch','staff','توضيح يحفظ النص الأصلي: الفرع المسموح','الفرع المسموح'),
+('staff.control.staff_assembly_target','staff','توضيح يحفظ النص الأصلي: التحويل إلى دور آخر (عند الحاجة)','التحويل إلى دور آخر (عند الحاجة)'),
+('staff.control.staff_access_role','staff','توضيح يحفظ النص الأصلي: تعديل الدور','تعديل الدور'),
+('staff.control.staff_access_branch','staff','توضيح يحفظ النص الأصلي: اختيار الفرع المسموح؛ أسماء الفروع الأصلية محفوظة','اختيار الفرع المسموح؛ أسماء الفروع الأصلية محفوظة'),
+('staff.control.staff_permission_value','staff','توضيح يحفظ النص الأصلي: حالة السماح أو المنع أو الافتراضي','حالة السماح أو المنع أو الافتراضي'),
+('system.control.system_qa_result','system','توضيح يحفظ النص الأصلي: نتيجة الاختبار','نتيجة الاختبار'),
+('system.control.system_qa_note','system','توضيح يحفظ النص الأصلي: ملاحظة / سبب الخطأ','ملاحظة / سبب الخطأ'),
+('finance.control.finance_fee_amount','finance','توضيح يحفظ النص الأصلي: مبلغ الرسوم المثبت','مبلغ الرسوم المثبت'),
+('finance.control.finance_fee_reference','finance','توضيح يحفظ النص الأصلي: مرجع الإثبات أو سبب التصحيح','مرجع الإثبات أو سبب التصحيح'),
+('dashboard.control.lifecycle_invoice','dashboard','توضيح يحفظ النص الأصلي: رقم فاتورة MicroPOS (اختياري)','رقم فاتورة MicroPOS (اختياري)'),
+('dashboard.control.lifecycle_reoffer_driver','dashboard','توضيح يحفظ النص الأصلي: الموصل الذي انتهى أو رفض عرضه السابق','الموصل الذي انتهى أو رفض عرضه السابق'),
+('dashboard.control.lifecycle_reoffer_reason','dashboard','توضيح يحفظ النص الأصلي: سبب إعادة العرض','سبب إعادة العرض'),
+('system.control.system_theme_choice','system','توضيح يحفظ النص الأصلي: اسم المظهر بحسب الاختيار','اسم المظهر بحسب الاختيار'),
+('driver.control.driver_rating_note','driver','تلميح: تعليق أو ملاحظة (اختياري)','تعليق أو ملاحظة (اختياري)'),
+('driver.control.driver_rating_star','driver','توضيح يحفظ النص الأصلي: عدد النجوم حسب بند التقييم','عدد النجوم حسب بند التقييم'),
+('driver.control.driver_grievance_kind','driver','توضيح يحفظ النص الأصلي: نوع التظلم','نوع التظلم'),
+('driver.control.driver_grievance_details','driver','توضيح يحفظ النص الأصلي: تفاصيل التظلم','تفاصيل التظلم'),
+('ratings.control.orders_rate_star','ratings','توضيح يحفظ النص الأصلي: عدد نجوم تقييم الموصل','عدد نجوم تقييم الموصل'),
+('ratings.control.orders_rate_note','ratings','تلميح: ملاحظة أو تعليق (اختياري)','ملاحظة أو تعليق (اختياري)'),
+('orders.control.orders_addition_warning','orders','توضيح يحفظ النص الأصلي: تحذير الإضافة — حسب الحالة الفعلية','تحذير الإضافة — حسب الحالة الفعلية'),
+('cashier.control.cashier_addition_warning','cashier','توضيح يحفظ النص الأصلي: تحذير الإضافة للكاشير — حسب الحالة الفعلية','تحذير الإضافة للكاشير — حسب الحالة الفعلية'),
+('driver.control.driver_addition_notice','driver','توضيح يحفظ النص الأصلي: تحذير استلام الإضافة — حسب الحالة الفعلية','تحذير استلام الإضافة — حسب الحالة الفعلية'),
+('driver.control.driver_addition_invoice_notice','driver','توضيح يحفظ النص الأصلي: تحذير فاتورة الإضافة — حسب الحالة الفعلية','تحذير فاتورة الإضافة — حسب الحالة الفعلية'),
+('cashier.control.cashier_cancel_banner','cashier','توضيح يحفظ النص الأصلي: تنبيه إلغاء الطلب — الرقم الفعلي محفوظ','تنبيه إلغاء الطلب — الرقم الفعلي محفوظ')
+ON CONFLICT(key) DO NOTHING;
