@@ -174,3 +174,13 @@
 [data-ff-a07-screen="login"][data-ff-a07-pack],[data-ff-a07-screen="customer_portal"][data-ff-a07-pack]{background:var(--a07-bg)!important;color:var(--a07-ink)!important;border-color:var(--a07-accent);border-radius:var(--a07-radius);box-shadow:var(--a07-shadow);}
 [data-ff-a07-screen="login"][data-ff-a07-pack] :is(h1,h2,h3,label,.muted),[data-ff-a07-screen="customer_portal"][data-ff-a07-pack] :is(h1,h2,h3,label,.muted){color:var(--a07-ink)!important;}
 [data-ff-a07-screen="login"][data-ff-a07-pack] :is(input,select,textarea),[data-ff-a07-screen="customer_portal"][data-ff-a07-pack] :is(input,select,textarea){max-width:100%;box-sizing:border-box;}
+
+/* STEP03: safe logical text alignment and independent text size. No positional
+   overrides, visibility changes, action rebinding or reductions in hit areas. */
+[data-ff-a07-pack] [data-ff-a07-el-align="start"]{text-align:start!important}
+[data-ff-a07-pack] [data-ff-a07-el-align="center"]{text-align:center!important}
+[data-ff-a07-pack] [data-ff-a07-el-align="end"]{text-align:end!important}
+[data-ff-a07-pack] [data-ff-a07-el-text-scale="normal"]{font-size:1em!important}
+[data-ff-a07-pack] [data-ff-a07-el-text-scale="large"]{font-size:1.125em!important}
+[data-ff-a07-pack] [data-ff-a07-el-font="cairo"]{font-family:Cairo,Tahoma,Arial,sans-serif!important}
+[data-ff-a07-pack] [data-ff-a07-el-font="noto"]{font-family:"Noto Sans Arabic",Tahoma,Arial,sans-serif!important}
