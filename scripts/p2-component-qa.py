@@ -142,7 +142,7 @@ def setup(browser,origin,role):
 rows=[]
 with sync_playwright() as pw:
  # Deterministic software rasterization for both pinned trees. Keep exact RGB comparison.
- browser=pw.chromium.launch(args=['--disable-gpu','--disable-lcd-text','--disable-font-subpixel-positioning','--force-color-profile=srgb'])
+ browser=pw.chromium.launch(**({'channel':'chrome'} if os.environ.get('P2_CURRENT_CHROME')=='1' else {}),args=['--disable-gpu','--disable-lcd-text','--disable-font-subpixel-positioning','--force-color-profile=srgb'])
  for role in roles:
   oc,old=setup(browser,old_origin,role);nc,new=setup(browser,new_origin,role)
   if True:
