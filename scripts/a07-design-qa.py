@@ -113,11 +113,18 @@ with sync_playwright() as pw:
    first.get_by_role("button",name="تأخير").click()
    assert dlg.locator(".ff-a07-element-row").first.get_attribute("data-element-key")=="clockInBtn"
    dlg.locator(".ff-a07-element-row").first.locator("select").first.select_option("pill")
+   dlg.locator(".ff-a07-element-row").first.locator("summary").click()
+   dlg.locator(".ff-a07-element-row").first.locator('[data-step03-property=weight]').select_option("strong")
+   assert dlg.locator("[data-a07-after] [data-ff-a07-el-weight=strong]").count()>=1
+   dlg.locator("[data-a07-undo]").click()
+   assert dlg.locator("[data-a07-after] [data-ff-a07-el-weight=strong]").count()==0
    dlg.locator("[data-a07-undo]").click()
    assert dlg.locator(".ff-a07-element-row").first.locator("select").first.input_value()=="pack"
    dlg.locator("[data-a07-redo]").click()
    assert dlg.locator(".ff-a07-element-row").first.locator("select").first.input_value()=="pill"
    assert dlg.locator("[data-a07-after] [data-ff-a07-shape=pill]").count()>=1
+   dlg.locator("[data-a07-redo]").click()
+   assert dlg.locator("[data-a07-after] [data-ff-a07-el-weight=strong]").count()>=1
    dlg.locator("input[name=draftName]").fill("مسودة اختبار آمنة")
    dlg.locator("button[type=submit]").click()
    page.wait_for_function("()=>window.__a06Calls.some(c=>c.name==='ff_a07_named_design')")
@@ -125,6 +132,7 @@ with sync_playwright() as pw:
    assert payload["p_screen"]=="driver" and payload["p_style"]["elements"]["driver_actions"][0]["key"]=="clockInBtn"
    assert payload["p_style"]["elements"]["driver_actions"][0]["shape"]=="pill"
    assert len(payload["p_style"]["elements"]["driver_actions"])==3
+   assert payload["p_style"]["elements"]["driver_actions"][0]["weight"]=="strong"
    assert not page.evaluate("()=>window.__a06Calls.some(c=>['ff_ui_publish','ff_ui_control_trial'].includes(c.name))")
    dlg.locator("[data-close]").click()
    page.evaluate("""()=>{window.__a07Catalog=Array.from({length:17},(_,i)=>({code:'D'+String(i+1).padStart(2,'0'),name:'QA '+(i+1)}));ffDashboardStudio.open()}""")
