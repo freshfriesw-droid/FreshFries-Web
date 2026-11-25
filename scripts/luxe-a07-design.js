@@ -152,6 +152,7 @@ function refresh(){
  const seen=new Set();
  for(const [screen,selector] of Object.entries(selectors)){
   for(const root of document.querySelectorAll(selector)){
+   if(root.id==='ffBurgerCashierPanel'&&activeScreen()==='assembly'){resetNode(root);delete root.dataset.ffA07Signature;root.querySelector(':scope > [data-ff-a07-caption]')?.remove();continue;}
    if(seen.has(root))continue;seen.add(root);
    root.dataset.ffA07Screen=screen;delete root.dataset.ffA07ElementScope;
    const row=publicScreen(screen)?publicRows[screen]:current[screen];
@@ -163,7 +164,7 @@ function refresh(){
  }
  const elementOnly=new Set();
  const shared=[[$('ffBurgerDialog'),activeScreen()==='assembly'?'assembly':'cashier'],[$('ffRewardRedeemDialog'),(typeof data!=='undefined'&&data?.role==='cashier')?'cashier':'orders']];
- if(activeScreen()==='assembly'){const panel=$('ffBurgerCashierPanel');if(panel){resetNode(panel);delete panel.dataset.ffA07Signature;seen.delete(panel);shared.push([panel,'assembly']);}}
+ if(activeScreen()==='assembly'){const panel=$('ffBurgerCashierPanel');if(panel)shared.push([panel,'assembly']);}
  for(const [root,screen] of shared){if(!root||seen.has(root))continue;seen.add(root);elementOnly.add(root);root.dataset.ffA07Screen=screen;if(packOK(current[screen]?.pack))root.dataset.ffA07ElementScope='1';else delete root.dataset.ffA07ElementScope;}
  for(const [screen,selector] of Object.entries(elementSelectors))for(const root of document.querySelectorAll(selector)){
   if(seen.has(root))continue;seen.add(root);elementOnly.add(root);root.dataset.ffA07Screen=screen;
