@@ -94,6 +94,11 @@ serve(async req=>{
   if(jwt.length<=30)return reply({error:"سجّل الدخول أولًا"},401,origin);
   const {data:auth,error:authErr}=await admin.auth.getUser(jwt);
   if(authErr||!auth?.user?.id)return reply({error:"جلسة الدخول غير صالحة"},401,origin);
+  const sessionKey=Deno.env.get("SUPABASE_ANON_KEY")||"";
+  if(!sessionKey)return reply({error:"خدمة التحقق من الجلسات غير متاحة"},503,origin);
+  const sessionClient=createClient(url,sessionKey,{global:{headers:{Authorization:"Bearer "+jwt}},auth:{autoRefreshToken:false,persistSession:false}});
+  const {data:sessionValid,error:sessionError}=await sessionClient.rpc("ff_step12_session_valid");
+  if(sessionError||sessionValid!==true)return reply({error:"انتهت جلسة الدخول، يرجى تسجيل الدخول من جديد"},401,origin);
   const actor=auth.user.id;
 
   if(action==="staff_details"||action==="staff_update"){
