@@ -64,7 +64,12 @@ function refresh(roots,configs){
   const screen=root.dataset.ffA07Screen,v=configs[screen]?.style_config?.elements||{};
   for(const [g,rows] of Object.entries(v)){
    if(groups[g]?.screen!==screen||!Array.isArray(rows))continue;
-   const resolved=rows.map(e=>({e,nodes:resolve(root,g,e.key)}));
+   // A nested workspace owns its own controls. An outer screen may not
+   // capture its dynamic selectors (even if the inner scope has no design).
+   const resolved=rows.map(e=>({e,nodes:resolve(root,g,e.key).filter(n=>{
+    const scope=n.closest('[data-ff-a07-screen]');
+    return !scope||scope.dataset.ffA07Screen===screen;
+   })}));
    const nodes=resolved.flatMap(x=>x.nodes);
    const parent=nodes[0]?.parentElement;
    const sameParent=!!parent&&nodes.length===rows.length&&nodes.every(n=>n.parentElement===parent);
