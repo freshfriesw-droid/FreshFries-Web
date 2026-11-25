@@ -1,0 +1,2443 @@
+{
+  "date": "2026-11-26 Asia/Aden",
+  "status": "catalog review only; not a per-role or per-argument acceptance test",
+  "migration": "20261125221559",
+  "total": 270,
+  "counts": {
+    "direct identity indicator": 237,
+    "delegated or internal indicator": 25,
+    "manual review": 8
+  },
+  "entries": [
+    {
+      "name": "ff27_document_invoice",
+      "args": "p_branch uuid, p_number text, p_ref text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "c13011c864cb487da48912deb1aded87"
+    },
+    {
+      "name": "ff27_quality",
+      "args": "p_from date, p_to date, p_branch uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "ef236068b3a76650f90df618dba1bd75"
+    },
+    {
+      "name": "ff27_submit",
+      "args": "p_request uuid, p_kind text, p_input jsonb",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "666239ff653783b7cebd7490b6965752"
+    },
+    {
+      "name": "ff28_customer",
+      "args": "p_order uuid, p_stars integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "95d9fddba50963df0ac0e2257c22ae13"
+    },
+    {
+      "name": "ff28_my_role",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "6349d030da9738f7f8cabf84505e7d9c"
+    },
+    {
+      "name": "ff38_admin_link_user",
+      "args": "p_email text, p_name text, p_role text, p_branch uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "497f2215e283e075f9e76826ce450135"
+    },
+    {
+      "name": "ff38_admin_permission_audit",
+      "args": "p_user uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9c69da282b6475a53ce49b56d1bd6f40"
+    },
+    {
+      "name": "ff38_admin_permission_matrix",
+      "args": "p_user uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "76d1f35bca2a24b9fe24bb35d623a4e2"
+    },
+    {
+      "name": "ff38_admin_set_permission",
+      "args": "p_user uuid, p_key text, p_override boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "1e2bef32da9ed22d96d00bcaa4292834"
+    },
+    {
+      "name": "ff38_admin_staff_audit",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "ce5f86436397f3cea30ce91d4a503ec0"
+    },
+    {
+      "name": "ff38_admin_staff_list",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "01c43398111d2326d388eec0aecd2d36"
+    },
+    {
+      "name": "ff38_admin_staff_set_access",
+      "args": "p_user uuid, p_role text, p_branches uuid[]",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "4e14dc345c1a32bbcc0345d76169c293"
+    },
+    {
+      "name": "ff38_admin_staff_set_active",
+      "args": "p_user uuid, p_active boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5c8d5a0ce56aa671f0c553c30b125a00"
+    },
+    {
+      "name": "ff38_cancel_unassigned_order",
+      "args": "p_order uuid, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "e96bfd4ec4b06d62d6197f1e1eecbe1d"
+    },
+    {
+      "name": "ff38_cashier_invoice_addition",
+      "args": "p_addition uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "4a228487ae8fe37f5878125285c1665b"
+    },
+    {
+      "name": "ff38_cashier_set_stage",
+      "args": "p_order uuid, p_stage text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d836ee468789119f87269bc5543d2552"
+    },
+    {
+      "name": "ff38_clock_in",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d1a7dd14fe7680347ed2341be6651128"
+    },
+    {
+      "name": "ff38_clock_out",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5c03279cfe70d7bc07dbfec5c61c4460"
+    },
+    {
+      "name": "ff38_dispatch",
+      "args": "p_order uuid, p_driver uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "cd4ab6631b65f07c05bdfe3e0b18b30e"
+    },
+    {
+      "name": "ff38_driver_progress",
+      "args": "p_order uuid, p_phase text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "30d4d5f22793e0f9f319100166fbbfe4"
+    },
+    {
+      "name": "ff38_driver_reply",
+      "args": "p_offer uuid, p_accept boolean, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "885f6d02d65125b432fa9e73d0b8df2a"
+    },
+    {
+      "name": "ff38_get_reject_permissions",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "aae1ffe57cbc8d4d33a885168e0db125"
+    },
+    {
+      "name": "ff38_heartbeat",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "fe376f583f512121a5208c08c3a6a13a"
+    },
+    {
+      "name": "ff38_list_reject_permission_audit",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "87367bcf5bbac82e02f0a75790846f6f"
+    },
+    {
+      "name": "ff38_list_visible_additions",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "c28999d99ab6068bdf57d1e1d1e9d429"
+    },
+    {
+      "name": "ff38_my_permissions",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "a735e5f38584b4329d1ba2ec61c89814"
+    },
+    {
+      "name": "ff38_order_financial_summary",
+      "args": "p_order uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "899e76ce05728194be575702c251651b"
+    },
+    {
+      "name": "ff38_permission_allowed",
+      "args": "p_user uuid, p_key text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "1b45c88349fd5ee434e8c4324d95f806"
+    },
+    {
+      "name": "ff38_set_driver_reject_permission",
+      "args": "p_order uuid, p_allow boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "a5e305f98cebdb57c9edb26f36e2516b"
+    },
+    {
+      "name": "ff38_snapshot",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f3b79b5fc77ef7e4eb21f662b05c2876"
+    },
+    {
+      "name": "ff38_sweep_offers",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "36fd517f82f038da76e1f25cff096435"
+    },
+    {
+      "name": "ff39_admin_send",
+      "args": "p_title text, p_body text, p_role text, p_branch uuid, p_requires_ack boolean",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "24dfa3f8e3264d1ee532e4b48aec6708"
+    },
+    {
+      "name": "ff39_admin_sent",
+      "args": "p_limit integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "1139e3fe2fc46a25bc18d73d23e5c79f"
+    },
+    {
+      "name": "ff39_inbox",
+      "args": "p_limit integer, p_unread_only boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "533fbee3dca17beb9961496e3ec6b79a"
+    },
+    {
+      "name": "ff39_mark_read",
+      "args": "p_message uuid, p_ack boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "239acc50196a9699dab36708b550e84d"
+    },
+    {
+      "name": "ff40_operations_alerts",
+      "args": "p_branch uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "1c110d5592d65556787eebb89e3ddaaf"
+    },
+    {
+      "name": "ff40_operations_report",
+      "args": "p_from date, p_to date, p_branch uuid",
+      "guard_hint": "manual review",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "959b1492b66a8c6d93adbe9bef203bfe"
+    },
+    {
+      "name": "ff41_case_comment",
+      "args": "p_case uuid, p_body text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9f1edca90b53f521963fe0a12430b5f6"
+    },
+    {
+      "name": "ff41_case_create",
+      "args": "p_kind text, p_subject text, p_description text, p_branch uuid, p_order uuid, p_priority text, p_customer_name text, p_customer_phone text, p_channel text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "6cb860f02be46bd8f008c314500e6f4d"
+    },
+    {
+      "name": "ff41_case_detail",
+      "args": "p_case uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "7c737c61a586d1cfff3c4d6e7a09b2e4"
+    },
+    {
+      "name": "ff41_case_list",
+      "args": "p_status text, p_kind text, p_limit integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9f527a847d6135a250115238ad397535"
+    },
+    {
+      "name": "ff41_case_transition",
+      "args": "p_case uuid, p_status text, p_resolution text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "222d135dfccad238f482713493790f12"
+    },
+    {
+      "name": "ff42_settlement_close",
+      "args": "p_settlement uuid, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "dfa113746abdd93fdeca17affd599b2e"
+    },
+    {
+      "name": "ff42_settlement_detail",
+      "args": "p_settlement uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "2fa0f3332d3703524ad6976a6055a23f"
+    },
+    {
+      "name": "ff42_settlement_overview",
+      "args": "p_day date, p_branch uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "ec8e84b8fdf0529b6640c7fd31e4ed91"
+    },
+    {
+      "name": "ff42_settlement_save",
+      "args": "p_day date, p_branch uuid, p_driver uuid, p_cash_due numeric, p_cash_received numeric, p_notes text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "161379619ee5234549642b2644844c6d"
+    },
+    {
+      "name": "ff43_security_report",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9b1c50c4537c29ba1bbc5fed5fecaa3e"
+    },
+    {
+      "name": "ff44_integrity_review",
+      "args": "p_from date, p_to date",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "fa8c6aa79fac8101441db03c955c9393"
+    },
+    {
+      "name": "ff45_branch_access_review",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "0401ad802e05653104f45e96aefb67de"
+    },
+    {
+      "name": "ff46_release_readiness",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "0593614d71f957531174834a9d33e5f3"
+    },
+    {
+      "name": "ff47_test_case_save",
+      "args": "p_run uuid, p_key text, p_state text, p_notes text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "767b57c9e8b24360b680497bb6b31883"
+    },
+    {
+      "name": "ff47_test_run_create",
+      "args": "p_version text, p_title text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5898421bcd317b080ed75123b9b79370"
+    },
+    {
+      "name": "ff47_test_run_detail",
+      "args": "p_run uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f78e1dddf2ae5103c8cea80edc9db2da"
+    },
+    {
+      "name": "ff47_test_run_set_state",
+      "args": "p_run uuid, p_state text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "2f0fd2f7872a7b311fa234ba67f838cf"
+    },
+    {
+      "name": "ff47_test_runs_list",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "0ebee1de0362f1f4336eef021cc5d20b"
+    },
+    {
+      "name": "ff48_diagnostics_summary",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "b2cfe1ec9bd1ff212d315ee3a67e5e29"
+    },
+    {
+      "name": "ff48_release_info",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "675f0306a519bc685df0ef7a55730a2e"
+    },
+    {
+      "name": "ff48_report_client_event",
+      "args": "p_event text, p_action text, p_client_version text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "e47df4cea18174de9e22ed3aaa0f747f"
+    },
+    {
+      "name": "ff49_can_work_branch",
+      "args": "p_branch uuid, p_roles text[]",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "45f69ecf18abd132a29781132a632386"
+    },
+    {
+      "name": "ff49_cashier_confirm_transfer",
+      "args": "p_transfer uuid, p_invoice_ref_after text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "346590743451e21e1fc2f9992ef9a4b4"
+    },
+    {
+      "name": "ff49_cashier_invoice",
+      "args": "p_order uuid, p_invoice_ref text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "31e8899b7c1807d1b794b3cd5274bb52"
+    },
+    {
+      "name": "ff49_cashier_receive",
+      "args": "p_order uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "dc9ed8755ce6546f0c090f8b99024dc6"
+    },
+    {
+      "name": "ff49_catalog",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "1bc12b0119c0f1a916a1725d9d7bdfc1"
+    },
+    {
+      "name": "ff49_create_reservation",
+      "args": "p_branch uuid, p_customer_name text, p_phone text, p_pickup timestamp with time zone, p_items jsonb, p_notes text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "66c0f810c30c54d34b3ee451f81c02d6"
+    },
+    {
+      "name": "ff49_manual_dispatch",
+      "args": "p_order uuid, p_driver uuid, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f36d9d8326446a484b43bb7d54c9e575"
+    },
+    {
+      "name": "ff49_request_driver_transfer",
+      "args": "p_order uuid, p_new_driver uuid, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d70b475304dbf162a4d9ff6527796984"
+    },
+    {
+      "name": "ff49_reservation_transition",
+      "args": "p_id uuid, p_next text, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "0b7083723e43e9b555a7ba88a10793bc"
+    },
+    {
+      "name": "ff49_reservations_list",
+      "args": "p_limit integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "bb6d5813888823fcd7bc4f9c057d2115"
+    },
+    {
+      "name": "ff49_snapshot",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "e10906b66f7d38e611c3cf257a7d56fd"
+    },
+    {
+      "name": "ff49_visible_transfers",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "3b9db46b0eb73d06080c53748913bfe9"
+    },
+    {
+      "name": "ff50_change_cashier_confirm_pos",
+      "args": "p_change uuid, p_invoice_ref text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "8ec086eb92bd06a77f08c699fd912b73"
+    },
+    {
+      "name": "ff50_change_cashier_decide",
+      "args": "p_change uuid, p_approve boolean, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "2dd7621cba366be556b4abf5be42b7ec"
+    },
+    {
+      "name": "ff50_change_request",
+      "args": "p_order uuid, p_items jsonb, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f8ce47bbfa0d62e4f37107eb13d56fb9"
+    },
+    {
+      "name": "ff50_change_service_confirm",
+      "args": "p_change uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "fda58081ec4e74299aa3d7a82cf74d98"
+    },
+    {
+      "name": "ff50_visible_order_changes",
+      "args": "p_limit integer",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "e5a86ca864f82e500144c4f8d4292c5b"
+    },
+    {
+      "name": "ff51_catalog_save_item",
+      "args": "p_id uuid, p_category text, p_name text, p_price numeric",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "87e4618f6b98fa69b4eed29ecd0fc458"
+    },
+    {
+      "name": "ff51_catalog_toggle",
+      "args": "p_id uuid, p_active boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "b44d19df5d7c46a2fc25da7e943892a2"
+    },
+    {
+      "name": "ff51_customer_directory",
+      "args": "p_query text, p_limit integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "81e41629a5601c3d3d2fb10d4736472b"
+    },
+    {
+      "name": "ff51_customer_note_add",
+      "args": "p_phone text, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5a481fa0900c9934af2321f2eee7656d"
+    },
+    {
+      "name": "ff51_customer_notes_list",
+      "args": "p_phone text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "cd62a9f586f93214f95bdf25621ac1eb"
+    },
+    {
+      "name": "ff51_driver_rating_summary",
+      "args": "",
+      "guard_hint": "manual review",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "046d4f9f63868ead0526d6d40b9aa004"
+    },
+    {
+      "name": "ff51_driver_set_break",
+      "args": "p_on_break boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "cc93830a4597b667895a33cdc1f5b554"
+    },
+    {
+      "name": "ff51_manager_catalog",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "0489718105e8346e0accbafb1d6c6f8f"
+    },
+    {
+      "name": "ff51_offer_save",
+      "args": "p_id uuid, p_name text, p_price numeric, p_active boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "019a2f334fded0571c2542988da5168d"
+    },
+    {
+      "name": "ff51_order_archive",
+      "args": "p_from date, p_to date, p_branch uuid, p_status text, p_limit integer, p_offset integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "bbe83af6ad57ccd9f32c2b5b73a58d12"
+    },
+    {
+      "name": "ff51_rate_driver",
+      "args": "p_order uuid, p_stars integer, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "6bb7324d0d8d31e4160b5d53983d8371"
+    },
+    {
+      "name": "ff52_admin_route_list",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "8b247bd69160c293439f6d198305467b"
+    },
+    {
+      "name": "ff52_admin_route_save",
+      "args": "p_branch uuid, p_driver uuid, p_terms text[], p_start time without time zone, p_end time without time zone, p_active boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "2f01e03f456edbbb3d6589d09a0bc53e"
+    },
+    {
+      "name": "ff52_late_addition_create",
+      "args": "p_order uuid, p_items jsonb",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "0197fd53b796d172aab91bbf3d631670"
+    },
+    {
+      "name": "ff52_late_cancel",
+      "args": "p_addition uuid, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "cb136ff80c5577356afd2234031f9d30"
+    },
+    {
+      "name": "ff52_late_driver_decide",
+      "args": "p_addition uuid, p_accept boolean, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "18a76d78c126fe5b80de4ce7978d2241"
+    },
+    {
+      "name": "ff52_late_driver_pickup",
+      "args": "p_addition uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "137bebbf83a2a6511d74ae051f70a4ac"
+    },
+    {
+      "name": "ff52_late_invoice",
+      "args": "p_addition uuid, p_invoice_ref text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "59f3f3f8063891c3568f877db0a9506a"
+    },
+    {
+      "name": "ff52_list_additions",
+      "args": "",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "579a5572acd9083d344ecfc2fba6dbe0"
+    },
+    {
+      "name": "ff52_reassign_before_pos",
+      "args": "p_order uuid, p_driver uuid, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "91383238a698de92149fd4546a7ea38b"
+    },
+    {
+      "name": "ff52_regular_addition_cancel",
+      "args": "p_addition uuid, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "979745257890c72152d25eb42b6c9c54"
+    },
+    {
+      "name": "ff52_regular_addition_create",
+      "args": "p_order uuid, p_items jsonb",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "cad9afae75a1fbf872696240a957d3b3"
+    },
+    {
+      "name": "ff52_regular_addition_invoice",
+      "args": "p_addition uuid, p_invoice text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9d39fe714f14c04107360a854934cad5"
+    },
+    {
+      "name": "ff53_save_menu_image",
+      "args": "p_item uuid, p_path text, p_kind text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "c95e542622e5f9563adf7121e0cfe332"
+    },
+    {
+      "name": "ff60_health",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5407bf209b9c9a85391797c490e982b3"
+    },
+    {
+      "name": "ff60_list_workflow",
+      "args": "p_order uuid, p_limit integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5e0fd203a83762fff19dcc16b657993d"
+    },
+    {
+      "name": "ff60_manual_reoffer",
+      "args": "p_order uuid, p_driver uuid, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "7099c54337b70b9996c33df777f1ddf3"
+    },
+    {
+      "name": "ff60_operational_queue",
+      "args": "p_branch uuid, p_limit integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "b81c99c68033c43ec3dc17ff19bd2007"
+    },
+    {
+      "name": "ff60_read_policy",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "579ae0fd29317ad3070b85ffe915e5fc"
+    },
+    {
+      "name": "ff60_set_policy",
+      "args": "p_fast_seconds integer, p_slow_seconds integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "3d54f8903be501b57aa952a9f9b17530"
+    },
+    {
+      "name": "ff61_set_delegation",
+      "args": "p_user uuid, p_view boolean, p_approve boolean, p_reject boolean, p_notify boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "7341e5ac6411600b63ff549ede4fec86"
+    },
+    {
+      "name": "ff62_assembly_set_branch",
+      "args": "p_user uuid, p_branch uuid, p_enabled boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "e6e72be537d55ed63d84a946a579109c"
+    },
+    {
+      "name": "ff62_assign_pinned",
+      "args": "p_order uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "53347ddd071982eb8acc2a20c7167ceb"
+    },
+    {
+      "name": "ff62_cairo_drivers",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5d0c3969fb3e5a4f3305ae6e5e3807ce"
+    },
+    {
+      "name": "ff62_create_pinned_order",
+      "args": "p_branch uuid, p_phone text, p_area text, p_items jsonb, p_delivery_fee numeric, p_notes text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9e10a5a5f89c09ecb2231d68fd43da90"
+    },
+    {
+      "name": "ff62_get_pinned",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "72266c1b06a9eef55a310f8cb39cbc8b"
+    },
+    {
+      "name": "ff62_manager_data_overview",
+      "args": "",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f06a698bf49379d6cc4c336a111c0595"
+    },
+    {
+      "name": "ff62_set_pinned",
+      "args": "p_driver uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5bb2a8ea55b7cde4348a668ac8434121"
+    },
+    {
+      "name": "ff68_admin_staff_set_role",
+      "args": "p_user uuid, p_role text, p_branches uuid[]",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "73a89193e391e7bd541c9a5718c7a025"
+    },
+    {
+      "name": "ff69_admin_send_assembly",
+      "args": "p_title text, p_body text, p_branch uuid, p_requires_ack boolean",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "ae534210a183e6e2c6ae1934401217e6"
+    },
+    {
+      "name": "ff70_set_item_notes",
+      "args": "p_order uuid, p_items jsonb",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "7203aab9f7fdbf5d89038c4ad2e5ce8e"
+    },
+    {
+      "name": "ff70_submit_atomic",
+      "args": "p_request uuid, p_kind text, p_input jsonb",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5e11a5eec39114917af49d0efe1a9f25"
+    },
+    {
+      "name": "ff70_visible_item_notes",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "279b403fe61b34a852fb30af1cb3bfb0"
+    },
+    {
+      "name": "ff71_admin_link_assembly",
+      "args": "p_email text, p_name text, p_branch uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "007d3b7381846af306dd3471d40b4831"
+    },
+    {
+      "name": "ff76_report_approval_save",
+      "args": "p_day date, p_branch uuid, p_notes text, p_manager_name text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "73539ecaf21fb5a208306b93221ea37b"
+    },
+    {
+      "name": "ff76_reporting_center",
+      "args": "p_from date, p_to date, p_branch uuid, p_driver uuid",
+      "guard_hint": "manual review",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "8e5610f1e50aee5784bee22bf0d032df"
+    },
+    {
+      "name": "ff80_dashboard_metrics",
+      "args": "p_branch uuid",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "2075f50c6343280772889480c7801fdf"
+    },
+    {
+      "name": "ff81_effective_cards",
+      "args": "p_branch uuid, p_device text, p_revision bigint",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "138f2432423560e67c6587041850d0f8"
+    },
+    {
+      "name": "ff81_effective_design",
+      "args": "p_branch uuid, p_device text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "7fb0d3f050e7cfb009696a9c3665c855"
+    },
+    {
+      "name": "ff81_named_card_draft",
+      "args": "p_role text, p_branch uuid, p_device text, p_pack text, p_text text, p_bar text, p_name text, p_description text, p_cards jsonb",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "a4cf6d52b3e4e7f93645a0027baedf3b"
+    },
+    {
+      "name": "ff82_delegate_catalog",
+      "args": "",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "b876f1b41efd8d552b974fcc77cf814f"
+    },
+    {
+      "name": "ff82_delegate_draft",
+      "args": "p_key text, p_body text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9bd7a0c63deeb3c309ea95fcc36db102"
+    },
+    {
+      "name": "ff82_delegate_history",
+      "args": "p_key text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "b238c5fdcff418827de2a5b2dc42c268"
+    },
+    {
+      "name": "ff82_delegate_review",
+      "args": "p_revision bigint, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "aa2d0b7f0c727cb6418d7695156c8b14"
+    },
+    {
+      "name": "ff82_manager_accounts",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "32f834f31ddb8e883698e3998e7a0d5d"
+    },
+    {
+      "name": "ff82_manager_audit",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "6ce1a2906acad4279c2e1ec08cf9157c"
+    },
+    {
+      "name": "ff82_manager_grants",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "b42a99679a9600d4ce037638b44ecfbf"
+    },
+    {
+      "name": "ff82_manager_reviews",
+      "args": "p_revision bigint",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "408012ab7dcc7b77cc7f2060442060b3"
+    },
+    {
+      "name": "ff82_my_grant",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "4888c15086f220cae578e9874382e66a"
+    },
+    {
+      "name": "ff82_revoke_grant",
+      "args": "p_id bigint",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "3d1842993a9540dc53c98f1d6f408d11"
+    },
+    {
+      "name": "ff82_set_grant",
+      "args": "p_recipient uuid, p_branch uuid, p_screen text, p_capabilities text[], p_start timestamp with time zone, p_end timestamp with time zone",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5a59b081cb47b6982332ce4db612d44b"
+    },
+    {
+      "name": "ff86_content_history_scoped",
+      "args": "p_key text, p_role text, p_branch uuid, p_global_branch boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "96d1db54473b58352e38571846be9c4b"
+    },
+    {
+      "name": "ff_a02_catalog_presentation",
+      "args": "p_kind text, p_id uuid, p_sort integer, p_card_style text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "b2dfad78434abe2e5abe43058548d8e4"
+    },
+    {
+      "name": "ff_a02_customer_history",
+      "args": "p_phone text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "7fe1d05473c8416a3bb34aaa1c53f519"
+    },
+    {
+      "name": "ff_a05_area_fee_hint",
+      "args": "p_branch uuid, p_area text",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f01ca64cf7c6c916e683a598bc95785e"
+    },
+    {
+      "name": "ff_a05_branch_policy",
+      "args": "p_branch uuid",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9e13e684e445e0557548b95e495dbf69"
+    },
+    {
+      "name": "ff_a05_catalog_price_history",
+      "args": "p_limit integer",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d94924689bd80a88188f4f7e680fe5b5"
+    },
+    {
+      "name": "ff_a05_set_area_tariff",
+      "args": "p_branch uuid, p_area text, p_fee numeric, p_effective timestamp with time zone, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "ca553c8a3c89092a82dc2395382f3d50"
+    },
+    {
+      "name": "ff_a05_set_branch_hours",
+      "args": "p_branch uuid, p_day integer, p_open time without time zone, p_close time without time zone, p_shift time without time zone, p_closed boolean, p_effective timestamp with time zone, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f79cbd1af2d1b08766ee00a26c1ea758"
+    },
+    {
+      "name": "ff_a06_nav_save",
+      "args": "p_role text, p_branch uuid, p_device text, p_mode text, p_width integer, p_bar text, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "a9a281be6e2d6b4b381c371e274e078a"
+    },
+    {
+      "name": "ff_a06_nav_scope",
+      "args": "p_branch uuid, p_device text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "8609d5f6071a22aab391b199a1cd536f"
+    },
+    {
+      "name": "ff_a07_design_catalog",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "717fa0754749b0d95f228f89120f5a73"
+    },
+    {
+      "name": "ff_a07_effective_designs",
+      "args": "p_branch uuid, p_device text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "aa7750d7c813a0aaa8cb0629faf3f53e"
+    },
+    {
+      "name": "ff_a07_manager_source",
+      "args": "p_screen text, p_role text, p_branch uuid, p_device text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "10b7c927d19b7532459d568eae0ccb58"
+    },
+    {
+      "name": "ff_a07_manager_style_layers",
+      "args": "p_screen text, p_role text, p_branch uuid, p_device text",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "b6195842775d27e41c450eb0cdb6b15a"
+    },
+    {
+      "name": "ff_a07_named_design",
+      "args": "p_screen text, p_role text, p_branch uuid, p_device text, p_pack text, p_text text, p_bar text, p_name text, p_description text, p_cards jsonb, p_style jsonb",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "74473c1762612ecb794fe87238168372"
+    },
+    {
+      "name": "ff_a07_preview_scope",
+      "args": "p_screen_scope text, p_role_scope text, p_branch_scope uuid, p_device_scope text, p_pack text, p_style jsonb, p_target_screen text, p_target_role text, p_target_branch uuid, p_target_device text",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "2c1cb325b0dbf60864d05ff2a3729684"
+    },
+    {
+      "name": "ff_a07_public_appearance",
+      "args": "p_screen text, p_device text",
+      "guard_hint": "delegated or internal indicator",
+      "anon": true,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "7de552b410f6f936cf5190b897bc1c96"
+    },
+    {
+      "name": "ff_a08_manager_card_source",
+      "args": "p_role text, p_branch uuid, p_device text",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "817ec4f3f2f3df6990df7e5b86114cfc"
+    },
+    {
+      "name": "ff_a08_metric_detail",
+      "args": "p_branch uuid, p_metric text, p_offset integer, p_limit integer",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "043b193c4231c7bf8e9ab9bf0b621bde"
+    },
+    {
+      "name": "ff_a09_design_context",
+      "args": "p_device text",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "46676f8bb53e9af62217342d6e0be211"
+    },
+    {
+      "name": "ff_a09_design_draft",
+      "args": "p_device text, p_patch jsonb, p_name text, p_base bigint",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "0c11c86ed9493a8a13b46d74536161a7"
+    },
+    {
+      "name": "ff_a09_design_history",
+      "args": "p_device text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "18f6078a63c5988c2ffa7bb10d404b07"
+    },
+    {
+      "name": "ff_a09_design_review",
+      "args": "p_revision bigint, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "33b625c5c3bf181a9a4c2feed3ba5ab5"
+    },
+    {
+      "name": "ff_a09_set_grant",
+      "args": "p_recipient uuid, p_branch uuid, p_screen text, p_capabilities text[], p_start timestamp with time zone, p_end timestamp with time zone, p_kinds text[]",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "aa95b9dc1dac66f55105d8e5867beddb"
+    },
+    {
+      "name": "ff_a10_cashier_coordination",
+      "args": "p_order uuid, p_stars integer, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f51414c5df86c1b2df9a59ac456ca66c"
+    },
+    {
+      "name": "ff_a10_confirm_fee",
+      "args": "p_settlement uuid, p_amount numeric, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "593655f6e4a02ab8a65f61a13b5eb722"
+    },
+    {
+      "name": "ff_a10_customer_rate",
+      "args": "p_order uuid, p_stars integer, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "7a159db063b62cd04295939dfc87fd5b"
+    },
+    {
+      "name": "ff_a10_driver_rating_queue",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "656507fb1d92008c424f5c5217d46330"
+    },
+    {
+      "name": "ff_a10_escalate_rating",
+      "args": "p_rating uuid, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "debe1f37e5fc39c1c9ddf6cf3e51b18a"
+    },
+    {
+      "name": "ff_a10_fee_history",
+      "args": "p_settlement uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "995c348de7d52f8d26d60ca824e685d3"
+    },
+    {
+      "name": "ff_a10_report_grant",
+      "args": "p_user uuid, p_section text, p_allowed boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "06c962d593004faea1db56b7ab267ad8"
+    },
+    {
+      "name": "ff_a10_report_grants",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "4af89438e5b8407c7a2f9f38d93e0d5b"
+    },
+    {
+      "name": "ff_a10_reporting_center",
+      "args": "p_from date, p_to date, p_branch uuid, p_driver uuid, p_staff uuid, p_area text, p_item text, p_status text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "7990d7c2a1fe94e23d5d3de342680a53"
+    },
+    {
+      "name": "ff_a11_message_access",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "59883a8db3ec92f75f2c02950b85f737"
+    },
+    {
+      "name": "ff_a11_message_audit",
+      "args": "p_limit integer",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "4a62c704def133b58854e88a929fdd04"
+    },
+    {
+      "name": "ff_a11_message_grant",
+      "args": "p_user uuid, p_role text, p_branch uuid, p_priority text, p_expires timestamp with time zone",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "a51d0799ff2219811c1cb43d8b11f0d3"
+    },
+    {
+      "name": "ff_a11_message_grants",
+      "args": "",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f1fac85adf929e947c6ecf564209eabe"
+    },
+    {
+      "name": "ff_a11_message_history",
+      "args": "p_limit integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "e3a80b3b5fccdf98c48460ce010a0195"
+    },
+    {
+      "name": "ff_a11_message_preview",
+      "args": "p_role text, p_branch uuid, p_priority text, p_people uuid[]",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d5d34a59d8e743fdb2b7f4bc46dae86a"
+    },
+    {
+      "name": "ff_a11_message_revoke",
+      "args": "p_id uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "83f309f593af69ed5820591ddf786cd6"
+    },
+    {
+      "name": "ff_a11_message_send",
+      "args": "p_title text, p_body text, p_role text, p_branch uuid, p_priority text, p_people uuid[], p_expected uuid[], p_ack boolean, p_route text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d4126aa4492a3da73a8e33346ebc9134"
+    },
+    {
+      "name": "ff_a11_message_state",
+      "args": "p_id uuid, p_action text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9c88e8cb280db595a7f474efbb42e0b4"
+    },
+    {
+      "name": "ff_a11_message_template_delete",
+      "args": "p_id uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d66c02da232d97fa3ce3794e13ae398c"
+    },
+    {
+      "name": "ff_a11_message_template_save",
+      "args": "p_name text, p_title text, p_body text, p_priority text, p_route text, p_ack boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "86338717d8da779b6c69d754c71a441b"
+    },
+    {
+      "name": "ff_a11_message_templates",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "096d645084f1cc3576612e1f95a12dad"
+    },
+    {
+      "name": "ff_a12_create_fixture",
+      "args": "p_branch uuid, p_type text, p_date date, p_confirmation text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "00f54ef6714c58cc98255d10433c983e"
+    },
+    {
+      "name": "ff_a12_legacy_batches",
+      "args": "",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d6dc56de65eba9f116918acfb8c6d54f"
+    },
+    {
+      "name": "ff_a12_legacy_execute",
+      "args": "p_branch uuid, p_type text, p_from date, p_to date, p_token text, p_confirmation text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\",lock_timeout=3s",
+      "definition_md5": "d5e24242c6c8ff4482c0b63002d38d14"
+    },
+    {
+      "name": "ff_a12_legacy_preview",
+      "args": "p_branch uuid, p_type text, p_from date, p_to date",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "05cac53d77693a21907ec55257604806"
+    },
+    {
+      "name": "ff_a12_legacy_restore",
+      "args": "p_batch uuid, p_confirmation text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\",lock_timeout=3s",
+      "definition_md5": "8ae40b572b5f7c61ce7f55757c7a08d4"
+    },
+    {
+      "name": "ff_a12_reset_batches",
+      "args": "",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "dc7d734a869ccaced49f4b70fb8bcd1b"
+    },
+    {
+      "name": "ff_a12_reset_execute",
+      "args": "p_branch uuid, p_type text, p_from date, p_to date, p_token text, p_confirmation text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\",lock_timeout=3s",
+      "definition_md5": "ae47e5bbc88f0930d6272c3cd450d3a7"
+    },
+    {
+      "name": "ff_a12_reset_preview",
+      "args": "p_branch uuid, p_type text, p_from date, p_to date",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "dbfb7b07566e1fb82c8283d26e2405ad"
+    },
+    {
+      "name": "ff_a12_restore",
+      "args": "p_batch uuid, p_confirmation text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\",lock_timeout=3s",
+      "definition_md5": "48048ba0c83c208a22ea823632f772e1"
+    },
+    {
+      "name": "ff_burger_confirm_notes",
+      "args": "p_ticket uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "dfb79cec69671acc09c5529684154259"
+    },
+    {
+      "name": "ff_burger_list",
+      "args": "p_limit integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "ef758da708f03f2be592f5c547b9a2d9"
+    },
+    {
+      "name": "ff_burger_menu",
+      "args": "",
+      "guard_hint": "manual review",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "28a6569c22752fc01741016bf959dc9e"
+    },
+    {
+      "name": "ff_burger_my_branch",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "cf8ca87f3901b93a62b90bf828fe46d3"
+    },
+    {
+      "name": "ff_burger_online_status",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "7222bfa199b28af8c803d384deeea3b7"
+    },
+    {
+      "name": "ff_burger_presence_ping",
+      "args": "p_online boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "c646429adf8f6839c10fe12518973ef5"
+    },
+    {
+      "name": "ff_burger_send",
+      "args": "p_branch uuid, p_order_kind text, p_delivery_order uuid, p_invoice text, p_items jsonb, p_notes text, p_token uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "7246d5985e620e752ffeebd0bc9b441b"
+    },
+    {
+      "name": "ff_burger_transition",
+      "args": "p_ticket uuid, p_action text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "3e51dbd6fbdc2bd3d200dbbc001184d0"
+    },
+    {
+      "name": "ff_case_alert_read",
+      "args": "p_case uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f202b43deb050251c7f1b221d01206bd"
+    },
+    {
+      "name": "ff_case_alerts",
+      "args": "p_limit integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "3ecd9cfb01f7a8932141dadf9a08eae5"
+    },
+    {
+      "name": "ff_confirm_pinned_order",
+      "args": "p_driver uuid, p_branch uuid, p_desk text, p_phone text, p_area text, p_items jsonb, p_notes text, p_override_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "0aa237529a1ff1df62d3b43eae510499"
+    },
+    {
+      "name": "ff_content_catalog_list",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d608645a59859b886a6d71e35a4e4910"
+    },
+    {
+      "name": "ff_content_create_draft",
+      "args": "p_key text, p_role text, p_branch uuid, p_body text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9b5ac5722a5a6126559aede6799271b6"
+    },
+    {
+      "name": "ff_content_effective",
+      "args": "p_branch uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "4889f99a4ba5e69550927be68195af5c"
+    },
+    {
+      "name": "ff_content_history",
+      "args": "p_key text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "52e17997faca5e9fdf6f5e72cdf1bf77"
+    },
+    {
+      "name": "ff_content_publish",
+      "args": "p_id bigint",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9535a1e88dddb40bd9842b6e268519ea"
+    },
+    {
+      "name": "ff_customer_views_manager",
+      "args": "p_limit integer",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "53de3bfc5275d1dfc20e9968778f7bb2"
+    },
+    {
+      "name": "ff_f01_daily_summary",
+      "args": "p_date date, p_compare_date date, p_branch uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "3ad4279e4de6b2ede42cfdb9db8f0877"
+    },
+    {
+      "name": "ff_has_branch",
+      "args": "target uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=public",
+      "definition_md5": "b1750c42014aff000c88cb3205c28f09"
+    },
+    {
+      "name": "ff_is_manager",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=public",
+      "definition_md5": "20e4934eab353f1e7d2127b541ab101e"
+    },
+    {
+      "name": "ff_log_customer_view",
+      "args": "p_action text, p_phone text, p_customer uuid, p_branch uuid, p_details jsonb",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "2811a123ab31510dee8461b7d7c5f871"
+    },
+    {
+      "name": "ff_luxe_ack_cashier_cancel",
+      "args": "p_order uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "cb0cffed4cf4de5b3e8a61201adf2896"
+    },
+    {
+      "name": "ff_luxe_cancel_assigned",
+      "args": "p_order uuid, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "eb9eada6c3b238078561b785b69f8f6e"
+    },
+    {
+      "name": "ff_luxe_cashier_cancel_alerts",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "22599c60093f4a272466e3b6abf61a30"
+    },
+    {
+      "name": "ff_luxe_cashier_completed_invoice",
+      "args": "p_order uuid, p_invoice_ref text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "b1f91297ae1cdcd8af50a2e73e0121fb"
+    },
+    {
+      "name": "ff_luxe_cashier_completed_orders",
+      "args": "p_limit integer, p_offset integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "0336f3686f6e48a2b7c17b90733d6476"
+    },
+    {
+      "name": "ff_luxe_cashier_completed_rating",
+      "args": "p_order uuid, p_stars integer, p_note text",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "68a8d0ffdf15b88a3f8b36a902278d3f"
+    },
+    {
+      "name": "ff_luxe_cashier_completed_report",
+      "args": "p_order uuid, p_category text, p_subject text, p_description text, p_priority text",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "012c98b538e5c0dbf7e236de986d9341"
+    },
+    {
+      "name": "ff_luxe_cashier_desks_roster",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9fce9375ab9e56d30bf9fca9cf60fc36"
+    },
+    {
+      "name": "ff_luxe_completed_universal",
+      "args": "p_from date, p_to date, p_branch uuid, p_limit integer, p_offset integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "2533aba1d98804bc05114cb8cf04f875"
+    },
+    {
+      "name": "ff_luxe_completed_universal_action",
+      "args": "p_order uuid, p_action text, p_payload jsonb",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "8c70ae34c71b806f14aa9d02daca6855"
+    },
+    {
+      "name": "ff_luxe_create_delivery_order_in_desk",
+      "args": "p_branch uuid, p_desk text, p_phone text, p_area text, p_items jsonb, p_delivery_fee numeric, p_notes text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "e39fb0bbc70b8d4562d668118dd54f47"
+    },
+    {
+      "name": "ff_luxe_create_pinned_order_in_desk",
+      "args": "p_branch uuid, p_desk text, p_phone text, p_area text, p_items jsonb, p_delivery_fee numeric, p_notes text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "97303bc7e4e6e26424e8f4187bd9adcb"
+    },
+    {
+      "name": "ff_luxe_dispatch_preview",
+      "args": "p_branch uuid, p_area text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "06c648057638b09516b99f59bfd794df"
+    },
+    {
+      "name": "ff_luxe_driver_cancel_alerts",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "ddee93b4060f04595a6df0d9d03f51f2"
+    },
+    {
+      "name": "ff_luxe_driver_grievance",
+      "args": "p_order uuid, p_category text, p_details text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5f2705252ab19150018733fc6a192b2a"
+    },
+    {
+      "name": "ff_luxe_driver_rate_order",
+      "args": "p_order uuid, p_cs integer, p_cashier integer, p_customer integer, p_overall integer, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "6953f602d2510eb9d2718c6ad1b4d34a"
+    },
+    {
+      "name": "ff_luxe_manager_driver_progress",
+      "args": "p_order uuid, p_phase text, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d32d08ad2016fb622daf890423e0ba9c"
+    },
+    {
+      "name": "ff_luxe_manager_prepare_staff",
+      "args": "p_name text, p_phone text, p_email text, p_role text, p_qualification text, p_address text, p_age integer, p_marital text, p_experience integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "098c65e1e5ac1529c88a4105fef3205b"
+    },
+    {
+      "name": "ff_luxe_rate_driver_cashier",
+      "args": "p_order uuid, p_stars integer, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "cfb330126469cd1345bc51d1a6219bdf"
+    },
+    {
+      "name": "ff_luxe_rate_driver_cs",
+      "args": "p_order uuid, p_stars integer, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "7f62f25f9b84efe60c2b5a8afb6ae27b"
+    },
+    {
+      "name": "ff_luxe_rating_summary_period",
+      "args": "p_from date, p_to date, p_branch uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "45303478cede7b02542d21ca35244d87"
+    },
+    {
+      "name": "ff_luxe_set_cashier_desk",
+      "args": "p_user uuid, p_desk text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "157dc182b44727ac9b279e34aeb107c1"
+    },
+    {
+      "name": "ff_luxe_settlement_period",
+      "args": "p_from date, p_to date, p_branch uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d5e7257d7ef2440b440fc32048a9a6c8"
+    },
+    {
+      "name": "ff_luxe_skip_driver_cancel",
+      "args": "p_order uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "8435a9859b0dbfdc1390cfde4d61a095"
+    },
+    {
+      "name": "ff_order_customer_edit",
+      "args": "p_order uuid, p_phone text, p_area text, p_name text, p_address text, p_reason text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f961db57ccb50fd26f6bcc2753196612"
+    },
+    {
+      "name": "ff_order_customer_edit_with_note",
+      "args": "p_order uuid, p_phone text, p_area text, p_name text, p_address text, p_reason text, p_note text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d16d947bed8032cadabb9d0617fc2b68"
+    },
+    {
+      "name": "ff_order_customer_read",
+      "args": "p_order uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "2cbabcff62b25758599cdadeaff11e9f"
+    },
+    {
+      "name": "ff_report_preset_list",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "64c323da9a948e86c1b5596e05d4d3b2"
+    },
+    {
+      "name": "ff_report_preset_save",
+      "args": "p_title text, p_sections text[], p_trend text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d9fda1eda67ad48c2477235eaaa01281"
+    },
+    {
+      "name": "ff_reward_check",
+      "args": "p_code text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5c80dd5735ecdbe8668ad9988dc82744"
+    },
+    {
+      "name": "ff_reward_issue",
+      "args": "p_kind text, p_name text, p_phone text, p_items jsonb, p_expiry_date date",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f9e45b99c679f4b6c7f6527bb998e291"
+    },
+    {
+      "name": "ff_reward_list",
+      "args": "p_limit integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "cd6dc2c7cd2f727f92dcb5690dc541b8"
+    },
+    {
+      "name": "ff_reward_redeem",
+      "args": "p_code text, p_branch uuid, p_channel text, p_area text, p_fee numeric, p_notes text, p_token uuid, p_identity_confirmed boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "9ba5232c423ed7f87ef8a42068f4e9b8"
+    },
+    {
+      "name": "ff_reward_void",
+      "args": "p_code text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "fa11f6ad0ecd7acfd4379614f667faed"
+    },
+    {
+      "name": "ff_save_catalog_parser_aliases",
+      "args": "p_kind text, p_id uuid, p_expected text[], p_aliases text[]",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "48b677919b51222d323fb3141e4c290a"
+    },
+    {
+      "name": "ff_security_login_event",
+      "args": "p_event text, p_details jsonb",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "3619ecd8ebcb10d6638f0c21c7a0d804"
+    },
+    {
+      "name": "ff_security_my_role",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "4534efff619a1b961b23650351dc9486"
+    },
+    {
+      "name": "ff_security_require_mfa",
+      "args": "",
+      "guard_hint": "manual review",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d986b70e8e815e25e4322265c7854d34"
+    },
+    {
+      "name": "ff_set_special_courier_capacity",
+      "args": "p_driver uuid, p_capacity integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "c72b368224eca601461d5dfff8f4eabf"
+    },
+    {
+      "name": "ff_special_courier_status",
+      "args": "p_driver uuid",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "c8319497a64af4ebaa757a4d0183283a"
+    },
+    {
+      "name": "ff_step06_public_content",
+      "args": "p_screen text",
+      "guard_hint": "delegated or internal indicator",
+      "anon": true,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "0ca9f91391bd11e467b3a453cae2d5c9"
+    },
+    {
+      "name": "ff_step08_content_restore",
+      "args": "p_current bigint",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "733106f2d9859fb4643edd1d7fb72b63"
+    },
+    {
+      "name": "ff_step08_content_trial",
+      "args": "p_id bigint, p_accounts uuid[], p_hours integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "fffbd7a085aa68c526c426a7cebbd427"
+    },
+    {
+      "name": "ff_step08_release_impact",
+      "args": "p_kind text, p_id bigint",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "d78c5214820fa27088770a8c8107216e"
+    },
+    {
+      "name": "ff_step12_session_valid",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "821598e28d5be1a00d340ea8c351c302"
+    },
+    {
+      "name": "ff_ui_control_trial",
+      "args": "p_id bigint, p_accounts uuid[], p_hours integer",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "6759852b847c8a256b9d0fcb2317265e"
+    },
+    {
+      "name": "ff_ui_effective",
+      "args": "p_branch uuid, p_device text",
+      "guard_hint": "manual review",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "3b499e447de03faf4e63a85ff8c45803"
+    },
+    {
+      "name": "ff_ui_manager_history",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "5462f81401ff4899ffbfbe2f8f065c91"
+    },
+    {
+      "name": "ff_ui_manager_source",
+      "args": "p_role text, p_branch uuid, p_device text",
+      "guard_hint": "manual review",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "6ed859fabec77452a608a78ce6351cc0"
+    },
+    {
+      "name": "ff_ui_named_draft",
+      "args": "p_role text, p_branch uuid, p_device text, p_pack text, p_text text, p_bar text, p_name text, p_description text",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "f53bfed24709598b0adae0e8d00f1977"
+    },
+    {
+      "name": "ff_ui_publish",
+      "args": "p_id bigint",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "0a08b93a9c403081c6200186c1d42514"
+    },
+    {
+      "name": "ff_ui_rollback",
+      "args": "p_current bigint",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "ab491750d918ee55dfc26ade8b763277"
+    },
+    {
+      "name": "ff_ui_save_draft",
+      "args": "p_role text, p_branch uuid, p_device text, p_pack text, p_text text, p_bar text, p_restore bigint",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "e02daa7fb3b0a5e1b55409b3b42e4ca9"
+    },
+    {
+      "name": "ff_ui_trial_accounts",
+      "args": "p_id bigint",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "b2e4f6e5280e97828ff18d0d817704a9"
+    },
+    {
+      "name": "ff_v12_assembly_account_update",
+      "args": "p_email text, p_branch uuid, p_enabled boolean",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "a3fc4f6809f86cd99fc37cfb4484e219"
+    },
+    {
+      "name": "ff_v12_assembly_accounts",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "89c6dc00a9f7889e8465ff886841d3ea"
+    },
+    {
+      "name": "ff_v12_assembly_me",
+      "args": "",
+      "guard_hint": "direct identity indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "1a069c31acd5ea7864f69ff5a3058f1b"
+    },
+    {
+      "name": "ff_v12_assembly_set_stage",
+      "args": "p_order uuid, p_stage text, p_expected_stage text",
+      "guard_hint": "manual review",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "14113f9fe204be017a67bdd7a252938f"
+    },
+    {
+      "name": "ff_v12_assembly_snapshot",
+      "args": "",
+      "guard_hint": "delegated or internal indicator",
+      "anon": false,
+      "authenticated": true,
+      "config": "search_path=\"\"",
+      "definition_md5": "e36ad6176fc8e89141933210b87fd9c8"
+    }
+  ]
+}
