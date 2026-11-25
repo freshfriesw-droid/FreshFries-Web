@@ -208,6 +208,87 @@ NOTIFY pgrst,'reload schema';
     blocked_worker("UPDATE public.ff82_content_grants SET ends_at=clock_timestamp()+interval '2 seconds' WHERE id=10",expiry=True)
     assert not active_grant()
     print("PASS STEP07 real concurrent expiry during lock wait: edit rechecked, denied, audit persisted",flush=True)
+
+    # STEP08 uses real release RPCs and locks, with minimal non-lifecycle validation
+    # fixtures. Full validators/positive restoration run in the live rollback suite.
+    sql("""
+CREATE TABLE auth.users(id uuid PRIMARY KEY);
+INSERT INTO auth.users SELECT user_id FROM public.ff_profiles;
+ALTER TABLE public.ff_profiles ADD COLUMN display_name text DEFAULT 'QA account';
+ALTER TABLE public.ff_ui_versions ADD COLUMN restored_from bigint;
+ALTER TABLE public.ff_ui_trials ADD COLUMN version_id bigint,
+ ADD COLUMN recipient uuid, ADD COLUMN started_by uuid,
+ ADD COLUMN started_at timestamptz DEFAULT clock_timestamp(), ADD COLUMN ends_at timestamptz,
+ ADD COLUMN stopped_at timestamptz, ADD COLUMN stopped_by uuid;
+ALTER TABLE public.ff_ui_trials ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY;
+ALTER TABLE public.ff_content_versions ADD COLUMN body text, ADD COLUMN actor_id uuid;
+CREATE TABLE public.ff_content_catalog(key text PRIMARY KEY,screen text);
+INSERT INTO public.ff_content_catalog VALUES('cashier.title','cashier');
+CREATE TABLE public.ff_audit_log(id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,actor_id uuid,action text,entity_type text,entity_id text,branch_id uuid,details jsonb);
+ALTER TABLE public.ff_audit_log ENABLE ROW LEVEL SECURITY;
+CREATE TABLE ff_private.a07_design_packs(code text PRIMARY KEY);
+INSERT INTO ff_private.a07_design_packs VALUES('D01'),('D02'),('D03');
+CREATE FUNCTION ff_private.a07_valid_style(v jsonb) RETURNS boolean LANGUAGE sql IMMUTABLE AS $$SELECT jsonb_typeof(v)='object'$$;
+CREATE FUNCTION ff_private.a07_valid_elements(v jsonb,s text) RETURNS boolean LANGUAGE sql IMMUTABLE AS $$SELECT true$$;
+CREATE FUNCTION public.ff81_validate_cards(v jsonb) RETURNS boolean LANGUAGE sql IMMUTABLE AS $$SELECT v IS NULL OR jsonb_typeof(v)='array'$$;
+CREATE FUNCTION public.ff83_valid_content(k text,v text) RETURNS boolean LANGUAGE sql IMMUTABLE AS $$SELECT v IS NULL OR length(v)>0$$;
+CREATE FUNCTION public.ff_has_branch(b uuid) RETURNS boolean LANGUAGE sql STABLE AS $$SELECT EXISTS(SELECT FROM public.ff_user_branches WHERE user_id=auth.uid() AND branch_id=b)$$;
+""" + f"""
+UPDATE public.ff_ui_versions SET style_config='{{}}',pack='D01',bar='labels' WHERE id=20;
+INSERT INTO public.ff_ui_versions(id,screen_scope,role_scope,branch_id,device,previous_id,pack,bar,style_config)
+ VALUES(40,'cashier','cashier','{BRANCH}','mobile',20,'D02','labels','{{}}'),(41,'cashier','cashier','{BRANCH}','mobile',20,'D03','icons','{{}}');
+UPDATE public.ff_content_versions SET body='old',actor_id='{MANAGER}' WHERE id=30;
+INSERT INTO public.ff_content_versions(id,content_key,role_scope,branch_id,previous_id,body,actor_id)
+ VALUES(50,'cashier.title','cashier','{BRANCH}',30,'winner','{MANAGER}'),(51,'cashier.title','cashier','{BRANCH}',30,'loser','{MANAGER}');
+""" + (ROOT/"supabase/migrations/20261125_step08_release_lifecycle.sql").read_text()
+    + """
+CREATE TRIGGER qa_design_audit AFTER UPDATE OF published_at ON public.ff_ui_versions FOR EACH ROW EXECUTE FUNCTION ff_private.a07_design_audit();
+NOTIFY pgrst,'reload schema';
+""")
+    def release_ready():
+        status,body=call("ff_step08_release_impact",{"p_kind":"design","p_id":40},MANAGER)
+        return status==200 and json.loads(body).get("valid") is True
+    wait_for(release_ready,"STEP08 release RPC schema")
+    for name,args in [("ff_step08_content_trial",{"p_id":51,"p_accounts":[WORKER],"p_hours":1}),("ff_step08_content_restore",{"p_current":30})]:
+        before=int(sql("SELECT count(*) FROM ff82_content_audit"))
+        status,body=call(name,args)
+        assert status==403,(name,status,body)
+        assert int(sql("SELECT count(*) FROM ff82_content_audit"))==before+1,(name,"no denial audit")
+        audit=json.loads(sql("SELECT row_to_json(a) FROM ff82_content_audit a ORDER BY id DESC LIMIT 1"))
+        assert audit["actor_id"]==WORKER and audit["outcome"]=="denied" and audit["effect"]=="no_change",audit
+    status,body=call("ff_step08_release_impact",{"p_kind":"design","p_id":40})
+    assert status==403,(status,body)
+    print("PASS STEP08 new manager-only endpoints reject non-manager HTTP; write denials audited",flush=True)
+    holder=subprocess.Popen(["docker","exec","-i",PG,"psql","-U","postgres","-d","postgres","-At","-v","ON_ERROR_STOP=1"],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+    try:
+        claims=json.dumps({"sub":MANAGER})
+        holder.stdin.write("SET application_name='step08-holder'; BEGIN; SELECT set_config('request.jwt.claims','"+claims+"',true); SELECT public.ff_ui_publish(40); SELECT public.ff_content_publish(50);\n")
+        holder.stdin.flush()
+        wait_for(lambda: sql("""SELECT count(*) FROM pg_locks l JOIN pg_stat_activity a USING(pid)
+          WHERE a.application_name='step08-holder' AND relation IN('public.ff_ui_versions'::regclass,'public.ff_content_versions'::regclass)
+          AND mode='ShareRowExclusiveLock' AND granted AND a.state='idle in transaction'""")=="2","manager owns both release locks")
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            fd=pool.submit(call,"ff_ui_control_trial",{"p_id":41,"p_accounts":[WORKER],"p_hours":1},MANAGER)
+            fc=pool.submit(call,"ff_step08_content_trial",{"p_id":51,"p_accounts":[WORKER],"p_hours":1},MANAGER)
+            try:
+                wait_for(lambda: sql("""SELECT count(*) FROM pg_locks
+                  WHERE relation IN('public.ff_ui_versions'::regclass,'public.ff_content_versions'::regclass)
+                  AND mode='ShareRowExclusiveLock' AND NOT granted""")=="2","both independent trial RPCs blocked by publication")
+            finally:
+                holder.stdin.write("COMMIT;\n\\q\n");holder.stdin.flush()
+            for future in (fd,fc):
+                status,body=future.result(timeout=15)
+                assert status==400,(status,body)
+        assert holder.wait(timeout=10)==0,holder.stderr.read()
+        assert sql("SELECT count(*) FROM ff_ui_versions WHERE id IN(40,41) AND published_at IS NOT NULL")=="1"
+        assert sql("SELECT count(*) FROM ff_content_versions WHERE id IN(50,51) AND published_at IS NOT NULL")=="1"
+        assert sql("SELECT count(*) FROM ff_ui_trials")=="0"
+        assert sql("SELECT count(*) FROM ff_private.step08_content_trials")=="0"
+        assert sql("SELECT count(*) FROM ff_audit_log WHERE action IN('a07_design_publish','step08_content_publish')")=="2"
+        print("PASS STEP08 real independent HTTP release/trial race: both waiting locks observed; stale trials rejected; two atomic releases and no trial writes",flush=True)
+    finally:
+        if holder.poll() is None:
+            holder.kill();holder.wait(timeout=10)
 except Exception:
     for name in (PG,REST):
         subprocess.run(["docker","logs",name],check=False)
