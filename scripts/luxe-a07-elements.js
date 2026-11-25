@@ -29,7 +29,7 @@ function refresh(roots,configs){
    const parent=nodes[0]?.parentElement;
    const sameParent=!!parent&&nodes.length===rows.length&&nodes.every(n=>n.parentElement===parent);
    const region=g==='driver_regions';
-   const reorder=sameParent&&(region||/flex|grid/.test(getComputedStyle(parent).display));
+   const reorder=sameParent;
    if(reorder&&region)parents.add(parent);
    resolved.forEach(({e,nodes},i)=>nodes.forEach(n=>{
     const before=desired.get(n)||{};desired.set(n,{...before,shape:e.shape,size:e.size,order:reorder?i+1:before.order});
