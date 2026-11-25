@@ -1,0 +1,18 @@
+BEGIN;
+DO $qa$
+DECLARE spec jsonb:='{"staff_dynamic_fields":{"screen":"staff","keys":["staff_assembly_branch","staff_assembly_target","staff_access_role","staff_access_branch","staff_permission_value"],"styleOnly":true},"system_qa_fields":{"screen":"system","keys":["system_qa_result","system_qa_note"],"styleOnly":true},"finance_evidence_fields":{"screen":"finance","keys":["finance_fee_amount","finance_fee_reference"],"styleOnly":true},"finance_evidence_controls":{"screen":"finance","keys":["finance_fee_save","finance_fee_status","finance_fee_history"],"styleOnly":true},"dashboard_lifecycle_fields":{"screen":"dashboard","keys":["lifecycle_invoice","lifecycle_reoffer_driver","lifecycle_reoffer_reason"],"styleOnly":true},"dashboard_lifecycle_status":{"screen":"dashboard","keys":["lifecycle_countdown","lifecycle_state"],"styleOnly":true},"dashboard_follow_control":{"screen":"dashboard","keys":["dashboard_order_follow"],"styleOnly":true},"system_theme_controls":{"screen":"system","keys":["system_theme_choice"],"styleOnly":true},"cashier_cancellation_controls":{"screen":"cashier","keys":["cashier_cancel_ack","cashier_cancel_banner","cashier_cancel_note"],"styleOnly":true},"driver_feedback_controls":{"screen":"driver","keys":["driver_feedback_refresh","driver_feedback_open"],"styleOnly":true},"driver_rating_fields":{"screen":"driver","keys":["driver_rating_note"],"styleOnly":true},"driver_rating_controls":{"screen":"driver","keys":["driver_rating_star","driver_rating_submit","driver_rating_close"],"styleOnly":true},"driver_grievance_fields":{"screen":"driver","keys":["driver_grievance_kind","driver_grievance_details"],"styleOnly":true},"driver_grievance_controls":{"screen":"driver","keys":["driver_grievance_save","driver_grievance_close"],"styleOnly":true}}'; g record; rows jsonb; patch jsonb; item_key text; invalid jsonb;
+BEGIN
+ FOR g IN SELECT * FROM jsonb_each(spec) LOOP
+ SELECT jsonb_agg(jsonb_build_object('key',a.k,'shape','round','size','normal','align','center','shadow','soft') ORDER BY a.ord) INTO rows FROM jsonb_array_elements_text(g.value->'keys') WITH ORDINALITY a(k,ord);
+ patch:=jsonb_build_object(g.key,rows);
+ IF NOT ff_private.a07_valid_elements(patch,g.value->>'screen') THEN RAISE EXCEPTION 'valid controls %',g.key;END IF;
+ IF ff_private.a07_valid_elements(patch,CASE WHEN g.value->>'screen'='finance' THEN 'staff' ELSE 'finance' END) OR ff_private.a07_valid_elements(jsonb_build_object(g.key,jsonb_set(rows,'{0,key}','"unknown_unsafe"')),g.value->>'screen') OR ff_private.a07_valid_elements(jsonb_build_object(g.key,jsonb_set(rows,'{0,hidden}','true')),g.value->>'screen') THEN RAISE EXCEPTION 'scope or protected identity %',g.key;END IF;
+ FOR item_key IN SELECT jsonb_array_elements_text(g.value->'keys') LOOP
+  SELECT jsonb_agg(CASE WHEN a.x->>'key'=item_key THEN a.x||'{"tone":"dark"}'::jsonb ELSE a.x END ORDER BY a.ord) INTO invalid FROM jsonb_array_elements(rows) WITH ORDINALITY a(x,ord);
+  IF ff_private.a07_valid_elements(jsonb_build_object(g.key,invalid),g.value->>'screen') THEN RAISE EXCEPTION 'semantic tone %',item_key;END IF;
+ END LOOP;
+ IF ff_private.a09_merge_elements(g.value->>'screen',patch,patch,jsonb_build_object(g.key,jsonb_set(rows,'{0,align}','"end"')),ARRAY['layout','buttons','colors']) IS NOT NULL THEN RAISE EXCEPTION 'delegation bypass %',g.key;END IF;
+ END LOOP;
+END $qa$;
+SELECT 'PASS STEP03 10 rating and grievance keys; protected scope, identity and semantic tone' AS result;
+ROLLBACK;

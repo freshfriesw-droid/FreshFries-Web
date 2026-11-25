@@ -17,7 +17,7 @@ const selectors={
  reservations:'#ff49ReservationsPanel',system:'#ff48DiagnosticsPanel,#ff47QAPanel,#ff46ReadinessPanel,#ff44IntegrityPanel,#ff43SecurityPanel,#ff45AccessPanel,#ff62DataCenter'
 };
 // Shared controls use an element-only scope: do not restyle shell containers or add logos.
-const elementSelectors={dashboard:'#ffx-topbar,#ffx-sidebar,#ff2-dialog,#ff3-guide,#ffF01Panel',system:'#ffx-preferences,#ffA12Recovery',orders:'#ffRewardManager,#ffRewardService',cashier:'#ffRewardCashier',archive:'#fflCashierFinished,#ffCompletedDetailDialog',cases:'#ffCaseAlertDialog',reports:'#ffHistoryPeriod',finance:'#ff42RangeReport'};
+const elementSelectors={dashboard:'#ffx-topbar,#ffx-sidebar,#ff2-dialog,#ff3-guide,#ffF01Panel',system:'#ffx-preferences,#ffA12Recovery',driver:'dialog.ff-luxe-rate-dialog:has(#ffLuxeFourScores),dialog.ff-luxe-rate-dialog:has(option[value="delivery_fee"])',orders:'#ffRewardManager,#ffRewardService',cashier:'#ffRewardCashier',archive:'#fflCashierFinished,#ffCompletedDetailDialog',cases:'#ffCaseAlertDialog',reports:'#ffHistoryPeriod',finance:'#ff42RangeReport'};
 const tokens={
  font:['الخط',['system','الخط المحلي الافتراضي'],['tahoma','Tahoma / Arial'],['cairo','Cairo إن كان مثبتًا'],['noto','Noto Sans Arabic إن كان مثبتًا'],['serif','خط عربي تقليدي']],
  scale:['حجم النص',['normal','عادي'],['large','كبير'],['xlarge','أكبر']],
@@ -163,7 +163,8 @@ function refresh(){
   }
  }
  const elementOnly=new Set();
- const shared=[[$('ffBurgerDialog'),activeScreen()==='assembly'?'assembly':'cashier'],[$('ffRewardRedeemDialog'),(typeof data!=='undefined'&&data?.role==='cashier')?'cashier':'orders']];
+ const ratingDialogs=[...document.querySelectorAll('dialog.ff-luxe-rate-dialog:has(button[data-skip])')].map(root=>[root,activeScreen()==='cashier'?'cashier':'orders']);
+ const shared=[...ratingDialogs,[$('ffBurgerDialog'),activeScreen()==='assembly'?'assembly':'cashier'],[$('ffRewardRedeemDialog'),(typeof data!=='undefined'&&data?.role==='cashier')?'cashier':'orders']];
  if(activeScreen()==='assembly'){const panel=$('ffBurgerCashierPanel');if(panel)shared.push([panel,'assembly']);}
  for(const [root,screen] of shared){if(!root||seen.has(root))continue;seen.add(root);elementOnly.add(root);root.dataset.ffA07Screen=screen;if(packOK(current[screen]?.pack))root.dataset.ffA07ElementScope='1';else delete root.dataset.ffA07ElementScope;}
  for(const [screen,selector] of Object.entries(elementSelectors))for(const root of document.querySelectorAll(selector)){

@@ -119,8 +119,8 @@
 :is([data-ff-a07-pack],[data-ff-a07-element-scope]) [data-ff-a07-el-weight="strong"]{font-weight:700!important}
 :is([data-ff-a07-pack],[data-ff-a07-element-scope]) [data-ff-a07-el-spacing="normal"]{padding-inline:12px!important}
 :is([data-ff-a07-pack],[data-ff-a07-element-scope]) [data-ff-a07-el-spacing="wide"]{padding-inline:18px!important}
-:is([data-ff-a07-pack],[data-ff-a07-element-scope]) [data-ff-a07-el-border="thin"]{border-width:1px!important}
-:is([data-ff-a07-pack],[data-ff-a07-element-scope]) [data-ff-a07-el-border="strong"]{border-width:3px!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) [data-ff-a07-el-border="thin"]{border-style:solid!important;border-width:1px!important}
+:is([data-ff-a07-pack],[data-ff-a07-element-scope]) [data-ff-a07-el-border="strong"]{border-style:solid!important;border-width:3px!important}
 :is([data-ff-a07-pack],[data-ff-a07-element-scope]) [data-ff-a07-el-shadow="none"]{box-shadow:none!important}
 :is([data-ff-a07-pack],[data-ff-a07-element-scope]) [data-ff-a07-el-shadow="soft"]{box-shadow:0 2px 8px #0003!important}
 :is([data-ff-a07-pack],[data-ff-a07-element-scope]) [data-ff-a07-el-tone="navy"]:not(:disabled){background:#1e3a5f!important;color:#fff!important}
