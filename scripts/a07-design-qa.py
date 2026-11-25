@@ -189,6 +189,34 @@ with sync_playwright() as pw:
    (out/f"step03-real-renderer-{role}.json").write_text(json.dumps(actual,ensure_ascii=False,indent=2))
    assert not actual["missing"] and not actual["bad"] and actual["cleanup"],(role,actual)
    print("PASS STEP03 actual renderer",role,actual["count"],flush=True)
+
+  if role in ("burger_kitchen","cashier","assembly"):
+   # The real burger ticket renderer, including mandatory note confirmation,
+   # in each workspace. Read-only fixtures, no transition RPC invoked.
+   burger=page.evaluate("""async role=>{
+    const baseRPC=rpc,now=Date.now(),stamp=n=>new Date(now-n*60000).toISOString();
+    const make=(id,status,extra={})=>({id,branch_id:'b1',branch_name:'QA',cashier_name:'QA',kitchen_name:'QA',kitchen_id:user.id,status,order_kind:'delivery',invoice_ref:'QA',sent_at:stamp(30),accepted_at:status==='sent'?null:stamp(10),ready_at:status==='ready'?stamp(1):null,notes:'QA mandatory notes',items:[{qty:1,name:'QA burger',item_notes:'QA item note'}],...extra});
+    rpc=async(name,args={})=>name==='ff_burger_list'?[make('qa-burger1','sent'),make('qa-burger2','preparing'),make('qa-burger3','ready')]:name==='ff_burger_my_branch'?{role,branches:[{id:'b1',name:'QA'}]}:baseRPC(name,args);
+    try{
+     if(role==='burger_kitchen')await ffBurgerStart();
+     else{if(role==='assembly'){if(document.getElementById('ffV12BurgerOpen').getAttribute('aria-expanded')!=='true')ffBurgerToggleAssembly()}else ffBurgerOnCashierDraw();await ffBurgerRefresh()}
+     await new Promise(r=>setTimeout(r,100));await ffBurgerRefresh();ffA07Design.refresh();
+     const screen=role,selectors=role==='burger_kitchen'?{burger_stage_action:'.ff-burger-card > button',burger_stage_state:'.ff-burger-chip',burger_required_note:'.ff-burger-urgent-note',burger_confirm_note:'.ff-burger-note-confirm input',burger_order_timer:'[data-ff-burger-start]'}:role==='cashier'?{cashier_burger_skip:'.ff-burger-card > button',cashier_burger_state:'.ff-burger-chip',cashier_burger_timer:'[data-ff-burger-start]'}:{assembly_burger_skip:'.ff-burger-card > button',assembly_burger_state:'.ff-burger-chip',assembly_burger_timer:'[data-ff-burger-start]'};
+     const defs=ffA07Elements.groups,groups=Object.fromEntries(Object.entries(defs).filter(([g,c])=>c.screen===screen&&c.keys.some(k=>Object.hasOwn(selectors,k))).map(([g,c])=>[g,c.keys.map(key=>({key,shape:'round',size:'normal',align:'center',font:'tahoma',border:'strong',shadow:'soft'}))]));
+     const records=Object.entries(selectors).map(([key,sel])=>({key,nodes:[...document.querySelectorAll(sel)].filter(n=>n.closest('[data-ff-a07-screen]')?.dataset.ffA07Screen===screen).map(n=>({n,disabled:n.disabled,checked:n.checked,handler:n.onclick,text:n.matches('[data-ff-burger-start]')?null:n.textContent,role:n.getAttribute('role')}))}));
+     const note=role==='burger_kitchen'?document.querySelector('.ff-burger-note-confirm input'):null,ready=note?.closest('.ff-burger-card')?.querySelector(':scope > button');
+     window.__a07Rows={[screen]:{id:995,pack:'D05',style_config:{elements:groups}}};await ffDashboardStudio.sync(true);ffA07Design.refresh();
+     const missing=records.filter(r=>!r.nodes.length).map(r=>r.key),bad=[];
+     for(const r of records)for(const o of r.nodes){const t=ffA07Elements.visualTarget(o.n),s=getComputedStyle(t);if(!o.n.isConnected||o.n.disabled!==o.disabled||o.n.checked!==o.checked||o.n.onclick!==o.handler||o.n.getAttribute('role')!==o.role||(o.text!==null&&o.n.textContent!==o.text)||s.textAlign!=='center'||!s.fontFamily.toLowerCase().includes('tahoma')||s.borderTopWidth!=='3px')bad.push(r.key)}
+     const protectedNote=role!=='burger_kitchen'||!!(note&&ready&&!note.checked&&ready.disabled&&note.getAttribute('aria-label'));
+     window.__a07Rows={};await ffDashboardStudio.sync(true);ffA07Design.refresh();
+     return {missing,bad,count:records.length,protectedNote,cleanup:records.every(r=>r.nodes.every(o=>!ffA07Elements.visualTarget(o.n).dataset.ffA07ElAlign))};
+    }finally{rpc=baseRPC;await ffBurgerRefresh();}
+   }""",role)
+   (out/f"step03-burger-renderer-{role}.json").write_text(json.dumps(burger,ensure_ascii=False,indent=2))
+   assert not burger["missing"] and not burger["bad"] and burger["protectedNote"] and burger["cleanup"],(role,burger)
+   print("PASS STEP03 actual burger renderer",role,burger["count"],flush=True)
+
   if role=="assembly":
    page.evaluate("""async()=>{window.__a07Rows={assembly:{id:510,pack:'D01',bar:'labels',style_config:{logoPosition:'cover',logoAsset:'mark',logoWidth:'56'}}};await ffDashboardStudio.sync(true)}""")
    logo=page.locator("#ffV12AssemblyWorkspace > .ff-a07-logo-cover img")
@@ -430,6 +458,7 @@ with sync_playwright() as pw:
      if(t.dataset.ffA07ElWeight!=='strong'||Number(s.fontWeight)<700)why.push('weight');
      if(t.dataset.ffA07ElShadow!=='soft'||s.boxShadow==='none')why.push('shadow');
      if(t.dataset.ffA07ElTextScale!=='large'||t.dataset.ffA07ElBorder!=='strong'||t.dataset.ffA07Shape!=='round')why.push('property binding');
+     if(s.borderTopStyle!=='solid'||parseFloat(s.borderTopWidth)!==3)why.push('border');
      if(why.length)bad.push({key:o.key,why});
     }
     const other=screen==='login'?'customer_portal':'login';
@@ -483,16 +512,17 @@ with sync_playwright() as pw:
   await loadStaffAdmin();
   const select=document.getElementById('permissionEmployee');if(![...select.options].some(o=>o.value==='qa-cashier'))select.add(new Option('QA','qa-cashier'));select.value='qa-cashier';await ffLoadPermissions();
   ff39Mailbox=[{id:'qa-msg1',title:'QA',body:'QA',created_at:stamp,requires_ack:true},{id:'qa-msg2',title:'QA',body:'QA',created_at:stamp,requires_ack:false}];ff39DrawInbox();
-  ff42Rows=[{driver_id:'qa-driver',driver_name:'QA',branch_id:'b1',branch_name:'QA',delivered_orders:1,delivered_order_value:1000}];ff42Render();
+  ff42Rows=[{driver_id:'qa-driver',driver_name:'QA',branch_id:'b1',branch_name:'QA',delivered_orders:1,delivered_order_value:1000,settlement_id:'qa-settlement',settlement_status:'closed',cash_received:1000,delivered_delivery_fees:500}];ff42Selected=0;ff42Render();await ffA10FeeEvidence(ff42Rows[0]);
   ff47Detail={run:{state:'open'},cases:[{key:'qa-case',title:'QA',category:'QA',priority:'normal',expected:'QA',state:'pending',notes:''}]};document.getElementById('ff47Category').value='';document.getElementById('ff47Filter').value='';ff47RenderCases();
   await ff49RefreshReservations();await ff49LoadTransfers();await ff50Refresh();
   ffA07Design.refresh();
   const selectors={ff41NextStatus:'#ff41NextStatus',ff41Resolution:'#ff41Resolution',ff41CommentBody:'#ff41CommentBody',case_transition:'button[data-ff41-transition]',case_comment:'button[data-ff41-comment]',case_open:'button[data-ff41-open]',staff_toggle:'button[data-staff-toggle]',staff_assembly_save:'button[data-assembly-save]',staff_assembly_convert:'button[data-assembly-convert]',staff_edit:'button[data-ffedit]',staff_save_access:'button[data-save-access]',staff_permission_save:'button[data-permission-save]',message_ack:'button[data-ff39-ack]',message_read:'button[data-ff39-read]',settlement_select:'button[data-ff42-select]',qa_case_save:'button[data-ff47-save]',reservation_next:'button[data-ff49-reserve-next]',reservation_cancel:'button[data-ff49-reserve-cancel]',transfer_confirm:'button[data-ff49-confirm-transfer]',change_approve:'button[data-ff50-approve]',change_reject:'button[data-ff50-reject]',change_service:'button[data-ff50-service]',change_pos:'button[data-ff50-pos]',catalog_item_edit:'button[data-ff51-item-edit]',catalog_item_toggle:'button[data-ff51-item-toggle]',catalog_offer_edit:'button[data-ff51-offer-edit]',catalog_offer_toggle:'button[data-ff51-offer-toggle]',customer_open:'button[data-ff51-customer]',route_edit:'button[data-ff52-route-edit]'};
+  Object.assign(selectors,{"staff_assembly_branch":"select[data-assembly-branch]","staff_assembly_target":"select[data-assembly-target]","staff_access_role":"select[data-access-role]","staff_access_branch":"input[data-access-branch]","staff_permission_value":"select[data-permission-key]","system_qa_result":"select[id^=\"ff47State_\"]","system_qa_note":"textarea[id^=\"ff47Notes_\"]","finance_fee_amount":"#ffA10FeeEvidence input[data-fee]","finance_fee_reference":"#ffA10FeeEvidence textarea[data-note]","finance_fee_save":"#ffA10FeeEvidence button[data-save]","finance_fee_status":"#ffA10FeeEvidence [data-status]","finance_fee_history":"#ffA10FeeEvidence [data-history]","dashboard_order_follow":"button[data-ffx-order]","system_theme_choice":"#ffx-themes button[data-ffx-theme]"});
   const rows={},records=[];
   for(const [g,c] of Object.entries(ffA07Elements.groups)){
    if(!c.keys.some(k=>Object.hasOwn(selectors,k)))continue;
    rows[c.screen]??={id:993,pack:'D05',style_config:{elements:{}}};
-   rows[c.screen].style_config.elements[g]=c.keys.map(key=>({key,shape:'round',size:'normal',align:'center',font:'tahoma',weight:'strong',spacing:'wide',spaceBlock:'wide',outerGap:'wide',shadow:'soft',textScale:'large'}));
+   rows[c.screen].style_config.elements[g]=c.keys.map(key=>({key,shape:'round',size:'normal',align:'center',font:'tahoma',weight:'strong',spacing:'wide',spaceBlock:'wide',outerGap:'wide',border:'strong',shadow:'soft',textScale:'large'}));
    for(const key of c.keys.filter(k=>Object.hasOwn(selectors,k))){
     const all=[...document.querySelectorAll(selectors[key])],ns=all.filter(n=>n.closest('[data-ff-a07-screen]')?.dataset.ffA07Screen===c.screen);
     records.push({key,screen:c.screen,unscoped:all.length-ns.length,nodes:ns.map(n=>({n,value:n.value,type:n.type,hidden:n.hidden,disabled:n.disabled,handler:n.onclick,html:n.outerHTML}))});
@@ -507,6 +537,7 @@ with sync_playwright() as pw:
    if(!s.fontFamily.toLowerCase().includes('tahoma'))why.push('font');
    if(parseFloat(s.paddingInlineStart)!==18||parseFloat(s.paddingBlockStart)!==12||parseFloat(s.marginBlockStart)!==8)why.push('spacing');
    if(Number(s.fontWeight)<700||s.boxShadow==='none')why.push('weight/shadow');
+   if(s.borderTopStyle!=='solid'||parseFloat(s.borderTopWidth)!==3)why.push('border');
    if(why.length)bad.push({key:r.key,why});
   }
   window.__a07Rows={};await ffDashboardStudio.sync(true);ffA07Design.refresh();

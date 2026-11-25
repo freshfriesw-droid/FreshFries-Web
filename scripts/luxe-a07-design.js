@@ -17,7 +17,7 @@ const selectors={
  reservations:'#ff49ReservationsPanel',system:'#ff48DiagnosticsPanel,#ff47QAPanel,#ff46ReadinessPanel,#ff44IntegrityPanel,#ff43SecurityPanel,#ff45AccessPanel,#ff62DataCenter'
 };
 // Shared controls use an element-only scope: do not restyle shell containers or add logos.
-const elementSelectors={dashboard:'#ffx-topbar,#ffx-sidebar,#ff2-dialog,#ff3-guide,#ffF01Panel',system:'#ffx-preferences,#ffA12Recovery',orders:'#ffRewardManager,#ffRewardService',cashier:'#ffRewardCashier',archive:'#fflCashierFinished,#ffCompletedDetailDialog',cases:'#ffCaseAlertDialog',reports:'#ffHistoryPeriod',finance:'#ff42RangeReport'};
+const elementSelectors={dashboard:'#ffx-topbar,#ffx-sidebar,#ff2-dialog,#ff3-guide,#ffF01Panel',system:'#ffx-preferences,#ffA12Recovery',driver:'dialog.ff-luxe-rate-dialog:has(#ffLuxeFourScores),dialog.ff-luxe-rate-dialog:has(option[value="delivery_fee"])',orders:'#ffRewardManager,#ffRewardService',cashier:'#ffRewardCashier',archive:'#fflCashierFinished,#ffCompletedDetailDialog',cases:'#ffCaseAlertDialog',reports:'#ffHistoryPeriod',finance:'#ff42RangeReport'};
 const tokens={
  font:['الخط',['system','الخط المحلي الافتراضي'],['tahoma','Tahoma / Arial'],['cairo','Cairo إن كان مثبتًا'],['noto','Noto Sans Arabic إن كان مثبتًا'],['serif','خط عربي تقليدي']],
  scale:['حجم النص',['normal','عادي'],['large','كبير'],['xlarge','أكبر']],
