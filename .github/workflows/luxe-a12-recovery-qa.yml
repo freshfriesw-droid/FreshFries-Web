@@ -1,0 +1,55 @@
+name: A12 Selective Recovery QA
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths: ['scripts/luxe-a12-recovery.js','index.html','.github/workflows/luxe-a12-recovery-qa.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright
+      - run: python scripts/a12-recovery-qa.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a12-browser-evidence
+          path: a12-evidence
+          if-no-files-found: ignore
+  production:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          python - <<'PY'
+          import urllib.request,time
+          from urllib.parse import urlparse
+          from pathlib import Path
+          base='https://delivery.freshfriesz.com/'
+          path='scripts/luxe-a12-recovery.js'
+          def get(path):
+              req=urllib.request.Request(base+path,headers={'Cache-Control':'no-cache','User-Agent':'FreshFries-LUXE-release-QA'})
+              with urllib.request.urlopen(req,timeout=20) as response:
+                  assert response.status==200
+                  assert urlparse(response.geturl()).hostname=='delivery.freshfriesz.com'
+                  return response.read()
+          for i in range(10):
+              try:
+                  marker='20261125-a12'
+                  assert marker in get('?qa='+marker).decode()
+                  assert get(path+'?v='+marker)==Path(path).read_bytes()
+                  print('PASS live production exact A12 script bytes and index marker')
+                  break
+              except Exception as e:
+                  print(i,e,flush=True);time.sleep(12)
+          else: raise SystemExit('Production A12 not verified')
+          PY

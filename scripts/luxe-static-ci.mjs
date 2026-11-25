@@ -143,23 +143,22 @@ assert.match(html, /v38\.38\.0/, 'Version not updated');
 assert.match(html, /ff_luxe_cancel_assigned/, 'Assigned-order cancellation missing');
 assert.match(html, /ff_luxe_ack_cashier_cancel/, 'Cashier cancellation acknowledgement missing');
 assert.match(html, /ff_luxe_dispatch_preview/, 'Courier candidate preview missing');
-assert.match(get(operationalFiles[0]).toString('utf8'), /ff_luxe_reset_safe/, 'Protected selective reset missing');
 assert.match(html, /ff_luxe_driver_rate_order/, 'Courier feedback missing');
 assert.match(html, /ff_luxe_driver_grievance/, 'Courier grievance form missing');
 assert.match(get(operationalFiles[1]).toString('utf8'), /ff_luxe_manager_driver_progress/,
   'Manager driver-phase action missing');
-assert.match(get(operationalFiles[0]).toString('utf8'), /ff_luxe_reset_preview/,
-  'Pre-reset data preview missing');
-const resetBlock=html.match(/<script id="ff-luxe-reset-ui-20261121">([\s\S]*?)<\/script>/)?.[1];
-assert.ok(resetBlock, 'Manager reset panel creation missing');
-assert.match(resetBlock, /run\.disabled=true/, 'Reset must be disabled until safe controller loads');
-assert.doesNotMatch(resetBlock, /run\.onclick\s*=/, 'Legacy direct reset action must not be wired');
-assert.doesNotMatch(html, /rpc\(['"]ff_luxe_reset_scoped/, 'Privileged internal reset function must never be invoked by browser');
-const guardedReset=get(operationalFiles[0]).toString('utf8');
-assert.match(guardedReset, /rpc\(['"]ff_luxe_reset_safe/, 'Guarded reset entry point missing');
-assert.match(guardedReset, /ff_luxe_reset_preview/, 'Preview must be available before the reset');
-assert.match(guardedReset, /if\(!backupCheck\.checked\)/, 'Backup confirmation required');
-assert.match(guardedReset, /run\.dataset\.ffResetMode='guarded'/, 'Safe controller must enable reset only after wiring');
+const guardedReset=get('scripts/luxe-a12-recovery.js').toString('utf8');
+new vm.Script(guardedReset,{filename:'scripts/luxe-a12-recovery.js'});
+assert.match(html,/scripts\/luxe-a12-recovery\.js\?v=20261125-a12/,'A12 recovery controller missing');
+assert.doesNotMatch(html+get(operationalFiles[0]).toString('utf8')+guardedReset,/rpc\(['"]ff_(?:luxe_reset_(?:scoped|safe|preview)|manager_reset_data)/,'Unsafe legacy reset must not be called');
+assert.match(guardedReset,/rpc\('ff_a12_reset_preview'/,'Preview must be available');
+assert.match(guardedReset,/rpc\('ff_a12_reset_execute'/,'Scoped server backup and reset missing');
+assert.match(guardedReset,/rpc\('ff_a12_restore'/,'Server-side recovery missing');
+assert.match(guardedReset,/p_token:p\.result\.token/,'Exact preview token required');
+assert.match(guardedReset,/backup_saved!==true/,'Server must confirm backup saved');
+assert.match(guardedReset,/exact_match!==true/,'Server must confirm recovery equality');
+assert.match(guardedReset,/id="ffA12Execute"[^>]*disabled/,'Reset starts disabled');
+assert.match(guardedReset,/ff-luxe-session-reset/,'Reset private state on logout');
 
 const manifest=JSON.parse(get('manifest.webmanifest').toString('utf8'));
 assert.equal(manifest.start_url, './index.html');

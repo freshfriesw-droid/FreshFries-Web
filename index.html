@@ -4656,7 +4656,7 @@ function ff27Submit(kind,input){
  const panel=document.createElement('dialog');panel.id='ff62DataCenter';panel.setAttribute('aria-labelledby','ff62DataTitle');
  const title=document.createElement('h2');title.id='ff62DataTitle';title.textContent='🗂️ إدارة البيانات والتصفير';
  const hint=document.createElement('p');hint.className='muted';
- hint.textContent='معاينة آمنة لأعداد السجلات في قاعدة البيانات. التصفير والحذف والاسترجاع غير متاحة حتى مراجعة التبعيات والنسخ الاحتياطي والتحقق المزدوج. لا تتأثر بيانات المطعم بهذه المعاينة.';
+ hint.textContent='ملخص البيانات للقراءة فقط. التصفير أدناه محصور في الطلبات الاصطناعية المسجلة من أداة الاختبار؛ يحفظ نسخة على الخادم قبل الحذف ويمكن استرجاعها.';
  const button=document.createElement('button');button.className='outline';button.type='button';button.textContent='عرض ملخص البيانات (قراءة فقط)';
  const state=document.createElement('p');state.className='muted';state.setAttribute('role','status');
  const result=document.createElement('div');result.className='ff62-data-overview';
@@ -4681,7 +4681,7 @@ function ff27Submit(kind,input){
      const strong=document.createElement('strong');strong.textContent=label+' : ';
      const value=document.createElement('span');value.textContent=Number(overview[key]||0).toLocaleString('ar-YE');
      row.append(strong,value);result.append(row)}
-    state.textContent='✅ تمت قراءة الملخص. جميع إجراءات الحذف والاسترجاع معطلة. يلزم نسخ احتياطي متحقق منه قبل تفعيل أي تصفير.';
+    state.textContent='تمت قراءة الملخص دون أي تعديل. لا تدخل البيانات التشغيلية أو الحسابات ضمن التصفير التجريبي.';
    }catch(e){if(token===sequence&&panel.open)state.textContent='تعذر جلب الملخص: '+(e?.message||String(e))}
    finally{if(token===sequence)button.disabled=false}
  });
@@ -5540,25 +5540,7 @@ const reset=resetUI;resetUI=function(){mode='';document.body.classList.remove('f
 #ffLuxeResetOptions input[type=text]{width:100%;padding:12px}
 #ffLuxeResetOptions [data-reset-run]{background:#b00000;color:#fff;padding:12px 16px;font-weight:800}
 </style>
-<script id="ff-luxe-reset-ui-20261121">
-(function(){
-'use strict';
-const center=document.getElementById('ff62DataCenter');if(!center)return;
-const box=document.createElement('section');box.id='ffLuxeResetOptions';
-box.innerHTML='<h3>🗑️ التصفير الانتقائي للمدير</h3><p>حدد البيانات المطلوب حذفها. العملية نهائية ولا تنفذ إلا بعد تأكيد صريح. ننصح بتصدير نسخة احتياطية قبل التنفيذ.</p><div data-reset-choices></div><div class="actions"><button type="button" class="outline" data-select-all>تحديد التصفير التشغيلي الشامل</button><button type="button" class="outline" data-clear>إلغاء التحديد</button></div><p class="muted">التصفير الشامل التشغيلي لا يحذف حسابات Supabase Authentication أو صلاحيات المدير أو سجلات التدقيق الأساسية أو إعدادات الفروع والأصناف. إلغاء بيانات الموظفين بشكل نهائي يحتاج إجراء مستقلاً ومراجعة للصلاحيات.</p><label>للتأكيد اكتب: تصفير فريش فرايز<input type="text" data-confirm placeholder="تصفير فريش فرايز" autocomplete="off"></label><div class="actions"><button type="button" data-reset-run>🔴 تنفيذ تصفير البيانات المحددة</button></div><p data-status role="status"></p>';
-const options=[['orders','الطلبات وما يرتبط بها من أصناف وإسنادات وإضافات'],['customers','العملاء وملاحظاتهم'],['ratings','التقييمات'],['grievances','تظلمات الموصلين'],['messages','الرسائل والإشعارات'],['diagnostics','سجلات تشخيص الأجهزة'],['tests','نتائج الاختبارات'],['applications','طلبات الانضمام المؤرشفة والحالية']];
-const choices=box.querySelector('[data-reset-choices]');
-for(const [value,label] of options){const row=document.createElement('label');const inp=document.createElement('input');inp.type='checkbox';inp.value=value;const txt=document.createElement('span');txt.textContent=label;row.append(inp,txt);choices.append(row)}
-box.querySelector('[data-select-all]').onclick=()=>choices.querySelectorAll('input').forEach(x=>x.checked=true);
-box.querySelector('[data-clear]').onclick=()=>choices.querySelectorAll('input').forEach(x=>x.checked=false);
-// Keep the destructive action inaccessible until the deferred guarded controller loads.
-const run=box.querySelector('[data-reset-run]'),status=box.querySelector('[data-status]');
-run.disabled=true;
-run.title='يجب تحميل المعاينة والتحقق من النسخة الاحتياطية قبل تفعيل هذا الإجراء';
-status.textContent='جارٍ تهيئة أدوات المعاينة الآمنة…';
-center.append(box);
-})();
-</script><script src="./scripts/luxe-a07-elements.js" defer></script>
+<script src="./scripts/luxe-a07-elements.js" defer></script>
 <script src="./scripts/luxe-a07-design.js" defer></script>
 <script src="./scripts/luxe-a08-dashboard.js" defer></script>
-<script src="./scripts/luxe-dashboard-studio.js" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js?v=20261125-a09-denial" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script><script defer src="scripts/luxe-a05-branch-policy.js"></script><script defer src="./scripts/luxe-a06-navigation.js"></script><script defer src="./scripts/luxe-a11-communications.js?v=20261125-a11"></script></body></html>
+<script src="./scripts/luxe-dashboard-studio.js" defer></script><script src="./scripts/luxe-operational-fixes-20261121.js" defer></script><script src="./scripts/luxe-operational-polish-20261121.js" defer></script><script src="./scripts/luxe-driver-cancel-20261122.js" defer></script><script src="./scripts/luxe-foreground-ring-20261122.js" defer></script><script src="./scripts/luxe-cashier-destinations-20261122.js" defer></script><script src="./scripts/luxe-collapsible-sections-manager-create-20261123.js" defer></script><script src="./scripts/luxe-f01-operational-day-20261123.js" defer></script><script src="./scripts/luxe-completed-universal-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-history-period-20261123.js" defer></script><script src="./scripts/luxe-shared-photo-menu-20261123.js?v=20261125-a02-card-style" defer></script><script src="./scripts/luxe-burger-kitchen-20261123.js?v=20261123-unified-menu3" defer></script><script src="./scripts/luxe-case-alerts-20261123.js" defer></script><script src="./scripts/luxe-unified-order-inputs-20261123.js?v=20261124-fix08-additions" defer></script><script src="./scripts/luxe-order-customer-edit-20261123.js?v=20261124-first-edit-alert" defer></script><script src="./scripts/luxe-one-time-rewards-20261123.js" defer></script><script src="./scripts/luxe-completed-detail-popup-20261123.js" defer></script><script src="./scripts/luxe-report-center-20261123.js?v=20261125-a10" defer></script><script src="./scripts/luxe-content-studio.js" defer></script><script src="./scripts/luxe-content-delegation.js?v=20261125-a09-denial" defer></script><script src="./scripts/luxe-all-menus-fold-20261123.js?v=20261123-unified-menu3" defer></script><script defer src="scripts/luxe-a05-branch-policy.js"></script><script defer src="./scripts/luxe-a06-navigation.js"></script><script defer src="./scripts/luxe-a11-communications.js?v=20261125-a11"></script><script defer src="./scripts/luxe-a12-recovery.js?v=20261125-a12"></script></body></html>
