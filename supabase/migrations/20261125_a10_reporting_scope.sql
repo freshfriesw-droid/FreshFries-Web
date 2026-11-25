@@ -1,3 +1,29 @@
+
+-- The confirmed fee allocation is explicit evidence attached to a closed settlement;
+-- it never changes the original settlement or creates an accounting movement.
+CREATE TABLE ff_private.a10_fee_evidence(id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,settlement_id uuid NOT NULL REFERENCES public.ff42_driver_settlements(id),amount numeric NOT NULL CHECK(amount>=0),evidence_note text NOT NULL CHECK(length(btrim(evidence_note)) BETWEEN 5 AND 500),confirmed_by uuid NOT NULL,confirmed_at timestamptz NOT NULL DEFAULT clock_timestamp());
+ALTER TABLE ff_private.a10_fee_evidence ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON ff_private.a10_fee_evidence FROM PUBLIC,anon,authenticated;
+CREATE INDEX a10_fee_evidence_latest ON ff_private.a10_fee_evidence(settlement_id,id DESC);
+CREATE OR REPLACE FUNCTION public.ff_a10_confirm_fee(p_settlement uuid,p_amount numeric,p_note text)
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
+DECLARE r public.ff42_driver_settlements; v_id bigint;
+BEGIN
+ IF auth.uid() IS NULL OR NOT public.ff_is_manager() THEN RAISE EXCEPTION 'تأكيد رسوم التوصيل للمدير العام فقط' USING ERRCODE='42501';END IF;
+ SELECT * INTO r FROM public.ff42_driver_settlements WHERE id=p_settlement FOR UPDATE;
+ IF r.id IS NULL OR r.status<>'closed' THEN RAISE EXCEPTION 'التأكيد يتطلب تسوية مقفلة';END IF;
+ IF p_amount IS NULL OR p_amount::text IN ('NaN','Infinity','-Infinity') OR p_amount<0 OR p_amount>least(r.cash_received,r.delivered_delivery_fees) OR length(btrim(coalesce(p_note,''))) NOT BETWEEN 5 AND 500 THEN RAISE EXCEPTION 'أدخل مبلغاً موثقاً لا يتجاوز الرسم المستحق والمستلم، مع مرجع الإثبات';END IF;
+ INSERT INTO ff_private.a10_fee_evidence(settlement_id,amount,evidence_note,confirmed_by) VALUES(p_settlement,p_amount,btrim(p_note),auth.uid()) RETURNING id INTO v_id;
+ RETURN jsonb_build_object('ok',true,'id',v_id,'amount',p_amount);
+END $$;
+CREATE OR REPLACE FUNCTION public.ff_a10_fee_history(p_settlement uuid)
+RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path='' AS $$
+BEGIN
+ IF auth.uid() IS NULL OR NOT public.ff_is_manager() THEN RAISE EXCEPTION 'سجل إثبات الرسوم للمدير العام فقط' USING ERRCODE='42501';END IF;
+ RETURN coalesce((SELECT jsonb_agg(to_jsonb(q) ORDER BY q.id DESC) FROM (SELECT e.id,e.amount,e.evidence_note,e.confirmed_at,p.display_name confirmed_by FROM ff_private.a10_fee_evidence e LEFT JOIN public.ff_profiles p ON p.user_id=e.confirmed_by WHERE e.settlement_id=p_settlement ORDER BY e.id DESC LIMIT 100) q),'[]');
+END $$;
+REVOKE ALL ON FUNCTION public.ff_a10_confirm_fee(uuid,numeric,text),public.ff_a10_fee_history(uuid) FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.ff_a10_confirm_fee(uuid,numeric,text),public.ff_a10_fee_history(uuid) TO authenticated;
 CREATE OR REPLACE FUNCTION ff_private.a10_order_filter(p_order uuid,p_creator uuid,p_order_area text,p_order_status text,p_staff uuid,p_area text,p_item text,p_status text)
 RETURNS boolean LANGUAGE sql STABLE SET search_path='' AS $$
  SELECT (p_staff IS NULL OR p_creator=p_staff) AND (p_area IS NULL OR lower(btrim(p_order_area))=lower(btrim(p_area))) AND (p_status IS NULL OR (p_status='pending' AND p_order_status NOT IN ('delivered','cancelled')) OR p_status=p_order_status)
@@ -363,12 +389,15 @@ BEGIN
       coalesce(sum(s.cash_due),0) AS cash_due,
       coalesce(sum(s.cash_received),0) AS cash_received,
       sum(s.cash_received) FILTER(WHERE s.status='closed') AS confirmed_received,
+      sum(fe.amount) FILTER(WHERE s.status='closed') AS confirmed_delivery_fees,
+      count(*) FILTER(WHERE s.status='closed' AND fe.id IS NULL) AS fees_need_review,
       sum(s.cash_due-s.cash_received) FILTER(WHERE s.status='closed') AS confirmed_difference,
       sum(s.cash_received) FILTER(WHERE s.status='draft') AS draft_received,
       count(*) FILTER(WHERE s.status='draft') AS draft_statements,
       count(*) FILTER(WHERE s.status='closed') AS closed_statements
    FROM public.ff42_driver_settlements AS s
    JOIN public.ff_drivers AS d ON d.id=s.driver_id
+   LEFT JOIN LATERAL (SELECT e.id,e.amount FROM ff_private.a10_fee_evidence e WHERE e.settlement_id=s.id ORDER BY e.id DESC LIMIT 1) fe ON true
    WHERE v_role IN('manager','supervisor','driver')
      AND s.settlement_date BETWEEN v_start AND v_end
      AND (p_branch IS NULL OR s.branch_id=p_branch)
@@ -382,7 +411,7 @@ BEGIN
  RETURN v_core||jsonb_build_object(
    'generated_at',now(),'filters',jsonb_build_object('branch',p_branch,'driver',p_driver,'staff',p_staff,'area',p_area,'item',p_item,'status',p_status),'partial_order_filter',v_partial,
    'reservation_summary',v_reservations,'internal_low_ratings',v_quality,
-   'finance_evidence',jsonb_build_object('confirmed_received',(SELECT sum((x->>'confirmed_received')::numeric) FROM jsonb_array_elements(v_settlements) x),'confirmed_difference',(SELECT sum((x->>'confirmed_difference')::numeric) FROM jsonb_array_elements(v_settlements) x),'draft_received',(SELECT sum((x->>'draft_received')::numeric) FROM jsonb_array_elements(v_settlements) x),'closed_statements',coalesce((SELECT sum((x->>'closed_statements')::int) FROM jsonb_array_elements(v_settlements) x),0),'fee_collection_confirmed',NULL,'basis','settlement_calendar_date'),
+   'finance_evidence',jsonb_build_object('confirmed_received',(SELECT sum((x->>'confirmed_received')::numeric) FROM jsonb_array_elements(v_settlements) x),'confirmed_difference',(SELECT sum((x->>'confirmed_difference')::numeric) FROM jsonb_array_elements(v_settlements) x),'draft_received',(SELECT sum((x->>'draft_received')::numeric) FROM jsonb_array_elements(v_settlements) x),'closed_statements',coalesce((SELECT sum((x->>'closed_statements')::int) FROM jsonb_array_elements(v_settlements) x),0),'fee_collection_confirmed',(SELECT sum((x->>'confirmed_delivery_fees')::numeric) FROM jsonb_array_elements(v_settlements) x),'fees_need_review',coalesce((SELECT sum((x->>'fees_need_review')::int) FROM jsonb_array_elements(v_settlements) x),0),'basis','settlement_calendar_date'),
    'attendance',v_attendance,'complaints',v_complaints,'grievances',v_grievances,
    'internal_driver_ratings',v_internal_ratings,'settlements',v_settlements,
    'comparison',v_comparison,'approval',coalesce(v_approval,'{}'::jsonb),
@@ -390,7 +419,7 @@ BEGIN
      'الخصومات تقديرية من فرق مبالغ الأصناف والتوصيل والفاتورة، وليست قيوداً محاسبية.',
      'الدوام محسوب من جلسات الحضور الجديدة، ولا يمكن استعادة الساعات القديمة التي لم توثق.',
      'التأخير هنا يُقاس بتجاوز 60 دقيقة من الإنشاء إلى التسليم.',
-     'الرسوم المذكورة مستحقة وليست دليلاً على تحصيل نقدي فعلي. التحصيل المؤكد من التسويات المقفلة فقط ويستند إلى تاريخ التسوية المحلي؛ تخصيصه إلى رسم التوصيل وحده غير موثق.',
+     'الرسوم المذكورة مستحقة وليست دليلاً على تحصيل نقدي فعلي. التحصيل المؤكد من التسويات المقفلة فقط ويستند إلى تاريخ التسوية المحلي؛ رسوم التوصيل المؤكدة تستند إلى إثبات مستقل داخل التسوية المقفلة.',
      'التسويات والدوام والحجوزات لا تنسب إلى فلتر صنف أو منطقة أو موظف أو حالة طلب؛ تظهر غير متاحة عند استخدام هذه الفلاتر.',
      'طلبات 02:00 إلى 07:59 مستبعدة من التقرير الرئيسي ولا تُحذف من قاعدة البيانات.'
    )
@@ -432,6 +461,7 @@ BEGIN
  IF NOT money THEN
   t:=t-ARRAY['item_sales','delivery_fees','discounts_estimate','net','average_order'];
   r:=r-ARRAY['finance_evidence','settlements','invoice_review'];
+  IF r ? 'additions' THEN r:=jsonb_set(r,'{additions}',(r->'additions')-'invoiced_value');END IF;
   IF r ? 'branch_rows' THEN r:=jsonb_set(r,'{branch_rows}',coalesce((SELECT jsonb_agg(z-ARRAY['net','average_order']) FROM jsonb_array_elements(r->'branch_rows') z),'[]'));END IF;
   IF r ? 'days' THEN r:=jsonb_set(r,'{days}',coalesce((SELECT jsonb_agg(z-'net') FROM jsonb_array_elements(r->'days') z),'[]'));END IF;
   IF r ? 'free_delivery_orders' THEN r:=jsonb_set(r,'{free_delivery_orders}',coalesce((SELECT jsonb_agg(z-'total_amount') FROM jsonb_array_elements(r->'free_delivery_orders') z),'[]'));END IF;
@@ -442,6 +472,7 @@ BEGIN
  IF NOT 'ratings'=ANY(a) THEN t:=t-ARRAY['rating_avg','rating_min','rating_max','low_ratings'];r:=r-ARRAY['low_ratings','internal_low_ratings','internal_driver_ratings'];IF r ? 'drivers' THEN r:=jsonb_set(r,'{drivers}',coalesce((SELECT jsonb_agg(z-'average_rating') FROM jsonb_array_elements(r->'drivers') z),'[]'));END IF;END IF;
  IF NOT 'areas'=ANY(a) THEN t:=t-ARRAY['new_customers','repeat_customers','new_areas'];r:=r-ARRAY['areas','customers'];END IF;
  IF NOT 'orders'=ANY(a) THEN r:=r-ARRAY['cancellations','late_orders','free_delivery_orders','fastest','phase_times','dispatch','additions','invoice_review'];END IF;
+ IF NOT ('orders'=ANY(a) OR 'summary'=ANY(a)) THEN r:=r-'reservation_summary';END IF;
  IF NOT 'branches'=ANY(a) THEN r:=r-'branch_rows';END IF;
  IF NOT 'drivers'=ANY(a) THEN r:=r-'drivers';END IF;
  IF NOT 'staff'=ANY(a) THEN r:=r-'service_staff';END IF;
