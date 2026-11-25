@@ -46,7 +46,7 @@ if(anchor)anchor.after(root);else document.querySelector('main')?.append(root);
 const previewDialog=document.createElement('dialog');previewDialog.id='ff76PdfDialog';previewDialog.dir='rtl';
 previewDialog.innerHTML='<header class="r-dialoghead"><b>معاينة PDF الكاملة قبل الإرسال</b><div><button id="ff76DlgDownload">حفظ الملف</button> <button id="ff76DlgShare" class="r-primary">مشاركة الملف</button> <button id="ff76DlgClose">✕ إغلاق</button></div></header><iframe id="ff76PDFFrame" title="معاينة PDF"></iframe>';
 document.body.append(previewDialog);
-function clearPDF(){pdfRevision++;pdfPromise=null;if(previewDialog.open)previewDialog.close();if(pdfURL){URL.revokeObjectURL(pdfURL);pdfURL=null}pdf=null;fileName='';previewed=false;el('ff76PDFFrame').removeAttribute('src')}
+function clearPDF(){document.querySelectorAll('[data-ff76-export-layer]').forEach(x=>x.remove());pdfRevision++;pdfPromise=null;if(previewDialog.open)previewDialog.close();if(pdfURL){URL.revokeObjectURL(pdfURL);pdfURL=null}pdf=null;fileName='';previewed=false;el('ff76PDFFrame').removeAttribute('src')}
 function clear(){snapshotArgs=null;el('ffA10Grants').hidden=true;result=null;identity='';clearPDF();el('ff76ManagerName').value='';el('ff76ManagerNotes').value='';el('ff76ApprovalStatus').textContent='';el('ff76Body').textContent='';el('ff76ApprovalBox').hidden=true;el('ff76SaveApproval').disabled=false;['ff76Preview','ff76Download','ff76Share','ff76CSV'].forEach(id=>el(id).disabled=true)}
 function day(){if(typeof ff40TodayYemen==='function')return ff40TodayYemen();const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Aden',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day}
 function changeDay(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
@@ -257,14 +257,14 @@ const uid=me(),tag=identity,revision=pdfRevision;pdfPromise=(async()=>{
  page.innerHTML='<div style="border-bottom:4px solid #c51b30;padding:10px 0;margin-bottom:15px"><h1>'+safe(content['reports.pdf_title']||'FRESH FRIES LUXE — مركز التقارير')+'</h1><b>'+safe(result.from)+' إلى '+safe(result.to)+'</b><p>'+safe(result.scope)+'</p><p>مصدر البيانات: Supabase · '+safe(stamp(result.generated_at))+'</p><p>الفلاتر: '+safe(filterText())+'</p></div>'+
  '<style>.r-section{border:1px solid #ccc;padding:10px;margin:12px 0;break-inside:auto}.r-section h3{border-right:4px solid #c51b30;padding-right:8px}.r-kpis{display:flex;flex-wrap:wrap;gap:7px}.r-kpi{border:1px solid #ddd;padding:8px;min-width:135px}.r-kpi b{display:block;font-size:18px}.r-scroll{overflow:visible}table{border-collapse:collapse;width:100%;font-size:11px}th,td{text-align:right;border:1px solid #ddd;padding:7px;overflow-wrap:anywhere}th{background:#eee}.r-muted{font-size:11px;color:#444}.r-bars{display:flex;align-items:flex-end;height:150px}.r-barcol{height:150px;width:65px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}.r-bar{width:34px;background:#c51b30}.r-barcol span{font-size:10px}.r-stamp{border:2px dashed #c51b30;padding:9px}</style>'+
  compose(selected())+(content['reports.pdf_note']?'<p class="r-muted">'+safe(content['reports.pdf_note'])+'</p>':'')+'<footer style="margin-top:20px;border-top:1px solid #ddd">فريش فرايز — تقرير تشغيلي لا يثبت التحصيل المالي.</footer>';
- const staging=document.createElement('div');staging.style.cssText='position:fixed;inset:0;overflow:auto;background:white;z-index:2147483000;pointer-events:none';staging.append(page);document.body.append(staging);
+ const staging=document.createElement('div');staging.dataset.ff76ExportLayer='staging';staging.style.cssText='position:fixed;inset:0;overflow:auto;background:white;z-index:2147483000;pointer-events:none';staging.append(page);document.body.append(staging);
  let overlay;
  try{
  const worker=window.html2pdf().set({margin:8,filename:'FreshFries_LUXE_'+result.from+'_'+result.to+'.pdf',
  html2canvas:{scale:1.25,logging:false,windowWidth:800,scrollX:0,scrollY:0,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
  pagebreak:{mode:['css','legacy'],avoid:['tr','.r-kpi']}}).from(page);
  await worker.toContainer();
- const container=await worker.get('container');overlay=await worker.get('overlay');
+ const container=await worker.get('container');overlay=await worker.get('overlay');overlay.dataset.ff76ExportLayer='render';authorized(uid,tag,revision);
  Object.assign(overlay.style,{opacity:'1',backgroundColor:'#ffffff',zIndex:'2147483001',overflow:'auto'});
  Object.assign(container.style,{position:'relative',left:'0',right:'auto',top:'0',margin:'0'});
  const canvas=await worker.toCanvas().get('canvas');
