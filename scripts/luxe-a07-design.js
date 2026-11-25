@@ -93,7 +93,7 @@ function selectFields(form){
  const grid=document.createElement('div');grid.className='ff-studio-fields';section.append(grid);
  for(const [key,[label,...values]] of Object.entries(tokens)){
   const wrap=document.createElement('label');wrap.textContent=label;const select=document.createElement('select');select.name='a07_'+key;
-  for(const [k,v]of values)select.add(new Option(v,k));wrap.append(select);grid.append(wrap);
+  select.add(new Option('وراثة من النطاق الأعم',''));for(const [k,v]of values)select.add(new Option(v,k));wrap.append(select);grid.append(wrap);
  }
  const note=document.createElement('p');note.className='muted';note.textContent='الخطوط من الجهاز مع بدائل محلية. لا تغيّر إعدادات المظهر حالات الطلب أو تحذيرات الخطر أو صلاحيات الوصول.';section.append(note);
  form.querySelector('#ffCardEditor').before(section);
@@ -103,7 +103,7 @@ function selectFields(form){
  return sel;
 }
 function readStyle(form){const v=Object.fromEntries(Object.keys(tokens).map(k=>[k,form.elements.namedItem('a07_'+k)?.value]).filter(([k,v])=>tokens[k].slice(1).some(o=>o[0]===v)));const elements=window.ffA07Elements?.read(form);if(elements&&Object.keys(elements).length)v.elements=elements;return v}
-function setStyle(form,v){for(const [k,[,...options]] of Object.entries(tokens)){const input=form.elements.namedItem('a07_'+k);if(input)input.value=options.some(x=>x[0]===v?.[k])?v[k]:options[0][0]}window.ffA07Elements?.set(form,v?.elements)}
+function setStyle(form,v){for(const [k,[,...options]] of Object.entries(tokens)){const input=form.elements.namedItem('a07_'+k);if(input)input.value=options.some(x=>x[0]===v?.[k])?v[k]:''}window.ffA07Elements?.set(form,v?.elements)}
 const demo={
  dashboard:['نظرة عامة','الطلبات اليومية','مؤشرات الفروع','إجراءات سريعة'],
  orders:['طلب جديد','1 تشكن فرايز — ملاحظة تجريبية','معاينة قبل الحفظ','حفظ الطلب'],
