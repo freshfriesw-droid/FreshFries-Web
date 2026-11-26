@@ -442,13 +442,14 @@
       "remaining": "اختبار جلسات مستقلة وعدم فقد التركيز والسلة؛ قرار المالك 26 نوفمبر: ترحيل العوائق المتكررة المثبتة إلى المراجعة النهائية قبل الإطلاق فقط، دون إسقاط معيار القبول أو احتساب PASS. [سجل D12-01…06 ونقطة STEP13](STEP12-progress-20261126.md).",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "التركيز والمسودة أثناء تحديث الطلب مثبتان؛ سيناريو نشر التصميم أثناء الإدخال وRealtime الفعلي باقيان.",
+        "reason": "بقاء المسودة والتركيز والسلة عند تحديث طلب وعند تغيير التصميم مثبت في Chrome؛ النقل الفعلي متعدد الجلسات عبر Realtime مستقل ومؤجل D12-03.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45688756614",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902377"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902377",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020696142"
         ],
-        "remaining_kind": "technical_evidence_pending+D12-03",
+        "remaining_kind": "D12-03",
         "reviewed_date": "2026-11-26",
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
@@ -752,13 +753,14 @@
       "evidence": "[#41](https://github.com/freshfriesw-droid/FreshFries-Web/pull/41)، [#54](https://github.com/freshfriesw-droid/FreshFries-Web/pull/54)",
       "remaining": "معاينة الأشكال؛ اختبار فعلي لكل شاشة ودور",
       "step13_review": {
-        "result": "BLOCKED",
-        "reason": "الأشرطة الخمسة ومقاسات الجوال مختبرة؛ لا إثبات كامل لعدم حجب الحفظ في كل حالة.",
+        "result": "PASS",
+        "reason": "الأشرطة الخمسة ومقاسات الجوال؛ 20 تحقق مباشر لعدم حجب الحفظ و175 حالة الأدوار/المقاسات.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020696142"
         ],
-        "remaining_kind": "technical_evidence_pending",
+        "remaining_kind": "none",
         "reviewed_date": "2026-11-26",
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
@@ -1463,11 +1465,12 @@
       "remaining": "جرد كامل لكل دور",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "مطابقة 38/38 مفاتيح القائمة، مع 20 سياقًا لجرد P0؛ لا يثبت الجرد تشغيل كل زر متغير أو كل بديل مرئي. يلزم إغلاق المرشحات غير المؤكدة باختبارات إجراءات.",
+        "reason": "مطابقة 38/38 مفاتيح القائمة، مع 20 سياقًا لجرد P0؛ لا يثبت الجرد تشغيل كل زر متغير أو كل بديل مرئي. يلزم إغلاق المرشحات غير المؤكدة باختبارات إجراءات. اختبار المسارات المباشر وحالة القائمة في #159 قيد التنفيذ.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159"
         ],
         "remaining_kind": "technical_evidence_pending",
         "reviewed_date": "2026-11-26",
@@ -1492,10 +1495,13 @@
       "remaining": "معيار CI مجتاز؛ QA-26 وFIX-02 مستقلان ولا يغلقان به وحده",
       "step13_review": {
         "result": "PASS",
-        "reason": "نجاح CI الثابت للبرجر في الأساس المثبت؛ إعادة الانحدار الحالية لا تزال تحت بوابة الدمج، ولا تُحسب ناجحة قبل اكتمالها.",
+        "reason": "17/17 مجموعات الاختبار على رأس #157 ناجحة، بما فيها اختبار البرجر والواجهة الثابتة وP2؛ دمج مثبت ومطابقة الموقع.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP02-P2-closure-20261125.md",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45545745456"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45545745456",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902558",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/157",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020695665"
         ],
         "remaining_kind": "none",
         "reviewed_date": "2026-11-26",
@@ -2096,10 +2102,12 @@
       "remaining": "جميع النماذج",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "إصلاح 39 اسم حقل؛ 273 تحقق ارتباط أصلي عبر 7 أدوار، واختبارات فتح وإغلاق واحتواء واسترجاع التركيز بلوحة المفاتيح. لم يثبت بعد تدقيق كل الحقول الديناميكية وقراءة جميع التحذيرات.",
+        "reason": "39 إصلاح تسمية مدمجة #157، 273 تحققًا للأدوار السبعة، فتح وإغلاق وحصر واسترجاع التركيز؛ P2 وانحدار 17/17 والموقع مطابق. تدقيق الحقول الديناميكية المرئية قيد الاختبار #159.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/pull/157",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020695665"
         ],
         "remaining_kind": "technical_evidence_pending",
         "reviewed_date": "2026-11-26",
@@ -2209,11 +2217,12 @@
       "remaining": "جرد خاص بالشاشات والأدوار",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "خريطة 41 مسارًا عامًا منها 38 مفتاحًا للمجموعات، و10 خاصة و3 عامة خارجها؛ المطابقة الآلية كاملة للمجموعات، لكن إثبات كل وظيفة قديمة/مسموح بها وبديلها لم يكتمل.",
+        "reason": "خريطة 41 مسارًا عامًا منها 38 مفتاحًا للمجموعات، و10 خاصة و3 عامة خارجها؛ المطابقة الآلية كاملة للمجموعات، لكن إثبات كل وظيفة قديمة/مسموح بها وبديلها لم يكتمل. اختبار المسارات المباشر وحالة القائمة في #159 قيد التنفيذ.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159"
         ],
         "remaining_kind": "technical_evidence_pending",
         "reviewed_date": "2026-11-26",
@@ -2294,14 +2303,15 @@
       "evidence": "[#41](https://github.com/freshfriesw-droid/FreshFries-Web/pull/41)، [#53](https://github.com/freshfriesw-droid/FreshFries-Web/pull/53)، [PR #128](https://github.com/freshfriesw-droid/FreshFries-Web/pull/128)، [STEP08](STEP08-closure-20261125.md)، [A07](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45682268882)، [HTTP](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45682268958)، [النشر](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45683256808)",
       "remaining": "أضيف دليل STEP08: رفض الإجراءات غير المسجلة وحذف العنصر المحمي والنص غير الآمن؛ لا يغلق المطلب العابر لجميع الشاشات.",
       "step13_review": {
-        "result": "BLOCKED",
-        "reason": "رفض عدد من التعديلات المحمية في STEP08 مثبت؛ لا يزال يلزم دليل يغطي جميع التحذيرات والإجراءات الإلزامية والبدائل المرئية.",
+        "result": "PASS",
+        "reason": "STEP08 رفض التعديل المحمي؛ فحص دالة التحقق الفعلية على Supabase دون كتابة: 170 مجموعة كاملة صالحة، 663 إزالة مرفوضة، و3315 محاولة لإخفاء/تعطيل/جعل العنصر شفافًا مرفوضة؛ 4148/4148. الخصائص المعتمدة لا تتيح حذف عنصر إلزامي، وإخفاء الاختصارات الاختيارية لا يلغي مسار القائمة. أي عيوب وصول جديدة تفحص في QA01/27.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP08-closure-20261125.md",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP04-closure-20261125.md",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902591"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902591",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/supabase/tests/step13_protected_elements_readonly.sql"
         ],
-        "remaining_kind": "technical_evidence_pending",
+        "remaining_kind": "none",
         "reviewed_date": "2026-11-26",
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
@@ -2323,14 +2333,15 @@
       "evidence": "[#33](https://github.com/freshfriesw-droid/FreshFries-Web/pull/33)، [#45](https://github.com/freshfriesw-droid/FreshFries-Web/pull/45)",
       "remaining": "جلستان مستقلتان",
       "step13_review": {
-        "result": "BLOCKED",
-        "reason": "سياقان حقيقيان في Chrome أثبتا بقاء المسودة والنص والكمية والتركيز أثناء تحديث الطلب؛ لم يثبت بعد نشر تصميم أثناء الإدخال/المعاينة بنفس السيناريو.",
+        "result": "PASS",
+        "reason": "Chrome الحقيقي 10 حالات: استقبال محاكاة إعداد تصميم منشور أثناء الإدخال والمعاينة عند 320/360/390/430/1440؛ حفظ ذات عقدة الحقل والتركيز والتحديد والنص الخام والسلة والرسوم والفرع والمعاينة. لا ادعاء شبكة نشر حقيقية، D12-03/QA05 منفصل.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45688756614",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902377"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902377",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020696142"
         ],
-        "remaining_kind": "technical_evidence_pending",
+        "remaining_kind": "none",
         "reviewed_date": "2026-11-26",
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
@@ -2352,13 +2363,14 @@
       "evidence": "[#41](https://github.com/freshfriesw-droid/FreshFries-Web/pull/41)، [#54](https://github.com/freshfriesw-droid/FreshFries-Web/pull/54)",
       "remaining": "تشغيل كل دور دون حجب الحفظ",
       "step13_review": {
-        "result": "BLOCKED",
-        "reason": "175 تحققًا للأشرطة الخمسة والعروض والأدوار؛ لا يوجد بعد إثبات مباشر أن زر حفظ الطلب غير محجوب في كل نمط ومقاس أثناء عمل نموذج حي.",
+        "result": "PASS",
+        "reason": "20 تحقق hit-test وتجربة نقرة فعلية دون إرسال على زر الحفظ في الأشرطة الخمسة عند 320/360/390/430، إضافة إلى 175 اختبار A06 وأحجام اللمس والقراءة.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020696142"
         ],
-        "remaining_kind": "technical_evidence_pending",
+        "remaining_kind": "none",
         "reviewed_date": "2026-11-26",
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
@@ -2550,10 +2562,11 @@
       "remaining": "تبديل الثيم والأدوار",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "اختبارات تبديل Accordion/Flat ومجموعة القائمة بعد تبديل الثيم ناجحة؛ إثبات حفظ مسار الدور لكل انتقال ديناميكي لا يزال مرتبطًا بجرد QA-27.",
+        "reason": "اختبارات تبديل Accordion/Flat ومجموعة القائمة بعد تبديل الثيم ناجحة؛ إثبات حفظ مسار الدور لكل انتقال ديناميكي لا يزال مرتبطًا بجرد QA-27. اختبار المسارات المباشر وحالة القائمة في #159 قيد التنفيذ.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159"
         ],
         "remaining_kind": "technical_evidence_pending",
         "reviewed_date": "2026-11-26",
@@ -3289,8 +3302,8 @@
       "evidence": "QA-04، QA-06، QA-09",
       "remaining": "يرث شروط القبول من البنود المرتبطة؛ لا يعد مقبولًا بمجرد وجود الوظيفة.",
       "step13_review": {
-        "result": "BLOCKED",
-        "reason": "مرتبط بمعايير لم تستكمل: QA-30",
+        "result": "PASS",
+        "reason": "شواهد القبول التقني مرتبطة بالبنود: QA-04، QA-06، QA-09، QA-30",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP08-closure-20261125.md",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP11-closure-20261126.md",
@@ -3298,9 +3311,10 @@
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP03-closure-20261125.md",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902591",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP04-closure-20261125.md",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902498"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902498",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/supabase/tests/step13_protected_elements_readonly.sql"
         ],
-        "remaining_kind": "inherited",
+        "remaining_kind": "none",
         "depends_on": [
           "QA-04",
           "QA-06",
@@ -3565,7 +3579,8 @@
         "reason": "مرتبط بمعايير لم تستكمل: DEC-05، QA-39",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159"
         ],
         "remaining_kind": "inherited",
         "depends_on": [
@@ -3625,13 +3640,14 @@
       "evidence": "DEC-07، QA-32",
       "remaining": "يرث شروط القبول من البنود المرتبطة؛ لا يعد مقبولًا بمجرد وجود الوظيفة.",
       "step13_review": {
-        "result": "BLOCKED",
-        "reason": "مرتبط بمعايير لم تستكمل: DEC-07، QA-32",
+        "result": "PASS",
+        "reason": "شواهد القبول التقني مرتبطة بالبنود: DEC-07، QA-32",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020696142"
         ],
-        "remaining_kind": "inherited",
+        "remaining_kind": "none",
         "depends_on": [
           "DEC-07",
           "QA-32"
@@ -4272,7 +4288,11 @@
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45545745456",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902558",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/157",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020695665",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159"
         ],
         "remaining_kind": "inherited",
         "depends_on": [
@@ -4317,7 +4337,8 @@
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45509575723",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902377",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902470",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45688756614"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45688756614",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020696142"
         ],
         "remaining_kind": "inherited",
         "depends_on": [
@@ -4421,11 +4442,13 @@
       "remaining": "كل المسارات",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "مرتبط بمعايير لم تستكمل: DEC-05، DEC-07، QA-27",
+        "reason": "مرتبط بمعايير لم تستكمل: DEC-05، QA-27",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020696142",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159"
         ],
         "remaining_kind": "inherited",
         "depends_on": [
@@ -4454,8 +4477,8 @@
       "evidence": "DEC-03,04,06,09,10، [PR #128](https://github.com/freshfriesw-droid/FreshFries-Web/pull/128)، [STEP08](STEP08-closure-20261125.md)، [A07](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45682268882)، [HTTP](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45682268958)، [النشر](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45683256808)",
       "remaining": "إغلاق الجزء الخاص بمحرر التصميم والمحتوى ودورة النشر والاستعادة في STEP08؛ لا يعد هذا إغلاقًا شاملًا لجميع وظائف المدير التشغيلية الأخرى (الفروع والمنيو والصلاحيات والرسائل).",
       "step13_review": {
-        "result": "BLOCKED",
-        "reason": "مرتبط بمعايير لم تستكمل: QA-30",
+        "result": "PASS",
+        "reason": "شواهد القبول التقني مرتبطة بالبنود: DEC-03، DEC-04، DEC-06، DEC-09، DEC-10، QA-30",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP03-closure-20261125.md",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP04-closure-20261125.md",
@@ -4466,9 +4489,10 @@
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP06-closure-20261125.md",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902422",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP07-closure-20261125.md",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902470"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902470",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/supabase/tests/step13_protected_elements_readonly.sql"
         ],
-        "remaining_kind": "inherited",
+        "remaining_kind": "none",
         "depends_on": [
           "DEC-03",
           "DEC-04",
@@ -4537,13 +4561,17 @@
       "remaining": "بوابة نهائية مستقلة؛ قرار المالك 26 نوفمبر: ترحيل العوائق المتكررة المثبتة إلى المراجعة النهائية قبل الإطلاق فقط، دون إسقاط معيار القبول أو احتساب PASS. [سجل D12-01…06 ونقطة STEP13](STEP12-progress-20261126.md).",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "مرتبط بمعايير لم تستكمل: QA-01، QA-05، QA-11، QA-15، QA-20، QA-23، QA-25، QA-26، QA-27، QA-30، QA-31، QA-32، QA-33، QA-39، QA-43، QA-44",
+        "reason": "مرتبط بمعايير لم تستكمل: QA-01، QA-05، QA-11، QA-15، QA-20، QA-23، QA-25، QA-26، QA-27، QA-33، QA-39، QA-43، QA-44",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP02-P2-closure-20261125.md",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45545745456",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902558",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/157",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020695665",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902432",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902323",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP08-closure-20261125.md",
@@ -4565,12 +4593,13 @@
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902609",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45705212109",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP05-closure-20261125.md",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/157",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902540",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902500",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902582",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/supabase/tests/step13_protected_elements_readonly.sql",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45688756614",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902377",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020696142",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP06-closure-20261125.md",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902422",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45509575723"
@@ -4639,14 +4668,14 @@
     "reviewed_rows": 149,
     "qa_rows": 45,
     "counts": {
-      "PASS": 91,
+      "PASS": 98,
       "FAIL": 0,
-      "BLOCKED": 58
+      "BLOCKED": 51
     },
     "qa_counts": {
-      "PASS": 29,
+      "PASS": 32,
       "FAIL": 0,
-      "BLOCKED": 16
+      "BLOCKED": 13
     },
     "semantics": "PASS = sufficient documented technical evidence for reviewed criterion; BLOCKED = evidence incomplete, distinguish technical evidence pending, D12 owner-approved deferred limitations and field tests; FAIL = verified failure not yet resolved. Historical source_status/test_status retained for audit; step13_review is the current individual review, not promotion of readiness. All launch readiness remains pending.",
     "observed_live_db": {
@@ -4663,6 +4692,15 @@
       "rls_total": 129
     },
     "owner_deferred": "D12-01..06 only, not permission to omit new repairable findings",
-    "deployment": "PR #157 candidate; no claim of merge or current live parity until verified"
+    "deployment": {
+      "merged_app_commit": "af1cb1156fc98c61571fe12fe19b970d17cc6ec2",
+      "pr": 157,
+      "ci": "17/17",
+      "official_https": "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020695665",
+      "html_sha256": "2f2cb79fd00367e57315ea0e540dce7405fe40a7c128699ed968fd630dda25f3",
+      "local_asset_references": 41,
+      "focused_pr": 158,
+      "route_pr": 159
+    }
   }
 }
