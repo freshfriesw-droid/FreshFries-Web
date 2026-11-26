@@ -1,0 +1,48 @@
+BEGIN;
+DO $qa$
+DECLARE b1 uuid:=gen_random_uuid();b2 uuid:=gen_random_uuid();m uuid:=gen_random_uuid();cs uuid:=gen_random_uuid();c uuid:=gen_random_uuid();du uuid:=gen_random_uuid();du2 uuid:=gen_random_uuid();d uuid:=gen_random_uuid();d2 uuid:=gen_random_uuid();o uuid:=gen_random_uuid();a uuid[]:=ARRAY[gen_random_uuid(),gen_random_uuid(),gen_random_uuid(),gen_random_uuid(),gen_random_uuid(),gen_random_uuid()];aid uuid;r jsonb;checks int:=0;
+BEGIN
+ INSERT INTO auth.users(id) VALUES(m),(cs),(c),(du),(du2);
+ INSERT INTO public.ff_profiles(user_id,display_name,role,active) VALUES(m,'QA STEP12 late manager','manager',true),(cs,'QA STEP12 late CS','customer_service',true),(c,'QA STEP12 late cashier','cashier',true),(du,'QA STEP12 late driver','driver',true),(du2,'QA STEP12 other driver','driver',true);
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);
+ INSERT INTO public.ff_branches(id,code,name) VALUES(b1,'qa-step12-late-'||b1,'QA STEP12 late one'),(b2,'qa-step12-late-'||b2,'QA STEP12 late two');
+ INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(c,b2),(du,b1),(du2,b1);
+ INSERT INTO public.ff38_staff_permission_overrides(user_id,permission_key,allowed,updated_by) VALUES(c,'edit_order',true,m);
+ INSERT INTO public.ff_drivers(id,name,branch_id) VALUES(d,'QA STEP12 late driver',b1),(d2,'QA STEP12 other driver',b1);
+ INSERT INTO public.ff38_driver_links(user_id,driver_id) VALUES(du,d),(du2,d2);
+ INSERT INTO public.ff38_driver_presence(driver_id,state,checked_in_at,last_seen_at) VALUES(d,'ready',now(),now()),(d2,'ready',now(),now()) ON CONFLICT(driver_id) DO UPDATE SET state='ready',checked_in_at=now(),last_seen_at=now();
+ INSERT INTO public.ff_orders(id,order_number,branch_id,phone_snapshot,area_snapshot,status,created_by,items_total,delivery_fee,total) VALUES(o,-1000000000000-floor(random()*1e12)::bigint,b1,'000000000','QA area','new',m,100,0,100);
+ INSERT INTO public.ff38_delivery_tasks(order_id,driver_id,phase,cashier_stage) VALUES(o,d,'on_way','handed_over');
+ FOREACH aid IN ARRAY a LOOP
+  INSERT INTO public.ff38_order_additions(id,order_id,requested_by) VALUES(aid,o,m);
+  INSERT INTO public.ff52_late_addition_consent(addition_id,driver_id) VALUES(aid,d);
+ END LOOP;
+ SET LOCAL ROLE authenticated;PERFORM set_config('request.jwt.claim.sub',c::text,true);
+ BEGIN PERFORM public.ff52_late_cancel(a[1],'QA foreign cancellation');RAISE EXCEPTION 'Other branch cancellation accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN insufficient_privilege THEN NULL;END;checks:=checks+1;
+ PERFORM set_config('request.jwt.claim.sub',du2::text,true);
+ BEGIN PERFORM public.ff52_late_driver_decide(a[2],true,'');RAISE EXCEPTION 'Foreign driver accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN insufficient_privilege THEN NULL;END;checks:=checks+1;
+ PERFORM set_config('request.jwt.claim.sub',du::text,true);
+ BEGIN PERFORM public.ff52_late_driver_decide(a[2],NULL,NULL);RAISE EXCEPTION 'Null driver decision accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN invalid_parameter_value THEN NULL;END;checks:=checks+1;
+ r:=public.ff52_late_driver_decide(a[3],true,'');IF r->>'accepted' IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'Acceptance lost';END IF;checks:=checks+1;
+ r:=public.ff52_late_driver_decide(a[4],false,'QA rejected');IF r->>'accepted' IS DISTINCT FROM 'false' THEN RAISE EXCEPTION 'Rejection lost';END IF;checks:=checks+1;
+ BEGIN PERFORM public.ff52_late_driver_decide(a[4],true,'');RAISE EXCEPTION 'Duplicate decision accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN insufficient_privilege THEN NULL;END;checks:=checks+1;
+ PERFORM set_config('request.jwt.claim.sub',cs::text,true);
+ IF public.ff52_late_cancel(a[3],'QA cancelled consent')->>'cancelled' IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'CS cancellation lost';END IF;checks:=checks+1;
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);
+ IF public.ff52_late_cancel(a[5],'QA manager cancellation')->>'cancelled' IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'Manager cancellation lost';END IF;checks:=checks+1;
+ BEGIN PERFORM public.ff52_late_cancel(gen_random_uuid(),'QA nonexistent addition');RAISE EXCEPTION 'Nonexistent addition accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN insufficient_privilege THEN NULL;END;checks:=checks+1;
+ RESET ROLE;
+ IF (SELECT status FROM public.ff38_order_additions WHERE id=a[1]) IS DISTINCT FROM 'pending' OR (SELECT state FROM public.ff52_late_addition_consent WHERE addition_id=a[1]) IS DISTINCT FROM 'awaiting_driver' THEN RAISE EXCEPTION 'Foreign denial changed state';END IF;checks:=checks+1;
+ IF (SELECT status FROM public.ff38_order_additions WHERE id=a[2]) IS DISTINCT FROM 'pending' OR (SELECT state FROM public.ff52_late_addition_consent WHERE addition_id=a[2]) IS DISTINCT FROM 'awaiting_driver' THEN RAISE EXCEPTION 'Null denial changed state';END IF;checks:=checks+1;
+ IF (SELECT status FROM public.ff38_order_additions WHERE id=a[4]) IS DISTINCT FROM 'cancelled' OR (SELECT state FROM public.ff52_late_addition_consent WHERE addition_id=a[4]) IS DISTINCT FROM 'driver_rejected' THEN RAISE EXCEPTION 'Rejection inconsistent';END IF;checks:=checks+1;
+ IF (SELECT count(*) FROM public.ff38_order_additions WHERE id IN(a[3],a[5]) AND status='cancelled')<>2 THEN RAISE EXCEPTION 'Cancellation inconsistent';END IF;checks:=checks+1;
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);
+ DELETE FROM public.ff_user_branches WHERE user_id=c;
+ INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(c,b1);
+ SET LOCAL ROLE authenticated;PERFORM set_config('request.jwt.claim.sub',c::text,true);
+ IF public.ff52_late_cancel(a[6],'QA granted local cancellation')->>'cancelled' IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'Granted local scope lost';END IF;checks:=checks+1;
+ RESET ROLE;
+ IF checks<>14 THEN RAISE EXCEPTION 'Expected 14 assertions, got %',checks;END IF;
+END $qa$;
+SELECT 'PASS STEP12 late addition guard: 14 assertions; branch permission, null consent, authorized cancellation and consistent state; rollback' result;
+ROLLBACK;
