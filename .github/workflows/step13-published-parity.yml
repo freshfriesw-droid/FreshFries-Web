@@ -1,0 +1,55 @@
+name: STEP13 published parity after route fixes
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/step13-published-parity.yml'
+      - 'assets/ff-pinned-cairo-v38-37.js'
+      - 'scripts/luxe-one-time-rewards-20261123.js'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  official-https:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify published app against checkout, without requests to authenticated APIs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from urllib.parse import urljoin,urlparse
+          from hashlib import sha256
+          import re,time
+          origin='https://freshfriesz.com/'
+          html=Path('index.html').read_bytes()
+          beacon=re.compile(rb'<script type="module" src="https://static\.cloudflareinsights\.com/beacon\.min\.js/v[0-9a-f]+" integrity="sha512-[A-Za-z0-9+/=]+" data-cf-beacon=\'\{[^<>\r\n]*\}\' crossorigin="anonymous"></script>\n(?=</body>\s*</html>\s*\Z)')
+          def get(p):
+              with urlopen(Request(urljoin(origin,p),headers={'User-Agent':'Mozilla/5.0','Cache-Control':'no-cache'}),timeout=20) as r:
+                  assert r.status==200 and urlparse(r.geturl()).hostname=='freshfriesz.com',(p,r.status,r.geturl())
+                  return r.read()
+          paths=sorted(set(x.decode().removeprefix('./') for x in re.findall(rb'(?:src|href)="([^"<>]+\.(?:css|js)(?:\?[^"<>]*)?)"',html) if not x.startswith((b'http:',b'https:',b'//'))))
+          paths+=['sw.js','manifest.json']
+          # Manifest filename taken from the actual document, not assumed.
+          paths.remove('manifest.json')
+          manifests=re.findall(rb'<link[^>]+rel="manifest"[^>]+href="([^"]+)"',html)
+          if not manifests:
+              manifests=re.findall(rb'<link[^>]+href="([^"]+)"[^>]+rel="manifest"',html)
+          assert manifests,'missing manifest link'
+          paths.extend(x.decode().removeprefix('./') for x in manifests)
+          for attempt in range(12):
+              try:
+                  for p in ('','index.html'):
+                      raw=get(p)
+                      assert raw==html or beacon.subn(b'',raw)==(html,1),('HTML differs',p,sha256(raw).hexdigest(),sha256(html).hexdigest())
+                  for p in paths:
+                      actual=get(p);expected=Path(p.split('?',1)[0]).read_bytes()
+                      assert actual==expected,('asset differs',p)
+                  print('PASS official freshfriesz.com exact root/index,',len(paths),'local asset references including SW and manifest;',sha256(html).hexdigest())
+                  break
+              except (OSError,AssertionError) as exc:
+                  print('attempt',attempt+1,str(exc),flush=True)
+                  if attempt==11: raise
+                  time.sleep(15)
+          PY
