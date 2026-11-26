@@ -6,6 +6,9 @@ on:
       - '.github/workflows/step13-published-parity.yml'
       - 'assets/ff-pinned-cairo-v38-37.js'
       - 'scripts/luxe-one-time-rewards-20261123.js'
+  pull_request:
+    paths:
+      - '.github/workflows/step13-published-parity.yml'
   workflow_dispatch:
 permissions:
   contents: read
