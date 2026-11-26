@@ -1,0 +1,67 @@
+name: STEP13 focused acceptance and official HTTPS parity
+on:
+  pull_request:
+    paths:
+      - 'scripts/step13-focused-acceptance-qa.py'
+      - '.github/workflows/step13-focused-acceptance-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright==1.51.0
+      - run: python scripts/step13-focused-acceptance-qa.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: step13-focused-acceptance
+          path: step13-evidence
+  official-https:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify published app against checkout, without requests to authenticated APIs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from urllib.parse import urljoin,urlparse
+          from hashlib import sha256
+          import re,time
+          origin='https://freshfriesz.com/'
+          html=Path('index.html').read_bytes()
+          beacon=re.compile(rb'<script type="module" src="https://static\.cloudflareinsights\.com/beacon\.min\.js/v[0-9a-f]+" integrity="sha512-[A-Za-z0-9+/=]+" data-cf-beacon=\'\{[^<>\r\n]*\}\' crossorigin="anonymous"></script>\n(?=</body>\s*</html>\s*\Z)')
+          def get(p):
+              with urlopen(Request(urljoin(origin,p),headers={'User-Agent':'Mozilla/5.0','Cache-Control':'no-cache'}),timeout=20) as r:
+                  assert r.status==200 and urlparse(r.geturl()).hostname=='freshfriesz.com',(p,r.status,r.geturl())
+                  return r.read()
+          paths=sorted(set(x.decode().removeprefix('./') for x in re.findall(rb'(?:src|href)="([^"<>]+\.(?:css|js)(?:\?[^"<>]*)?)"',html) if not x.startswith((b'http:',b'https:',b'//'))))
+          paths+=['sw.js','manifest.json']
+          # Manifest filename taken from the actual document, not assumed.
+          paths.remove('manifest.json')
+          manifests=re.findall(rb'<link[^>]+rel="manifest"[^>]+href="([^"]+)"',html)
+          if not manifests:
+              manifests=re.findall(rb'<link[^>]+href="([^"]+)"[^>]+rel="manifest"',html)
+          assert manifests,'missing manifest link'
+          paths.extend(x.decode().removeprefix('./') for x in manifests)
+          for attempt in range(6):
+              try:
+                  for p in ('','index.html'):
+                      raw=get(p)
+                      assert raw==html or beacon.subn(b'',raw)==(html,1),('HTML differs',p,sha256(raw).hexdigest(),sha256(html).hexdigest())
+                  for p in paths:
+                      actual=get(p);expected=Path(p.split('?',1)[0]).read_bytes()
+                      assert actual==expected,('asset differs',p)
+                  print('PASS official freshfriesz.com exact root/index,',len(paths),'local asset references including SW and manifest;',sha256(html).hexdigest())
+                  break
+              except (OSError,AssertionError) as exc:
+                  print('attempt',attempt+1,str(exc),flush=True)
+                  if attempt==5: raise
+                  time.sleep(15)
+          PY
