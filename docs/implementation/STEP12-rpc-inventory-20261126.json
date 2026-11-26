@@ -751,7 +751,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "81e41629a5601c3d3d2fb10d4736472b"
+      "definition_md5": "81e41629a5601c3d3d2fb10d4736472b",
+      "scope_test": "STEP12 step12_customer_privacy_matrix_rollback.sql PASS 41/41: 32 denials, 8 manager/CS authorized checks and 1 state check; SQL claims only"
     },
     {
       "name": "ff51_customer_note_add",
@@ -760,7 +761,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5a481fa0900c9934af2321f2eee7656d"
+      "definition_md5": "5a481fa0900c9934af2321f2eee7656d",
+      "scope_test": "STEP12 step12_customer_privacy_matrix_rollback.sql PASS 41/41: 32 denials, 8 manager/CS authorized checks and 1 state check; SQL claims only"
     },
     {
       "name": "ff51_customer_notes_list",
@@ -769,7 +771,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "cd62a9f586f93214f95bdf25621ac1eb"
+      "definition_md5": "cd62a9f586f93214f95bdf25621ac1eb",
+      "scope_test": "STEP12 step12_customer_privacy_matrix_rollback.sql PASS 41/41: 32 denials, 8 manager/CS authorized checks and 1 state check; SQL claims only"
     },
     {
       "name": "ff51_driver_rating_summary",
@@ -1323,7 +1326,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "7fe1d05473c8416a3bb34aaa1c53f519"
+      "definition_md5": "7fe1d05473c8416a3bb34aaa1c53f519",
+      "scope_test": "STEP12 step12_customer_privacy_matrix_rollback.sql PASS 41/41: 32 denials, 8 manager/CS authorized checks and 1 state check; SQL claims only"
     },
     {
       "name": "ff_a05_area_fee_hint",
@@ -2549,5 +2553,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26 STEP12 admin/finance matrix and reward guards; 101/270 entries with explicit scope_test, not full acceptance; #146 pending merge"
+  "last_update": "2026-11-26 STEP12 customer privacy matrix; 105/270 entries with explicit scope_test, not full acceptance; #146 pending merge"
 }
