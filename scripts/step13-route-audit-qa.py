@@ -30,6 +30,25 @@ try:
     ctx=browser.new_context(viewport={"width":width,"height":850},service_workers="block",reduced_motion="reduce")
     ctx.route("**/*",lambda route:route.continue_() if route.request.url.startswith(origin) else route.abort())
     page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,role)
+    # Complete the authenticated-UI fixture without any real login or network.
+    # All external traffic remains aborted by the context route above.
+    page.evaluate("""role=>{
+      document.getElementById('ff39InboxBtn').classList.remove('hidden');
+      client.auth={getSession:async()=>({data:{session:{access_token:'synthetic-route-fixture'}},error:null})};
+      const original=window.fetch;
+      window.fetch=async(input,init)=>{
+        if(String(input).endsWith('/functions/v1/ff61-employees')){
+          const action=JSON.parse(init?.body||'{}').action;
+          const payload=action==='capabilities'?{ok:true,view:role==='manager',notify:role==='manager'}:{ok:true,notifications:[],applications:[],ids:[],unread_count:0,pending_count:0,total_count:0,page_size:25};
+          return new Response(JSON.stringify(payload),{status:200,headers:{'Content-Type':'application/json'}});
+        }
+        return original(input,init);
+      };
+      window.dispatchEvent(new Event('focus'));
+    }""",role)
+    if role=="manager":
+     page.wait_for_function("!document.getElementById('ff61ManageShortcut').hidden&&!document.getElementById('ff63NotificationsShortcut').hidden")
+    page.evaluate("()=>draw()")
     page.wait_for_function("document.querySelectorAll('#ffx-nav button[data-key]').length>0")
     # Spy on real dispatch boundaries while preserving original implementations.
     page.evaluate("""()=>{
@@ -104,3 +123,5 @@ print("Diagnostics:",json.dumps({"unnamed":unnamed,"failures":failures[:20]},ens
 assert len(states)==10 and not failures,"route or state verification failed"
 
 assert not unnamed, 'Visible unlabeled controls remain: '+json.dumps(unnamed,ensure_ascii=False)
+
+assert not (keys-{x['key'] for x in results}), 'General route coverage incomplete'
