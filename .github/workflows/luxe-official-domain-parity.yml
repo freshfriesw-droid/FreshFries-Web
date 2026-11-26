@@ -8,6 +8,10 @@ on:
       - 'styles/**'
       - 'assets/**'
       - '.github/workflows/luxe-official-domain-parity.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/luxe-official-domain-parity.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -37,6 +41,16 @@ jobs:
             assert final.scheme=='https'
             assert final.hostname in ('freshfriesz.com','delivery.freshfriesz.com'), final.hostname
             print('HTTPS',path,'->',r.geturl(),flush=True)""".replace('\n    ','\n'))
+          src += """
+          # PWA entry files are not script/href CSS references in the HTML.
+          # Verify both ordinary requests and cache-busted requests exactly.
+          for path in ('sw.js','manifest.webmanifest'):
+           expected=(root/path).read_bytes()
+           for suffix in ('','?qa='+nonce+'-pwa'):
+            actual=get(path+suffix)
+            assert actual==expected, 'public PWA file differs: '+path+suffix
+            print('PASS PWA exact',path+suffix,sha256(actual).hexdigest(),flush=True)
+          """.replace('\n          ', '\n')
           Path('scripts/.step03-apex-probe.py').write_text(src)
           PY
           python3 -m py_compile scripts/.step03-apex-probe.py
