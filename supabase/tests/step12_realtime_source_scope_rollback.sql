@@ -1,0 +1,37 @@
+BEGIN;
+DO $qa$
+DECLARE a uuid:=gen_random_uuid();b uuid:=gen_random_uuid();m uuid:=gen_random_uuid();ba uuid:=gen_random_uuid();bb uuid:=gen_random_uuid();oa uuid:=gen_random_uuid();ob uuid:=gen_random_uuid();msg uuid:=gen_random_uuid();sa uuid:=gen_random_uuid();sb uuid:=gen_random_uuid();n int;checks int:=0;
+BEGIN
+ INSERT INTO auth.users(id) VALUES(a),(b),(m);
+ INSERT INTO public.ff_profiles(user_id,display_name,role,active) VALUES(a,'QA STEP12 realtime A','cashier',true),(b,'QA STEP12 realtime B','cashier',true),(m,'QA STEP12 realtime manager','manager',true);
+ INSERT INTO public.ff_branches(id,code,name) VALUES(ba,'qa-rt-'||ba,'QA RT A'),(bb,'qa-rt-'||bb,'QA RT B');
+ INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(a,ba),(b,bb);
+ INSERT INTO public.ff_orders(id,order_number,branch_id,phone_snapshot,business_date,status) VALUES(oa,-1000000000000-floor(random()*1e12)::bigint,ba,'000000000',public.ff_business_date(now()),'new'),(ob,-1000000000000-floor(random()*1e12)::bigint,bb,'000000000',public.ff_business_date(now()),'new');
+ INSERT INTO public.ff27_branch_updates(order_id,branch_id) VALUES(oa,ba),(ob,bb) ON CONFLICT(order_id) DO UPDATE SET branch_id=excluded.branch_id;
+ INSERT INTO public.ff39_messages(id,sender_id,title,body) VALUES(msg,m,'QA synthetic','QA synthetic');
+ INSERT INTO public.ff39_message_recipients(message_id,user_id) VALUES(msg,a),(msg,b) ON CONFLICT DO NOTHING;
+ INSERT INTO public.ff_a09_grant_events(recipient) VALUES(a),(b) ON CONFLICT(recipient) DO NOTHING;
+ INSERT INTO auth.sessions(id,user_id,created_at,updated_at) VALUES(sa,a,now(),now()),(sb,b,now(),now());
+ SET LOCAL ROLE authenticated;
+ PERFORM set_config('request.jwt.claim.sub',a::text,true);PERFORM set_config('request.jwt.claims',jsonb_build_object('sub',a,'role','authenticated','session_id',sa)::text,true);
+ SELECT count(*) INTO n FROM public.ff27_branch_updates WHERE order_id IN(oa,ob) AND branch_id=ba;IF n<>1 THEN RAISE EXCEPTION 'Own branch invisible';END IF;checks:=checks+1;
+ SELECT count(*) INTO n FROM public.ff27_branch_updates WHERE order_id IN(oa,ob) AND branch_id=bb;IF n<>0 THEN RAISE EXCEPTION 'Other branch visible';END IF;checks:=checks+1;
+ SELECT count(*) INTO n FROM public.ff39_message_recipients WHERE message_id=msg AND user_id=a;IF n<>1 THEN RAISE EXCEPTION 'Own message invisible';END IF;checks:=checks+1;
+ SELECT count(*) INTO n FROM public.ff39_message_recipients WHERE message_id=msg AND user_id=b;IF n<>0 THEN RAISE EXCEPTION 'Other recipient visible';END IF;checks:=checks+1;
+ SELECT count(*) INTO n FROM public.ff_a09_grant_events WHERE recipient=a;IF n<>1 THEN RAISE EXCEPTION 'Own grant signal invisible';END IF;checks:=checks+1;
+ SELECT count(*) INTO n FROM public.ff_a09_grant_events WHERE recipient=b;IF n<>0 THEN RAISE EXCEPTION 'Other grant signal visible';END IF;checks:=checks+1;
+ PERFORM set_config('request.jwt.claim.sub',b::text,true);PERFORM set_config('request.jwt.claims',jsonb_build_object('sub',b,'role','authenticated','session_id',sb)::text,true);
+ SELECT count(*) INTO n FROM public.ff27_branch_updates WHERE order_id IN(oa,ob) AND branch_id=bb;IF n<>1 THEN RAISE EXCEPTION 'Second own branch invisible';END IF;checks:=checks+1;
+ SELECT count(*) INTO n FROM public.ff39_message_recipients WHERE message_id=msg AND user_id=b;IF n<>1 THEN RAISE EXCEPTION 'Second own recipient invisible';END IF;checks:=checks+1;
+ SELECT count(*) INTO n FROM public.ff_a09_grant_events WHERE recipient=b;IF n<>1 THEN RAISE EXCEPTION 'Second own grant signal invisible';END IF;checks:=checks+1;
+ RESET ROLE;
+ DELETE FROM auth.sessions WHERE id=sb AND user_id=b;
+ SET LOCAL ROLE authenticated;
+ SELECT count(*) INTO n FROM public.ff27_branch_updates WHERE order_id IN(oa,ob);IF n<>0 THEN RAISE EXCEPTION 'Revoked branch signal visible';END IF;checks:=checks+1;
+ SELECT count(*) INTO n FROM public.ff39_message_recipients WHERE message_id=msg;IF n<>0 THEN RAISE EXCEPTION 'Revoked recipient signal visible';END IF;checks:=checks+1;
+ SELECT count(*) INTO n FROM public.ff_a09_grant_events WHERE recipient IN(a,b);IF n<>0 THEN RAISE EXCEPTION 'Revoked grant signal visible';END IF;checks:=checks+1;
+ RESET ROLE;
+ IF checks<>12 THEN RAISE EXCEPTION 'Incomplete checks %',checks;END IF;
+END $qa$;
+SELECT 'PASS STEP12 realtime source row RLS: 12 assertions; branch, recipient, grant ownership and revoked session' result;
+ROLLBACK;
