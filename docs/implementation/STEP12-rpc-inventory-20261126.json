@@ -2922,5 +2922,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26: 419 new SQL rollback assertions; 4 confirmed access/state defects and 1 duplicate-note defect fixed in 4 live migrations. #149 merged, #150/#151 pending CI. 270/270 current definitions and EXECUTE grants match. {\"explicit\":201,\"prior_only\":68,\"review_only\":1,\"unlinked\":0}. Evidence linkage only; not complete acceptance."
+  "last_update": "2026-11-26: 419 new live SQL rollback assertions; 5 reproduced and corrected defects in 4 migrations, all applied and merged (#149/#150/#151 each 11/11 CI PASS). 270/270 current signatures, hashes and EXECUTE grants match; 201 explicit scope_test, 68 prior evidence, 1 reviewed no-op, zero unlinked; evidence linkage only. STEP12 remains open, live Auth/Storage/Realtime blocked; independent restore conditional. Postmerge static 45762899544: in_progress؛ 45763226951: in_progress"
 }
