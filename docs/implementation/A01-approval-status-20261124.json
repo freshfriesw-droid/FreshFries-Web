@@ -106,7 +106,7 @@
       "review_date": "2026-11-24",
       "reviewer": "مراجعة آلية عبر ChatGPT؛ نتائج GitHub Actions واختبارات SQL بحسب المراجع",
       "reference_page": 6,
-      "evidence": "[#19](https://github.com/freshfriesw-droid/FreshFries-Web/pull/19)، [#28](https://github.com/freshfriesw-droid/FreshFries-Web/pull/28)؛ STEP12: [فحص سلامة البيانات read-only](../../supabase/tests/step12_referential_integrity_readonly.sql) PASS؛ 186/186 FK بلا سجل يتيم، 533/533 قيود معتمدة بعد الترحيل الحي 20261126144008، 242/242 فهرس صالح، 688/688 محفز FK غير معطل. لا إثبات استعادة مستقلة أو قبول شامل. [السجل](STEP12-progress-20261126.md).",
+      "evidence": "[#19](https://github.com/freshfriesw-droid/FreshFries-Web/pull/19)، [#28](https://github.com/freshfriesw-droid/FreshFries-Web/pull/28)؛ STEP12: [فحص سلامة البيانات read-only](../../supabase/tests/step12_referential_integrity_readonly.sql) PASS؛ 186/186 FK بلا سجل يتيم، 533/533 قيود معتمدة بعد الترحيل الحي 20261126144008، 242/242 فهرس صالح، 688/688 محفز FK غير معطل. لا إثبات استعادة مستقلة أو قبول شامل. [السجل](STEP12-progress-20261126.md).؛ [#155 مدمج](https://github.com/freshfriesw-droid/FreshFries-Web/pull/155)، CI 11/11، [HTTPS بعد الدمج PASS](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45746550586/job/139987425122)، دون تغيير ملفات التطبيق أو ترقية القبول.",
       "remaining": "SQL تصحيح بيانات العميل؛ اختبار المراحل والتنبيه والخصوصية"
     },
     {
@@ -301,7 +301,7 @@
       "review_date": "2026-11-24",
       "reviewer": "مراجعة آلية عبر ChatGPT؛ نتائج GitHub Actions واختبارات SQL بحسب المراجع",
       "reference_page": 9,
-      "evidence": "[#4](https://github.com/freshfriesw-droid/FreshFries-Web/pull/4)؛ STEP12: [فحص سلامة البيانات read-only](../../supabase/tests/step12_referential_integrity_readonly.sql) PASS؛ 186/186 FK بلا سجل يتيم، 533/533 قيود معتمدة بعد الترحيل الحي 20261126144008، 242/242 فهرس صالح، 688/688 محفز FK غير معطل. لا إثبات استعادة مستقلة أو قبول شامل. [السجل](STEP12-progress-20261126.md).",
+      "evidence": "[#4](https://github.com/freshfriesw-droid/FreshFries-Web/pull/4)؛ STEP12: [فحص سلامة البيانات read-only](../../supabase/tests/step12_referential_integrity_readonly.sql) PASS؛ 186/186 FK بلا سجل يتيم، 533/533 قيود معتمدة بعد الترحيل الحي 20261126144008، 242/242 فهرس صالح، 688/688 محفز FK غير معطل. لا إثبات استعادة مستقلة أو قبول شامل. [السجل](STEP12-progress-20261126.md).؛ [#155 مدمج](https://github.com/freshfriesw-droid/FreshFries-Web/pull/155)، CI 11/11، [HTTPS بعد الدمج PASS](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45746550586/job/139987425122)، دون تغيير ملفات التطبيق أو ترقية القبول.",
       "remaining": "تجربة انتقائية مع استرجاع وإثبات حفظ الحسابات والسياسات"
     },
     {
@@ -1396,7 +1396,7 @@
       "review_date": "2026-11-24",
       "reviewer": "مراجعة آلية عبر ChatGPT؛ نتائج GitHub Actions واختبارات SQL بحسب المراجع",
       "reference_page": 46,
-      "evidence": "[#4](https://github.com/freshfriesw-droid/FreshFries-Web/pull/4)؛ STEP12: [فحص سلامة البيانات read-only](../../supabase/tests/step12_referential_integrity_readonly.sql) PASS؛ 186/186 FK بلا سجل يتيم، 533/533 قيود معتمدة بعد الترحيل الحي 20261126144008، 242/242 فهرس صالح، 688/688 محفز FK غير معطل. لا إثبات استعادة مستقلة أو قبول شامل. [السجل](STEP12-progress-20261126.md).",
+      "evidence": "[#4](https://github.com/freshfriesw-droid/FreshFries-Web/pull/4)؛ STEP12: [فحص سلامة البيانات read-only](../../supabase/tests/step12_referential_integrity_readonly.sql) PASS؛ 186/186 FK بلا سجل يتيم، 533/533 قيود معتمدة بعد الترحيل الحي 20261126144008، 242/242 فهرس صالح، 688/688 محفز FK غير معطل. لا إثبات استعادة مستقلة أو قبول شامل. [السجل](STEP12-progress-20261126.md).؛ [#155 مدمج](https://github.com/freshfriesw-droid/FreshFries-Web/pull/155)، CI 11/11، [HTTPS بعد الدمج PASS](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45746550586/job/139987425122)، دون تغيير ملفات التطبيق أو ترقية القبول.",
       "remaining": "تنفيذ واسترجاع"
     },
     {
@@ -2116,7 +2116,7 @@
       "review_date": "2026-11-24",
       "reviewer": "مراجعة آلية عبر ChatGPT؛ نتائج GitHub Actions واختبارات SQL بحسب المراجع",
       "reference_page": 49,
-      "evidence": "QA-42، A01؛ STEP12: [فحص سلامة البيانات read-only](../../supabase/tests/step12_referential_integrity_readonly.sql) PASS؛ 186/186 FK بلا سجل يتيم، 533/533 قيود معتمدة بعد الترحيل الحي 20261126144008، 242/242 فهرس صالح، 688/688 محفز FK غير معطل. لا إثبات استعادة مستقلة أو قبول شامل. [السجل](STEP12-progress-20261126.md).",
+      "evidence": "QA-42، A01؛ STEP12: [فحص سلامة البيانات read-only](../../supabase/tests/step12_referential_integrity_readonly.sql) PASS؛ 186/186 FK بلا سجل يتيم، 533/533 قيود معتمدة بعد الترحيل الحي 20261126144008، 242/242 فهرس صالح، 688/688 محفز FK غير معطل. لا إثبات استعادة مستقلة أو قبول شامل. [السجل](STEP12-progress-20261126.md).؛ [#155 مدمج](https://github.com/freshfriesw-droid/FreshFries-Web/pull/155)، CI 11/11، [HTTPS بعد الدمج PASS](https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45746550586/job/139987425122)، دون تغيير ملفات التطبيق أو ترقية القبول.",
       "remaining": "يرث شروط القبول من البنود المرتبطة؛ لا يعد مقبولًا بمجرد وجود الوظيفة."
     },
     {
