@@ -1,0 +1,22 @@
+name: STEP13 route dispatch and accessibility audit
+on:
+  pull_request:
+    paths: ['scripts/step13-route-audit-qa.py','.github/workflows/step13-route-audit-qa.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright==1.51.0
+      - run: python scripts/step13-route-audit-qa.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: step13-route-evidence
+          path: step13-route-evidence
