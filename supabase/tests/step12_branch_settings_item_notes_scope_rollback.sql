@@ -1,0 +1,51 @@
+BEGIN;
+DO $qa$
+DECLARE b1 uuid:=gen_random_uuid();b2 uuid:=gen_random_uuid();m uuid:=gen_random_uuid();cs uuid:=gen_random_uuid();c2 uuid:=gen_random_uuid();c uuid:=gen_random_uuid();s uuid:=gen_random_uuid();d uuid:=gen_random_uuid();a uuid:=gen_random_uuid();k uuid:=gen_random_uuid();u uuid:=gen_random_uuid();x uuid:=gen_random_uuid();o uuid:=gen_random_uuid();actor uuid;v jsonb;checks int:=0;items jsonb:='[{"name":"QA STEP12 item A","qty":1,"price":100,"item_notes":"note A"},{"name":"QA STEP12 item B","qty":2,"price":50,"item_notes":"note B"}]';bad jsonb:='[{"name":"QA STEP12 item A","qty":2,"price":100,"item_notes":"bad"},{"name":"QA STEP12 item B","qty":2,"price":50,"item_notes":"bad"}]';
+BEGIN
+ INSERT INTO auth.users(id) VALUES(m),(cs),(c2),(c),(s),(d),(a),(k),(u),(x);
+ INSERT INTO public.ff_profiles(user_id,display_name,role,active) VALUES(m,'QA STEP12 settings manager','manager',true),(cs,'QA STEP12 notes owner','customer_service',true),(c2,'QA STEP12 notes other','customer_service',true),(c,'QA STEP12 settings cashier','cashier',true),(s,'QA STEP12 settings supervisor','supervisor',true),(d,'QA STEP12 settings driver','driver',true),(a,'QA STEP12 settings assembly','assembly',true),(k,'QA STEP12 settings kitchen','burger_kitchen',true),(x,'QA STEP12 settings disabled','manager',false);
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);
+ INSERT INTO public.ff_branches(id,code,name) VALUES(b1,'qa-step12-settings-'||b1,'QA STEP12 settings one'),(b2,'qa-step12-settings-'||b2,'QA STEP12 settings two');
+ INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(cs,b1),(c2,b1),(c,b1),(s,b1),(d,b1),(a,b1),(k,b1),(x,b1);
+ INSERT INTO public.ff38_staff_permission_overrides(user_id,permission_key,allowed,updated_by) SELECT actor_id,'manage_branches',false,m FROM unnest(ARRAY[cs,c2,c,s,d,a,k]) actor_id;
+ INSERT INTO public.ff38_staff_permission_overrides(user_id,permission_key,allowed,updated_by) VALUES(cs,'create_order',true,m);
+ INSERT INTO public.ff_orders(id,order_number,branch_id,phone_snapshot,area_snapshot,status,created_by,items_total,delivery_fee,total) VALUES(o,-1000000000000-floor(random()*1e12)::bigint,b1,'000000000','QA area','new',cs,200,0,200);
+ INSERT INTO public.ff_order_items(order_id,item_name,quantity,unit_price,line_total) VALUES(o,'QA STEP12 item A',1,100,100),(o,'QA STEP12 item B',2,50,100);
+ SET LOCAL ROLE authenticated;
+ FOREACH actor IN ARRAY ARRAY[cs,c2,c,s,d,a,k,u,x] LOOP
+  PERFORM set_config('request.jwt.claim.sub',actor::text,true);
+  BEGIN PERFORM public.ff_a05_set_area_tariff(b1,'QA area',20,now(),'QA settings denial');RAISE EXCEPTION 'Denied tariff accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN insufficient_privilege THEN NULL;END;checks:=checks+1;
+  BEGIN PERFORM public.ff_a05_set_branch_hours(b1,0,'09:00','21:00','15:00',false,now(),'QA settings denial');RAISE EXCEPTION 'Denied hours accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN insufficient_privilege THEN NULL;END;checks:=checks+1;
+ END LOOP;
+ FOREACH actor IN ARRAY ARRAY[m,c2,c,s,d,a,k,u,x] LOOP
+  PERFORM set_config('request.jwt.claim.sub',actor::text,true);
+  BEGIN PERFORM public.ff70_set_item_notes(o,items);RAISE EXCEPTION 'Nonowner notes accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN insufficient_privilege THEN NULL;END;checks:=checks+1;
+ END LOOP;
+ PERFORM set_config('request.jwt.claim.sub',cs::text,true);
+ v:=public.ff70_set_item_notes(o,items);IF v->>'updated' IS DISTINCT FROM '2' THEN RAISE EXCEPTION 'Notes count mismatch';END IF;checks:=checks+1;
+ BEGIN PERFORM public.ff70_set_item_notes(o,bad);RAISE EXCEPTION 'Changed item accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN raise_exception THEN IF SQLERRM<>'بيانات الأصناف غير مطابقة' THEN RAISE;END IF;END;checks:=checks+1;
+ RESET ROLE;
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);
+ UPDATE public.ff38_staff_permission_overrides SET allowed=true WHERE user_id=s AND permission_key='manage_branches';
+ UPDATE public.ff38_staff_permission_overrides SET allowed=false WHERE user_id=cs AND permission_key='create_order';
+ SET LOCAL ROLE authenticated;
+ PERFORM set_config('request.jwt.claim.sub',cs::text,true);
+ BEGIN PERFORM public.ff70_set_item_notes(o,items);RAISE EXCEPTION 'Revoked note permission accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN insufficient_privilege THEN NULL;END;checks:=checks+1;
+ PERFORM set_config('request.jwt.claim.sub',s::text,true);
+ v:=public.ff_a05_set_area_tariff(b1,' QA   area ',20,now(),'QA supervisor allowed');IF v->>'saved' IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'Allowed tariff failed';END IF;checks:=checks+1;
+ v:=public.ff_a05_set_branch_hours(b1,0,'09:00','21:00','15:00',false,now(),'QA supervisor allowed');IF v->>'saved' IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'Allowed hours failed';END IF;checks:=checks+1;
+ BEGIN PERFORM public.ff_a05_set_area_tariff(b2,'QA area',20,now(),'QA other branch');RAISE EXCEPTION 'Foreign tariff accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN insufficient_privilege THEN NULL;END;checks:=checks+1;
+ BEGIN PERFORM public.ff_a05_set_branch_hours(b2,0,'09:00','21:00','15:00',false,now(),'QA other branch');RAISE EXCEPTION 'Foreign hours accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN insufficient_privilege THEN NULL;END;checks:=checks+1;
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);
+ v:=public.ff_a05_set_area_tariff(b2,'QA area',30,now(),'QA manager allowed');IF v->>'saved' IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'Manager tariff failed';END IF;checks:=checks+1;
+ v:=public.ff_a05_set_branch_hours(b2,0,'09:00','21:00','15:00',false,now(),'QA manager allowed');IF v->>'saved' IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'Manager hours failed';END IF;checks:=checks+1;
+ BEGIN PERFORM public.ff_a05_set_area_tariff(b2,'QA area',-1,now(),'QA invalid fee');RAISE EXCEPTION 'Invalid fee accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN invalid_parameter_value THEN NULL;END;checks:=checks+1;
+ BEGIN PERFORM public.ff_a05_set_branch_hours(b2,0,'09:00','21:00','22:00',false,now(),'QA invalid shift');RAISE EXCEPTION 'Invalid shift accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN invalid_parameter_value THEN NULL;END;checks:=checks+1;
+ RESET ROLE;
+ IF (SELECT count(*) FROM ff_private.a05_area_tariffs WHERE branch_id IN(b1,b2))<>2 OR (SELECT count(*) FROM ff_private.a05_branch_hours WHERE branch_id IN(b1,b2))<>2 THEN RAISE EXCEPTION 'Unexpected settings writes';END IF;checks:=checks+1;
+ IF (SELECT count(*) FROM public.ff_audit_log WHERE branch_id IN(b1,b2) AND action IN('a05_area_tariff_changed','a05_branch_hours_changed'))<>4 THEN RAISE EXCEPTION 'Audit mismatch';END IF;checks:=checks+1;
+ IF (SELECT count(*) FROM public.ff_order_items WHERE order_id=o AND ((item_name='QA STEP12 item A' AND quantity=1 AND unit_price=100 AND line_total=100 AND item_notes='note A') OR (item_name='QA STEP12 item B' AND quantity=2 AND unit_price=50 AND line_total=100 AND item_notes='note B')))<>2 THEN RAISE EXCEPTION 'Notes or financial fields mismatch';END IF;checks:=checks+1;
+ IF checks<>41 THEN RAISE EXCEPTION 'Expected 41 assertions, got %',checks;END IF;
+END $qa$;
+SELECT 'PASS STEP12 branch settings and order item notes: 41 assertions; rollback' result;
+ROLLBACK;
