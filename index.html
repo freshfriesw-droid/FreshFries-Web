@@ -2722,19 +2722,24 @@ function ff49DeliveryInput(parsed){
  };
 }
 async function ff49SaveDelivery(input){
- const b=$('createBtn');b.disabled=true;
+ const b=$('createBtn'),actor=user?.id,seq=ff28Epoch;if(!actor)return;b.disabled=true;
+ const current=()=>user?.id===actor&&ff28Epoch===seq;
  try{
   const x=await ff27Submit('delivery',input);
+  if(!current())return;
   toast((window.ffContentStudio?.text('orders.success','تم اعتماد الطلب',$('newBranch').value)||'تم اعتماد الطلب')+' #'+x.order_number+' — '+(x.dispatch?.state==='assigned_cumulative'?'إسناد تراكمي مباشر':x.dispatch?.state==='offered'?'أُرسل عرض للموصل وفق المهلة المحددة':'بانتظار موصل مناسب'));
   window.dispatchEvent(new CustomEvent('ff:order-created',{detail:{orderNumber:x.order_number}}));
   await reload(true);
- }catch(e){toast('تعذر إنشاء الطلب: '+e.message)}finally{b.disabled=false}
+ }catch(e){if(current())toast('تعذر إنشاء الطلب: '+e.message)}finally{if(current())b.disabled=false}
 };
 $('createBtn').onclick=async()=>{
+ const actor=user?.id,seq=ff28Epoch,current=()=>actor&&user?.id===actor&&ff28Epoch===seq;
+ if(!actor)return;
  try{
   await ff49LoadCatalog();
+  if(!current())return;
   await ff49SaveDelivery(ff49DeliveryInput(ff49ParseItemsAndNotes($('newItems').value)));
- }catch(e){toast('تعذر إنشاء الطلب: '+e.message)}
+ }catch(e){if(current())toast('تعذر إنشاء الطلب: '+e.message)}
 };
 const ff49OldDraw=draw;
 draw=function(){ff49OldDraw();
@@ -2745,7 +2750,7 @@ draw=function(){ff49OldDraw();
 const ff49OldReload=reload;
 reload=async function(...args){const r=await ff49OldReload(...args);if(user&&data?.role){void ff49LoadCatalog();if(!$('ff49ReservationsPanel').classList.contains('hidden'))void ff49RefreshReservations(true)}return r;};
 const ff49OldReset=resetUI;
-resetUI=function(){ff49OldReset();ff49Reservations=[];ff49ManualOrderId=null;ff49Catalog=[];ff49CatalogAt=0;ff49CatalogActor='';ff49CatalogSeq++;ff49CatalogLoad=null;ff49ReserveSeq++;ff49ReserveLoad=null;for(const id of ['ff49ReserveName','ff49ReservePhone','ff49ReserveNotes','ff49ReserveItems','ff49ReservePickup'])$(id).value='';$('ff49ReservationsList').replaceChildren();
+resetUI=function(){ff49OldReset();ff49Reservations=[];ff49ManualOrderId=null;ff49Catalog=[];ff49CatalogAt=0;ff49CatalogActor='';ff49CatalogSeq++;ff49CatalogLoad=null;ff49ReserveSeq++;ff49ReserveLoad=null;ff49ReserveBusy=false;$('createBtn').disabled=false;$('ff49ReserveSave').disabled=false;for(const id of ['ff49ReserveName','ff49ReservePhone','ff49ReserveNotes','ff49ReserveItems','ff49ReservePickup'])$(id).value='';$('ff49ReservationsList').replaceChildren();
  for(const id of ['ff49ReservationsBtn','ff49TransferBtn','ff49ReservationsPanel','ff49TransferPanel','ff49ManualPanel'])$(id).classList.add('hidden');};
 function ff49ReserveStages(status,role){
  const next={new:'reviewed',reviewed:'confirmed',confirmed:'preparing',preparing:'ready',ready:'collected'};
@@ -2775,17 +2780,17 @@ $('ff49ReservationsBtn').onclick=ff49OpenReservations; $('ffReserveBottom').oncl
 $('ff49ReservationsRefresh').onclick=()=>void ff49RefreshReservations();
 $('ff49ReservationsClose').onclick=()=>{ff49ReserveSeq++;ff49ReserveLoad=null;$('ff49ReservationsPanel').classList.add('hidden')};
 $('ff49ReserveSave').onclick=async()=>{
- const b=$('ff49ReserveSave'),actor=user?.id;if(ff49ReserveBusy||!actor||!['manager','customer_service'].includes(data?.role))return;ff49ReserveBusy=true;b.disabled=true;
- const ids=['ff49ReserveBranch','ff49ReserveName','ff49ReservePhone','ff49ReserveNotes','ff49ReserveItems','ff49ReservePickup'];const values=Object.fromEntries(ids.map(id=>[id,$(id).value]));const current=()=>user?.id===actor&&ids.every(id=>$(id).value===values[id]);
+ const b=$('ff49ReserveSave'),actor=user?.id,epoch=ff28Epoch;if(ff49ReserveBusy||!actor||!['manager','customer_service'].includes(data?.role))return;ff49ReserveBusy=true;b.disabled=true;
+ const ids=['ff49ReserveBranch','ff49ReserveName','ff49ReservePhone','ff49ReserveNotes','ff49ReserveItems','ff49ReservePickup'];const values=Object.fromEntries(ids.map(id=>[id,$(id).value]));const sameSession=()=>user?.id===actor&&ff28Epoch===epoch;const current=()=>sameSession()&&ids.every(id=>$(id).value===values[id]);
  try{await ff49LoadCatalog();if(!current())throw Error('تغيرت بيانات الحجز؛ راجعها مجددًا');const {items,notes,meta}=ff49ParseItemsAndNotes(values.ff49ReserveItems);if(Object.keys(meta).length)throw Error('اكتب الأصناف والملاحظات فقط؛ بيانات الحجز في الحقول المخصصة');const pickup=values.ff49ReservePickup?new Date(values.ff49ReservePickup+':00+03:00'):null;if(pickup&&(!Number.isFinite(pickup.getTime())||pickup.getTime()<=Date.now()-300000))throw Error('موعد الاستلام غير صالح');
   await ff27Submit('reservation',{
    p_branch:$('ff49ReserveBranch').value,p_customer_name:$('ff49ReserveName').value.trim(),
    p_phone:values.ff49ReservePhone.trim(),p_pickup:pickup?.toISOString()||null,p_items:items,
    p_notes:[$('ff49ReserveNotes').value.trim(),notes].filter(Boolean).join(' | ')
-  });toast('تم حفظ الحجز وإتاحته لكاشير الفرع');
+  });if(!sameSession())return;toast('تم حفظ الحجز وإتاحته لكاشير الفرع');
   if(current())for(const id of ids.filter(x=>x!=='ff49ReserveBranch')){$(id).value='';$(id).dispatchEvent(new Event('input',{bubbles:true}))}
   await ff49RefreshReservations();
- }catch(e){if(user?.id===actor)toast('تعذر حفظ الحجز: '+e.message)}finally{ff49ReserveBusy=false;b.disabled=false}
+ }catch(e){if(sameSession())toast('تعذر حفظ الحجز: '+e.message)}finally{if(sameSession()){ff49ReserveBusy=false;b.disabled=false}}
 };
 document.addEventListener('click',async event=>{
  const b=event.target.closest('[data-ff49-reserve-next],[data-ff49-reserve-cancel]');if(!b)return;
@@ -4101,9 +4106,10 @@ new MutationObserver(sync).observe(src,{attributes:true,childList:true,character
   if(!previewReady||!reviewedInput||reviewKey!==draftKey()){
    closeReview();status('تغيرت بيانات الطلب؛ راجع الطلب مجددًا قبل التأكيد.',true);return;
   }
-  const input=reviewedInput;
+  const input=reviewedInput,actor=user?.id,epoch=ff28Epoch;
   closeReview();
   await ff49SaveDelivery(input);
+  if(user?.id!==actor||ff28Epoch!==epoch)return;
   if(!$('newItems').value.trim()){cart.clear();renderCart();render();autoNotes='';$('ffbQuickInput').value='';$('ffbQuickReview').classList.add('hidden')}
  };
  // Avoid reloading catalog repeatedly during a draft. A live forced refresh remains available.
@@ -4639,20 +4645,29 @@ render();
 
 const ff27Pending=new Map();
 function ff27Submit(kind,input){
- const slot='ff27-request-'+user.id+'-'+kind;
+ const actor=user?.id,seq=ff28Epoch;
+ if(!actor)return Promise.reject(Error('يجب تسجيل الدخول'));
+ const current=()=>user?.id===actor&&ff28Epoch===seq;
+ const stale=()=>Error('تغيرت جلسة الحساب؛ راجع الطلب مجددًا');
+ const slot='ff27-request-'+actor+'-'+kind,pendingKey=slot+'-'+seq;
  const payload=JSON.stringify(input);
- const pending=ff27Pending.get(slot);
+ const pending=ff27Pending.get(pendingKey);
  if(pending)return pending.payload===payload?pending.work:Promise.reject(Error('انتظر نتيجة الطلب الجاري قبل إنشاء طلب مختلف'));
  const work=(async()=>{
   const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(payload));
+  if(!current())throw stale();
   const digest=Array.from(new Uint8Array(bytes),x=>x.toString(16).padStart(2,'0')).join('');
   const prev=JSON.parse(sessionStorage.getItem(slot)||'null');
   const request=prev?.digest===digest?prev.request:crypto.randomUUID();
   sessionStorage.setItem(slot,JSON.stringify({digest,request}));
-  const result=await rpc('ff27_submit',{p_request:request,p_kind:kind,p_input:input});
-  sessionStorage.removeItem(slot);return result;
- })().finally(()=>ff27Pending.delete(slot));
- ff27Pending.set(slot,{payload,work});return work;
+  const result=await rpc('ff27_submit',{p_request:request,p_kind:kind,p_input:JSON.parse(payload)});
+  if(!current())throw stale();
+  // An earlier completed request must not erase a newer retry token.
+  const latest=JSON.parse(sessionStorage.getItem(slot)||'null');
+  if(latest?.request===request&&latest?.digest===digest)sessionStorage.removeItem(slot);
+  return result;
+ })().finally(()=>ff27Pending.delete(pendingKey));
+ ff27Pending.set(pendingKey,{payload,work});return work;
 }
 
 (()=>{

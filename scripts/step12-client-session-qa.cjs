@@ -17,6 +17,32 @@ function harness(){
  return {c,events,calls,toasts,$};
 }
 function switchAccount(h,id='B'){const c=h.c;c.ff28Epoch++;c.user={id};c.data={role:'cashier',marker:'new'};c.inFlight=true;c.selfPermissions={newOnly:true};c.additionData=[{id:'new'}];c.rejectPermissions={newOnly:true};h.events.length=0;}
+const submitSource=extract('const ff27Pending=new Map();',"\n\n(()=>{\n const csv=document.getElementById('ff40ExportCSV');");
+function submitHarness(){
+ const h=harness(),store=new Map(),sent=[];let serial=0;
+ h.c.TextEncoder=TextEncoder;
+ h.c.crypto={subtle:{digest:async()=>new Uint8Array([1,2,3]).buffer},randomUUID:()=>('request-'+(++serial))};
+ h.c.sessionStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)};
+ h.c.rpc=async(n,args)=>{sent.push({n,args,actor:h.c.user?.id});return {order_number:123};};
+ vm.runInContext(submitSource,h.c);
+ return {...h,store,sent};
+}
+async function submitChecks(){
+ let n=0;
+ // Account changes while asynchronous hashing is in flight: no RPC or retry state.
+ {const h=submitHarness(),d=defer();h.c.crypto.subtle.digest=()=>d.promise;const p=h.c.ff27Submit('delivery',{name:'old draft'});switchAccount(h);d.resolve(new Uint8Array([1]).buffer);await assert.rejects(p,/تغيرت جلسة/);assert.equal(h.sent.length,0);assert.equal(h.store.size,0);n++;}
+ // Same account signs in again; generation change still blocks old draft.
+ {const h=submitHarness(),d=defer();h.c.crypto.subtle.digest=()=>d.promise;const p=h.c.ff27Submit('reservation',{name:'old draft'});switchAccount(h,'A');d.resolve(new Uint8Array([1]).buffer);await assert.rejects(p,/تغيرت جلسة/);assert.equal(h.sent.length,0);n++;}
+ // Identical concurrent submissions in one session share one request; another payload is refused.
+ {const h=submitHarness(),d=defer();h.c.crypto.subtle.digest=()=>d.promise;const p=h.c.ff27Submit('delivery',{name:'one'});const p2=h.c.ff27Submit('delivery',{name:'one'});assert.equal(p,p2);await assert.rejects(h.c.ff27Submit('delivery',{name:'different'}),/انتظر/);d.resolve(new Uint8Array([1]).buffer);await p;assert.equal(h.sent.length,1);assert.equal(h.store.size,0);n++;}
+ // Payload remains the captured draft even if the caller mutates its input during hashing.
+ {const h=submitHarness(),d=defer(),input={name:'captured'};h.c.crypto.subtle.digest=()=>d.promise;const p=h.c.ff27Submit('delivery',input);input.name='changed';d.resolve(new Uint8Array([1]).buffer);await p;assert.equal(h.sent[0].args.p_input.name,'captured');n++;}
+ // Network failure preserves the same retry token; success removes it.
+ {const h=submitHarness();let first;h.c.rpc=async(n,args)=>{first=args.p_request;throw Error('offline')};await assert.rejects(h.c.ff27Submit('delivery',{name:'retry'}),/offline/);assert.equal(h.store.size,1);h.c.rpc=async(n,args)=>{assert.equal(args.p_request,first);return {order_number:321}};await h.c.ff27Submit('delivery',{name:'retry'});assert.equal(h.store.size,0);n++;}
+ // Old response cannot display success or delete a retry token after a new generation.
+ {const h=submitHarness(),d=defer();h.c.rpc=()=>d.promise;const old=h.c.ff27Submit('delivery',{name:'old'});await tick();switchAccount(h,'A');const stored=JSON.stringify({digest:'new',request:'new-request'});h.store.set('ff27-request-A-delivery',stored);d.resolve({order_number:999});await assert.rejects(old,/تغيرت جلسة/);assert.equal(h.store.get('ff27-request-A-delivery'),stored);n++;}
+ assert.equal(n,6);console.log('PASS STEP12 order submit generation: '+n+' cases; stale drafts blocked, retry idempotency retained');
+}
 async function main(){
  let count=0;
  // Successful normal refresh, followed by a stale permissions response.
@@ -41,4 +67,4 @@ async function main(){
  {const h=harness(),d=defer();h.c.client.auth.signOut=async()=>d.promise;const p=h.$('logoutBtn').onclick();switchAccount(h);d.resolve({error:null});await p;assert.equal(h.c.user.id,'B');assert(!h.events.includes('reset'));count++;}
  assert.equal(count,14);console.log('PASS STEP12 client session generation: '+count+' cases; deferred RPC isolation, revoked session, role fallback, logout');
 }
-main().catch(e=>{console.error(e);process.exitCode=1});
+main().then(submitChecks).catch(e=>{console.error(e);process.exitCode=1});
