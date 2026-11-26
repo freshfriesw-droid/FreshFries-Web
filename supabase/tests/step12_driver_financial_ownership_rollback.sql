@@ -1,0 +1,30 @@
+BEGIN;
+DO $qa$
+DECLARE b uuid:=gen_random_uuid();u uuid:=gen_random_uuid();m uuid:=gen_random_uuid();u2 uuid:=gen_random_uuid();d1 uuid:=gen_random_uuid();d2 uuid:=gen_random_uuid();o1 uuid:=gen_random_uuid();o2 uuid:=gen_random_uuid();r jsonb;checks int:=0;
+BEGIN
+ INSERT INTO auth.users(id) VALUES(u),(m),(u2);
+ INSERT INTO public.ff_profiles(user_id,display_name,role,active) VALUES(u,'QA STEP12 driver finance','driver',true),(m,'QA STEP12 manager','manager',true),(u2,'QA STEP12 unlinked driver','driver',true);
+ INSERT INTO public.ff_branches(id,code,name) VALUES(b,'qa-finance-driver-'||b,'QA driver finance branch');
+ INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(u,b),(u2,b);
+ INSERT INTO public.ff_drivers(id,name,branch_id) VALUES(d1,'QA own driver',b),(d2,'QA other driver',b);
+ INSERT INTO public.ff38_driver_links(user_id,driver_id) VALUES(u,d1);
+ INSERT INTO public.ff38_driver_presence(driver_id,state,checked_in_at,last_seen_at) VALUES(d1,'busy',now(),now()),(d2,'busy',now(),now()) ON CONFLICT(driver_id) DO UPDATE SET state=excluded.state,checked_in_at=excluded.checked_in_at,last_seen_at=excluded.last_seen_at;
+ INSERT INTO public.ff_orders(id,order_number,branch_id,phone_snapshot,business_date,driver_id,status,items_total,total) VALUES(o1,-1000000000000-floor(random()*1e12)::bigint,b,'000000000',public.ff_business_date(now()),d1,'sent',100,100),(o2,-1000000000000-floor(random()*1e12)::bigint,b,'000000000',public.ff_business_date(now()),d2,'sent',200,200);
+ INSERT INTO public.ff38_delivery_tasks(order_id,driver_id) VALUES(o1,d1),(o2,d2);
+ SET LOCAL ROLE authenticated;PERFORM set_config('request.jwt.claim.sub',u::text,true);
+ r:=public.ff38_order_financial_summary(o1);IF r->>'order_id' IS DISTINCT FROM o1::text OR (r->>'base_total')::numeric IS DISTINCT FROM 100::numeric THEN RAISE EXCEPTION 'Own financial scope broken';END IF;checks:=checks+1;
+ BEGIN PERFORM public.ff38_order_financial_summary(o2);RAISE EXCEPTION 'Other driver financial summary accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN SQLSTATE '42501' THEN NULL;END;checks:=checks+1;
+ PERFORM set_config('request.jwt.claim.sub',u2::text,true);
+ BEGIN PERFORM public.ff38_order_financial_summary(o1);RAISE EXCEPTION 'Unlinked driver allowed' USING ERRCODE='ZQA12';EXCEPTION WHEN SQLSTATE '42501' THEN NULL;END;checks:=checks+1;
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);
+ r:=public.ff38_order_financial_summary(o2);IF (r->>'base_total')::numeric IS DISTINCT FROM 200::numeric THEN RAISE EXCEPTION 'Manager summary broken';END IF;checks:=checks+1;
+ RESET ROLE;
+ UPDATE public.ff_drivers SET active=false WHERE id=d1;
+ SET LOCAL ROLE authenticated;PERFORM set_config('request.jwt.claim.sub',u::text,true);
+ BEGIN PERFORM public.ff38_order_financial_summary(o1);RAISE EXCEPTION 'Inactive driver allowed' USING ERRCODE='ZQA12';EXCEPTION WHEN SQLSTATE '42501' THEN NULL;END;checks:=checks+1;
+ RESET ROLE;
+ IF (SELECT total FROM public.ff_orders WHERE id=o2) IS DISTINCT FROM 200::numeric THEN RAISE EXCEPTION 'Data changed';END IF;checks:=checks+1;
+ IF checks<>6 THEN RAISE EXCEPTION 'Incomplete checks';END IF;
+END $qa$;
+SELECT 'PASS STEP12 driver financial ownership: 6 assertions' result;
+ROLLBACK;
