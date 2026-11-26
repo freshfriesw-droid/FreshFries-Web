@@ -255,8 +255,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "74d49a0195300a997e7fb7c8f33fca27",
-      "scope_test": "20261125225737: cashier desk authorization and preservation, 9 rollback checks plus 33 regressions"
+      "definition_md5": "d2674b2f1448be17a2f2b5105c3efff5",
+      "scope_test": "20261125225737: cashier desk authorization and preservation, 9 rollback checks plus 33 regressions; 20261126000830: 6 driver ownership checks and 35 regression assertions PASS; own linked active driver allowed; other, unlinked, inactive denied"
     },
     {
       "name": "ff38_permission_allowed",
@@ -2508,5 +2508,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26: all 25 delegated indicator entries targeted live SQL authorization checks"
+  "last_update": "2026-11-26 driver financial ownership"
 }
