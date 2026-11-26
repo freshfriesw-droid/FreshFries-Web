@@ -2559,5 +2559,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26 STEP12 role discovery matrix; 111/270 entries with explicit scope_test, not full acceptance; #146 pending merge"
+  "last_update": "2026-11-26 STEP12 #146 merged at 9a41b439786d1ca6ed7c84bb99194a830d1181ca; 111/270 entries with explicit scope_test, not full acceptance; post-merge Pages/static pending at checkpoint"
 }
