@@ -1,0 +1,33 @@
+BEGIN;
+DO $qa$
+DECLARE m uuid:=gen_random_uuid(); a uuid:=gen_random_uuid(); b uuid:=gen_random_uuid(); s uuid:=gen_random_uuid(); x uuid:=gen_random_uuid(); y uuid:=gen_random_uuid(); c uuid:=gen_random_uuid(); i uuid; items jsonb; code_value text; tok uuid:=gen_random_uuid(); r jsonb; orig uuid; reward_id uuid; denied int:=0; checks int:=0;
+BEGIN
+ INSERT INTO auth.users(id) VALUES(m),(a),(b),(s);
+ INSERT INTO public.ff_profiles(user_id,display_name,role,active) VALUES(m,'QA STEP12 reward manager','manager',true),(a,'QA STEP12 reward cashier A','cashier',true),(b,'QA STEP12 reward cashier B','cashier',true),(s,'QA STEP12 reward cashier same','cashier',true);
+ INSERT INTO public.ff_branches(id,code,name) VALUES(x,'qa-reward-'||x,'QA reward A'),(y,'qa-reward-'||y,'QA reward B');
+ INSERT INTO public.ff_user_branches(user_id,branch_id) VALUES(a,x),(b,y),(s,x);
+ INSERT INTO public.ff_menu_categories(id,name,active) VALUES(c,'QA STEP12 reward '||c,true);
+ INSERT INTO public.ff_menu_items(category_id,name,price,active) VALUES(c,'QA STEP12 reward item',100,true) RETURNING id INTO i;
+ items:=jsonb_build_array(jsonb_build_object('id',i,'qty',1));
+ SET LOCAL ROLE authenticated;
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);
+ r:=public.ff_reward_issue('hospitality','QA synthetic recipient','0000000000',items,NULL);code_value:=r->>'code';reward_id:=(r->>'id')::uuid;
+ PERFORM set_config('request.jwt.claim.sub',a::text,true);
+ r:=public.ff_reward_redeem(code_value,x,'cashier_pickup','',0,'',tok,true);orig:=(r->>'reservation_id')::uuid;
+ IF orig IS NULL OR r->>'saved' IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'Missing valid receipt';END IF;checks:=checks+1;
+ r:=public.ff_reward_redeem(code_value,x,'cashier_pickup','',0,'',tok,true);
+ IF (r->>'reservation_id')::uuid IS DISTINCT FROM orig OR r->>'duplicate' IS DISTINCT FROM 'true' THEN RAISE EXCEPTION 'Legitimate retry broken';END IF;checks:=checks+1;
+ BEGIN PERFORM public.ff_reward_redeem(code_value,x,'cashier_pickup','',0,'',gen_random_uuid(),true);RAISE EXCEPTION 'Second redemption accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN SQLSTATE '42501' THEN denied:=denied+1;END;
+ PERFORM set_config('request.jwt.claim.sub',b::text,true);
+ BEGIN PERFORM public.ff_reward_redeem(code_value,y,'cashier_pickup','',0,'',tok,true);RAISE EXCEPTION 'Cross-branch replay accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN SQLSTATE '42501' THEN denied:=denied+1;END;
+ PERFORM set_config('request.jwt.claim.sub',s::text,true);
+ BEGIN PERFORM public.ff_reward_redeem(code_value,x,'cashier_pickup','',0,'',tok,true);RAISE EXCEPTION 'Cross-account replay accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN SQLSTATE '42501' THEN denied:=denied+1;END;
+ PERFORM set_config('request.jwt.claim.sub',m::text,true);
+ BEGIN PERFORM public.ff_reward_redeem(code_value,x,'reservation','',0,'',tok,true);RAISE EXCEPTION 'Cross-channel replay accepted' USING ERRCODE='ZQA12';EXCEPTION WHEN SQLSTATE '42501' THEN denied:=denied+1;END;
+ RESET ROLE;
+ IF (SELECT count(*) FROM public.ff49_reservations WHERE branch_id IN (x,y))<>1 THEN RAISE EXCEPTION 'Unexpected duplicate reservation';END IF;checks:=checks+1;
+ IF NOT EXISTS(SELECT FROM public.ff_reward_codes WHERE id=reward_id AND status='redeemed' AND redeemed_by=a AND redeemed_branch_id=x AND redeemed_channel='cashier_pickup' AND redeemed_reservation_id=orig AND redeem_token=tok) THEN RAISE EXCEPTION 'Reward ownership changed';END IF;checks:=checks+1;
+ IF denied<>4 OR checks<>4 THEN RAISE EXCEPTION 'Expected 4 denials and 4 valid/state checks';END IF;
+END $qa$;
+SELECT 'PASS STEP12 reward redemption: 4 replay denials, 4 valid/idempotency/state assertions' result;
+ROLLBACK;
