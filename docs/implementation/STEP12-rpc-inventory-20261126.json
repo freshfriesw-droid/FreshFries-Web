@@ -320,7 +320,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "1139e3fe2fc46a25bc18d73d23e5c79f"
+      "definition_md5": "1139e3fe2fc46a25bc18d73d23e5c79f",
+      "scope_test": "STEP12 step12_communications_presets_scope_rollback.sql PASS 39/39; inbox and receipt ownership, cancelled message, sender history, inactive identities, own report presets and dispatch policy; SQL claims only; message access assertion covers can_send and branches, not all grants"
     },
     {
       "name": "ff39_inbox",
@@ -329,7 +330,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "533fbee3dca17beb9961496e3ec6b79a"
+      "definition_md5": "533fbee3dca17beb9961496e3ec6b79a",
+      "scope_test": "STEP12 step12_communications_presets_scope_rollback.sql PASS 39/39; inbox and receipt ownership, cancelled message, sender history, inactive identities, own report presets and dispatch policy; SQL claims only; message access assertion covers can_send and branches, not all grants"
     },
     {
       "name": "ff39_mark_read",
@@ -338,7 +340,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "239acc50196a9699dab36708b550e84d"
+      "definition_md5": "239acc50196a9699dab36708b550e84d",
+      "scope_test": "STEP12 step12_communications_presets_scope_rollback.sql PASS 39/39; inbox and receipt ownership, cancelled message, sender history, inactive identities, own report presets and dispatch policy; SQL claims only; message access assertion covers can_send and branches, not all grants"
     },
     {
       "name": "ff40_operations_alerts",
@@ -368,7 +371,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9f1edca90b53f521963fe0a12430b5f6"
+      "definition_md5": "9f1edca90b53f521963fe0a12430b5f6",
+      "scope_test": "STEP12 step12_case_privacy_matrix_rollback.sql PASS 57/57; synthetic grievance ownership, cashier desk, supervisor branch and masked phone, alert receipt and manager lifecycle; SQL claims only"
     },
     {
       "name": "ff41_case_create",
@@ -377,7 +381,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "6cb860f02be46bd8f008c314500e6f4d"
+      "definition_md5": "6cb860f02be46bd8f008c314500e6f4d",
+      "scope_test": "STEP12 step12_case_privacy_matrix_rollback.sql PASS 57/57; synthetic grievance ownership, cashier desk, supervisor branch and masked phone, alert receipt and manager lifecycle; SQL claims only"
     },
     {
       "name": "ff41_case_detail",
@@ -386,7 +391,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "7c737c61a586d1cfff3c4d6e7a09b2e4"
+      "definition_md5": "7c737c61a586d1cfff3c4d6e7a09b2e4",
+      "scope_test": "STEP12 step12_case_privacy_matrix_rollback.sql PASS 57/57; synthetic grievance ownership, cashier desk, supervisor branch and masked phone, alert receipt and manager lifecycle; SQL claims only"
     },
     {
       "name": "ff41_case_list",
@@ -395,7 +401,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9f527a847d6135a250115238ad397535"
+      "definition_md5": "9f527a847d6135a250115238ad397535",
+      "scope_test": "STEP12 step12_case_privacy_matrix_rollback.sql PASS 57/57; synthetic grievance ownership, cashier desk, supervisor branch and masked phone, alert receipt and manager lifecycle; SQL claims only"
     },
     {
       "name": "ff41_case_transition",
@@ -404,7 +411,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "222d135dfccad238f482713493790f12"
+      "definition_md5": "222d135dfccad238f482713493790f12",
+      "scope_test": "STEP12 step12_case_privacy_matrix_rollback.sql PASS 57/57; synthetic grievance ownership, cashier desk, supervisor branch and masked phone, alert receipt and manager lifecycle; SQL claims only"
     },
     {
       "name": "ff42_settlement_close",
@@ -966,7 +974,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5407bf209b9c9a85391797c490e982b3"
+      "definition_md5": "5407bf209b9c9a85391797c490e982b3",
+      "scope_test": "STEP12 step12_communications_presets_scope_rollback.sql PASS 39/39; inbox and receipt ownership, cancelled message, sender history, inactive identities, own report presets and dispatch policy; SQL claims only; message access assertion covers can_send and branches, not all grants"
     },
     {
       "name": "ff60_list_workflow",
@@ -1004,7 +1013,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "579ae0fd29317ad3070b85ffe915e5fc"
+      "definition_md5": "579ae0fd29317ad3070b85ffe915e5fc",
+      "scope_test": "STEP12 step12_communications_presets_scope_rollback.sql PASS 39/39; inbox and receipt ownership, cancelled message, sender history, inactive identities, own report presets and dispatch policy; SQL claims only; message access assertion covers can_send and branches, not all grants"
     },
     {
       "name": "ff60_set_policy",
@@ -1622,7 +1632,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "59883a8db3ec92f75f2c02950b85f737"
+      "definition_md5": "59883a8db3ec92f75f2c02950b85f737",
+      "scope_test": "STEP12 step12_communications_presets_scope_rollback.sql PASS 39/39; inbox and receipt ownership, cancelled message, sender history, inactive identities, own report presets and dispatch policy; SQL claims only; message access assertion covers can_send and branches, not all grants"
     },
     {
       "name": "ff_a11_message_audit",
@@ -1660,7 +1671,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "e3a80b3b5fccdf98c48460ce010a0195"
+      "definition_md5": "e3a80b3b5fccdf98c48460ce010a0195",
+      "scope_test": "STEP12 step12_communications_presets_scope_rollback.sql PASS 39/39; inbox and receipt ownership, cancelled message, sender history, inactive identities, own report presets and dispatch policy; SQL claims only; message access assertion covers can_send and branches, not all grants"
     },
     {
       "name": "ff_a11_message_preview",
@@ -1889,7 +1901,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f202b43deb050251c7f1b221d01206bd"
+      "definition_md5": "f202b43deb050251c7f1b221d01206bd",
+      "scope_test": "STEP12 step12_case_privacy_matrix_rollback.sql PASS 57/57; synthetic grievance ownership, cashier desk, supervisor branch and masked phone, alert receipt and manager lifecycle; SQL claims only"
     },
     {
       "name": "ff_case_alerts",
@@ -1898,7 +1911,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "3ecd9cfb01f7a8932141dadf9a08eae5"
+      "definition_md5": "3ecd9cfb01f7a8932141dadf9a08eae5",
+      "scope_test": "STEP12 step12_case_privacy_matrix_rollback.sql PASS 57/57; synthetic grievance ownership, cashier desk, supervisor branch and masked phone, alert receipt and manager lifecycle; SQL claims only"
     },
     {
       "name": "ff_confirm_pinned_order",
@@ -2261,7 +2275,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "64c323da9a948e86c1b5596e05d4d3b2"
+      "definition_md5": "64c323da9a948e86c1b5596e05d4d3b2",
+      "scope_test": "STEP12 step12_communications_presets_scope_rollback.sql PASS 39/39; inbox and receipt ownership, cancelled message, sender history, inactive identities, own report presets and dispatch policy; SQL claims only; message access assertion covers can_send and branches, not all grants"
     },
     {
       "name": "ff_report_preset_save",
@@ -2270,7 +2285,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d9fda1eda67ad48c2477235eaaa01281"
+      "definition_md5": "d9fda1eda67ad48c2477235eaaa01281",
+      "scope_test": "STEP12 step12_communications_presets_scope_rollback.sql PASS 39/39; inbox and receipt ownership, cancelled message, sender history, inactive identities, own report presets and dispatch policy; SQL claims only; message access assertion covers can_send and branches, not all grants"
     },
     {
       "name": "ff_reward_check",
@@ -2559,5 +2575,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26 STEP12 #146 merged at 9a41b439786d1ca6ed7c84bb99194a830d1181ca; 111/270 entries with explicit scope_test, not full acceptance; post-merge Pages/static pending at checkpoint"
+  "last_update": "2026-11-26 STEP12 case privacy and communications/preset scope; #146 post-merge Pages/static both PASS; 127/270 entries with explicit scope_test, not full acceptance"
 }
