@@ -73,7 +73,21 @@ with sync_playwright() as pw:
  for role in roles:
   ctx=browser.new_context(viewport={"width":390,"height":850},service_workers="block",reduced_motion="reduce")
   ctx.route("**/*",lambda route:route.continue_() if route.request.url.startswith(origin) else route.abort())
-  page=ctx.new_page();page.goto(origin,wait_until="load");page.evaluate(fixture,role)
+  page=ctx.new_page();page.goto(origin,wait_until="load")
+  # Validate native DOM associations, independent of the role hiding a panel.
+  delta_path=root/"docs/implementation/STEP13-accessibility-delta-20261126.json"
+  if delta_path.is_file():
+   fields=json.loads(delta_path.read_text())["hunks"]
+   association=page.evaluate("""rows=>rows.map(r=>{
+     const e=document.getElementById(r.id);
+     return {id:r.id,unique:document.querySelectorAll('[id="'+r.id+'"]').length===1,
+       valid:!!e&&(r.id==='ff51CustomerSearch'
+         ?e.getAttribute('aria-label')===r.label
+         :Array.from(e.labels||[]).some(l=>l.htmlFor===r.id&&l.control===e&&l.textContent.trim()===r.label))}
+   })""",fields)
+   assert len(association)==39 and all(x["unique"] and x["valid"] for x in association),(role,association)
+   (out/f"step13-labels-{role}.json").write_text(json.dumps(association,ensure_ascii=False,indent=2))
+  page.evaluate(fixture,role)
   special=role in ("assembly","burger_kitchen")
   nav="#ffA06SpecialNav" if special else "#ffx-mobile-nav"
   page.wait_for_function("(sel)=>document.querySelectorAll(sel+' button').length>=2",arg=nav)
@@ -149,6 +163,17 @@ with sync_playwright() as pw:
    assert page.locator('#ffx-nav [data-ffx-group-toggle]').first.get_attribute("aria-expanded")==expanded
    search=page.locator("#ffx-nav-search");search.fill("قيمة غير موجودة");assert page.locator('#ffx-nav .ffx-nav-group:not([hidden])').count()==0
    search.fill("");page.keyboard.press("Escape")
+   # Real keyboard open, focus containment, Escape, and restoration.
+   page.locator("#ffx-menu").focus();page.keyboard.press("Enter")
+   assert page.locator("#ffx-sidebar").get_attribute("aria-hidden") is None
+   assert page.evaluate("document.activeElement.id")== "ffx-drawer-close"
+   page.keyboard.press("Shift+Tab")
+   assert page.evaluate("document.getElementById('ffx-sidebar').contains(document.activeElement)")
+   page.keyboard.press("Tab")
+   assert page.evaluate("document.activeElement.id")== "ffx-drawer-close"
+   page.keyboard.press("Escape")
+   assert page.locator("#ffx-sidebar").get_attribute("aria-hidden")=="true"
+   assert page.evaluate("document.activeElement.id")=="ffx-menu"
    if role in ("manager","customer_service","supervisor"):
     page.locator("#ffx-menu").click();page.locator("#ffx-nav-search").fill("123");assert page.locator('#ffA06OrderSearchResults button[data-ff-a06-result="123"]').count()==1
     page.locator('#ffA06OrderSearchResults button[data-ff-a06-result="123"]').click();assert page.locator("#orderSearch").input_value()=="123"
