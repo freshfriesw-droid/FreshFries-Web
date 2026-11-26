@@ -62,7 +62,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "497f2215e283e075f9e76826ce450135"
+      "definition_md5": "497f2215e283e075f9e76826ce450135",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff38_admin_permission_audit",
@@ -98,7 +99,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "ce5f86436397f3cea30ce91d4a503ec0"
+      "definition_md5": "ce5f86436397f3cea30ce91d4a503ec0",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff38_admin_staff_list",
@@ -107,7 +109,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "01c43398111d2326d388eec0aecd2d36"
+      "definition_md5": "01c43398111d2326d388eec0aecd2d36",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff38_admin_staff_set_access",
@@ -407,7 +410,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "dfa113746abdd93fdeca17affd599b2e"
+      "definition_md5": "dfa113746abdd93fdeca17affd599b2e",
+      "scope_test": "STEP12 step12_financial_catalog_scope_rollback.sql PASS 72/72: 8 unauthorized contexts denied per RPC; authorized manager/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff42_settlement_detail",
@@ -416,7 +420,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "2fa0f3332d3703524ad6976a6055a23f"
+      "definition_md5": "2fa0f3332d3703524ad6976a6055a23f",
+      "scope_test": "STEP12 step12_financial_catalog_scope_rollback.sql PASS 72/72: 8 unauthorized contexts denied per RPC; authorized manager/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff42_settlement_overview",
@@ -435,7 +440,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "161379619ee5234549642b2644844c6d"
+      "definition_md5": "161379619ee5234549642b2644844c6d",
+      "scope_test": "STEP12 step12_financial_catalog_scope_rollback.sql PASS 72/72: 8 unauthorized contexts denied per RPC; authorized manager/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff43_security_report",
@@ -484,7 +490,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "767b57c9e8b24360b680497bb6b31883"
+      "definition_md5": "767b57c9e8b24360b680497bb6b31883",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff47_test_run_create",
@@ -493,7 +500,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5898421bcd317b080ed75123b9b79370"
+      "definition_md5": "5898421bcd317b080ed75123b9b79370",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff47_test_run_detail",
@@ -502,7 +510,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f78e1dddf2ae5103c8cea80edc9db2da"
+      "definition_md5": "f78e1dddf2ae5103c8cea80edc9db2da",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff47_test_run_set_state",
@@ -511,7 +520,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "2f0fd2f7872a7b311fa234ba67f838cf"
+      "definition_md5": "2f0fd2f7872a7b311fa234ba67f838cf",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff47_test_runs_list",
@@ -721,7 +731,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "87e4618f6b98fa69b4eed29ecd0fc458"
+      "definition_md5": "87e4618f6b98fa69b4eed29ecd0fc458",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff51_catalog_toggle",
@@ -730,7 +741,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "b44d19df5d7c46a2fc25da7e943892a2"
+      "definition_md5": "b44d19df5d7c46a2fc25da7e943892a2",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff51_customer_directory",
@@ -796,7 +808,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "019a2f334fded0571c2542988da5168d"
+      "definition_md5": "019a2f334fded0571c2542988da5168d",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff51_order_archive",
@@ -833,7 +846,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "2f01e03f456edbbb3d6589d09a0bc53e"
+      "definition_md5": "2f01e03f456edbbb3d6589d09a0bc53e",
+      "scope_test": "STEP12 step12_financial_catalog_scope_rollback.sql PASS 72/72: 8 unauthorized contexts denied per RPC; authorized manager/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff52_late_addition_create",
@@ -991,7 +1005,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "3d54f8903be501b57aa952a9f9b17530"
+      "definition_md5": "3d54f8903be501b57aa952a9f9b17530",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff61_set_delegation",
@@ -1121,7 +1136,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "007d3b7381846af306dd3471d40b4831"
+      "definition_md5": "007d3b7381846af306dd3471d40b4831",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff76_report_approval_save",
@@ -1130,7 +1146,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "73539ecaf21fb5a208306b93221ea37b"
+      "definition_md5": "73539ecaf21fb5a208306b93221ea37b",
+      "scope_test": "STEP12 step12_financial_catalog_scope_rollback.sql PASS 72/72: 8 unauthorized contexts denied per RPC; authorized manager/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff76_reporting_center",
@@ -1296,7 +1313,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "b2dfad78434abe2e5abe43058548d8e4"
+      "definition_md5": "b2dfad78434abe2e5abe43058548d8e4",
+      "scope_test": "STEP12 step12_financial_catalog_scope_rollback.sql PASS 72/72: 8 unauthorized contexts denied per RPC; authorized manager/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff_a02_customer_history",
@@ -2187,7 +2205,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d5e7257d7ef2440b440fc32048a9a6c8"
+      "definition_md5": "d5e7257d7ef2440b440fc32048a9a6c8",
+      "scope_test": "STEP12 step12_financial_catalog_scope_rollback.sql PASS 72/72: 8 unauthorized contexts denied per RPC; authorized manager/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff_luxe_skip_driver_cancel",
@@ -2260,7 +2279,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f9e45b99c679f4b6c7f6527bb998e291"
+      "definition_md5": "016c64df9337308284aec3db72c2a78a",
+      "scope_test": "STEP12 #146 live migration 20261126014631; 9 denial + 5 valid/state assertions PASS after fix; SQL claims only"
     },
     {
       "name": "ff_reward_list",
@@ -2278,7 +2298,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9ba5232c423ed7f87ef8a42068f4e9b8"
+      "definition_md5": "1ad742d7e83d87a12a58be0caf1b28e7",
+      "scope_test": "STEP12 #146 live migration 20261126014901; 4 replay denial + 4 valid/idempotency/state assertions PASS; SQL claims only"
     },
     {
       "name": "ff_reward_void",
@@ -2296,7 +2317,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "48b677919b51222d323fb3141e4c290a"
+      "definition_md5": "48b677919b51222d323fb3141e4c290a",
+      "scope_test": "STEP12 step12_financial_catalog_scope_rollback.sql PASS 72/72: 8 unauthorized contexts denied per RPC; authorized manager/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff_security_login_event",
@@ -2483,7 +2505,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "a3fc4f6809f86cd99fc37cfb4484e219"
+      "definition_md5": "a3fc4f6809f86cd99fc37cfb4484e219",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff_v12_assembly_accounts",
@@ -2492,7 +2515,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "89c6dc00a9f7889e8465ff886841d3ea"
+      "definition_md5": "89c6dc00a9f7889e8465ff886841d3ea",
+      "scope_test": "STEP12 step12_admin_mutations_rollback.sql PASS 120/120: 8 unauthorized contexts denied per RPC; selected manager valid/state assertions (SQL claims, not real JWT)"
     },
     {
       "name": "ff_v12_assembly_me",
@@ -2525,5 +2549,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26 STEP12 privileged read RPC: 10 additional signatures; 77/270 entries with explicit scope_test, not full acceptance"
+  "last_update": "2026-11-26 STEP12 admin/finance matrix and reward guards; 101/270 entries with explicit scope_test, not full acceptance; #146 pending merge"
 }

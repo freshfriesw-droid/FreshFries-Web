@@ -226,8 +226,8 @@
       "review_date": "2026-11-24",
       "reviewer": "مراجعة آلية عبر ChatGPT؛ نتائج GitHub Actions واختبارات SQL بحسب المراجع",
       "reference_page": 8,
-      "evidence": "[#8](https://github.com/freshfriesw-droid/FreshFries-Web/pull/8)، [#9](https://github.com/freshfriesw-droid/FreshFries-Web/pull/9)، [#10](https://github.com/freshfriesw-droid/FreshFries-Web/pull/10)، [#11](https://github.com/freshfriesw-droid/FreshFries-Web/pull/11)، [#12](https://github.com/freshfriesw-droid/FreshFries-Web/pull/12)، STEP12: [#145](https://github.com/freshfriesw-droid/FreshFries-Web/pull/145) CI 17/17، [90 SQL rollback assertions](../../supabase/tests/step12_privileged_read_rpc_rollback.sql)، [سجل STEP12](STEP12-progress-20261126.md).",
-      "remaining": "اختبارات RLS/RPC كاملة والأدوار والفرع؛ STEP12 مفتوحة: Auth/Storage/Realtime الحقيقي وقبول RPC المتبقي، والتحقق المستقل من استعادة النسخة الكاملة مشروط بالإمكانيات. لا قبول شامل."
+      "evidence": "[#8](https://github.com/freshfriesw-droid/FreshFries-Web/pull/8)، [#9](https://github.com/freshfriesw-droid/FreshFries-Web/pull/9)، [#10](https://github.com/freshfriesw-droid/FreshFries-Web/pull/10)، [#11](https://github.com/freshfriesw-droid/FreshFries-Web/pull/11)، [#12](https://github.com/freshfriesw-droid/FreshFries-Web/pull/12)، STEP12: [#145](https://github.com/freshfriesw-droid/FreshFries-Web/pull/145) CI 17/17، [90 SQL rollback assertions](../../supabase/tests/step12_privileged_read_rpc_rollback.sql)، [سجل STEP12](STEP12-progress-20261126.md).؛ STEP12: [#146](https://github.com/freshfriesw-droid/FreshFries-Web/pull/146) — ترحيلان حيان واختبارات SQL متراجعة؛ [إدارة](../../supabase/tests/step12_admin_mutations_rollback.sql)، [مالية](../../supabase/tests/step12_financial_catalog_scope_rollback.sql). 214 حالة جديدة ناجحة، لا اختبار Auth حي.",
+      "remaining": "اختبارات RLS/RPC كاملة والأدوار والفرع؛ STEP12 مفتوحة: Auth/Storage/Realtime الحقيقي وقبول RPC المتبقي، والتحقق المستقل من استعادة النسخة الكاملة مشروط بالإمكانيات. لا قبول شامل. دمج #146 والتحقق من النشر وتغطية RPC المتبقية، دون قبول شامل."
     },
     {
       "id": "FIX-16",
@@ -1141,8 +1141,8 @@
       "review_date": "2026-11-24",
       "reviewer": "مراجعة آلية عبر ChatGPT؛ نتائج GitHub Actions واختبارات SQL بحسب المراجع",
       "reference_page": 34,
-      "evidence": "[#12](https://github.com/freshfriesw-droid/FreshFries-Web/pull/12)، [#48](https://github.com/freshfriesw-droid/FreshFries-Web/pull/48)، [#57](https://github.com/freshfriesw-droid/FreshFries-Web/pull/57)، STEP12: [#145](https://github.com/freshfriesw-droid/FreshFries-Web/pull/145) CI 17/17، [90 SQL rollback assertions](../../supabase/tests/step12_privileged_read_rpc_rollback.sql)، [سجل STEP12](STEP12-progress-20261126.md).",
-      "remaining": "فحص أمني شامل؛ STEP12 مفتوحة: Auth/Storage/Realtime الحقيقي وقبول RPC المتبقي، والتحقق المستقل من استعادة النسخة الكاملة مشروط بالإمكانيات. لا قبول شامل."
+      "evidence": "[#12](https://github.com/freshfriesw-droid/FreshFries-Web/pull/12)، [#48](https://github.com/freshfriesw-droid/FreshFries-Web/pull/48)، [#57](https://github.com/freshfriesw-droid/FreshFries-Web/pull/57)، STEP12: [#145](https://github.com/freshfriesw-droid/FreshFries-Web/pull/145) CI 17/17، [90 SQL rollback assertions](../../supabase/tests/step12_privileged_read_rpc_rollback.sql)، [سجل STEP12](STEP12-progress-20261126.md).؛ STEP12: [#146](https://github.com/freshfriesw-droid/FreshFries-Web/pull/146) — ترحيلان حيان واختبارات SQL متراجعة؛ [إدارة](../../supabase/tests/step12_admin_mutations_rollback.sql)، [مالية](../../supabase/tests/step12_financial_catalog_scope_rollback.sql). 214 حالة جديدة ناجحة، لا اختبار Auth حي.",
+      "remaining": "فحص أمني شامل؛ STEP12 مفتوحة: Auth/Storage/Realtime الحقيقي وقبول RPC المتبقي، والتحقق المستقل من استعادة النسخة الكاملة مشروط بالإمكانيات. لا قبول شامل. دمج #146 والتحقق من النشر وتغطية RPC المتبقية، دون قبول شامل."
     },
     {
       "id": "QA-26",
@@ -2056,8 +2056,8 @@
       "review_date": "2026-11-24",
       "reviewer": "مراجعة آلية عبر ChatGPT؛ نتائج GitHub Actions واختبارات SQL بحسب المراجع",
       "reference_page": 48,
-      "evidence": "FIX-15، QA-25، STEP12: [#145](https://github.com/freshfriesw-droid/FreshFries-Web/pull/145) CI 17/17، [90 SQL rollback assertions](../../supabase/tests/step12_privileged_read_rpc_rollback.sql)، [سجل STEP12](STEP12-progress-20261126.md).",
-      "remaining": "يرث شروط القبول من البنود المرتبطة؛ لا يعد مقبولًا بمجرد وجود الوظيفة.؛ STEP12 مفتوحة: Auth/Storage/Realtime الحقيقي وقبول RPC المتبقي، والتحقق المستقل من استعادة النسخة الكاملة مشروط بالإمكانيات. لا قبول شامل."
+      "evidence": "FIX-15، QA-25، STEP12: [#145](https://github.com/freshfriesw-droid/FreshFries-Web/pull/145) CI 17/17، [90 SQL rollback assertions](../../supabase/tests/step12_privileged_read_rpc_rollback.sql)، [سجل STEP12](STEP12-progress-20261126.md).؛ STEP12: [#146](https://github.com/freshfriesw-droid/FreshFries-Web/pull/146) — ترحيلان حيان واختبارات SQL متراجعة؛ [إدارة](../../supabase/tests/step12_admin_mutations_rollback.sql)، [مالية](../../supabase/tests/step12_financial_catalog_scope_rollback.sql). 214 حالة جديدة ناجحة، لا اختبار Auth حي.",
+      "remaining": "يرث شروط القبول من البنود المرتبطة؛ لا يعد مقبولًا بمجرد وجود الوظيفة.؛ STEP12 مفتوحة: Auth/Storage/Realtime الحقيقي وقبول RPC المتبقي، والتحقق المستقل من استعادة النسخة الكاملة مشروط بالإمكانيات. لا قبول شامل. دمج #146 والتحقق من النشر وتغطية RPC المتبقية، دون قبول شامل."
     },
     {
       "id": "TR-42",
