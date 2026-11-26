@@ -26,7 +26,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "ef236068b3a76650f90df618dba1bd75"
+      "definition_md5": "ef236068b3a76650f90df618dba1bd75",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff27_submit",
@@ -35,7 +36,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "666239ff653783b7cebd7490b6965752"
+      "definition_md5": "186bc254f3fa6e250f9f1fc6f2d1ead7",
+      "scope_test": "STEP12 step12_atomic_retry_scope_rollback.sql PASS 18/18 collective; current role, permission and branch after request lock, retry and no duplication; migration 20261126052409, #149 pending merge; synthetic SQL claims only."
     },
     {
       "name": "ff28_customer",
@@ -281,7 +283,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "c28999d99ab6068bdf57d1e1d1e9d429"
+      "definition_md5": "c28999d99ab6068bdf57d1e1d1e9d429",
+      "scope_test": "STEP12 step12_visibility_cashier_completion_rollback.sql PASS 58/58 collective; snapshot/addition ownership, desk scope, invoice and customer edit denial, manager progress audit; synthetic SQL claims only."
     },
     {
       "name": "ff38_my_permissions",
@@ -664,7 +667,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "1bc12b0119c0f1a916a1725d9d7bdfc1"
+      "definition_md5": "1bc12b0119c0f1a916a1725d9d7bdfc1",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff49_create_reservation",
@@ -673,7 +677,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "66c0f810c30c54d34b3ee451f81c02d6"
+      "definition_md5": "66c0f810c30c54d34b3ee451f81c02d6",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff49_manual_dispatch",
@@ -705,7 +710,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "0b7083723e43e9b555a7ba88a10793bc"
+      "definition_md5": "0b7083723e43e9b555a7ba88a10793bc",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff49_reservations_list",
@@ -714,7 +720,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "bb6d5813888823fcd7bc4f9c057d2115"
+      "definition_md5": "bb6d5813888823fcd7bc4f9c057d2115",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff49_snapshot",
@@ -723,7 +730,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "e10906b66f7d38e611c3cf257a7d56fd"
+      "definition_md5": "e10906b66f7d38e611c3cf257a7d56fd",
+      "scope_test": "STEP12 step12_visibility_cashier_completion_rollback.sql PASS 58/58 collective; snapshot/addition ownership, desk scope, invoice and customer edit denial, manager progress audit; synthetic SQL claims only."
     },
     {
       "name": "ff49_visible_transfers",
@@ -928,7 +936,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "0197fd53b796d172aab91bbf3d631670"
+      "definition_md5": "0197fd53b796d172aab91bbf3d631670",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a02_addition_roundtrip_rollback.sql",
+        "note": "STEP09 progress records successful live rollback: item validation, regular/late addition state, invoicing, cancellation, pickup and final delivery. Prior evidence, not exhaustive role coverage; no re-run."
+      }
     },
     {
       "name": "ff52_late_cancel",
@@ -937,7 +949,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "cb136ff80c5577356afd2234031f9d30"
+      "definition_md5": "f412e71e49b3baee6d25e04805134740",
+      "scope_test": "STEP12 step12_late_addition_guard_rollback.sql PASS 14/14 collective; foreign branch cancellation denied, explicit decision, owner/manager/CS and local override preserved; migration 20261126052603, #149 pending merge; synthetic SQL claims only."
     },
     {
       "name": "ff52_late_driver_decide",
@@ -946,7 +959,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "18a76d78c126fe5b80de4ce7978d2241"
+      "definition_md5": "0362469d697cc8f70461804e28617420",
+      "scope_test": "STEP12 step12_late_addition_guard_rollback.sql PASS 14/14 collective; foreign branch cancellation denied, explicit decision, owner/manager/CS and local override preserved; migration 20261126052603, #149 pending merge; synthetic SQL claims only."
     },
     {
       "name": "ff52_late_driver_pickup",
@@ -955,7 +969,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "137bebbf83a2a6511d74ae051f70a4ac"
+      "definition_md5": "137bebbf83a2a6511d74ae051f70a4ac",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a02_addition_roundtrip_rollback.sql",
+        "note": "STEP09 progress records successful live rollback: item validation, regular/late addition state, invoicing, cancellation, pickup and final delivery. Prior evidence, not exhaustive role coverage; no re-run."
+      }
     },
     {
       "name": "ff52_late_invoice",
@@ -994,7 +1012,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "979745257890c72152d25eb42b6c9c54"
+      "definition_md5": "979745257890c72152d25eb42b6c9c54",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a02_addition_roundtrip_rollback.sql",
+        "note": "STEP09 progress records successful live rollback: item validation, regular/late addition state, invoicing, cancellation, pickup and final delivery. Prior evidence, not exhaustive role coverage; no re-run."
+      }
     },
     {
       "name": "ff52_regular_addition_create",
@@ -1003,7 +1025,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "cad9afae75a1fbf872696240a957d3b3"
+      "definition_md5": "cad9afae75a1fbf872696240a957d3b3",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a02_addition_roundtrip_rollback.sql",
+        "note": "STEP09 progress records successful live rollback: item validation, regular/late addition state, invoicing, cancellation, pickup and final delivery. Prior evidence, not exhaustive role coverage; no re-run."
+      }
     },
     {
       "name": "ff52_regular_addition_invoice",
@@ -1012,7 +1038,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9d39fe714f14c04107360a854934cad5"
+      "definition_md5": "9d39fe714f14c04107360a854934cad5",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a02_addition_roundtrip_rollback.sql",
+        "note": "STEP09 progress records successful live rollback: item validation, regular/late addition state, invoicing, cancellation, pickup and final delivery. Prior evidence, not exhaustive role coverage; no re-run."
+      }
     },
     {
       "name": "ff53_save_menu_image",
@@ -1051,7 +1081,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "7099c54337b70b9996c33df777f1ddf3"
+      "definition_md5": "7099c54337b70b9996c33df777f1ddf3",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a03_managed_reoffer_rollback.sql",
+        "note": "STEP09 records PASS: missing reason, foreign driver, duplicate pending, fresh deadline and audit. Prior evidence."
+      }
     },
     {
       "name": "ff60_operational_queue",
@@ -1126,7 +1160,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5d0c3969fb3e5a4f3305ae6e5e3807ce"
+      "definition_md5": "5d0c3969fb3e5a4f3305ae6e5e3807ce",
+      "scope_test": "STEP12 step12_pinned_capacity_scope_matrix_rollback.sql PASS 77/77 collective; central and scoped roles, explicit pin, zero fee, cashier desk, capacity; synthetic Cairo fixture and QA branch rolled back; synthetic SQL claims only."
     },
     {
       "name": "ff62_create_pinned_order",
@@ -1135,7 +1170,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9e10a5a5f89c09ecb2231d68fd43da90"
+      "definition_md5": "9e10a5a5f89c09ecb2231d68fd43da90",
+      "scope_test": "STEP12 step12_pinned_capacity_scope_matrix_rollback.sql PASS 77/77 collective; central and scoped roles, explicit pin, zero fee, cashier desk, capacity; synthetic Cairo fixture and QA branch rolled back; synthetic SQL claims only."
     },
     {
       "name": "ff62_get_pinned",
@@ -1144,7 +1180,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "72266c1b06a9eef55a310f8cb39cbc8b"
+      "definition_md5": "72266c1b06a9eef55a310f8cb39cbc8b",
+      "scope_test": "STEP12 step12_pinned_capacity_scope_matrix_rollback.sql PASS 77/77 collective; central and scoped roles, explicit pin, zero fee, cashier desk, capacity; synthetic Cairo fixture and QA branch rolled back; synthetic SQL claims only."
     },
     {
       "name": "ff62_manager_data_overview",
@@ -1163,7 +1200,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5bb2a8ea55b7cde4348a668ac8434121"
+      "definition_md5": "5bb2a8ea55b7cde4348a668ac8434121",
+      "scope_test": "STEP12 step12_pinned_capacity_scope_matrix_rollback.sql PASS 77/77 collective; central and scoped roles, explicit pin, zero fee, cashier desk, capacity; synthetic Cairo fixture and QA branch rolled back; synthetic SQL claims only."
     },
     {
       "name": "ff68_admin_staff_set_role",
@@ -1204,7 +1242,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5e11a5eec39114917af49d0efe1a9f25"
+      "definition_md5": "5e11a5eec39114917af49d0efe1a9f25",
+      "scope_test": "STEP12 step12_atomic_retry_scope_rollback.sql PASS 18/18 collective; current role, permission and branch after request lock, retry and no duplication; migration 20261126052409, #149 pending merge; synthetic SQL claims only."
     },
     {
       "name": "ff70_visible_item_notes",
@@ -1477,7 +1516,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "a9a281be6e2d6b4b381c371e274e078a"
+      "definition_md5": "a9a281be6e2d6b4b381c371e274e078a",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a06_navigation_scope_rollback.sql",
+        "note": "STEP09 records PASS: role/device precedence, foreign branch, disabled account and nonmanager save denial. Prior evidence."
+      }
     },
     {
       "name": "ff_a06_nav_scope",
@@ -1486,7 +1529,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "8609d5f6071a22aab391b199a1cd536f"
+      "definition_md5": "8609d5f6071a22aab391b199a1cd536f",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a06_navigation_scope_rollback.sql",
+        "note": "STEP09 records PASS: role/device precedence, foreign branch, disabled account and nonmanager save denial. Prior evidence."
+      }
     },
     {
       "name": "ff_a07_design_catalog",
@@ -2044,7 +2091,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "cf8ca87f3901b93a62b90bf828fe46d3"
+      "definition_md5": "cf8ca87f3901b93a62b90bf828fe46d3",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff_burger_online_status",
@@ -2053,7 +2101,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "7222bfa199b28af8c803d384deeea3b7"
+      "definition_md5": "7222bfa199b28af8c803d384deeea3b7",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff_burger_presence_ping",
@@ -2062,7 +2111,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "c646429adf8f6839c10fe12518973ef5"
+      "definition_md5": "c646429adf8f6839c10fe12518973ef5",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff_burger_send",
@@ -2117,7 +2167,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "0aa237529a1ff1df62d3b43eae510499"
+      "definition_md5": "0aa237529a1ff1df62d3b43eae510499",
+      "scope_test": "STEP12 step12_pinned_capacity_scope_matrix_rollback.sql PASS 77/77 collective; central and scoped roles, explicit pin, zero fee, cashier desk, capacity; synthetic Cairo fixture and QA branch rolled back; synthetic SQL claims only."
     },
     {
       "name": "ff_content_catalog_list",
@@ -2195,7 +2246,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "3ad4279e4de6b2ede42cfdb9db8f0877"
+      "definition_md5": "3ad4279e4de6b2ede42cfdb9db8f0877",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff_has_branch",
@@ -2204,7 +2256,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=public",
-      "definition_md5": "b1750c42014aff000c88cb3205c28f09"
+      "definition_md5": "b1750c42014aff000c88cb3205c28f09",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff_is_manager",
@@ -2213,7 +2266,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=public",
-      "definition_md5": "20e4934eab353f1e7d2127b541ab101e"
+      "definition_md5": "20e4934eab353f1e7d2127b541ab101e",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff_log_customer_view",
@@ -2252,7 +2306,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "22599c60093f4a272466e3b6abf61a30"
+      "definition_md5": "22599c60093f4a272466e3b6abf61a30",
+      "scope_test": "STEP12 step12_visibility_cashier_completion_rollback.sql PASS 58/58 collective; snapshot/addition ownership, desk scope, invoice and customer edit denial, manager progress audit; synthetic SQL claims only."
     },
     {
       "name": "ff_luxe_cashier_completed_invoice",
@@ -2261,7 +2316,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "b1f91297ae1cdcd8af50a2e73e0121fb"
+      "definition_md5": "b1f91297ae1cdcd8af50a2e73e0121fb",
+      "scope_test": "STEP12 step12_visibility_cashier_completion_rollback.sql PASS 58/58 collective; snapshot/addition ownership, desk scope, invoice and customer edit denial, manager progress audit; synthetic SQL claims only."
     },
     {
       "name": "ff_luxe_cashier_completed_orders",
@@ -2270,7 +2326,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "0336f3686f6e48a2b7c17b90733d6476"
+      "definition_md5": "0336f3686f6e48a2b7c17b90733d6476",
+      "scope_test": "STEP12 step12_visibility_cashier_completion_rollback.sql PASS 58/58 collective; snapshot/addition ownership, desk scope, invoice and customer edit denial, manager progress audit; synthetic SQL claims only."
     },
     {
       "name": "ff_luxe_cashier_completed_rating",
@@ -2329,7 +2386,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "e39fb0bbc70b8d4562d668118dd54f47"
+      "definition_md5": "e39fb0bbc70b8d4562d668118dd54f47",
+      "scope_test": "STEP12 step12_pinned_capacity_scope_matrix_rollback.sql PASS 77/77 collective; central and scoped roles, explicit pin, zero fee, cashier desk, capacity; synthetic Cairo fixture and QA branch rolled back; synthetic SQL claims only."
     },
     {
       "name": "ff_luxe_create_pinned_order_in_desk",
@@ -2338,7 +2396,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "97303bc7e4e6e26424e8f4187bd9adcb"
+      "definition_md5": "97303bc7e4e6e26424e8f4187bd9adcb",
+      "scope_test": "STEP12 step12_pinned_capacity_scope_matrix_rollback.sql PASS 77/77 collective; central and scoped roles, explicit pin, zero fee, cashier desk, capacity; synthetic Cairo fixture and QA branch rolled back; synthetic SQL claims only."
     },
     {
       "name": "ff_luxe_dispatch_preview",
@@ -2347,7 +2406,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "06c648057638b09516b99f59bfd794df"
+      "definition_md5": "06c648057638b09516b99f59bfd794df",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff_luxe_driver_cancel_alerts",
@@ -2386,7 +2446,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d32d08ad2016fb622daf890423e0ba9c"
+      "definition_md5": "d32d08ad2016fb622daf890423e0ba9c",
+      "scope_test": "STEP12 step12_visibility_cashier_completion_rollback.sql PASS 58/58 collective; snapshot/addition ownership, desk scope, invoice and customer edit denial, manager progress audit; synthetic SQL claims only."
     },
     {
       "name": "ff_luxe_manager_prepare_staff",
@@ -2465,7 +2526,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f961db57ccb50fd26f6bcc2753196612"
+      "definition_md5": "f961db57ccb50fd26f6bcc2753196612",
+      "scope_test": "STEP12 step12_visibility_cashier_completion_rollback.sql PASS 58/58 collective; snapshot/addition ownership, desk scope, invoice and customer edit denial, manager progress audit; synthetic SQL claims only."
     },
     {
       "name": "ff_order_customer_edit_with_note",
@@ -2474,7 +2536,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d16d947bed8032cadabb9d0617fc2b68"
+      "definition_md5": "d16d947bed8032cadabb9d0617fc2b68",
+      "scope_test": "STEP12 step12_visibility_cashier_completion_rollback.sql PASS 58/58 collective; snapshot/addition ownership, desk scope, invoice and customer edit denial, manager progress audit; synthetic SQL claims only."
     },
     {
       "name": "ff_order_customer_read",
@@ -2606,7 +2669,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "c72b368224eca601461d5dfff8f4eabf"
+      "definition_md5": "c72b368224eca601461d5dfff8f4eabf",
+      "scope_test": "STEP12 step12_pinned_capacity_scope_matrix_rollback.sql PASS 77/77 collective; central and scoped roles, explicit pin, zero fee, cashier desk, capacity; synthetic Cairo fixture and QA branch rolled back; synthetic SQL claims only."
     },
     {
       "name": "ff_special_courier_status",
@@ -2615,7 +2679,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "c8319497a64af4ebaa757a4d0183283a"
+      "definition_md5": "c8319497a64af4ebaa757a4d0183283a",
+      "scope_test": "STEP12 step12_pinned_capacity_scope_matrix_rollback.sql PASS 77/77 collective; central and scoped roles, explicit pin, zero fee, cashier desk, capacity; synthetic Cairo fixture and QA branch rolled back; synthetic SQL claims only."
     },
     {
       "name": "ff_step06_public_content",
@@ -2813,7 +2878,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "1a069c31acd5ea7864f69ff5a3058f1b"
+      "definition_md5": "1a069c31acd5ea7864f69ff5a3058f1b",
+      "scope_test": "STEP12 step12_operational_scope_matrix_rollback.sql PASS 110/110 collective; role/branch, reservation states, reporting, kitchen and assembly scope; synthetic SQL claims only."
     },
     {
       "name": "ff_v12_assembly_set_stage",
@@ -2837,5 +2903,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26: 149/270 explicit scope-test links, 60 additional prior evidence links, 61 unlinked; not full acceptance. #147 and #148 merged; official PWA parity PASS."
+  "last_update": "2026-11-26: STEP12 277 new assertions, 3 reproduced defects corrected in 2 live migrations #149 pending CI; 183/270 explicit scope_test, 68 prior evidence links, 19 unlinked; partial coverage, not full acceptance."
 }
