@@ -192,7 +192,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "30d4d5f22793e0f9f319100166fbbfe4"
+      "definition_md5": "30d4d5f22793e0f9f319100166fbbfe4",
+      "scope_test": "STEP12 driver operational ownership 15 checks: other driver progress denied; synthetic SQL role contexts, rollback"
     },
     {
       "name": "ff38_driver_reply",
@@ -201,7 +202,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "885f6d02d65125b432fa9e73d0b8df2a"
+      "definition_md5": "885f6d02d65125b432fa9e73d0b8df2a",
+      "scope_test": "STEP12 driver operational ownership 15 checks: other driver offer denied and remains offered; synthetic SQL role contexts, rollback"
     },
     {
       "name": "ff38_get_reject_permissions",
@@ -943,7 +945,7 @@
       "authenticated": true,
       "config": "search_path=\"\"",
       "definition_md5": "fe352bf5930e845f1cc9e29a6be30261",
-      "scope_test": "20261125230344: cashier workflow/cancel/document/change/dispatch, 14 live rollback assertions PASS"
+      "scope_test": "20261125230344: cashier workflow/cancel/document/change/dispatch, 14 live rollback assertions PASS; STEP12 driver operational ownership 15 checks: unrelated driver denied; own list allowed; historical offers not separately tested; synthetic SQL role contexts, rollback"
     },
     {
       "name": "ff60_manual_reoffer",
@@ -1528,7 +1530,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "656507fb1d92008c424f5c5217d46330"
+      "definition_md5": "656507fb1d92008c424f5c5217d46330",
+      "scope_test": "STEP12 driver operational ownership 15 checks: other rating row hidden; own visible; synthetic SQL role contexts, rollback"
     },
     {
       "name": "ff_a10_escalate_rating",
@@ -2090,7 +2093,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "ddee93b4060f04595a6df0d9d03f51f2"
+      "definition_md5": "ddee93b4060f04595a6df0d9d03f51f2",
+      "scope_test": "STEP12 driver operational ownership 15 checks: other alert hidden; own visible then skipped; synthetic SQL role contexts, rollback"
     },
     {
       "name": "ff_luxe_driver_grievance",
@@ -2099,7 +2103,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5f2705252ab19150018733fc6a192b2a"
+      "definition_md5": "5f2705252ab19150018733fc6a192b2a",
+      "scope_test": "STEP12 driver operational ownership 15 checks: other denied; own submitted; synthetic SQL role contexts, rollback"
     },
     {
       "name": "ff_luxe_driver_rate_order",
@@ -2108,7 +2113,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "6953f602d2510eb9d2718c6ad1b4d34a"
+      "definition_md5": "6953f602d2510eb9d2718c6ad1b4d34a",
+      "scope_test": "STEP12 driver operational ownership 15 checks: other denied; own saved; synthetic SQL role contexts, rollback"
     },
     {
       "name": "ff_luxe_manager_driver_progress",
@@ -2180,7 +2186,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "8435a9859b0dbfdc1390cfde4d61a095"
+      "definition_md5": "8435a9859b0dbfdc1390cfde4d61a095",
+      "scope_test": "STEP12 driver operational ownership 15 checks: other denied; own skip works; synthetic SQL role contexts, rollback"
     },
     {
       "name": "ff_order_customer_edit",
@@ -2508,5 +2515,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26 driver financial ownership"
+  "last_update": "2026-11-26: explicit driver operational ownership evidence and all 13 live migrations matched"
 }
