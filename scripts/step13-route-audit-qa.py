@@ -102,3 +102,5 @@ print("STEP13 route audit:",len(results),"actual dispatch checks;",len(states),"
 print("Uncovered keys:",sorted(keys-{x["key"] for x in results}),flush=True)
 print("Diagnostics:",json.dumps({"unnamed":unnamed,"failures":failures[:20]},ensure_ascii=False),flush=True)
 assert len(states)==10 and not failures,"route or state verification failed"
+
+assert not unnamed, 'Visible unlabeled controls remain: '+json.dumps(unnamed,ensure_ascii=False)
