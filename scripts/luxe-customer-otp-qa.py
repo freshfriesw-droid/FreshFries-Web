@@ -126,7 +126,7 @@ with sync_playwright() as pw:
           <div id="ff51CustomersPanel"><div id="ff51CustomerNotesSection"><h3 id="ff51CustomerNotesHeading"></h3>
           <textarea id="ff51CustomerNoteText"></textarea><div id="ff51CustomerNotesList"></div><div id="ff51CustomerHistory"></div></div></div>""")
         page.add_script_tag(content="""var $=id=>document.getElementById(id),user={id:'cs'},data={role:'customer_service',branches:[{id:'cairo',name:'القاهرة'}]};
-        var ff49ReserveSeq=0,ff49ReserveLoad=null,ff49ReserveBusy=false,ff49Reservations=[];
+        var ff28Epoch=1,ff49ReserveSeq=0,ff49ReserveLoad=null,ff49ReserveBusy=false,ff49Reservations=[];
         var ff51NotesSeq=0,ff51SelectedPhone=null,ff51Viewer=roles=>roles.includes(data.role)?user.id:null;
         var esc=x=>String(x??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
         var amount=x=>String(x),time=x=>String(x),branchName=x=>x,ffLuxeDial=x=>esc(x),toast=x=>window.lastToast=x;
@@ -152,6 +152,18 @@ with sync_playwright() as pw:
         assert args['kind']=='reservation' and args['args']['p_pickup']=='2099-02-03T11:30:00.000Z'
         assert args['args']['p_items'][0]['item_notes']=='بدون شطة'
         assert 'p_delivery_fee' not in args['args'] and 'p_driver_id' not in args['args']
+        # Session changes during catalogue loading must not submit the old draft.
+        page.locator('#ff49ReserveName').fill('عميل تجريبي')
+        page.locator('#ff49ReservePhone').fill('777000001')
+        page.locator('#ff49ReserveItems').fill('1 تشكن')
+        page.evaluate("ff49LoadCatalog=()=>new Promise(resolve=>window.resolveCatalog=resolve)")
+        page.locator('#ff49ReserveSave').click()
+        page.wait_for_function("typeof window.resolveCatalog==='function'")
+        page.evaluate("ff28Epoch++;user={id:'other'};ff49ReserveBusy=false;document.getElementById('ff49ReserveSave').disabled=false;resolveCatalog(true)")
+        page.evaluate("()=>new Promise(r=>setTimeout(r,0))")
+        assert page.evaluate('submissions.length')==1
+        assert not page.locator('#ff49ReserveSave').is_disabled()
+        page.evaluate("user={id:'cs'};ff28Epoch++;ff49LoadCatalog=async()=>true")
         page.evaluate("void ff51CustomerNotes('A')")
         page.wait_for_function("typeof resolveA==='function'")
         page.locator('#ff51CustomerNoteText').fill('private draft A')
