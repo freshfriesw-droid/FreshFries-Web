@@ -44,7 +44,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "95d9fddba50963df0ac0e2257c22ae13"
+      "definition_md5": "95d9fddba50963df0ac0e2257c22ae13",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a02_customer_portal_privacy_rollback.sql",
+        "note": "STEP12 progress records A02 privacy PASS: synthetic verified customer ownership, invalid rating/duplicate and foreign staff denial; prior not new acceptance."
+      }
     },
     {
       "name": "ff28_my_role",
@@ -73,7 +77,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9c69da282b6475a53ce49b56d1bd6f40"
+      "definition_md5": "9c69da282b6475a53ce49b56d1bd6f40",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step12_admin_rpc_matrix_rollback.sql",
+        "note": "Prior STEP12 100 assertions: eight unauthorized contexts, selected authorized manager actions. Retained earlier test evidence; no new run."
+      }
     },
     {
       "name": "ff38_admin_permission_matrix",
@@ -82,7 +90,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "76d1f35bca2a24b9fe24bb35d623a4e2"
+      "definition_md5": "76d1f35bca2a24b9fe24bb35d623a4e2",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step12_admin_rpc_matrix_rollback.sql",
+        "note": "Prior STEP12 100 assertions: eight unauthorized contexts, selected authorized manager actions. Retained earlier test evidence; no new run."
+      }
     },
     {
       "name": "ff38_admin_set_permission",
@@ -91,7 +103,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "1e2bef32da9ed22d96d00bcaa4292834"
+      "definition_md5": "1e2bef32da9ed22d96d00bcaa4292834",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step12_admin_rpc_matrix_rollback.sql",
+        "note": "Prior STEP12 100 assertions: eight unauthorized contexts, selected authorized manager actions. Retained earlier test evidence; no new run."
+      }
     },
     {
       "name": "ff38_admin_staff_audit",
@@ -120,7 +136,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "4e14dc345c1a32bbcc0345d76169c293"
+      "definition_md5": "4e14dc345c1a32bbcc0345d76169c293",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step12_admin_rpc_matrix_rollback.sql",
+        "note": "Prior STEP12 100 assertions: eight unauthorized contexts, selected authorized manager actions. Retained earlier test evidence; no new run."
+      }
     },
     {
       "name": "ff38_admin_staff_set_active",
@@ -129,7 +149,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5c8d5a0ce56aa671f0c553c30b125a00"
+      "definition_md5": "5c8d5a0ce56aa671f0c553c30b125a00",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step12_admin_rpc_matrix_rollback.sql",
+        "note": "Prior STEP12 100 assertions: eight unauthorized contexts, selected authorized manager actions. Retained earlier test evidence; no new run."
+      }
     },
     {
       "name": "ff38_cancel_unassigned_order",
@@ -168,7 +192,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d1a7dd14fe7680347ed2341be6651128"
+      "definition_md5": "d1a7dd14fe7680347ed2341be6651128",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step11_attendance_rollback.sql",
+        "note": "STEP11 closure live 15 checks and separate concurrent fixture: pending offer/task guards, break/reconnect/checkout idempotency; prior not new acceptance."
+      }
     },
     {
       "name": "ff38_clock_out",
@@ -177,7 +205,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5c03279cfe70d7bc07dbfec5c61c4460"
+      "definition_md5": "5c03279cfe70d7bc07dbfec5c61c4460",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step11_attendance_rollback.sql",
+        "note": "STEP11 closure live 15 checks and separate concurrent fixture: pending offer/task guards, break/reconnect/checkout idempotency; prior not new acceptance."
+      }
     },
     {
       "name": "ff38_dispatch",
@@ -216,7 +248,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "aae1ffe57cbc8d4d33a885168e0db125"
+      "definition_md5": "472c400f1bc16eb5e4e58200e13abab1",
+      "scope_test": "STEP12 step12_reject_permission_scope_rollback.sql PASS 31/31 after live migration 20261126030005; branch-scoped supervisor, central roles, driver own offer, unauthorized read/write/audit; SQL claims only; #148 pending merge"
     },
     {
       "name": "ff38_heartbeat",
@@ -225,7 +258,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "fe376f583f512121a5208c08c3a6a13a"
+      "definition_md5": "fe376f583f512121a5208c08c3a6a13a",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step11_attendance_rollback.sql",
+        "note": "STEP11 closure live 15 checks and separate concurrent fixture: pending offer/task guards, break/reconnect/checkout idempotency; prior not new acceptance."
+      }
     },
     {
       "name": "ff38_list_reject_permission_audit",
@@ -234,7 +271,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "87367bcf5bbac82e02f0a75790846f6f"
+      "definition_md5": "87367bcf5bbac82e02f0a75790846f6f",
+      "scope_test": "STEP12 step12_reject_permission_scope_rollback.sql PASS 31/31 after live migration 20261126030005; branch-scoped supervisor, central roles, driver own offer, unauthorized read/write/audit; SQL claims only; #148 pending merge"
     },
     {
       "name": "ff38_list_visible_additions",
@@ -282,7 +320,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "a5e305f98cebdb57c9edb26f36e2516b"
+      "definition_md5": "a5e305f98cebdb57c9edb26f36e2516b",
+      "scope_test": "STEP12 step12_reject_permission_scope_rollback.sql PASS 31/31 after live migration 20261126030005; branch-scoped supervisor, central roles, driver own offer, unauthorized read/write/audit; SQL claims only; #148 pending merge"
     },
     {
       "name": "ff38_snapshot",
@@ -301,7 +340,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "36fd517f82f038da76e1f25cff096435"
+      "definition_md5": "36fd517f82f038da76e1f25cff096435",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a05_staff_scope_rollback.sql",
+        "note": "STEP12 progress records live A05 30 checks: revoked dispatch/edit, foreign branch, role transitions; prior not new acceptance."
+      }
     },
     {
       "name": "ff39_admin_send",
@@ -638,7 +681,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f36d9d8326446a484b43bb7d54c9e575"
+      "definition_md5": "f36d9d8326446a484b43bb7d54c9e575",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a03_dispatch_branch_scope_rollback.sql",
+        "note": "STEP12 progress records live A03 8 checks: branch, central CS and revoked assign; prior not new acceptance."
+      }
     },
     {
       "name": "ff49_request_driver_transfer",
@@ -805,7 +852,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "cc93830a4597b667895a33cdc1f5b554"
+      "definition_md5": "cc93830a4597b667895a33cdc1f5b554",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step11_attendance_rollback.sql",
+        "note": "STEP11 closure live 15 checks and separate concurrent fixture: pending offer/task guards, break/reconnect/checkout idempotency; prior not new acceptance."
+      }
     },
     {
       "name": "ff51_manager_catalog",
@@ -834,7 +885,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "bbe83af6ad57ccd9f32c2b5b73a58d12"
+      "definition_md5": "bbe83af6ad57ccd9f32c2b5b73a58d12",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a05_report_scope_rollback.sql",
+        "note": "STEP12 progress records A05 13 checks: cashier desk and revoked report scope; prior not new acceptance."
+      }
     },
     {
       "name": "ff51_rate_driver",
@@ -1033,7 +1088,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "7341e5ac6411600b63ff549ede4fec86"
+      "definition_md5": "7341e5ac6411600b63ff549ede4fec86",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step12_admin_rpc_matrix_rollback.sql",
+        "note": "Prior STEP12 100 assertions: eight unauthorized contexts, selected authorized manager actions. Retained earlier test evidence; no new run."
+      }
     },
     {
       "name": "ff62_assembly_set_branch",
@@ -1042,7 +1101,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "e6e72be537d55ed63d84a946a579109c"
+      "definition_md5": "e6e72be537d55ed63d84a946a579109c",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step12_admin_rpc_matrix_rollback.sql",
+        "note": "Prior STEP12 100 assertions: eight unauthorized contexts, selected authorized manager actions. Retained earlier test evidence; no new run."
+      }
     },
     {
       "name": "ff62_assign_pinned",
@@ -1107,7 +1170,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "73a89193e391e7bd541c9a5718c7a025"
+      "definition_md5": "73a89193e391e7bd541c9a5718c7a025",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step12_admin_rpc_matrix_rollback.sql",
+        "note": "Prior STEP12 100 assertions: eight unauthorized contexts, selected authorized manager actions. Retained earlier test evidence; no new run."
+      }
     },
     {
       "name": "ff69_admin_send_assembly",
@@ -1295,7 +1362,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "4888c15086f220cae578e9874382e66a"
+      "definition_md5": "4888c15086f220cae578e9874382e66a",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step07_delegation_rollback.sql",
+        "note": "STEP07 closure records PASS before/after migration; scoped grant, kind, branch, review, expiry, revocation, inactive account; prior not new acceptance."
+      }
     },
     {
       "name": "ff82_revoke_grant",
@@ -1426,7 +1497,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "aa7750d7c813a0aaa8cb0629faf3f53e"
+      "definition_md5": "aa7750d7c813a0aaa8cb0629faf3f53e",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step08_release_lifecycle_rollback.sql",
+        "note": "STEP08 closure records live rollback PASS before/after migration; device/account/branch trial, stale release, restore, manager gates and unsafe content; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a07_manager_source",
@@ -1454,7 +1529,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "74473c1762612ecb794fe87238168372"
+      "definition_md5": "74473c1762612ecb794fe87238168372",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step08_release_lifecycle_rollback.sql",
+        "note": "STEP08 closure records live rollback PASS before/after migration; device/account/branch trial, stale release, restore, manager gates and unsafe content; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a07_preview_scope",
@@ -1513,7 +1592,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "0c11c86ed9493a8a13b46d74536161a7"
+      "definition_md5": "0c11c86ed9493a8a13b46d74536161a7",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step07_delegation_rollback.sql",
+        "note": "STEP07 closure records PASS before/after migration; scoped grant, kind, branch, review, expiry, revocation, inactive account; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a09_design_history",
@@ -1522,7 +1605,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "18f6078a63c5988c2ffa7bb10d404b07"
+      "definition_md5": "18f6078a63c5988c2ffa7bb10d404b07",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step07_delegation_rollback.sql",
+        "note": "STEP07 closure records PASS before/after migration; scoped grant, kind, branch, review, expiry, revocation, inactive account; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a09_design_review",
@@ -1531,7 +1618,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "33b625c5c3bf181a9a4c2feed3ba5ab5"
+      "definition_md5": "33b625c5c3bf181a9a4c2feed3ba5ab5",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step07_delegation_rollback.sql",
+        "note": "STEP07 closure records PASS before/after migration; scoped grant, kind, branch, review, expiry, revocation, inactive account; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a09_set_grant",
@@ -1540,7 +1631,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "aa95b9dc1dac66f55105d8e5867beddb"
+      "definition_md5": "aa95b9dc1dac66f55105d8e5867beddb",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step07_delegation_rollback.sql",
+        "note": "STEP07 closure records PASS before/after migration; scoped grant, kind, branch, review, expiry, revocation, inactive account; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a10_cashier_coordination",
@@ -1558,7 +1653,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "593655f6e4a02ab8a65f61a13b5eb722"
+      "definition_md5": "593655f6e4a02ab8a65f61a13b5eb722",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a10_reporting_rollback.sql",
+        "note": "STEP12 progress records A10 live 21 checks: calculations, finance evidence, revoked sections, foreign branch/staff filter; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a10_customer_rate",
@@ -1595,7 +1694,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "995c348de7d52f8d26d60ca824e685d3"
+      "definition_md5": "995c348de7d52f8d26d60ca824e685d3",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a10_reporting_rollback.sql",
+        "note": "STEP12 progress records A10 live 21 checks: calculations, finance evidence, revoked sections, foreign branch/staff filter; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a10_report_grant",
@@ -1604,7 +1707,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "06c962d593004faea1db56b7ab267ad8"
+      "definition_md5": "06c962d593004faea1db56b7ab267ad8",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step12_admin_rpc_matrix_rollback.sql",
+        "note": "Prior STEP12 100 assertions: eight unauthorized contexts, selected authorized manager actions. Retained earlier test evidence; no new run."
+      }
     },
     {
       "name": "ff_a10_report_grants",
@@ -1623,7 +1730,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "7990d7c2a1fe94e23d5d3de342680a53"
+      "definition_md5": "7990d7c2a1fe94e23d5d3de342680a53",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a10_reporting_rollback.sql",
+        "note": "STEP12 progress records A10 live 21 checks: calculations, finance evidence, revoked sections, foreign branch/staff filter; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a11_message_access",
@@ -1652,7 +1763,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "a51d0799ff2219811c1cb43d8b11f0d3"
+      "definition_md5": "a51d0799ff2219811c1cb43d8b11f0d3",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step12_admin_rpc_matrix_rollback.sql",
+        "note": "Prior STEP12 100 assertions: eight unauthorized contexts, selected authorized manager actions. Retained earlier test evidence; no new run."
+      }
     },
     {
       "name": "ff_a11_message_grants",
@@ -1681,7 +1796,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d5d34a59d8e743fdb2b7f4bc46dae86a"
+      "definition_md5": "d5d34a59d8e743fdb2b7f4bc46dae86a",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a11_communications_rollback.sql",
+        "note": "STEP11 closure records live 24 checks: recipient scope, stale audience, unsafe route, scoped grants/revocation, history and state; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a11_message_revoke",
@@ -1690,7 +1809,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "83f309f593af69ed5820591ddf786cd6"
+      "definition_md5": "83f309f593af69ed5820591ddf786cd6",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a11_communications_rollback.sql",
+        "note": "STEP11 closure records live 24 checks: recipient scope, stale audience, unsafe route, scoped grants/revocation, history and state; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a11_message_send",
@@ -1699,7 +1822,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d4126aa4492a3da73a8e33346ebc9134"
+      "definition_md5": "d4126aa4492a3da73a8e33346ebc9134",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a11_communications_rollback.sql",
+        "note": "STEP11 closure records live 24 checks: recipient scope, stale audience, unsafe route, scoped grants/revocation, history and state; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a11_message_state",
@@ -1708,7 +1835,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9c88e8cb280db595a7f474efbb42e0b4"
+      "definition_md5": "9c88e8cb280db595a7f474efbb42e0b4",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a11_communications_rollback.sql",
+        "note": "STEP11 closure records live 24 checks: recipient scope, stale audience, unsafe route, scoped grants/revocation, history and state; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a11_message_template_delete",
@@ -1717,7 +1848,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d66c02da232d97fa3ce3794e13ae398c"
+      "definition_md5": "d66c02da232d97fa3ce3794e13ae398c",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a11_templates_attendance_rollback.sql",
+        "note": "STEP11 closure records live 14 checks: template ownership/deletion, message and attendance; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a11_message_template_save",
@@ -1726,7 +1861,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "86338717d8da779b6c69d754c71a441b"
+      "definition_md5": "86338717d8da779b6c69d754c71a441b",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a11_templates_attendance_rollback.sql",
+        "note": "STEP11 closure records live 14 checks: template ownership/deletion, message and attendance; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a11_message_templates",
@@ -1735,7 +1874,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "096d645084f1cc3576612e1f95a12dad"
+      "definition_md5": "096d645084f1cc3576612e1f95a12dad",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a11_templates_attendance_rollback.sql",
+        "note": "STEP11 closure records live 14 checks: template ownership/deletion, message and attendance; prior not new acceptance."
+      }
     },
     {
       "name": "ff_a12_create_fixture",
@@ -1744,7 +1887,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "00f54ef6714c58cc98255d10433c983e"
+      "definition_md5": "00f54ef6714c58cc98255d10433c983e",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a12_selective_recovery_rollback.sql",
+        "note": "Approved A12/#99 prior evidence: scope, confirmation, stale preview, cashier denial, exact restore, rollback. Do not re-run destructive paths without need."
+      }
     },
     {
       "name": "ff_a12_legacy_batches",
@@ -1763,7 +1910,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\",lock_timeout=3s",
-      "definition_md5": "d5e24242c6c8ff4482c0b63002d38d14"
+      "definition_md5": "d5e24242c6c8ff4482c0b63002d38d14",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a12_legacy_roundtrip_rollback.sql",
+        "note": "Approved A12/#99 prior 82-order graph roundtrip and protected hashes, nonmanager denial, stale/confirmation checks; no new reset."
+      }
     },
     {
       "name": "ff_a12_legacy_preview",
@@ -1772,7 +1923,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "05cac53d77693a21907ec55257604806"
+      "definition_md5": "05cac53d77693a21907ec55257604806",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a12_legacy_roundtrip_rollback.sql",
+        "note": "Approved A12/#99 prior 82-order graph roundtrip and protected hashes, nonmanager denial, stale/confirmation checks; no new reset."
+      }
     },
     {
       "name": "ff_a12_legacy_restore",
@@ -1781,7 +1936,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\",lock_timeout=3s",
-      "definition_md5": "8ae40b572b5f7c61ce7f55757c7a08d4"
+      "definition_md5": "8ae40b572b5f7c61ce7f55757c7a08d4",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a12_legacy_roundtrip_rollback.sql",
+        "note": "Approved A12/#99 prior 82-order graph roundtrip and protected hashes, nonmanager denial, stale/confirmation checks; no new reset."
+      }
     },
     {
       "name": "ff_a12_reset_batches",
@@ -1800,7 +1959,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\",lock_timeout=3s",
-      "definition_md5": "ae47e5bbc88f0930d6272c3cd450d3a7"
+      "definition_md5": "ae47e5bbc88f0930d6272c3cd450d3a7",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a12_selective_recovery_rollback.sql",
+        "note": "Approved A12/#99 prior evidence: scope, confirmation, stale preview, cashier denial, exact restore, rollback. Do not re-run destructive paths without need."
+      }
     },
     {
       "name": "ff_a12_reset_preview",
@@ -1809,7 +1972,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "dbfb7b07566e1fb82c8283d26e2405ad"
+      "definition_md5": "dbfb7b07566e1fb82c8283d26e2405ad",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a12_selective_recovery_rollback.sql",
+        "note": "Approved A12/#99 prior evidence: scope, confirmation, stale preview, cashier denial, exact restore, rollback. Do not re-run destructive paths without need."
+      }
     },
     {
       "name": "ff_a12_restore",
@@ -1818,7 +1985,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\",lock_timeout=3s",
-      "definition_md5": "48048ba0c83c208a22ea823632f772e1"
+      "definition_md5": "48048ba0c83c208a22ea823632f772e1",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a12_selective_recovery_rollback.sql",
+        "note": "Approved A12/#99 prior evidence: scope, confirmation, stale preview, cashier denial, exact restore, rollback. Do not re-run destructive paths without need."
+      }
     },
     {
       "name": "ff_burger_confirm_notes",
@@ -1827,7 +1998,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "dfb79cec69671acc09c5529684154259"
+      "definition_md5": "dfb79cec69671acc09c5529684154259",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a04_assembly_burger_rollback.sql",
+        "note": "STEP12 progress records live A04 40 checks: branch/role, token replay, state, notes ownership; prior not new acceptance."
+      }
     },
     {
       "name": "ff_burger_list",
@@ -1836,7 +2011,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "ef758da708f03f2be592f5c547b9a2d9"
+      "definition_md5": "ef758da708f03f2be592f5c547b9a2d9",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a04_assembly_burger_rollback.sql",
+        "note": "STEP12 progress records live A04 40 checks: branch/role, token replay, state, notes ownership; prior not new acceptance."
+      }
     },
     {
       "name": "ff_burger_menu",
@@ -1883,7 +2062,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "7246d5985e620e752ffeebd0bc9b441b"
+      "definition_md5": "7246d5985e620e752ffeebd0bc9b441b",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a04_assembly_burger_rollback.sql",
+        "note": "STEP12 progress records live A04 40 checks: branch/role, token replay, state, notes ownership; prior not new acceptance."
+      }
     },
     {
       "name": "ff_burger_transition",
@@ -1892,7 +2075,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "3e51dbd6fbdc2bd3d200dbbc001184d0"
+      "definition_md5": "3e51dbd6fbdc2bd3d200dbbc001184d0",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a04_assembly_burger_rollback.sql",
+        "note": "STEP12 progress records live A04 40 checks: branch/role, token replay, state, notes ownership; prior not new acceptance."
+      }
     },
     {
       "name": "ff_case_alert_read",
@@ -1939,7 +2126,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9b5ac5722a5a6126559aede6799271b6"
+      "definition_md5": "9b5ac5722a5a6126559aede6799271b6",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step08_release_lifecycle_rollback.sql",
+        "note": "STEP08 closure records live rollback PASS before/after migration; device/account/branch trial, stale release, restore, manager gates and unsafe content; prior not new acceptance."
+      }
     },
     {
       "name": "ff_content_effective",
@@ -1948,7 +2139,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "4889f99a4ba5e69550927be68195af5c"
+      "definition_md5": "4889f99a4ba5e69550927be68195af5c",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step08_release_lifecycle_rollback.sql",
+        "note": "STEP08 closure records live rollback PASS before/after migration; device/account/branch trial, stale release, restore, manager gates and unsafe content; prior not new acceptance."
+      }
     },
     {
       "name": "ff_content_history",
@@ -1966,7 +2161,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9535a1e88dddb40bd9842b6e268519ea"
+      "definition_md5": "9535a1e88dddb40bd9842b6e268519ea",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step08_release_lifecycle_rollback.sql",
+        "note": "STEP08 closure records live rollback PASS before/after migration; device/account/branch trial, stale release, restore, manager gates and unsafe content; prior not new acceptance."
+      }
     },
     {
       "name": "ff_customer_views_manager",
@@ -2219,7 +2418,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "157dc182b44727ac9b279e34aeb107c1"
+      "definition_md5": "157dc182b44727ac9b279e34aeb107c1",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step12_admin_rpc_matrix_rollback.sql",
+        "note": "Prior STEP12 100 assertions: eight unauthorized contexts, selected authorized manager actions. Retained earlier test evidence; no new run."
+      }
     },
     {
       "name": "ff_luxe_settlement_period",
@@ -2266,7 +2469,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "2cbabcff62b25758599cdadeaff11e9f"
+      "definition_md5": "2cbabcff62b25758599cdadeaff11e9f",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a05_staff_scope_rollback.sql",
+        "note": "STEP12 progress records live A05 30 checks: revoked dispatch/edit, foreign branch, role transitions; prior not new acceptance."
+      }
     },
     {
       "name": "ff_report_preset_list",
@@ -2409,7 +2616,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "733106f2d9859fb4643edd1d7fb72b63"
+      "definition_md5": "733106f2d9859fb4643edd1d7fb72b63",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step08_release_lifecycle_rollback.sql",
+        "note": "STEP08 closure records live rollback PASS before/after migration; device/account/branch trial, stale release, restore, manager gates and unsafe content; prior not new acceptance."
+      }
     },
     {
       "name": "ff_step08_content_trial",
@@ -2418,7 +2629,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "fffbd7a085aa68c526c426a7cebbd427"
+      "definition_md5": "fffbd7a085aa68c526c426a7cebbd427",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step08_release_lifecycle_rollback.sql",
+        "note": "STEP08 closure records live rollback PASS before/after migration; device/account/branch trial, stale release, restore, manager gates and unsafe content; prior not new acceptance."
+      }
     },
     {
       "name": "ff_step08_release_impact",
@@ -2427,7 +2642,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d78c5214820fa27088770a8c8107216e"
+      "definition_md5": "d78c5214820fa27088770a8c8107216e",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step08_release_lifecycle_rollback.sql",
+        "note": "STEP08 closure records live rollback PASS before/after migration; device/account/branch trial, stale release, restore, manager gates and unsafe content; prior not new acceptance."
+      }
     },
     {
       "name": "ff_step12_session_valid",
@@ -2446,7 +2665,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "6759852b847c8a256b9d0fcb2317265e"
+      "definition_md5": "6759852b847c8a256b9d0fcb2317265e",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step08_release_lifecycle_rollback.sql",
+        "note": "STEP08 closure records live rollback PASS before/after migration; device/account/branch trial, stale release, restore, manager gates and unsafe content; prior not new acceptance."
+      }
     },
     {
       "name": "ff_ui_effective",
@@ -2486,7 +2709,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f53bfed24709598b0adae0e8d00f1977"
+      "definition_md5": "f53bfed24709598b0adae0e8d00f1977",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a09_manager_denial_audit_rollback.sql",
+        "note": "Prior A09 25 checks, 403 denial and no-change/audit; prior not new acceptance."
+      }
     },
     {
       "name": "ff_ui_publish",
@@ -2495,7 +2722,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "0a08b93a9c403081c6200186c1d42514"
+      "definition_md5": "0a08b93a9c403081c6200186c1d42514",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step08_release_lifecycle_rollback.sql",
+        "note": "STEP08 closure records live rollback PASS before/after migration; device/account/branch trial, stale release, restore, manager gates and unsafe content; prior not new acceptance."
+      }
     },
     {
       "name": "ff_ui_rollback",
@@ -2504,7 +2735,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "ab491750d918ee55dfc26ade8b763277"
+      "definition_md5": "ab491750d918ee55dfc26ade8b763277",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step08_release_lifecycle_rollback.sql",
+        "note": "STEP08 closure records live rollback PASS before/after migration; device/account/branch trial, stale release, restore, manager gates and unsafe content; prior not new acceptance."
+      }
     },
     {
       "name": "ff_ui_save_draft",
@@ -2513,7 +2748,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "e02daa7fb3b0a5e1b55409b3b42e4ca9"
+      "definition_md5": "e02daa7fb3b0a5e1b55409b3b42e4ca9",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/a09_manager_denial_audit_rollback.sql",
+        "note": "Prior A09 25 checks, 403 denial and no-change/audit; prior not new acceptance."
+      }
     },
     {
       "name": "ff_ui_trial_accounts",
@@ -2522,7 +2761,11 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "b2e4f6e5280e97828ff18d0d817704a9"
+      "definition_md5": "b2e4f6e5280e97828ff18d0d817704a9",
+      "prior_scope_evidence": {
+        "test": "supabase/tests/step08_release_lifecycle_rollback.sql",
+        "note": "STEP08 closure records live rollback PASS before/after migration; device/account/branch trial, stale release, restore, manager gates and unsafe content; prior not new acceptance."
+      }
     },
     {
       "name": "ff_v12_assembly_account_update",
@@ -2575,5 +2818,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26 STEP12 case privacy and communications/preset scope; #146 post-merge Pages/static both PASS; 127/270 entries with explicit scope_test, not full acceptance"
+  "last_update": "2026-11-26 STEP12 new live supervisor reject-permission scope fix #148 pending merge; official domain and PWA parity PASS on #147; 130/270 explicit STEP12 scope_test entries, 60 additional prior evidence links, not complete acceptance"
 }
