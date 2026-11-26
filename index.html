@@ -1173,13 +1173,13 @@ function ffA05SyncBranchOptions(el,rows){
 function fillBranchSelects(){const branches=data.branches||[];for(const id of ['newBranch','addBranch']){const el=$(id);if(id==='newBranch'&&['manager','customer_service'].includes(data.role)&&[...el.options].some(o=>o.dataset.ffCashierDesk))continue;ffA05SyncBranchOptions(el,branches);}ffA05SyncBranchOptions($('orderBranchFilter'),[{id:'',name:'كل الفروع'},...branches]);}
 function draw(){if(!data)return;if(data.role!=='manager'&&$('ff62DataCenter')?.open)$('ff62DataCenter').close();if(typeof ffRenderAssemblyLauncher==='function')ffRenderAssemblyLauncher();$('createBtn').disabled=!canAction('create_order');$('createBtn').title=canAction('create_order')?'':'إنشاء الطلبات ممنوع وفق صلاحيات حسابك';$('auditCard').classList.toggle('hidden',!canAction('view_reports')||!['manager','customer_service'].includes(data.role));$('identity').textContent=(user?.email||user?.phone||'حساب الموظف')+' — '+({manager:'المدير العام',driver:'موصل',cashier:'الكاشير',customer_service:'خدمة العملاء المركزية',supervisor:'مشرف'}[data.role]||data.role);$('driverView').classList.toggle('hidden',data.role!=='driver');$('staffView').classList.toggle('hidden',!['manager','customer_service','supervisor'].includes(data.role));$('cashierView').classList.toggle('hidden',data.role!=='cashier');$('managerLinks').hidden=data.role!=='manager';$('staffAdminCard').hidden=data.role!=='manager';$('serviceOnly').classList.toggle('hidden',!['manager','customer_service'].includes(data.role));$('metrics').classList.remove('hidden');drawMetrics();if(data.role==='driver')drawDriver();if(['manager','customer_service','supervisor'].includes(data.role)){fillBranchSelects();drawRoster();drawOffers();drawOrders()}if(data.role==='cashier'){drawCashier();window.ffBurgerOnCashierDraw?.()}}
 let ffSnapshotRetryAfter=0,ffSnapshotConsecutiveFailures=0;
-async function reload(force=false){if(ffV12AssemblyActive||!client||!user||inFlight||(!force&&Date.now()<ffSnapshotRetryAfter))return; inFlight=true;const loadingUser=user.id;try{let incoming=await rpc('ff49_snapshot');if(user?.id!==loadingUser||ffV12AssemblyActive)return;if(!incoming||typeof incoming!=='object'||!incoming.role)throw Error('استجابة ملخص الطلبات غير مكتملة');if(data?.role&&data.role!==incoming.role){resetUI();$('loginStatus').textContent='تغير دور الحساب؛ يرجى تسجيل الدخول مجددًا';return;}ffSnapshotConsecutiveFailures=0;ffSnapshotRetryAfter=0;data=incoming;window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
+async function reload(force=false){if(ffV12AssemblyActive||!client||!user||inFlight||(!force&&Date.now()<ffSnapshotRetryAfter))return; inFlight=true;const loadingUser=user.id,loadingEpoch=ff28Epoch;const isCurrent=()=>ff28Epoch===loadingEpoch&&user?.id===loadingUser&&!ffV12AssemblyActive;const invalidSession=e=>['PT401','PGRST301'].includes(e?.code);try{let incoming=await rpc('ff49_snapshot');if(!isCurrent())return;if(!incoming||typeof incoming!=='object'||!incoming.role)throw Error('استجابة ملخص الطلبات غير مكتملة');if(data?.role&&data.role!==incoming.role){resetUI();$('loginStatus').textContent='تغير دور الحساب؛ يرجى تسجيل الدخول مجددًا';return;}ffSnapshotConsecutiveFailures=0;ffSnapshotRetryAfter=0;data=incoming;window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
  if(incoming?.role!=='manager' && Date.now()>=selfPermissionsNextTry && (!selfPermissions || Date.now()-selfPermissionsFetchedAt>60000)){
     selfPermissionsNextTry=Date.now()+60000;
-    try{const p=await rpc('ff38_my_permissions');if(!p || typeof p!=='object')throw Error('صلاحيات غير صالحة');selfPermissions=p;selfPermissionsFetchedAt=Date.now()}
-   catch(err){selfPermissions=null;console.warn('صلاحيات الحساب غير متاحة (ستُعاد المحاولة لاحقًا)',err.code||err.message)}
+    try{const p=await rpc('ff38_my_permissions');if(!isCurrent())return;if(!p || typeof p!=='object')throw Error('صلاحيات غير صالحة');selfPermissions=p;selfPermissionsFetchedAt=Date.now()}
+   catch(err){if(!isCurrent())return;if(invalidSession(err))throw err;selfPermissions=null;console.warn('صلاحيات الحساب غير متاحة (ستُعاد المحاولة لاحقًا)',err.code||err.message)}
   }
- if(['manager','customer_service','driver'].includes(incoming?.role) && Date.now()>=rejectPermissionsNextTry){rejectPermissionsNextTry=Date.now()+60000;try{const perms=await rpc('ff38_get_reject_permissions');rejectPermissions={};if(!Array.isArray(perms))throw Error('صلاحيات الرفض غير متاحة');for(const p of perms)rejectPermissions[p.order_id]=p.allow_driver_reject===true;rejectPermissionReady=true}catch(err){rejectPermissionReady=false;rejectPermissions={};console.warn('تعذر تحميل صلاحيات رفض الموصل',err.code||err.message)}}try{const a=await rpc('ff52_list_additions');if(!Array.isArray(a))throw Error('تنسيق بيانات الإضافات غير صحيح');const newKey=a.filter(x=>x.status==='pending').map(x=>x.id).sort().join('/');if(additionReady&&newKey!==lastAdditionKey&&newKey){ding();notify('إضافة جديدة على طلب','راجع الإضافات المعلقة في شاشة الطلبات')}lastAdditionKey=newKey;additionData=a;additionReady=true;$('additionLoadError').classList.add('hidden')}catch(err){additionReady=false;additionData=[];$('additionLoadError').textContent='⚠️ تعذر تحميل الإضافات: '+err.message+' — نفّذ ملف SQL المرفق أولًا. لن يتم عرض إجمالي نهائي قبل استعادة الاتصال.';$('additionLoadError').classList.remove('hidden')}draw();fetchCount++;conn(`🟢 متصل بقاعدة البيانات المركزية — تحديث ${time(new Date())} — استعلام ${fetchCount}`);if(Date.now()-ff39LastSync>25000)void ff39RefreshInbox()}catch(e){if(user?.id===loadingUser&&(e?.code==='42501'||e?.code==='PGRST301')){resetUI();$('loginStatus').textContent='تم تغيير صلاحية الحساب أو تعليق الجلسة؛ سجّل الدخول مجددًا';return;}ffSnapshotConsecutiveFailures++;ffSnapshotRetryAfter=Date.now()+Math.min(60000,Math.max(12000,ffSnapshotConsecutiveFailures*12000));conn('⚠️ تعذر تحميل الطلبات: '+e.message+(e.code?' ['+e.code+']':'')+' — أعد التحديث أو تحقق من الاتصال');if(force)toast('تعذر التحديث: '+e.message)}finally{inFlight=false}}
+ if(['manager','customer_service','driver'].includes(incoming?.role) && Date.now()>=rejectPermissionsNextTry){rejectPermissionsNextTry=Date.now()+60000;try{const perms=await rpc('ff38_get_reject_permissions');if(!isCurrent())return;rejectPermissions={};if(!Array.isArray(perms))throw Error('صلاحيات الرفض غير متاحة');for(const p of perms)rejectPermissions[p.order_id]=p.allow_driver_reject===true;rejectPermissionReady=true}catch(err){if(!isCurrent())return;if(invalidSession(err))throw err;rejectPermissionReady=false;rejectPermissions={};console.warn('تعذر تحميل صلاحيات رفض الموصل',err.code||err.message)}}try{const a=await rpc('ff52_list_additions');if(!isCurrent())return;if(!Array.isArray(a))throw Error('تنسيق بيانات الإضافات غير صحيح');const newKey=a.filter(x=>x.status==='pending').map(x=>x.id).sort().join('/');if(additionReady&&newKey!==lastAdditionKey&&newKey){ding();notify('إضافة جديدة على طلب','راجع الإضافات المعلقة في شاشة الطلبات')}lastAdditionKey=newKey;additionData=a;additionReady=true;$('additionLoadError').classList.add('hidden')}catch(err){if(!isCurrent())return;if(invalidSession(err))throw err;additionReady=false;additionData=[];$('additionLoadError').textContent='⚠️ تعذر تحميل الإضافات: '+err.message+' — نفّذ ملف SQL المرفق أولًا. لن يتم عرض إجمالي نهائي قبل استعادة الاتصال.';$('additionLoadError').classList.remove('hidden')}if(!isCurrent())return;draw();fetchCount++;conn(`🟢 متصل بقاعدة البيانات المركزية — تحديث ${time(new Date())} — استعلام ${fetchCount}`);if(Date.now()-ff39LastSync>25000)void ff39RefreshInbox()}catch(e){if(!isCurrent())return;if(e?.code==='42501'||invalidSession(e)){resetUI();$('loginStatus').textContent='تم تغيير صلاحية الحساب أو تعليق الجلسة؛ سجّل الدخول مجددًا';return;}ffSnapshotConsecutiveFailures++;ffSnapshotRetryAfter=Date.now()+Math.min(60000,Math.max(12000,ffSnapshotConsecutiveFailures*12000));conn('⚠️ تعذر تحميل الطلبات: '+e.message+(e.code?' ['+e.code+']':'')+' — أعد التحديث أو تحقق من الاتصال');if(force)toast('تعذر التحديث: '+e.message)}finally{if(ff28Epoch===loadingEpoch)inFlight=false}}
 function ding(){try{soundCtx=soundCtx||new(window.AudioContext||window.webkitAudioContext)();soundCtx.resume();const osc=soundCtx.createOscillator(),gain=soundCtx.createGain();osc.type='square';osc.frequency.value=760;gain.gain.value=.07;osc.connect(gain);gain.connect(soundCtx.destination);osc.start();setTimeout(()=>osc.stop(),280)}catch{}}
 function notify(title,body){if('Notification'in window&&Notification.permission==='granted')try{new Notification(title,{body,tag:'ff38-offer'})}catch{}}
 function tick(){document.querySelectorAll('[data-exp]').forEach(el=>{const left=ffOfferSecondsLeft(el.dataset.exp);el.textContent=el.hasAttribute('data-ff-cs-offer-id')?(left===0?'انتهت المهلة':left+' ثانية'):left;});document.querySelectorAll('[data-ff-luxe-assigned-ts]').forEach(el=>{const ms=Date.parse(el.dataset.ffLuxeAssignedTs);if(Number.isFinite(ms))el.textContent=ffLuxeTimeSinceAssignment(ms)})}
@@ -1230,29 +1230,32 @@ function ff28Credentials(name,password){
 }
 
 /* v38.37.1: Obtain the staff snapshot once on the sign-in hot path. */
-let ffLuxeInitialSnapshot=null;
-async function ff28ReadRole(){
- ffLuxeInitialSnapshot=null;
+async function ff28ReadRole(seq){
+ const current=()=>seq===ff28Epoch;
  try{
   const snapshot=await rpc('ff49_snapshot');
+  if(!current())return null;
   if(['manager','supervisor','customer_service','cashier','driver'].includes(snapshot?.role)){
-   ffLuxeInitialSnapshot=snapshot;
-   return snapshot.role;
+   return {role:snapshot.role,snapshot};
   }
- }catch(err){console.info('سيتم التحقق من نوع الحساب بالطريقة البديلة',err.code||err.message)}
- try{return await rpc('ff28_my_role')}
- catch(error){if(error.code!=='PGRST202')throw error}
+ }catch(err){if(!current())return null;if(['PT401','PGRST301'].includes(err?.code))throw err;console.info('سيتم التحقق من نوع الحساب بالطريقة البديلة',err.code||err.message)}
+ if(!current())return null;
+ try{const role=await rpc('ff28_my_role');return current()?{role,snapshot:null}:null}
+ catch(error){if(!current())return null;if(error.code!=='PGRST202')throw error}
  try{
   const info=await rpc('ff_v12_assembly_me');
-  if(info?.is_assembly===true)return 'assembly';
- }catch(error){if(error.code!=='PGRST202')throw error}
+  if(!current())return null;
+  if(info?.is_assembly===true)return {role:'assembly',snapshot:null};
+ }catch(error){if(!current())return null;if(error.code!=='PGRST202')throw error}
  throw Error('تعذر تحديد واجهة الحساب، تحقق من الاتصال وصلاحيات الحساب.');
 }
 async function setSession(session){
  resetUI();if(!session?.user)return;
  ff28AccountId=session.user.id;const seq=ff28Epoch;
- const role=await ff28ReadRole();
- if(seq!==ff28Epoch)return;
+ let resolved;
+ try{resolved=await ff28ReadRole(seq)}catch(err){if(seq!==ff28Epoch)return;throw err}
+ if(seq!==ff28Epoch||!resolved)return;
+ const {role,snapshot:initial}=resolved;
  if(['customer','applicant'].includes(role)){
   document.body.dataset.access=role;$('ff28Title').textContent=role==='customer'?'طلباتي':'طلب الانضمام للعمل';$('ff28Apply').hidden=true;
   await ff28PortalLoad();return;
@@ -1262,10 +1265,10 @@ async function setSession(session){
  if(role==='assembly'){document.body.dataset.access='staff';$('loginOverlay').classList.add('hidden');await ffV12Start();return;}
  if(role==='burger_kitchen'){
    if(typeof window.ffBurgerStart!=='function')await new Promise(resolve=>document.readyState==='loading'?document.addEventListener('DOMContentLoaded',resolve,{once:true}):resolve());
+   if(seq!==ff28Epoch)return;
    if(typeof window.ffBurgerStart!=='function')throw Error('لم يتم تحميل واجهة قسم البرجر');
    document.body.dataset.access='staff';$('loginOverlay').classList.add('hidden');await window.ffBurgerStart();return;
  }
- const initial=ffLuxeInitialSnapshot;ffLuxeInitialSnapshot=null;
  if(initial?.role===role){
   data=initial;
   window.dispatchEvent(new Event('ff-assembly-snapshot-success'));
@@ -1320,7 +1323,7 @@ async function initialize(){if(!window.supabase?.createClient){for(let i=0;i<40&
 }let ffLastSweepAt=0;pollTimer=setInterval(async()=>{if(!user||document.hidden||ffV12AssemblyActive||window.ffBurgerActive?.())return;/* نبضات الموصل مستقلة؛ تنظيف العروض لا يلزم كل 4 ثوانٍ */if(['manager','customer_service'].includes(data?.role)&&canAction('assign_driver')&&Date.now()-ffLastSweepAt>20000){ffLastSweepAt=Date.now();try{await rpc('ff38_sweep_offers')}catch(e){console.warn('تعذر تنظيف عروض الإسناد',e.code||e.message)}}await reload();},4000);clockTimer=setInterval(tick,1000);window.addEventListener('focus',()=>reload());document.addEventListener('visibilitychange',()=>{if(!document.hidden)reload()});try{signal=client.channel('ff38-live-hint').on('postgres_changes',{event:'*',schema:'public',table:'ff_orders'},()=>reload()).subscribe()}catch{}
 }
 $('loginBtn').onclick=async()=>{let b=$('loginBtn');b.disabled=true;$('loginStatus').textContent='جارٍ التحقق من بيانات الدخول وتحميل الصلاحيات...';try{let {data:auth,error}=await client.auth.signInWithPassword(ff28Credentials($('email').value,$('password').value));if(error)throw error;$('loginStatus').textContent='تم التحقق من بيانات الدخول؛ جارٍ تجهيز واجهة الحساب...';await setSession(auth.session);$('password').value=''}catch(e){$('loginStatus').textContent='فشل الدخول: '+(e.message||e)}finally{b.disabled=false}};
-$('logoutBtn').onclick=async()=>{if(data?.role==='driver')try{await rpc('ff38_clock_out')}catch(e){return toast('لا يمكن الخروج: '+e.message)}try{await client.auth.signOut({scope:'local'})}catch(e){toast(e.message)}resetUI()};
+$('logoutBtn').onclick=async()=>{const b=$('logoutBtn'),seq=ff28Epoch;if(b.disabled)return;b.disabled=true;try{if(data?.role==='driver'){try{await rpc('ff38_clock_out')}catch(e){if(seq===ff28Epoch)toast('لا يمكن الخروج: '+e.message);return}}if(seq!==ff28Epoch)return;const {error}=await client.auth.signOut({scope:'local'});if(error)throw error;if(seq===ff28Epoch)resetUI()}catch(e){if(seq===ff28Epoch)toast('لم يتم تأكيد تسجيل الخروج؛ أعد المحاولة: '+(e?.message||e))}finally{b.disabled=false}};
 $('refreshBtn').onclick=()=>reload(true);
 for(const id of ['orderSearch','orderBranchFilter','orderStatusFilter'])$(id).addEventListener(id==='orderSearch'?'input':'change',()=>{if(data)drawOrders()});
 $('auditRefreshBtn').onclick=async()=>{let b=$('auditRefreshBtn');b.disabled=true;try{const arr=await rpc('ff38_list_reject_permission_audit');$('auditHistory').className='';$('auditHistory').innerHTML=arr.length?arr.map(a=>`<div class="item"><b>طلب #${esc(a.order_number??'—')}</b> · ${a.new_value?'✅ سماح':'🔒 منع'}<div class="muted">${esc(a.actor_name||'مستخدم')} · ${time(a.changed_at)}</div></div>`).join(''):'<div class="empty">لا توجد تغييرات مسجلة.</div>'}catch(e){toast('تعذر تحميل السجل: '+e.message)}finally{b.disabled=false}};
