@@ -1,0 +1,240 @@
+{
+  "base_commit": "a645e483db0075f1fac2402612ae2e9ef5297a11",
+  "scope": "QA-23: 38 explicit label associations and one search accessible name; no styling, data or handlers changed",
+  "hunks": [
+    {
+      "id": "addEmail",
+      "label": "بريد الموظف",
+      "before": "<label>بريد الموظف</label><input id=\"addEmail\" type=\"email\" placeholder=\"example@email.com\">",
+      "after": "<label for=\"addEmail\">بريد الموظف</label><input id=\"addEmail\" type=\"email\" placeholder=\"example@email.com\">"
+    },
+    {
+      "id": "addName",
+      "label": "اسم الموظف",
+      "before": "<label>اسم الموظف</label><input id=\"addName\" placeholder=\"اسم الموظف\">",
+      "after": "<label for=\"addName\">اسم الموظف</label><input id=\"addName\" placeholder=\"اسم الموظف\">"
+    },
+    {
+      "id": "addRole",
+      "label": "الدور",
+      "before": "<label>الدور</label><select id=\"addRole\">",
+      "after": "<label for=\"addRole\">الدور</label><select id=\"addRole\">"
+    },
+    {
+      "id": "addBranch",
+      "label": "الفرع (للموصل والكاشير ونقطة التجميع)",
+      "before": "<label>الفرع (للموصل والكاشير ونقطة التجميع)</label><select id=\"addBranch\">",
+      "after": "<label for=\"addBranch\">الفرع (للموصل والكاشير ونقطة التجميع)</label><select id=\"addBranch\">"
+    },
+    {
+      "id": "permissionEmployee",
+      "label": "الموظف",
+      "before": "<label>الموظف</label><select id=\"permissionEmployee\">",
+      "after": "<label for=\"permissionEmployee\">الموظف</label><select id=\"permissionEmployee\">"
+    },
+    {
+      "id": "orderSearch",
+      "label": "رقم الطلب أو الهاتف أو اسم العميل أو المنطقة",
+      "before": "<label>رقم الطلب أو الهاتف أو اسم العميل أو المنطقة</label><input id=\"orderSearch\" placeholder=\"ابحث في الطلبات الظاهرة\">",
+      "after": "<label for=\"orderSearch\">رقم الطلب أو الهاتف أو اسم العميل أو المنطقة</label><input id=\"orderSearch\" placeholder=\"ابحث في الطلبات الظاهرة\">"
+    },
+    {
+      "id": "orderBranchFilter",
+      "label": "الفرع",
+      "before": "<label>الفرع</label><select id=\"orderBranchFilter\">",
+      "after": "<label for=\"orderBranchFilter\">الفرع</label><select id=\"orderBranchFilter\">"
+    },
+    {
+      "id": "orderStatusFilter",
+      "label": "الحالة",
+      "before": "<label>الحالة</label><select id=\"orderStatusFilter\">",
+      "after": "<label for=\"orderStatusFilter\">الحالة</label><select id=\"orderStatusFilter\">"
+    },
+    {
+      "id": "ff51CatName",
+      "label": "القسم",
+      "before": "<label>القسم</label><input id=\"ff51CatName\" placeholder=\"الوجبات الرئيسية\">",
+      "after": "<label for=\"ff51CatName\">القسم</label><input id=\"ff51CatName\" placeholder=\"الوجبات الرئيسية\">"
+    },
+    {
+      "id": "ff51ItemName",
+      "label": "اسم الصنف",
+      "before": "<label>اسم الصنف</label><input id=\"ff51ItemName\">",
+      "after": "<label for=\"ff51ItemName\">اسم الصنف</label><input id=\"ff51ItemName\">"
+    },
+    {
+      "id": "ff51ItemPrice",
+      "label": "السعر بالريال",
+      "before": "<label>السعر بالريال</label><input id=\"ff51ItemPrice\" type=\"number\" min=\"0\">",
+      "after": "<label for=\"ff51ItemPrice\">السعر بالريال</label><input id=\"ff51ItemPrice\" type=\"number\" min=\"0\">"
+    },
+    {
+      "id": "ff51OfferName",
+      "label": "اسم العرض",
+      "before": "<label>اسم العرض</label><input id=\"ff51OfferName\">",
+      "after": "<label for=\"ff51OfferName\">اسم العرض</label><input id=\"ff51OfferName\">"
+    },
+    {
+      "id": "ff51OfferPrice",
+      "label": "سعر العرض",
+      "before": "<label>سعر العرض</label><input id=\"ff51OfferPrice\" type=\"number\" min=\"0\">",
+      "after": "<label for=\"ff51OfferPrice\">سعر العرض</label><input id=\"ff51OfferPrice\" type=\"number\" min=\"0\">"
+    },
+    {
+      "id": "ffCatalogCardSort",
+      "label": "ترتيب البطاقة (الأصغر أولًا)",
+      "before": "<label>ترتيب البطاقة (الأصغر أولًا)</label><input id=\"ffCatalogCardSort\" type=\"number\" min=\"0\" max=\"99999\" step=\"1\">",
+      "after": "<label for=\"ffCatalogCardSort\">ترتيب البطاقة (الأصغر أولًا)</label><input id=\"ffCatalogCardSort\" type=\"number\" min=\"0\" max=\"99999\" step=\"1\">"
+    },
+    {
+      "id": "ffCatalogCardStyle",
+      "label": "تصميم البطاقة",
+      "before": "<label>تصميم البطاقة</label><select id=\"ffCatalogCardStyle\">",
+      "after": "<label for=\"ffCatalogCardStyle\">تصميم البطاقة</label><select id=\"ffCatalogCardStyle\">"
+    },
+    {
+      "id": "ff51CustomerNoteText",
+      "label": "إضافة ملاحظة",
+      "before": "<label>إضافة ملاحظة</label><textarea id=\"ff51CustomerNoteText\">",
+      "after": "<label for=\"ff51CustomerNoteText\">إضافة ملاحظة</label><textarea id=\"ff51CustomerNoteText\">"
+    },
+    {
+      "id": "ff51ArchiveFrom",
+      "label": "من تاريخ",
+      "before": "<label>من تاريخ</label><input id=\"ff51ArchiveFrom\" type=\"date\">",
+      "after": "<label for=\"ff51ArchiveFrom\">من تاريخ</label><input id=\"ff51ArchiveFrom\" type=\"date\">"
+    },
+    {
+      "id": "ff51ArchiveTo",
+      "label": "إلى تاريخ",
+      "before": "<label>إلى تاريخ</label><input id=\"ff51ArchiveTo\" type=\"date\">",
+      "after": "<label for=\"ff51ArchiveTo\">إلى تاريخ</label><input id=\"ff51ArchiveTo\" type=\"date\">"
+    },
+    {
+      "id": "ff51ArchiveStatus",
+      "label": "الحالة",
+      "before": "<label>الحالة</label><select id=\"ff51ArchiveStatus\">",
+      "after": "<label for=\"ff51ArchiveStatus\">الحالة</label><select id=\"ff51ArchiveStatus\">"
+    },
+    {
+      "id": "ff51ArchiveBranch",
+      "label": "الفرع",
+      "before": "<label>الفرع</label><select id=\"ff51ArchiveBranch\">",
+      "after": "<label for=\"ff51ArchiveBranch\">الفرع</label><select id=\"ff51ArchiveBranch\">"
+    },
+    {
+      "id": "ff51RatingBranch",
+      "label": "فرع تقييمات الموصلين",
+      "before": "<label>فرع تقييمات الموصلين</label><select id=\"ff51RatingBranch\">",
+      "after": "<label for=\"ff51RatingBranch\">فرع تقييمات الموصلين</label><select id=\"ff51RatingBranch\">"
+    },
+    {
+      "id": "ff50RequestItems",
+      "label": "الأصناف الجديدة كاملة (كل صنف يبدأ بالعدد)",
+      "before": "<label>الأصناف الجديدة كاملة (كل صنف يبدأ بالعدد)</label><textarea id=\"ff50RequestItems\">",
+      "after": "<label for=\"ff50RequestItems\">الأصناف الجديدة كاملة (كل صنف يبدأ بالعدد)</label><textarea id=\"ff50RequestItems\">"
+    },
+    {
+      "id": "ff50RequestReason",
+      "label": "سبب التعديل",
+      "before": "<label>سبب التعديل</label><input id=\"ff50RequestReason\" maxlength=\"500\" placeholder=\"اشرح ما طلبه العميل (إلزامي)\">",
+      "after": "<label for=\"ff50RequestReason\">سبب التعديل</label><input id=\"ff50RequestReason\" maxlength=\"500\" placeholder=\"اشرح ما طلبه العميل (إلزامي)\">"
+    },
+    {
+      "id": "ff49ReserveBranch",
+      "label": "فرع الاستلام",
+      "before": "<label>فرع الاستلام</label><select id=\"ff49ReserveBranch\">",
+      "after": "<label for=\"ff49ReserveBranch\">فرع الاستلام</label><select id=\"ff49ReserveBranch\">"
+    },
+    {
+      "id": "ff49ReserveName",
+      "label": "اسم العميل",
+      "before": "<label>اسم العميل</label><input id=\"ff49ReserveName\" maxlength=\"100\">",
+      "after": "<label for=\"ff49ReserveName\">اسم العميل</label><input id=\"ff49ReserveName\" maxlength=\"100\">"
+    },
+    {
+      "id": "ff49ReservePhone",
+      "label": "الهاتف",
+      "before": "<label>الهاتف</label><input id=\"ff49ReservePhone\" inputmode=\"tel\">",
+      "after": "<label for=\"ff49ReservePhone\">الهاتف</label><input id=\"ff49ReservePhone\" inputmode=\"tel\">"
+    },
+    {
+      "id": "ff49ReserveNotes",
+      "label": "ملاحظات الحجز",
+      "before": "<label>ملاحظات الحجز</label><input id=\"ff49ReserveNotes\">",
+      "after": "<label for=\"ff49ReserveNotes\">ملاحظات الحجز</label><input id=\"ff49ReserveNotes\">"
+    },
+    {
+      "id": "ff49ReserveItems",
+      "label": "الأصناف — كل صنف بسطر ويبدأ بالعدد",
+      "before": "<label>الأصناف — كل صنف بسطر ويبدأ بالعدد</label><textarea id=\"ff49ReserveItems\" placeholder=\"1 تشكن | 1500&#10;2 استربس | 900\">",
+      "after": "<label for=\"ff49ReserveItems\">الأصناف — كل صنف بسطر ويبدأ بالعدد</label><textarea id=\"ff49ReserveItems\" placeholder=\"1 تشكن | 1500&#10;2 استربس | 900\">"
+    },
+    {
+      "id": "ff49ManualDriver",
+      "label": "الموصل المرشح",
+      "before": "<label>الموصل المرشح</label><select id=\"ff49ManualDriver\">",
+      "after": "<label for=\"ff49ManualDriver\">الموصل المرشح</label><select id=\"ff49ManualDriver\">"
+    },
+    {
+      "id": "ff49ManualReason",
+      "label": "سبب اختيار الموصل",
+      "before": "<label>سبب اختيار الموصل</label><input id=\"ff49ManualReason\" maxlength=\"500\" placeholder=\"مثال: في طريقه لنفس المنطقة\">",
+      "after": "<label for=\"ff49ManualReason\">سبب اختيار الموصل</label><input id=\"ff49ManualReason\" maxlength=\"500\" placeholder=\"مثال: في طريقه لنفس المنطقة\">"
+    },
+    {
+      "id": "ff52LateItems",
+      "label": "الأصناف (العدد أولًا، مع السعر أو اسم من المنيو)",
+      "before": "<label>الأصناف (العدد أولًا، مع السعر أو اسم من المنيو)</label><textarea id=\"ff52LateItems\" placeholder=\"1 تشكن | 1500&#10;2 بطاطس | 300\">",
+      "after": "<label for=\"ff52LateItems\">الأصناف (العدد أولًا، مع السعر أو اسم من المنيو)</label><textarea id=\"ff52LateItems\" placeholder=\"1 تشكن | 1500&#10;2 بطاطس | 300\">"
+    },
+    {
+      "id": "ff52RouteBranch",
+      "label": "الفرع",
+      "before": "<label>الفرع</label><select id=\"ff52RouteBranch\">",
+      "after": "<label for=\"ff52RouteBranch\">الفرع</label><select id=\"ff52RouteBranch\">"
+    },
+    {
+      "id": "ff52RouteDriver",
+      "label": "الموصل",
+      "before": "<label>الموصل</label><select id=\"ff52RouteDriver\">",
+      "after": "<label for=\"ff52RouteDriver\">الموصل</label><select id=\"ff52RouteDriver\">"
+    },
+    {
+      "id": "ff52RouteAreas",
+      "label": "المناطق — افصل بينها بالفاصلة (،)",
+      "before": "<label>المناطق — افصل بينها بالفاصلة (،)</label><textarea id=\"ff52RouteAreas\">",
+      "after": "<label for=\"ff52RouteAreas\">المناطق — افصل بينها بالفاصلة (،)</label><textarea id=\"ff52RouteAreas\">"
+    },
+    {
+      "id": "ff52RouteStart",
+      "label": "من الساعة",
+      "before": "<label>من الساعة</label><input id=\"ff52RouteStart\" type=\"time\" value=\"08:30\">",
+      "after": "<label for=\"ff52RouteStart\">من الساعة</label><input id=\"ff52RouteStart\" type=\"time\" value=\"08:30\">"
+    },
+    {
+      "id": "ff52RouteEnd",
+      "label": "حتى",
+      "before": "<label>حتى</label><input id=\"ff52RouteEnd\" type=\"time\" value=\"15:00\">",
+      "after": "<label for=\"ff52RouteEnd\">حتى</label><input id=\"ff52RouteEnd\" type=\"time\" value=\"15:00\">"
+    },
+    {
+      "id": "ff52RouteActive",
+      "label": "حالة التوجيه",
+      "before": "<label>حالة التوجيه</label><select id=\"ff52RouteActive\">",
+      "after": "<label for=\"ff52RouteActive\">حالة التوجيه</label><select id=\"ff52RouteActive\">"
+    },
+    {
+      "id": "password",
+      "label": "كلمة المرور",
+      "before": "<label>كلمة المرور</label><input id=\"password\" type=\"password\" autocomplete=\"current-password\" placeholder=\"••••••••\">",
+      "after": "<label for=\"password\">كلمة المرور</label><input id=\"password\" type=\"password\" autocomplete=\"current-password\" placeholder=\"••••••••\">"
+    },
+    {
+      "id": "ff51CustomerSearch",
+      "label": "ابحث برقم الهاتف أو اسم العميل",
+      "before": "<input id=\"ff51CustomerSearch\" style=\"flex:1\" placeholder=\"ابحث برقم الهاتف أو اسم العميل\">",
+      "after": "<input id=\"ff51CustomerSearch\" style=\"flex:1\" aria-label=\"ابحث برقم الهاتف أو اسم العميل\" placeholder=\"ابحث برقم الهاتف أو اسم العميل\">"
+    }
+  ]
+}
