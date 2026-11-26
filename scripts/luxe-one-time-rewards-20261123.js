@@ -24,7 +24,7 @@ manager.innerHTML='<h2>🎟️ أكواد التعويض والجوائز وال
 '<label>اسم العميل<input name="name" required minlength="2" maxlength="100"></label>'+
 '<label>رقم الهاتف<input name="phone" required inputmode="tel" maxlength="30"></label>'+
 '<label>انتهاء الصلاحية (اختياري)<input name="expiry" type="date"></label></div>'+
-'<h3>أصناف الكود من المنيو</h3><input id="ffRewardItemSearch" placeholder="🔎 ابحث عن صنف" autocomplete="off">'+
+'<h3>أصناف الكود من المنيو</h3><input id="ffRewardItemSearch" aria-label="البحث عن صنف للكود" placeholder="🔎 ابحث عن صنف" autocomplete="off">'+
 '<div id="ffRewardManagerItems"></div><button class="primary" type="submit" id="ffRewardIssue">إصدار كود جديد</button></form>'+
 '<p id="ffRewardIssueStatus" role="status"></p><div id="ffRewardResult"></div>'+
 '<div class="actions"><button id="ffRewardCodesRefresh" class="outline" type="button">📋 الأكواد الصادرة</button></div>'+
