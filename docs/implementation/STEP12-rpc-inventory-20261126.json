@@ -907,7 +907,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "6bb7324d0d8d31e4160b5d53983d8371"
+      "definition_md5": "6bb7324d0d8d31e4160b5d53983d8371",
+      "scope_test": "supabase/tests/step12_rating_coordination_scope_rollback.sql: 53/53 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff52_admin_route_list",
@@ -1233,7 +1234,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "7203aab9f7fdbf5d89038c4ad2e5ce8e"
+      "definition_md5": "b1ca894a87bdb7339c6aded1e7b7823c",
+      "scope_test": "supabase/tests/step12_branch_settings_item_notes_scope_rollback.sql: 41/41 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance; 20261126053538 step12_duplicate_item_notes_rollback.sql: 5/5 normalized duplicate mapping PASS before/after migration"
     },
     {
       "name": "ff70_submit_atomic",
@@ -1303,7 +1305,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "138f2432423560e67c6587041850d0f8"
+      "definition_md5": "138f2432423560e67c6587041850d0f8",
+      "scope_test": "supabase/tests/step12_legacy_design_delegation_scope_rollback.sql: 43/43 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff81_effective_design",
@@ -1312,7 +1315,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "7fb0d3f050e7cfb009696a9c3665c855"
+      "definition_md5": "7fb0d3f050e7cfb009696a9c3665c855",
+      "scope_test": "supabase/tests/step12_legacy_design_delegation_scope_rollback.sql: 43/43 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff81_named_card_draft",
@@ -1321,7 +1325,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "a4cf6d52b3e4e7f93645a0027baedf3b"
+      "definition_md5": "a4cf6d52b3e4e7f93645a0027baedf3b",
+      "scope_test": "supabase/tests/step12_legacy_design_delegation_scope_rollback.sql: 43/43 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff82_delegate_catalog",
@@ -1340,7 +1345,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9bd7a0c63deeb3c309ea95fcc36db102"
+      "definition_md5": "9bd7a0c63deeb3c309ea95fcc36db102",
+      "scope_test": "supabase/tests/step12_legacy_design_delegation_scope_rollback.sql: 43/43 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff82_delegate_history",
@@ -1349,7 +1355,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "b238c5fdcff418827de2a5b2dc42c268"
+      "definition_md5": "b238c5fdcff418827de2a5b2dc42c268",
+      "scope_test": "supabase/tests/step12_legacy_design_delegation_scope_rollback.sql: 43/43 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff82_delegate_review",
@@ -1358,7 +1365,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "aa2d0b7f0c727cb6418d7695156c8b14"
+      "definition_md5": "aa2d0b7f0c727cb6418d7695156c8b14",
+      "scope_test": "supabase/tests/step12_legacy_design_delegation_scope_rollback.sql: 43/43 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff82_manager_accounts",
@@ -1420,7 +1428,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "3d1842993a9540dc53c98f1d6f408d11"
+      "definition_md5": "3d1842993a9540dc53c98f1d6f408d11",
+      "scope_test": "supabase/tests/step12_legacy_design_delegation_scope_rollback.sql: 43/43 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff82_set_grant",
@@ -1429,7 +1438,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5a59b081cb47b6982332ce4db612d44b"
+      "definition_md5": "5a59b081cb47b6982332ce4db612d44b",
+      "scope_test": "supabase/tests/step12_legacy_design_delegation_scope_rollback.sql: 43/43 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff86_content_history_scoped",
@@ -1498,7 +1508,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "ca553c8a3c89092a82dc2395382f3d50"
+      "definition_md5": "ca553c8a3c89092a82dc2395382f3d50",
+      "scope_test": "supabase/tests/step12_branch_settings_item_notes_scope_rollback.sql: 41/41 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff_a05_set_branch_hours",
@@ -1507,7 +1518,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f79cbd1af2d1b08766ee00a26c1ea758"
+      "definition_md5": "f79cbd1af2d1b08766ee00a26c1ea758",
+      "scope_test": "supabase/tests/step12_branch_settings_item_notes_scope_rollback.sql: 41/41 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff_a06_nav_save",
@@ -1700,7 +1712,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "f51414c5df86c1b2df9a59ac456ca66c"
+      "definition_md5": "048956f6b6c7e2bfe3f0a5d2d676445a",
+      "scope_test": "supabase/tests/step12_rating_coordination_scope_rollback.sql: 53/53 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff_a10_confirm_fee",
@@ -1722,7 +1735,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "7a159db063b62cd04295939dfc87fd5b"
+      "definition_md5": "7a159db063b62cd04295939dfc87fd5b",
+      "scope_test": "supabase/tests/step12_rating_coordination_scope_rollback.sql: 53/53 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff_a10_driver_rating_queue",
@@ -1741,7 +1755,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "debe1f37e5fc39c1c9ddf6cf3e51b18a"
+      "definition_md5": "debe1f37e5fc39c1c9ddf6cf3e51b18a",
+      "scope_test": "supabase/tests/step12_rating_coordination_scope_rollback.sql: 53/53 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff_a10_fee_history",
@@ -2466,7 +2481,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "cfb330126469cd1345bc51d1a6219bdf"
+      "definition_md5": "cfb330126469cd1345bc51d1a6219bdf",
+      "scope_test": "supabase/tests/step12_rating_coordination_scope_rollback.sql: 53/53 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff_luxe_rate_driver_cs",
@@ -2475,7 +2491,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "7f62f25f9b84efe60c2b5a8afb6ae27b"
+      "definition_md5": "7f62f25f9b84efe60c2b5a8afb6ae27b",
+      "scope_test": "supabase/tests/step12_rating_coordination_scope_rollback.sql: 53/53 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff_luxe_rating_summary_period",
@@ -2484,7 +2501,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "45303478cede7b02542d21ca35244d87"
+      "definition_md5": "45303478cede7b02542d21ca35244d87",
+      "scope_test": "supabase/tests/step12_rating_coordination_scope_rollback.sql: 53/53 live SQL rollback group PASS; synthetic claim scope; not live JWT acceptance"
     },
     {
       "name": "ff_luxe_set_cashier_desk",
@@ -2660,7 +2678,8 @@
       "authenticated": true,
       "config": "search_path=\"\"",
       "definition_md5": "d986b70e8e815e25e4322265c7854d34",
-      "manual_review": "Function body returns void without requiring MFA; no new MFA requirement identified in final FIX-15 / QA-25 or STEP12. Not counted as a security control; no permission or login-policy change made."
+      "manual_review": "Function body returns void without requiring MFA; no new MFA requirement identified in final FIX-15 / QA-25 or STEP12. Not counted as a security control; no permission or login-policy change made.",
+      "review_evidence": "Live definition inspected: RETURNS void; BEGIN RETURN; END; deliberate no-op, not an MFA enforcement control. No new MFA requirement or policy introduced without approval. Not scope-test PASS."
     },
     {
       "name": "ff_set_special_courier_capacity",
@@ -2903,5 +2922,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26: STEP12 277 new assertions, 3 reproduced defects corrected in 2 live migrations #149 pending CI; 183/270 explicit scope_test, 68 prior evidence links, 19 unlinked; partial coverage, not full acceptance."
+  "last_update": "2026-11-26: 419 new SQL rollback assertions; 4 confirmed access/state defects and 1 duplicate-note defect fixed in 4 live migrations. #149 merged, #150/#151 pending CI. 270/270 current definitions and EXECUTE grants match. {\"explicit\":201,\"prior_only\":68,\"review_only\":1,\"unlinked\":0}. Evidence linkage only; not complete acceptance."
 }
