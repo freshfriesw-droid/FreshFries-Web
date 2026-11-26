@@ -57,6 +57,15 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-07"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -201,6 +210,16 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-04",
+          "F14-12"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -342,6 +361,15 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-06"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -399,6 +427,15 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-02"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -427,6 +464,16 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-01",
+          "F14-12"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -457,6 +504,15 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-08"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -541,6 +597,16 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-09",
+          "F14-10"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -940,6 +1006,15 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-09"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -1026,6 +1101,16 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-01",
+          "F14-02"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -1140,6 +1225,18 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-04",
+          "F14-05",
+          "F14-09",
+          "F14-10"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -1168,6 +1265,15 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-06"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -1225,6 +1331,16 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-04",
+          "F14-12"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -1254,6 +1370,16 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-03",
+          "F14-12"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -1339,6 +1465,16 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-01",
+          "F14-02"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -1453,6 +1589,15 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-12"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -1604,6 +1749,15 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-08"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -1777,6 +1931,17 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-01",
+          "F14-11",
+          "F14-12"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -1893,6 +2058,15 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-06"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -2035,6 +2209,16 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-09",
+          "F14-10"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -2183,6 +2367,17 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-01",
+          "F14-02",
+          "F14-12"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -2211,6 +2406,15 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-07"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -2418,6 +2622,15 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-09"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -2709,6 +2922,15 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-02"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -2738,6 +2960,18 @@
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
         "candidate": "101011886fec22d650147b25211d8159606cb6e8",
         "scope": "technical evidence review; not field acceptance or launch"
+      },
+      "step14_review": {
+        "result": "BLOCKED",
+        "date": "2026-11-26",
+        "field_groups": [
+          "F14-01",
+          "F14-04",
+          "F14-06",
+          "F14-12"
+        ],
+        "evidence": "STEP14-field-tests-20261126.md",
+        "reason": "فحص الجاهزية الحي فقط منفذ؛ لا دليل اختبار ميداني بحسابات وأجهزة فعلية. راجع البوابة ومؤجلات D12 قبل القبول."
       }
     },
     {
@@ -4746,5 +4980,56 @@
       "verification_pr": 160
     },
     "next_step": "STEP14 field tests, with prior D12 deferrals preserved"
+  },
+  "step14": {
+    "status": "OPEN — live read-only readiness completed; physical field tests BLOCKED",
+    "date": "2026-11-26",
+    "evidence": "STEP14-field-tests-20261126.md",
+    "starting_commit": "fa5bbbfca3135340045a4f98f7f4a143c84f2225",
+    "field_groups": {
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 12
+    },
+    "live_readiness": {
+      "branches": 3,
+      "active_auth_profiles": 13,
+      "linked_cashier_by_branch": {
+        "cairo": 2,
+        "sam_mall": 1,
+        "khamseen": 0
+      },
+      "linked_driver_by_branch": {
+        "cairo": 3,
+        "sam_mall": 1,
+        "khamseen": 0
+      },
+      "assembly_by_branch": {
+        "cairo": 1,
+        "sam_mall": 0,
+        "khamseen": 0
+      },
+      "burger_by_branch": {
+        "cairo": 1,
+        "sam_mall": 0,
+        "khamseen": 0
+      },
+      "supervisors": 0,
+      "configured_hours_rows": 0,
+      "approved_tariff_rows": 0,
+      "offer_minutes": [
+        3,
+        10
+      ],
+      "cairo_special_capacity": 5,
+      "enabled_push_devices": 7,
+      "enabled_push_accounts": 3,
+      "orders": 83,
+      "order_items": 91,
+      "rls": "129/129",
+      "field_run_records": 0
+    },
+    "next": "STEP14 F14-01/F14-03 with owner, real staff and devices; do not enter STEP15",
+    "deferred": "D12-01..06 preserved; no launch or permanent reset"
   }
 }
