@@ -1327,7 +1327,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "32f834f31ddb8e883698e3998e7a0d5d"
+      "definition_md5": "32f834f31ddb8e883698e3998e7a0d5d",
+      "scope_test": "STEP12 step12_manager_registry_scope_rollback.sql PASS 99/99; 88 denied/empty reads across eight nonmanager/disabled contexts, 11 active-manager assertions; SQL claims only"
     },
     {
       "name": "ff82_manager_audit",
@@ -1336,7 +1337,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "6ce1a2906acad4279c2e1ec08cf9157c"
+      "definition_md5": "6ce1a2906acad4279c2e1ec08cf9157c",
+      "scope_test": "STEP12 step12_manager_registry_scope_rollback.sql PASS 99/99; 88 denied/empty reads across eight nonmanager/disabled contexts, 11 active-manager assertions; SQL claims only"
     },
     {
       "name": "ff82_manager_grants",
@@ -1345,7 +1347,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "b42a99679a9600d4ce037638b44ecfbf"
+      "definition_md5": "b42a99679a9600d4ce037638b44ecfbf",
+      "scope_test": "STEP12 step12_manager_registry_scope_rollback.sql PASS 99/99; 88 denied/empty reads across eight nonmanager/disabled contexts, 11 active-manager assertions; SQL claims only"
     },
     {
       "name": "ff82_manager_reviews",
@@ -1354,7 +1357,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "408012ab7dcc7b77cc7f2060442060b3"
+      "definition_md5": "408012ab7dcc7b77cc7f2060442060b3",
+      "scope_test": "STEP12 step12_manager_registry_scope_rollback.sql PASS 99/99; 88 denied/empty reads across eight nonmanager/disabled contexts, 11 active-manager assertions; SQL claims only"
     },
     {
       "name": "ff82_my_grant",
@@ -1394,7 +1398,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "96d1db54473b58352e38571846be9c4b"
+      "definition_md5": "96d1db54473b58352e38571846be9c4b",
+      "scope_test": "STEP12 step12_manager_registry_scope_rollback.sql PASS 99/99; 88 denied/empty reads across eight nonmanager/disabled contexts, 11 active-manager assertions; SQL claims only"
     },
     {
       "name": "ff_a02_catalog_presentation",
@@ -1489,7 +1494,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "717fa0754749b0d95f228f89120f5a73"
+      "definition_md5": "717fa0754749b0d95f228f89120f5a73",
+      "scope_test": "STEP12 step12_manager_registry_scope_rollback.sql PASS 99/99; 88 denied/empty reads across eight nonmanager/disabled contexts, 11 active-manager assertions; SQL claims only"
     },
     {
       "name": "ff_a07_effective_designs",
@@ -1511,7 +1517,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "10b7c927d19b7532459d568eae0ccb58"
+      "definition_md5": "10b7c927d19b7532459d568eae0ccb58",
+      "scope_test": "STEP12 step12_manager_registry_scope_rollback.sql PASS 99/99; 88 denied/empty reads across eight nonmanager/disabled contexts, 11 active-manager assertions; SQL claims only"
     },
     {
       "name": "ff_a07_manager_style_layers",
@@ -2118,7 +2125,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "d608645a59859b886a6d71e35a4e4910"
+      "definition_md5": "d608645a59859b886a6d71e35a4e4910",
+      "scope_test": "STEP12 step12_manager_registry_scope_rollback.sql PASS 99/99; 88 denied/empty reads across eight nonmanager/disabled contexts, 11 active-manager assertions; SQL claims only"
     },
     {
       "name": "ff_content_create_draft",
@@ -2153,7 +2161,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "52e17997faca5e9fdf6f5e72cdf1bf77"
+      "definition_md5": "52e17997faca5e9fdf6f5e72cdf1bf77",
+      "scope_test": "STEP12 step12_manager_registry_scope_rollback.sql PASS 99/99; 88 denied/empty reads across eight nonmanager/disabled contexts, 11 active-manager assertions; SQL claims only"
     },
     {
       "name": "ff_content_publish",
@@ -2289,7 +2298,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9fce9375ab9e56d30bf9fca9cf60fc36"
+      "definition_md5": "9fce9375ab9e56d30bf9fca9cf60fc36",
+      "scope_test": "STEP12 step12_manager_registry_scope_rollback.sql PASS 99/99; 88 denied/empty reads across eight nonmanager/disabled contexts, 11 active-manager assertions; SQL claims only"
     },
     {
       "name": "ff_luxe_completed_universal",
@@ -2692,7 +2702,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5462f81401ff4899ffbfbe2f8f065c91"
+      "definition_md5": "5462f81401ff4899ffbfbe2f8f065c91",
+      "scope_test": "STEP12 step12_manager_registry_scope_rollback.sql PASS 99/99; 88 denied/empty reads across eight nonmanager/disabled contexts, 11 active-manager assertions; SQL claims only"
     },
     {
       "name": "ff_ui_manager_source",
@@ -2821,5 +2832,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26 STEP12 client audit scope 102 new assertions; 133/270 scope_test, 60 prior evidence links; #147/#148 pending CI/merge"
+  "last_update": "2026-11-26 STEP12 manager registry scope; 144/270 explicit scope_test, 60 prior evidence links; #147/#148 pending CI/merge"
 }
