@@ -425,7 +425,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "ec8e84b8fdf0529b6640c7fd31e4ed91"
+      "definition_md5": "ec8e84b8fdf0529b6640c7fd31e4ed91",
+      "scope_test": "2026-11-26 STEP12 privileged read RPC rollback: 8 unauthorized contexts rejected (42501), active manager valid read; SQL claim simulation, not live JWT"
     },
     {
       "name": "ff42_settlement_save",
@@ -443,7 +444,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "9b1c50c4537c29ba1bbc5fed5fecaa3e"
+      "definition_md5": "9b1c50c4537c29ba1bbc5fed5fecaa3e",
+      "scope_test": "2026-11-26 STEP12 privileged read RPC rollback: 8 unauthorized contexts rejected (42501), active manager valid read; SQL claim simulation, not live JWT"
     },
     {
       "name": "ff44_integrity_review",
@@ -452,7 +454,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "fa8c6aa79fac8101441db03c955c9393"
+      "definition_md5": "fa8c6aa79fac8101441db03c955c9393",
+      "scope_test": "2026-11-26 STEP12 privileged read RPC rollback: 8 unauthorized contexts rejected (42501), active manager valid read; SQL claim simulation, not live JWT"
     },
     {
       "name": "ff45_branch_access_review",
@@ -461,7 +464,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "0401ad802e05653104f45e96aefb67de"
+      "definition_md5": "0401ad802e05653104f45e96aefb67de",
+      "scope_test": "2026-11-26 STEP12 privileged read RPC rollback: 8 unauthorized contexts rejected (42501), active manager valid read; SQL claim simulation, not live JWT"
     },
     {
       "name": "ff46_release_readiness",
@@ -470,7 +474,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "0593614d71f957531174834a9d33e5f3"
+      "definition_md5": "0593614d71f957531174834a9d33e5f3",
+      "scope_test": "2026-11-26 STEP12 privileged read RPC rollback: 8 unauthorized contexts rejected (42501), active manager valid read; SQL claim simulation, not live JWT"
     },
     {
       "name": "ff47_test_case_save",
@@ -515,7 +520,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "0ebee1de0362f1f4336eef021cc5d20b"
+      "definition_md5": "0ebee1de0362f1f4336eef021cc5d20b",
+      "scope_test": "2026-11-26 STEP12 privileged read RPC rollback: 8 unauthorized contexts rejected (42501), active manager valid read; SQL claim simulation, not live JWT"
     },
     {
       "name": "ff48_diagnostics_summary",
@@ -524,7 +530,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "b2cfe1ec9bd1ff212d315ee3a67e5e29"
+      "definition_md5": "b2cfe1ec9bd1ff212d315ee3a67e5e29",
+      "scope_test": "2026-11-26 STEP12 privileged read RPC rollback: 8 unauthorized contexts rejected (42501), active manager valid read; SQL claim simulation, not live JWT"
     },
     {
       "name": "ff48_release_info",
@@ -779,7 +786,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "0489718105e8346e0accbafb1d6c6f8f"
+      "definition_md5": "0489718105e8346e0accbafb1d6c6f8f",
+      "scope_test": "2026-11-26 STEP12 privileged read RPC rollback: 8 unauthorized contexts rejected (42501), active manager valid read; SQL claim simulation, not live JWT"
     },
     {
       "name": "ff51_offer_save",
@@ -815,7 +823,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "8b247bd69160c293439f6d198305467b"
+      "definition_md5": "8b247bd69160c293439f6d198305467b",
+      "scope_test": "2026-11-26 STEP12 privileged read RPC rollback: 8 unauthorized contexts rejected (42501), active manager valid read; SQL claim simulation, not live JWT"
     },
     {
       "name": "ff52_admin_route_save",
@@ -1567,7 +1576,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "4af89438e5b8407c7a2f9f38d93e0d5b"
+      "definition_md5": "4af89438e5b8407c7a2f9f38d93e0d5b",
+      "scope_test": "2026-11-26 STEP12 privileged read RPC rollback: 8 unauthorized contexts rejected (42501), active manager valid read; SQL claim simulation, not live JWT"
     },
     {
       "name": "ff_a10_reporting_center",
@@ -2515,5 +2525,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26: explicit driver operational ownership evidence and all 13 live migrations matched"
+  "last_update": "2026-11-26 STEP12 privileged read RPC: 10 additional signatures; 77/270 entries with explicit scope_test, not full acceptance"
 }
