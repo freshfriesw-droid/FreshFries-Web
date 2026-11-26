@@ -75,15 +75,16 @@
       "remaining": "خريطة FIX-03 جزئية؛ استكمال كل إجراء ودور وفرع",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "مطابقة مفاتيح القائمة 38/38 مع الخريطة، يبقى إثبات البدائل والديناميكية.",
+        "reason": "تغطية 38/38 مفتاح مجموعة؛ 164 توجيها فعليا و92 تحقق بديل قديم، مع خريطة A06 واختبارات الأدوار الخاصة.؛ اختبار الرأس ناجح، اعتماد الدمج والنشر الأخير معلق.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45853474668/job/140025624641"
         ],
         "remaining_kind": "technical_evidence_pending",
         "reviewed_date": "2026-11-26",
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
-        "candidate": "101011886fec22d650147b25211d8159606cb6e8",
+        "candidate": "848bb475a9f7082234e64477aef843531a2eef84",
         "scope": "technical evidence review; not field acceptance or launch"
       }
     },
@@ -698,15 +699,16 @@
       "remaining": "تغطية كل مسار وتخصيص مركزي",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "القائمة الهجينة مثبتة والمطابقة 38/38؛ اكتمال جميع البدائل ومسارات الدور بحاجة لإثبات.",
+        "reason": "تغطية 38/38 مفتاح مجموعة، و10 تحقق حفظ حالة ومسار، مع خريطة واختبارات A06 والأدوار الخاصة.؛ اختبار الرأس ناجح، اعتماد الدمج والنشر الأخير معلق.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45853474668/job/140025624641"
         ],
         "remaining_kind": "technical_evidence_pending",
         "reviewed_date": "2026-11-26",
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
-        "candidate": "101011886fec22d650147b25211d8159606cb6e8",
+        "candidate": "848bb475a9f7082234e64477aef843531a2eef84",
         "scope": "technical evidence review; not field acceptance or launch"
       }
     },
@@ -1465,17 +1467,18 @@
       "remaining": "جرد كامل لكل دور",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "مطابقة 38/38 مفاتيح القائمة، مع 20 سياقًا لجرد P0؛ لا يثبت الجرد تشغيل كل زر متغير أو كل بديل مرئي. يلزم إغلاق المرشحات غير المؤكدة باختبارات إجراءات. اختبار المسارات المباشر وحالة القائمة في #159 قيد التنفيذ.",
+        "reason": "38/38 مفاتيح القائمة العامة مع 164 توجيها فعليا و92 تحقق وصول قديم، بلا إخفاق؛ الأدوار الخاصة والأزرار الأخرى موثقة في A06/P0 وA02–A12. إثبات تقني لا حسابات حقيقية.؛ اختبار الرأس ناجح، اعتماد الدمج والنشر الأخير معلق.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45853474668/job/140025624641"
         ],
         "remaining_kind": "technical_evidence_pending",
         "reviewed_date": "2026-11-26",
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
-        "candidate": "101011886fec22d650147b25211d8159606cb6e8",
+        "candidate": "848bb475a9f7082234e64477aef843531a2eef84",
         "scope": "technical evidence review; not field acceptance or launch"
       }
     },
@@ -2102,17 +2105,18 @@
       "remaining": "جميع النماذج",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "39 إصلاح تسمية مدمجة #157، 273 تحققًا للأدوار السبعة، فتح وإغلاق وحصر واسترجاع التركيز؛ P2 وانحدار 17/17 والموقع مطابق. تدقيق الحقول الديناميكية المرئية قيد الاختبار #159.",
+        "reason": "39 حقلا سابقا (273 تحقق تسمية)، وحقلان ديناميكيان إضافيان، وفحص 164 توجيها دون أي حقل ظاهر غير مسمى؛ لوحة المفاتيح وحصر/استرجاع التركيز وتباين وتحذيرات الواجهة مثبتة في A06 وP2/A07. نطاق قبول برمجي وليس فحص أجهزة فعلية.؛ اختبار الرأس ناجح، اعتماد الدمج والنشر الأخير معلق.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/pull/157",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
           "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020695665"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45852061163/job/140020695665",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45853474668/job/140025624641"
         ],
         "remaining_kind": "technical_evidence_pending",
         "reviewed_date": "2026-11-26",
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
-        "candidate": "101011886fec22d650147b25211d8159606cb6e8",
+        "candidate": "848bb475a9f7082234e64477aef843531a2eef84",
         "scope": "technical evidence review; not field acceptance or launch"
       }
     },
@@ -2217,17 +2221,18 @@
       "remaining": "جرد خاص بالشاشات والأدوار",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "خريطة 41 مسارًا عامًا منها 38 مفتاحًا للمجموعات، و10 خاصة و3 عامة خارجها؛ المطابقة الآلية كاملة للمجموعات، لكن إثبات كل وظيفة قديمة/مسموح بها وبديلها لم يكتمل. اختبار المسارات المباشر وحالة القائمة في #159 قيد التنفيذ.",
+        "reason": "فهرس المسارات العامة 41 (38 ضمن مجموعات + الإعدادات والتحديث والخروج) والخاصة 10 والعامة خارج الموظفين 3، مع إثبات جميع الـ38 توجيها فعليا عبر الأدوار والمقاسات، 92 تحقق وصول قديم واختبارات A06 الخاصة وA08 والعمليات المتخصصة السابقة.؛ اختبار الرأس ناجح، اعتماد الدمج والنشر الأخير معلق.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json",
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/STEP09-closure-20261125.md",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45853474668/job/140025624641"
         ],
         "remaining_kind": "technical_evidence_pending",
         "reviewed_date": "2026-11-26",
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
-        "candidate": "101011886fec22d650147b25211d8159606cb6e8",
+        "candidate": "848bb475a9f7082234e64477aef843531a2eef84",
         "scope": "technical evidence review; not field acceptance or launch"
       }
     },
@@ -2562,16 +2567,17 @@
       "remaining": "تبديل الثيم والأدوار",
       "step13_review": {
         "result": "BLOCKED",
-        "reason": "اختبارات تبديل Accordion/Flat ومجموعة القائمة بعد تبديل الثيم ناجحة؛ إثبات حفظ مسار الدور لكل انتقال ديناميكي لا يزال مرتبطًا بجرد QA-27. اختبار المسارات المباشر وحالة القائمة في #159 قيد التنفيذ.",
+        "reason": "10/10 حالات تغيير النمط والثيم مع حفظ المسار وحالة المجموعة الفعلية (خمسة أدوار × مقاسين)، وتغطية A06 السابقة.؛ اختبار الرأس ناجح، اعتماد الدمج والنشر الأخير معلق.",
         "evidence": [
           "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45850902273",
           "https://github.com/freshfriesw-droid/FreshFries-Web/blob/main/docs/implementation/A06-route-map-20261125.json",
-          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159"
+          "https://github.com/freshfriesw-droid/FreshFries-Web/pull/159",
+          "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45853474668/job/140025624641"
         ],
         "remaining_kind": "technical_evidence_pending",
         "reviewed_date": "2026-11-26",
         "baseline": "a645e483db0075f1fac2402612ae2e9ef5297a11",
-        "candidate": "101011886fec22d650147b25211d8159606cb6e8",
+        "candidate": "848bb475a9f7082234e64477aef843531a2eef84",
         "scope": "technical evidence review; not field acceptance or launch"
       }
     },
@@ -4700,7 +4706,10 @@
       "html_sha256": "2f2cb79fd00367e57315ea0e540dce7405fe40a7c128699ed968fd630dda25f3",
       "local_asset_references": 41,
       "focused_pr": 158,
-      "route_pr": 159
+      "route_pr": 159,
+      "focused_merge": "3e45f21f762cfd21d49ebf74e491a1c2ad0471cb",
+      "route_candidate": "848bb475a9f7082234e64477aef843531a2eef84",
+      "route_audit": "https://github.com/freshfriesw-droid/FreshFries-Web/actions/runs/45853474668/job/140025624641"
     }
   }
 }
