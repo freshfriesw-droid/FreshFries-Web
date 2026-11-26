@@ -53,7 +53,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "6349d030da9738f7f8cabf84505e7d9c"
+      "definition_md5": "6349d030da9738f7f8cabf84505e7d9c",
+      "scope_test": "STEP12 step12_role_discovery_matrix_rollback.sql PASS 48/48; active roles, disabled/nonstaff, branch & cross-user permission contexts; SQL claims only"
     },
     {
       "name": "ff38_admin_link_user",
@@ -251,7 +252,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "a735e5f38584b4329d1ba2ec61c89814"
+      "definition_md5": "a735e5f38584b4329d1ba2ec61c89814",
+      "scope_test": "STEP12 step12_role_discovery_matrix_rollback.sql PASS 48/48; active roles, disabled/nonstaff, branch & cross-user permission contexts; SQL claims only"
     },
     {
       "name": "ff38_order_financial_summary",
@@ -270,7 +272,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "1b45c88349fd5ee434e8c4324d95f806"
+      "definition_md5": "1b45c88349fd5ee434e8c4324d95f806",
+      "scope_test": "STEP12 step12_role_discovery_matrix_rollback.sql PASS 48/48; active roles, disabled/nonstaff, branch & cross-user permission contexts; SQL claims only"
     },
     {
       "name": "ff38_set_driver_reject_permission",
@@ -550,7 +553,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "675f0306a519bc685df0ef7a55730a2e"
+      "definition_md5": "675f0306a519bc685df0ef7a55730a2e",
+      "scope_test": "STEP12 step12_role_discovery_matrix_rollback.sql PASS 48/48; active roles, disabled/nonstaff, branch & cross-user permission contexts; SQL claims only"
     },
     {
       "name": "ff48_report_client_event",
@@ -568,7 +572,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "45f69ecf18abd132a29781132a632386"
+      "definition_md5": "45f69ecf18abd132a29781132a632386",
+      "scope_test": "STEP12 step12_role_discovery_matrix_rollback.sql PASS 48/48; active roles, disabled/nonstaff, branch & cross-user permission contexts; SQL claims only"
     },
     {
       "name": "ff49_cashier_confirm_transfer",
@@ -2340,7 +2345,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "4534efff619a1b961b23650351dc9486"
+      "definition_md5": "4534efff619a1b961b23650351dc9486",
+      "scope_test": "STEP12 step12_role_discovery_matrix_rollback.sql PASS 48/48; active roles, disabled/nonstaff, branch & cross-user permission contexts; SQL claims only"
     },
     {
       "name": "ff_security_require_mfa",
@@ -2553,5 +2559,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26 STEP12 customer privacy matrix; 105/270 entries with explicit scope_test, not full acceptance; #146 pending merge"
+  "last_update": "2026-11-26 STEP12 role discovery matrix; 111/270 entries with explicit scope_test, not full acceptance; #146 pending merge"
 }
