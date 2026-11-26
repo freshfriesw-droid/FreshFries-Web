@@ -20,6 +20,18 @@ def strip(s):
 current_html=strip((root/'index.html').read_text())
 baseline_html=strip((base/'index.html').read_text())
 if os.environ.get('P2_STEP04_REGRESSION')=='1':
+ # STEP12: reverse only the exact reviewed security-only source deltas.
+ # The fixture is absent in historical snapshots; in the current tree every
+ # recorded hunk must match once. Do not normalize CSS or any other script.
+ security_delta=root/'docs/implementation/STEP12-ui-source-delta-20261126.json'
+ if security_delta.exists():
+  delta=json.loads(security_delta.read_text())
+  assert delta['base_commit']=='62d4ed9ca3b1533d75747cd48d3f64b8e6493d38'
+  assert len(delta['hunks'])==15
+  for h in delta['hunks']:
+   assert h['before']!=h['after']
+   assert current_html.count(h['after'])==1,('unexpected STEP12 source delta',h['new_line'])
+   current_html=current_html.replace(h['after'],h['before'],1)
  # STEP04 intentionally changes exactly the shortcut construction and renderer,
  # plus the three cache-busting asset links. Prove every other byte of markup
  # and inline JavaScript stays identical to the closed P2 tree.
@@ -62,7 +74,7 @@ if os.environ.get('P2_STEP04_REGRESSION')=='1':
  assert baseline_html.count(parser_before)==1,'missing pinned STEP09 parser block'
  assert current_html.count(parser_after)==1,'unexpected STEP09 parser implementation'
  current_html=current_html.replace(parser_after,parser_before,1)
- assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04–STEP10 audited hooks'
+ assert current_html==baseline_html,'unexpected markup/script delta beyond STEP04–STEP12 audited hooks'
 else:
  assert current_html==baseline_html,'non-CSS application markup or script changed'
 changed={str(f.relative_to(base)) for f in list((base/'scripts').glob('*.js'))+list((base/'assets').glob('*.js')) if f.read_bytes()!=(root/f.relative_to(base)).read_bytes()}
