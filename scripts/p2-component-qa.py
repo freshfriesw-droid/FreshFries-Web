@@ -20,6 +20,16 @@ def strip(s):
 current_html=strip((root/'index.html').read_text())
 baseline_html=strip((base/'index.html').read_text())
 if os.environ.get('P2_STEP04_REGRESSION')=='1':
+ # STEP13: reverse only the exact form-label additions for the source guard.
+ # Actual browser parity still renders the candidate, including new attributes.
+ accessibility_delta=root/'docs/implementation/STEP13-accessibility-delta-20261126.json'
+ if accessibility_delta.exists():
+  accessibility=json.loads(accessibility_delta.read_text())
+  assert accessibility['base_commit']=='a645e483db0075f1fac2402612ae2e9ef5297a11'
+  assert len(accessibility['hunks'])==39
+  for h in accessibility['hunks']:
+   assert current_html.count(h['after'])==1,('unexpected STEP13 source delta',h['id'])
+   current_html=current_html.replace(h['after'],h['before'],1)
  # STEP12: reverse only the exact reviewed security-only source deltas.
  # The fixture is absent in historical snapshots; in the current tree every
  # recorded hunk must match once. Do not normalize CSS or any other script.
