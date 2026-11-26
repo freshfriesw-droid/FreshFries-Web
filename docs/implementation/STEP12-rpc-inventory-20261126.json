@@ -614,7 +614,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "e47df4cea18174de9e22ed3aaa0f747f"
+      "definition_md5": "e47df4cea18174de9e22ed3aaa0f747f",
+      "scope_test": "STEP12 step12_client_audit_scope_rollback.sql PASS 102/102; role/actor fields, branch and inactive denial, event validation and per-user diagnostic limit; client event is not verified Auth or MFA proof"
     },
     {
       "name": "ff49_can_work_branch",
@@ -2211,7 +2212,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "2811a123ab31510dee8461b7d7c5f871"
+      "definition_md5": "2811a123ab31510dee8461b7d7c5f871",
+      "scope_test": "STEP12 step12_client_audit_scope_rollback.sql PASS 102/102; role/actor fields, branch and inactive denial, event validation and per-user diagnostic limit; client event is not verified Auth or MFA proof"
     },
     {
       "name": "ff_luxe_ack_cashier_cancel",
@@ -2559,7 +2561,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "3619ecd8ebcb10d6638f0c21c7a0d804"
+      "definition_md5": "3619ecd8ebcb10d6638f0c21c7a0d804",
+      "scope_test": "STEP12 step12_client_audit_scope_rollback.sql PASS 102/102; role/actor fields, branch and inactive denial, event validation and per-user diagnostic limit; client event is not verified Auth or MFA proof"
     },
     {
       "name": "ff_security_my_role",
@@ -2818,5 +2821,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26 STEP12 new live supervisor reject-permission scope fix #148 pending merge; official domain and PWA parity PASS on #147; 130/270 explicit STEP12 scope_test entries, 60 additional prior evidence links, not complete acceptance"
+  "last_update": "2026-11-26 STEP12 client audit scope 102 new assertions; 133/270 scope_test, 60 prior evidence links; #147/#148 pending CI/merge"
 }
