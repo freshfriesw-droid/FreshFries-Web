@@ -249,7 +249,7 @@
       "authenticated": true,
       "config": "search_path=\"\"",
       "definition_md5": "472c400f1bc16eb5e4e58200e13abab1",
-      "scope_test": "STEP12 step12_reject_permission_scope_rollback.sql PASS 31/31 after live migration 20261126030005; branch-scoped supervisor, central roles, driver own offer, unauthorized read/write/audit; SQL claims only; #148 pending merge"
+      "scope_test": "STEP12 step12_reject_permission_scope_rollback.sql PASS 31/31 after live migration 20261126030005; branch-scoped supervisor, central roles, driver own offer, unauthorized read/write/audit; SQL claims only; #148 pending merge; PR #148 merged 9bbca5c596a56ead27dae53a7111b6a692f4fc79, CI 11/11 PASS."
     },
     {
       "name": "ff38_heartbeat",
@@ -1021,7 +1021,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "c95e542622e5f9563adf7121e0cfe332"
+      "definition_md5": "c95e542622e5f9563adf7121e0cfe332",
+      "scope_test": "PASS — step12_reward_staff_media_scope_rollback.sql (48 assertions collectively; synthetic SQL role contexts, rollback; not live Auth/Storage HTTP)."
     },
     {
       "name": "ff60_health",
@@ -2394,7 +2395,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "098c65e1e5ac1529c88a4105fef3205b"
+      "definition_md5": "098c65e1e5ac1529c88a4105fef3205b",
+      "scope_test": "PASS — step12_reward_staff_media_scope_rollback.sql (48 assertions collectively; synthetic SQL role contexts, rollback; not live Auth/Storage HTTP)."
     },
     {
       "name": "ff_luxe_rate_driver_cashier",
@@ -2514,7 +2516,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "5c80dd5735ecdbe8668ad9988dc82744"
+      "definition_md5": "5c80dd5735ecdbe8668ad9988dc82744",
+      "scope_test": "PASS — step12_reward_staff_media_scope_rollback.sql (48 assertions collectively; synthetic SQL role contexts, rollback; not live Auth/Storage HTTP)."
     },
     {
       "name": "ff_reward_issue",
@@ -2533,7 +2536,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "cd6dc2c7cd2f727f92dcb5690dc541b8"
+      "definition_md5": "cd6dc2c7cd2f727f92dcb5690dc541b8",
+      "scope_test": "PASS — step12_reward_staff_media_scope_rollback.sql (48 assertions collectively; synthetic SQL role contexts, rollback; not live Auth/Storage HTTP)."
     },
     {
       "name": "ff_reward_redeem",
@@ -2552,7 +2556,8 @@
       "anon": false,
       "authenticated": true,
       "config": "search_path=\"\"",
-      "definition_md5": "fa11f6ad0ecd7acfd4379614f667faed"
+      "definition_md5": "fa11f6ad0ecd7acfd4379614f667faed",
+      "scope_test": "PASS — step12_reward_staff_media_scope_rollback.sql (48 assertions collectively; synthetic SQL role contexts, rollback; not live Auth/Storage HTTP)."
     },
     {
       "name": "ff_save_catalog_parser_aliases",
@@ -2832,5 +2837,5 @@
       "scope_test": "STEP12 delegated boundaries: live SQL role-context rollback, 60 assertions in total; individual covered result: nonstaff/disabled denied; not full role/argument acceptance"
     }
   ],
-  "last_update": "2026-11-26 STEP12 manager registry scope; 144/270 explicit scope_test, 60 prior evidence links; #147/#148 pending CI/merge"
+  "last_update": "2026-11-26: 149/270 explicit scope-test links, 60 additional prior evidence links, 61 unlinked; not full acceptance. #147 and #148 merged; official PWA parity PASS."
 }
